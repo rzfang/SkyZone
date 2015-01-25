@@ -66,24 +66,30 @@ a.IcoShr
   height: 20px;
   margin: 0px 2px;
   vertical-align: middle;
-  background-image: url(../image/shares.png);
+  font-size: 1.3em;
   background-size: 100px 20px;
+  
+  &:hover
+  { text-decoration: none; }
 }
 
 a.IcoLnk
-{ background-position: 0px 0px; }
+{ color: #404040; }
 
 a.IcoFb
-{ background-position: -20px 0px; }
+{ color: #4367a4; }
 
 a.IcoGp
-{ background-position: -40px 0px; }
+{ color: #d23e2b; }
 
 a.IcoTtr
-{ background-position: -60px 0px; }
+{ color: #3abfe8; }
 
 a.IcoPlk
-{ background-position: -80px 0px; }
+{
+  background-image: url(../image/shares.png);
+  background-position: -80px 0px;
+}
 
 /*==== component 'TabBox' ====*/
 

@@ -50,6 +50,7 @@ if (isset($_GET['Blog']) && IsUUID($_GET['Blog'], true))
 <?php } ?>
     <link rel='icon' href='/favicon.ico' type='image/ico'/>
     <link rel='alternate' type='application/atom+xml' title='atom' href='feed.php'/>
+    <link rel='stylesheet' type='text/css' href='resource/icon.css'/>
     <link rel='stylesheet' type='text/css' href='resource/base.css'/>
     <link rel='stylesheet' type='text/css' href='resource/style1.css'/>
     <style type='text/css'>
