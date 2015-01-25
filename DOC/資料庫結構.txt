@@ -1,0 +1,11 @@
+
+guestbook 訪客留言板
+serial, datetime, name, message
+
+捎信
+news 新消息
+serial, datetime, message, link
+
+呢喃
+daily 生活記事
+

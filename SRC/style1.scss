@@ -1,0 +1,382 @@
+/*==== SkyZone case ==================================================================================================*/
+
+/*==== normal element ====*/
+
+body
+{
+  margin: 0px;
+  padding: 0px;
+  font-size: 1em;
+  font-family: monospace;
+  color: #202020;
+}
+
+a, input, option, button
+{ font-size: 1em;  }
+
+a
+{
+ text-decoration: none;
+
+  &:hover
+  { text-decoration: underline; }
+}
+
+div, span, pre , th, td
+{
+  border-width: 0px;
+  border-style: solid;
+  border-color: rgba(160, 160, 160, 0.9);
+}
+
+ul, ol
+{ margin: 5px 0px 10px 0px; }
+
+/*==== blog type icon ====*/
+
+.IcoBlogTp
+{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0px 2px;
+  vertical-align: middle;
+  background-image: url(../image/blog_types.png);
+  background-size: 80px 20px;
+}
+
+.IcoBlogLck
+{ background-position: 0px 0px; }
+
+.IcoBlogImg
+{ background-position: -20px 0px; }
+
+.IcoBlogImgs
+{ background-position: -40px 0px; }
+
+.IcoBlogTxt
+{ background-position: -60px 0px; }
+
+/*==== sharing icon ====*/
+
+a.IcoShr
+{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0px 2px;
+  vertical-align: middle;
+  background-image: url(../image/shares.png);
+  background-size: 100px 20px;
+}
+
+a.IcoLnk
+{ background-position: 0px 0px; }
+
+a.IcoFb
+{ background-position: -20px 0px; }
+
+a.IcoGp
+{ background-position: -40px 0px; }
+
+a.IcoTtr
+{ background-position: -60px 0px; }
+
+a.IcoPlk
+{ background-position: -80px 0px; }
+
+/*==== component 'TabBox' ====*/
+
+.TbBx > ul > li
+  {
+    border-color: rgba(160, 160, 160, 0.9);
+
+    &.PckTb
+    { background-color: rgba(255, 255, 255, 0.9); }
+  }
+
+/*==== component 'ItemList' ====*/
+
+.LstIdxTg
+{
+  display: inline-block;
+  min-width: 20px;
+  margin: 0px 2px;
+  border: 1px solid;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover
+  { color: #ff0000; }
+}
+
+.LstIdxTgDsb
+{
+  display: inline-block;
+  min-width: 20px;
+  margin: 0px 2px;
+  border: 1px solid;
+  text-align: center;
+  color: #808080;
+  background-color: #c0c0c0;
+}
+
+.OneItm
+{
+  margin: 5px 0px;
+  padding: 5px;
+  border-width: 1px;
+  border-radius: 5px;
+
+  &:hover
+  { background-color: rgba(232, 240, 255, 0.9); }
+}
+
+.OneMsg
+{
+  position: relative;
+
+  > pre
+  {
+    margin: 5px 0px;
+    white-space: pre-wrap;
+  }
+
+  > div:last-of-type
+  {
+    text-align: right;
+    font-size: 10px;
+    color: #808080;
+  }
+
+  > input.Btn0
+  {
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 2px;
+  }
+}
+
+.OneBlog > div
+{
+  &:first-child
+  { white-space: pre-wrap; }
+
+  &:nth-child(2)
+  {
+    font-size: 12px;
+    color: #808080;
+  }
+
+  &:nth-child(2) > span
+  {
+    margin-right: 10px;
+    padding: 0px 2px;
+    border-radius: 3px;
+  }
+
+  &:nth-child(3)
+  {
+    white-space: normal;
+    font-size: 12px;
+    color: #202020;
+  }
+
+  &:last-child
+  {
+    text-align: right;
+    font-size: 10px;
+    color: #808080;
+  }
+}
+
+.OneMsgCmt
+{
+  position: relative;
+
+  > pre
+  {
+    margin: 5px 0px;
+    white-space: pre-wrap;
+  }
+
+  > div:last-of-type
+  {
+    text-align: right;
+    font-size: 10px;
+    color: #808080;
+  }
+
+  > span:last-child
+  {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 10px;
+    color: #808080;
+  }
+}
+
+.OneTtrl
+{ cursor: pointer; }
+
+/*==== component: 'Frame' */
+
+/*==== 'Frame' blog ====*/
+
+.Frm .Ctn .Blog
+{
+  padding: 20px;
+  line-height: 2em;
+  text-align: center;
+
+  &.Text > pre
+  {
+    display: inline-block;
+    margin-bottom: 40px;
+    white-space: pre-wrap;
+    text-align: left;
+  }
+
+  &.Img
+  {
+    > img
+    {
+      vertical-align: top;
+      cursor: pointer;
+    }
+
+    > pre
+    {
+      display: inline-block;
+      margin: 0;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: left;
+      vertical-align: bottom;
+    }
+  }
+
+  &.Imgs
+  {
+    padding-bottom: 30px;
+
+    > div
+    {
+      min-height: 100px;
+      margin: 10px 10px 20px 10px;
+
+      > img
+      {
+        display: inline-block;
+        min-width: 50px;
+        min-height: 50px;
+        cursor: pointer;
+      }
+
+      > div > span
+      {
+        display: inline-block;
+        text-align: left;
+        vertical-align: top;
+        white-space: pre-wrap;
+      }
+    }
+  }
+}
+
+.Frm .Ftr
+{
+  display: inline-block;
+  position: absolute;
+  left: 1px;
+  bottom: 1px;
+  padding: 5px;
+  vertical-align: top;
+  font-size: 14px;
+  border: 1px solid #c0c0c0;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+
+  > input[type=checkbox]
+  { vertical-align: bottom; }
+
+  > span
+  {
+    display: inline-block;
+    max-width: 300px;
+    margin-left: 5px;
+    vertical-align: top;
+    word-break: break-all;
+    word-wrap: break-word;
+
+    > div
+    {
+      > span
+      {
+        display: inline-block;
+        vertical-align: top;
+
+        &:first-child
+        {
+          min-width: 80px;
+          text-align: left;
+        }
+      }
+
+      &:nth-child(2) > span:nth-child(2) > span
+      {
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: top;
+      }
+    }
+  }
+}
+
+/*==== 'Frame' blog tag list ====*/
+
+#TgLstFrm.Frm > .Ctn > div:last-child
+{ text-align: center; }
+
+/*==== 'Button0' component. ====*/
+
+.Btn0
+{
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 3px;
+  border: 1px solid #c0c0c0;
+  border-radius: 3px;
+  vertical-align: top;
+  cursor: pointer;
+  color: #404040;
+  background-image: -webkit-linear-gradient(#90c0f0, #e0f0f0);
+  background-image: linear-gradient(0deg, #90c0f0, #e0f0f0);
+
+  &:hover
+  {
+    background-image: -webkit-linear-gradient(#b0d0f0, #f0f0ff);
+    background-image: linear-gradient(0deg, #b0d0f0, #f0f0ff);
+  }
+
+  &:active
+  {
+    color: #808080;
+    padding: 2px 3px 0px 3px;
+    background-image: -webkit-linear-gradient(#f0f0ff, #b0d0f0);
+    background-image: linear-gradient(0deg, #f0f0ff, #b0d0f0);
+  }
+
+  &.Lock
+  {
+    color: #f0f0f0;
+    padding: 1px 3px;
+    cursor: default;
+    background-image: -webkit-linear-gradient(#808080, #f0f0f0);
+    background-image: linear-gradient(0deg, #808080, #f0f0f0);
+  }
+}
+
+/*====================================================================================================================*/

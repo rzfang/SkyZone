@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv='content-type' content='text/html; charset=utf-8'/>
+    <meta name='description' content=''/>
+    <meta name='keywords' content=''/>
+    <meta name='author' content=''/>
+    <style type='text/css'>
+    <!--
+      body { margin: 0; padding: 0; }
+      .Tbl { display: table; width: 100%; }
+      .Tbl > div { display: table-cell; width: 50%; }
+      .Tbl > div > textarea { width: 99%; }
+    -->
+    </style>
+    <script type='text/javascript' src='resource/jquery.min.js'></script>
+    <script type='text/javascript'>
+    <!--
+      $(function ()
+        {
+          $('div.Tbl input:button').on('click', InputParse);
+          
+          return;
+
+          function InputParse (Evt)
+          {
+            console.log(this.prev());
+          }
+        });
+
+      /* create a ZMK parsed instance object.
+        'Src' = Source string to parse to.
+        'TgRlO' = Tag Rules info Object. */
+      function ZMK(Src, TgRlO)
+      {
+        var TgRls = {'h1': /={4} (.+) ={5,}\r?\n/g, 'h2': /={4} (.+) ={4}\r?\n/g, 'hr': /={4,}\r?\n/g,
+                     'ul_li': /@ (.+)\r?\n@/g, 'ol_li': /\d\. (.+)\r?\n\d\./g,
+                     'a': /https?:\/\/[^ ]+/g};
+      }
+    -->
+    </script>
+  </head>
+  <body>
+    <div class='Tbl'>
+      <div>
+        <h1>input</h1>
+        <textarea></textarea>
+        <input type='button' value='parse'/>
+      </div>
+      <div>
+        <h1>output</h1>
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>
+<!--=================================================================================================================-->
