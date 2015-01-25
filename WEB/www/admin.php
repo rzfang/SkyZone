@@ -79,7 +79,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
     -->
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
-    <script type='text/javascript' src='resource/include.<?= DEV ? 'js' : 'min.js'; ?>'></script>
+    <script type='text/javascript' src='resource/include.min.js'></script>
     <script type='text/javascript'>
     <!--
 <?php if (!$IsLgn){ ?>

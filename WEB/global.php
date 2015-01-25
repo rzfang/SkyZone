@@ -15,7 +15,7 @@ define('ADMIN_ML', 'rzfang@skyzone.url.tw');
 define('ADMIN_PSWD', 'skyfang' . date('Ymd'));
 define('RZ_PSWD', 'rz' . date('Y') . 'zone' . date('md'));
 define('COOKIE_LIFE', 604800); // 7 days in second.
-define('DEV', true);
+define('DEV', false);
 
 // session name.
 define('SSN_ADMIN_PSWD', 'AdminPswd');

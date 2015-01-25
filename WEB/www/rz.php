@@ -45,7 +45,7 @@ if (isset($_SESSION['RZPswd']))
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-    <script type='text/javascript' src='resource/include.<?= DEV ? 'js' : 'min.js'; ?>'></script>
+    <script type='text/javascript' src='resource/include.min.js'></script>
     <script type='text/javascript'>
 <?php if (!$IsLgn){ ?>
 
