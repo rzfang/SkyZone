@@ -1,43 +1,16 @@
 <?php
 //==== Constant ========================================================================================================
 
-// path.
 define('RT_PTH', dirname(__FILE__) . '/../');
-define('WEB_PTH', RT_PTH . 'WEB/');
-define('DAT_PTH', RT_PTH . 'DAT/');
-define('CCH_PTH', RT_PTH . 'DAT/cache/');
-
-// website info.
-define('WEBSITE', '空域');
-
-// website config.
-define('ADMIN_ML', 'rzfang@skyzone.url.tw');
-define('ADMIN_PSWD', 'skyfang' . date('Ymd'));
-define('RZ_PSWD', 'rz' . date('Y') . 'zone' . date('md'));
-define('COOKIE_LIFE', 604800); // 7 days in second.
-define('DEV', false);
-
-// session name.
-define('SSN_ADMIN_PSWD', 'AdminPswd');
-define('SSN_RZ_PSWD', 'RZPswd');
-define('SSN_ERR_HNT', 'ErrHnt');
-
-// the manager of created data file.
-define('FILE_MOD', 0754);
+require(RT_PTH . 'SRC/constants.php');
 
 if (DEV)
 {
-  // default DB connect info for develop.
-  define('DB_PTH', '/home/rzfang/Project/SkyZone/DAT/SkyZone.sqlite3');
-
   // website URL.
   define('WEBSITE_URL', 'http://127.0.0.1/skyzone/');
 }
 else
 {
-  // default DB connect info for release.
-  define('DB_PTH', '/home/rzfang/Website/SkyZone/DAT/SkyZone.sqlite3');
-
   // website URL.
   define('WEBSITE_URL', 'http://skyzone.zii.tw/');
 }

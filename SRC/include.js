@@ -982,21 +982,7 @@ function Frame(PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
                " background-image: -webkit-linear-gradient(top, rgba(200, 240, 255, 1), rgba(240, 248, 255, 0.9)); }\n" +
                '.' + CSSCls + " { border-width: 1px; border-radius: 5px; box-shadow: -1px 1px 2px; }\n" +
                '.' + CSSCls + " > div:nth-child(2) { padding: 5px; background-color: rgba(240, 240, 240, 0.9); }\n" +
-               '.' + CSSCls + " > div:nth-child(3) { padding: 1px 3px; border-top-width: 1px; border-radius: 0px 0px 5px 5px; background-color: rgba(248, 248, 255, 0.9); }\n" +
-               '.' + CSSCls + " .FIB { display: inline-block; min-width: 24px; min-height: 24px; margin-left: 3px; border: 1px solid #a0a0a0; border-radius: 3px; background-color: #f0f8ff; box-shadow: 1px -1px 5px #c8f0ff inset; background-image: url(image/frame_icon.png); cursor: pointer; }\n" +
-               '.' + CSSCls + " .FIB:hover { color: #ff0000; border-color: #ff0000; }\n" +
-               '.' + CSSCls + ' .FIB_Close          { background-position: ' + (II.X)             + 'px ' + (II.Y)                  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Close:hover    { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y - 1)              + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Close:active   { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + 1)              + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Max            { background-position: ' + (II.X)             + 'px ' + (II.Y + II.H * -1)      + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Max:hover      { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -1 - 1)  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Max:active     { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -1 + 1)  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Resize         { background-position: ' + (II.X)             + 'px ' + (II.Y + II.H * -2)      + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Resize:hover   { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -2 - 1)  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Resize:active  { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -2 + 1)  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Move           { background-position: ' + (II.X)             + 'px ' + (II.Y + II.H * -3)      + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Move:hover     { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -3 - 1)  + "px; }\n" +
-               '.' + CSSCls + ' .FIB_Move:active    { background-position: ' + (II.X + II.W * -1) + 'px ' + (II.Y + II.H * -3 + 1)  + "px; }\n";
+               '.' + CSSCls + " > div:nth-child(3) { padding: 1px 3px; border-top-width: 1px; border-radius: 0px 0px 5px 5px; background-color: rgba(248, 248, 255, 0.9); }\n";
 
     CSSAdd(CSSS, FIBCID);
   }

@@ -1,3 +1,16 @@
+==== nginx 環境佈署 ============================================================
+
+$ cd [專案根目錄];
+$ vim SRC/nginx.conf;
+/root
+修改成 [nginx http server 起始目錄]/skyzone
+:wq
+$ cd /etc/nginx/conf.d;
+$ sudo ln -sf [專案根目錄]/DOC/nginx.conf skyzone.conf;
+$ cd [nginx http server 起始目錄];
+$ sudo ln -sf [專案根目錄]/WEB/www skyzone;
+$ sudo service nginx reload;
+
 ==== PEAR - Archive_Tar ========================================================
 
 ==== 說明 ====

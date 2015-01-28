@@ -9,7 +9,7 @@
 	font-style: normal;
 }
 
-[class^="Ico"], [class*=" Ico"] {
+.icon {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -36,6 +36,14 @@
 .icon-facebook:before     { content: "\ea8d"; }
 .icon-twitter:before      { content: "\ea92"; }
 .icon-tumblr:before       { content: "\eabc"; }
+
+//==== color declare. ====
+
+// 'Clr' = Color.
+$Clr_Red:   #ff0000;
+$Clr_Black: #000000;
+$Clr_White: #ffffff;
+$Clr_Grey:  #404040;
 
 /*==== normal element ====*/
 
@@ -73,6 +81,8 @@ ul, ol
 
 .IcoBlogTp
 {
+  @extend .icon;
+
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -90,6 +100,8 @@ ul, ol
 
 a.IcoShr
 {
+  @extend .icon;
+
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -134,7 +146,7 @@ a.IcoPlk
   cursor: pointer;
 
   &:hover
-  { color: #ff0000; }
+  { color: $Clr_Red; }
 }
 
 .LstIdxTgDsb
@@ -252,62 +264,108 @@ a.IcoPlk
 
 /*==== 'Frame' blog ====*/
 
-.Frm .Ctn .Blog
+.Frm
 {
-  padding: 20px;
-  line-height: 2em;
-  text-align: center;
-
-  &.Text > pre
+  .Hdr
   {
-    display: inline-block;
-    margin-bottom: 40px;
-    white-space: pre-wrap;
-    text-align: left;
+    > span:last-child
+    {
+      .FIB
+      {
+        @extend .icon;
+
+        display: inline-block;
+        position: relative;
+        min-width: 24px; min-height: 24px;
+        margin-left: 3px;
+        border: 1px solid #a0a0a0;
+        border-radius: 3px;
+        background-color: #f0f8ff;
+        box-shadow: 1px -1px 5px #c8f0ff inset;
+        cursor: pointer;
+        color: $Clr_Grey;
+
+        &::before
+        {
+          position: absolute;
+          right: 5px;
+          bottom: 6px;
+          font-size: 0.8rem;
+        }
+
+        &:hover
+        {
+          border-color: $Clr_Red;
+          color: $Clr_Red;
+        }
+
+        &:active::before { bottom: 2px; }
+      }
+
+      .FIB_Move   { @extend .icon-compass; }
+      .FIB_Resize { @extend .icon-enlarge2;}
+      .FIB_Max    { @extend .icon-enlarge; }
+      .FIB_Close  { @extend .icon-cross; }
+    }
   }
 
-  &.Img
+  .Ctn .Blog
   {
-    > img
-    {
-      vertical-align: top;
-      cursor: pointer;
-    }
+    padding: 20px;
+    line-height: 2em;
+    text-align: center;
 
-    > pre
+    &.Text > pre
     {
       display: inline-block;
-      margin: 0;
-      padding: 5px;
-      border-radius: 5px;
+      margin-bottom: 40px;
+      white-space: pre-wrap;
       text-align: left;
-      vertical-align: bottom;
     }
-  }
 
-  &.Imgs
-  {
-    padding-bottom: 30px;
-
-    > div
+    &.Img
     {
-      min-height: 100px;
-      margin: 10px 10px 20px 10px;
-
       > img
       {
-        display: inline-block;
-        min-width: 50px;
-        min-height: 50px;
+        vertical-align: top;
         cursor: pointer;
       }
 
-      > div > span
+      > pre
       {
         display: inline-block;
+        margin: 0;
+        padding: 5px;
+        border-radius: 5px;
         text-align: left;
-        vertical-align: top;
-        white-space: pre-wrap;
+        vertical-align: bottom;
+      }
+    }
+
+    &.Imgs
+    {
+      padding-bottom: 30px;
+
+      > div
+      {
+        min-height: 100px;
+        margin: 10px 10px 20px 10px;
+
+        > img
+        {
+          display: inline-block;
+          min-width: 50px;
+          min-height: 50px;
+          cursor: pointer;
+        }
+
+        > div > span
+        {
+          display: inline-block;
+          text-align: left;
+          vertical-align: top;
+          white-space: pre-wrap;
+        }
       }
     }
   }
