@@ -1,0 +1,178 @@
+@import 'SRC/base';
+
+//==== SkyZone case ====================================================================================================
+
+//==== color declare. ====
+
+// 'Clr' = Color.
+$Clr_Black: #202020;
+$Clr_Grey:  #808080;
+$Clr_White: #f0f0f0;
+$Clr_Bdr:   #a0a0a0; // 'Bdr' = Border.
+$Clr_Bg:    #e8e8e8; // 'Bg' = Background.
+$Clr_Rng:   #080808; // 'Rng' = Range.
+$Clr_Lnk_0: #005db2; // 'Lnk' = Link.
+$Clr_Lnk_1: #ffc463;
+
+// 005db2
+// bbdfff
+// 63b5ff
+// b27d27
+// ffc463
+
+//==== icons. ====
+
+@font-face {
+	font-family: 'icomoon';
+	src: url('data:application/x-font-ttf;base64,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') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.icon {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	// Better Font Rendering.
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-image:before        { content: "\e90d"; }
+.icon-images:before       { content: "\e90e"; }
+.icon-book:before         { content: "\e91f"; }
+.icon-text:before         { content: "\e926"; }
+.icon-lock:before         { content: "\e98f"; }
+.icon-share:before        { content: "\ea82"; }
+.icon-google-plus:before  { content: "\ea89"; }
+.icon-facebook:before     { content: "\ea8d"; }
+.icon-twitter:before      { content: "\ea92"; }
+.icon-tumblr:before       { content: "\eabc"; }
+
+//==== normal element ====
+
+html
+{ font-size: 16px; }
+
+body
+{
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  color: $Clr_Black;
+  background-color: $Clr_Bg;
+}
+
+a, input, option, button
+{ font-size: 1rem;  }
+
+a
+{
+  text-decoration: none;
+  color: $Clr_Lnk_0;
+
+  &:hover
+  {
+    text-decoration: underline;
+    color: $Clr_Lnk_1;
+  }
+}
+
+div, span, pre , th, td
+{
+  border-width: 0px;
+  border-style: solid;
+}
+
+ul, ol
+{ margin: 5px 0px 10px 0px; }
+
+//==== structure extend. ====
+
+#Base > *
+{
+  padding: 10px 10px;
+}
+
+#Head, #Tail
+{ background-color: $Clr_Bg - $Clr_Rng; }
+
+#Head > nav > span
+{
+  display: inline-block;
+  font-size: 1.2rem;
+}
+
+//==== component 'TabBox' ====
+
+.TbBx
+{
+  li
+  {
+    @extend .Btn0;
+
+    margin-right: 10px;
+    border-width: 0;
+
+    &.PckTb
+    { font-size: 1.2rem; }
+  }
+
+  > div
+  { white-space: pre-line; }
+}
+
+//==== 'Button0' component. ====
+
+.Btn0
+{
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 3px;
+  border: 1px solid $Clr_Bdr;
+  border-radius: 3px;
+  vertical-align: middle;
+  cursor: pointer;
+
+  &:active
+  {
+    padding: 2px 3px 0px 3px;
+  }
+
+  &.Lock
+  {
+    color: #f0f0f0;
+    cursor: default;
+  }
+}
+
+//==== pages. ====
+
+#AboutPage
+{
+  .AbtPg > a
+  { font-size: 1.1rem; }
+}
+
+#BlogsPage
+{
+  #BlogBx > .Blog
+  {
+    display: block;
+    margin: 20px 0;
+    line-height: 1.5;
+    
+    > div:first-child > a
+    { font-size: 1.3rem; }
+    
+    > div:nth-child(3), div:last-child
+    { color: $Clr_Grey; }
+  }
+}
+
+//======================================================================================================================

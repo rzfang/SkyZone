@@ -257,12 +257,12 @@ class Tag
 {
   /* list tags.
     Return: JSON string | array of Tag info. */
-  public static function TagList ($IA)
+  public static function TagList ($IA = array())
   {
     global $Kw;
 
     if (empty($IA))
-      return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
+    { $IA = array(); }
 
     $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
     $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;

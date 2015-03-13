@@ -5,31 +5,42 @@
   display: none;
 }
 
+@media screen and ( min-device-width: 640px )
+{
+  #Base
+  { 
+    max-width: 1000px; 
+    
+    #Tail
+    {
+      text-align: center;
+    }
+  }
+}
+
 #Base
 {
   position: relative;
   margin: 0px auto;
-}
-
-#Head
-{
-  text-align: center;
-
-  > div
+  
+  #Head > nav
   {
-    display: inline-block;
-    padding: 5px;
+    line-height: 2rem;
+
+    > div
+    {
+      display: inline-block;
+      padding: 5px;
+    }
   }
-}
 
-#Main
-{
-  min-height: 500px;
-}
+  #Main
+  {
+    min-height: 500px;
+  }
 
-#Tail
-{
-  text-align: center;
+  #Tail
+  { line-height: 2rem; }
 }
 
 /*==== normal class =================================================================================================*/

@@ -1,0 +1,95 @@
+<?php
+header('Content-Type: text/html; charset=utf-8');
+
+require('../global.php');
+?>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <? require('../meta.php'); ?>
+  </head>
+  <body id='AboutPage'>
+    <div id='Base'>
+      <header id='Head'>
+        <? require('../header.php'); ?>
+      </header>
+      <main id='Main'>
+        <div id='AbtBx' class='TbBx'>
+          <div class='AbtPg' name='網站導覽'>
+            <a href='blogs.php'>網誌</a>
+            RZ 不定期分享的自言自語、碎碎唸等沒營養垃圾文章。
+
+            <a href='message.php'>留言板</a>
+            開放給客倌隨意留言，沒什麼限制，就是請大家多注意網路禮儀哦。
+
+            <a href='feed.php'>訂閱</a>
+            想要隨時知道 RZ 是不是又在網誌上的發佈了垃圾文章，
+            就用這個 RSS/Atom 訂閱空域的最新消息吧。
+
+            <a href='index.php'>回入口</a>
+            回到空域的大門口。RZ 除了網誌以外，還有其它比較主題性的資訊會擺在門口。
+          </div>
+          <div class='AbtPg' name='關於空域'>
+            空域是 RZ(小弟本人) 一腳踏進程式與資訊圈以來，不斷學習、探索，
+            終於下定決心所成立的網站。
+
+            開始構思發想階段的時間點已不可考；
+            網站的成立時間則大約是在 2011 年 6 月前後。
+
+            一開始發想很單純，
+            RZ 不太滿意各 Blog 經營業者所提供的維護方式，即模版式的介面配置。
+            可能是因為 RZ 自己喜歡凡是自己動手做，又剛好懂點網頁程式，
+            因此萌生了一個吃力不討好的想法：
+            「既然我可以自己做，幹嘛要屈就於人家 Blog 式的管理方式。」
+            於是…可以算是價值觀扭曲、過度偏執的想法，成就了 空域 的開站。
+
+            RZ 把空域當成個人生活的紀錄，基本上就是 Blog，
+            但希望能跳脫制式 Blog 的版面框架；
+            同時 RZ 也把空域當作在網頁程式精進的管道，
+            在這裡，客倌無須拘慬，無論您是偶然經過，或是在此流連，
+            若空域帶給您一些想法、一些啟發，不妨在空域留下您的心得。
+
+            網海茫茫，人與人的際會如此奇妙…
+
+            我的天空，我在其中，在我這裡，自由放空。 RZ 的個人網站。
+
+            20120401 by RZ
+          </div>
+          <div class='AbtPg' name='關於我'>
+            小弟本名方元利，在成長的不同時期有不同的暱稱，基本上都跟名字發音有關，
+            阿利、Lee、小方、RZ (目前較常使用) 等，
+            RZ 不在乎客倌如何稱呼 RZ，名字不重要，重要的是所代表的人。
+
+            有一陣子 RZ 用「天空」作為自己在網路上的代稱，
+            因為喜歡天空的開闊，天空的湛藍。
+            而本站名為空域 ，也是由此而來。
+
+            RZ 喜歡寫寫東西、畫畫東西，發發夢想，在空域裡客倌會發現這些習性，
+            當然 RZ 也還喜歡很多事情，但嘮嘮不休不是 RZ 的習慣，
+            客倌就隨意參觀吧。
+
+            那麼…
+            客倌，您好，
+            我是 RZ ，
+            初次見面的，請多指教；
+            朋友，又見面了，歡迎回來。
+
+            20120401 by RZ
+          </div>
+        </div>
+      </main>
+      <footer id='Tail'>
+        <? require('../footer.php'); ?>
+        <script type='text/javascript'>
+        <!--
+          $(function()
+            {
+              Button0('.Btn0');
+              TabBox('#AbtBx', '#AbtBx > .AbtPg', 0);
+            });
+        -->
+        </script>
+      </footer>
+    </div>
+  </body>
+</html>

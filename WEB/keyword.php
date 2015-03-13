@@ -16,5 +16,5 @@ $Kw = array( // 'Kw' = Keyword.
     'Done'            => '完成。',),
   'Hnt' => array(
     'Copyright' => '©2011-2014 RZ Fang',
-    'TailHint' => '請使用支援 HTML5 與 CSS3 的網頁瀏覽器。'));
+    'TailHint' => ''));
 ?>

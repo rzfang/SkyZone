@@ -507,11 +507,10 @@ function TabBox(BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
                .children('ul:first');
 
   CSSStr = BxOS + " > ul { margin: 0px; padding: 0px; }\n" +
-           BxOS + ' > ul > li { display: inline-block; position: relative; padding: 4px 3px 0px 4px; ' +
-                               'border-width: 1px 1px 0px 1px; border-style: solid; vertical-align: bottom; ' +
+           BxOS + ' > ul > li { display: inline-block; position: relative; ' +
+                               'border-style: solid; vertical-align: bottom; ' +
                                "cursor: pointer; }\n" +
-           BxOS + " > ul > li.PckTb { top: 1px; font-size: 20px; }\n" +
-           TbCSSS + ' { display: none; min-height: 100px; border-width: 1px; border-style: solid; }';
+           TbCSSS + ' { display: none; min-height: 100px; border-style: solid; }';
 
   CSSAdd(CSSStr);
 

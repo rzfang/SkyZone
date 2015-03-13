@@ -56,6 +56,7 @@ if (isset($_GET['Blog']) && IsUUID($_GET['Blog'], true))
     <!--
       div.AbtPg { padding: 5px; word-wrap:break-word; white-space: pre-line; }
 
+      #Head, #Tail { text-align: center; }
       #Head > a { text-decoration: none; }
 
       #GdWdsChk, #AtCnrChk { position: absolute; bottom: 0px; padding: 5px; border-radius: 5px 0px 0px 0px;
