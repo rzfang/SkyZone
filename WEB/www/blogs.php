@@ -7,91 +7,127 @@ require(WEB_PTH . 'api.php');
 
 $PckTg = ''; // 'PckTg' = Picked Tag.
 $Tgs = array(); // '$Tgs' = Tags.
-$Cnt = 0; // '$Cnt' = Count.
-$Blogs = array();
 
 if (!empty($_GET['t']) && is_string($_GET['t']))
 { $PckTg = $_GET['t']; }
 
 if (Db::Db0Connect() === 0)
-{
-  $Tgs = Tag::TagList();
-  $Cnt = Blog::BlogList(array('Cnt', 'TgIDA' => array($PckTg)));
-  $Blogs = Blog::BlogList(array('Lmt' => 10, 'TgIDA' => array($PckTg)));
-}
+{ $Tgs = Tag::TagList(); }
 ?>
 <!DOCTYPE HTML>
 <html>
   <head>
     <? require(WEB_PTH . 'meta.php'); ?>
   </head>
-  <body id='BlogsPage'>
+  <body id='BlgsPg'>
     <div id='Template'>
-      <?
-        $Blog = <<<Blog
-  <div class='Blog'>
-    <div>
-      <i class='icon ?1?'></i>
-      <a href='blog.php?b=?2?'>?3?</a>
-    </div>
-    <div>?4?</div>
-    <div>?5?</div>
-    <div>?6?</div>
-  </div>
-Blog;
-
-        echo $Blog;
-      ?>
+      <div id='Blg' class='Blg'>
+        <div>
+          <i class='icon'></i>
+          <a href=''></a>
+        </div>
+        <pre></pre>
+        <div></div>
+        <div></div>
+      </div>
     </div>
     <div id='Base'>
       <header id='Head'>
         <? require(WEB_PTH . 'header.php'); ?>
       </header>
       <main id='Main'>
-        <div id='FctnBx'>
-          <div id='TgBx'>
-            分類標籤：
-            <?
-              foreach ($Tgs as $V)
-              {
-                if ($V['ID'] === $PckTg)
-                  echo "<span>{$V['Nm']}</span>\n";
-                else
-                  echo "<a href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n";
-              }
-
-              if (!empty($PckTg))
-                echo "<a href='blogs.php'>取消</a>\n";
-            ?>
-          </div>
-        </div>
-
-        <div id='BlogBx'>
+        <div id='TgBx'>
+          <span id='TgTtl'>分類標籤</span>
           <?
-            $TpClsMp = array('image' => 'icon-image', 'images' => 'icon-images', 'text' => 'icon-text', 'book' => 'icon-book');
+            if (!empty($PckTg))
+              echo "<a href='blogs.php'>取消</a>\n";
 
-            foreach ($Blogs as $V)
+            echo '<br/>';
+
+            foreach ($Tgs as $V)
             {
-              $Tgs = '';
-              $TA = array(); // '$TA' = Temp Array.
-
-              foreach ($V['Tg'] as $V1)
-              { $Tgs .= "<span>{$V1['Nm']}</span>"; }
-              
-              $TA = array($TpClsMp[$V['Tp']], $V['ID'], $V['Ttl'], $V['Smry'], $Tgs, $V['Dt']);
-
-              echo SymbolString($Blog, $TA);
+              if ($V['ID'] === $PckTg)
+                echo "<span class='Tg Pckd'>{$V['Nm']}</span>\n";
+              else
+                echo "<a class='Tg' href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n";
             }
           ?>
+        </div>
+        <div id='BlgBx'>
+        </div>
+        <div id='ExtBx'>
+          <a id='LdMr' href='javascript:void(0);'>載入更多</a>
+          <a id='ToTop' href='javascript:void(0);'>回到頂端</a>
         </div>
       </main>
       <footer id='Tail'>
         <? require(WEB_PTH . 'footer.php'); ?>
         <script type='text/javascript'>
         <!--
+          var BxDOM;
+
           $(function ()
             {
+              BxDOM = ItemList2(
+                        '#BlgBx',
+                        'service.php',
+                        { Cmd: 1, Lmt: 6, Ofst: 0, TgIDA: ['<?= $PckTg; ?>'] },
+                        OneBlogCreate,
+                        false,
+                        AfterBlogsCreate);
+
+              BxDOM.PageGet();
+
+              $('#LdMr').on('click', function () { BxDOM.PageGet(); });
+              $('#ToTop').on('click', function () { window.scrollTo(0, 0); });
             });
+
+          function OneBlogCreate (BlgInfo, Idx)
+          {
+            var TpClsMp = { image: 'icon-image', images: 'icon-images', text: 'icon-text', book: 'icon-book' },
+                Blg = $('#Blg').clone().removeAttr('id').hide(),
+                Tgs = [];
+
+            Blg.children('div').first().children('i').addClass(TpClsMp[BlgInfo.Tp])
+                                                     .end()
+                                       .children('a').text(BlgInfo.Ttl)
+                                                     .attr('href', 'zone.php?Blog=' + BlgInfo.ID)
+                                                     .end()
+                                       .end()
+                               .last().text(BlgInfo.Dt)
+                                      .end()
+                               .end()
+               .children('pre:first').text(BlgInfo.Smry);
+
+            for (var i = 0; i < BlgInfo.Tg.length; i++)
+            { Tgs.push($('<span/>').text(BlgInfo.Tg[i].Nm)); }
+
+            Blg.children('div:eq(1)').append(Tgs);
+
+            return Blg;
+          }
+
+          function AfterBlogsCreate (Cnt)
+          {
+            var Itms = $(this).find('> *:not(:visible)'),
+                i = 0;
+
+            OneShow();
+
+            return;
+
+            function OneShow ()
+            {
+              if (i > Cnt)
+              { return; }
+
+              Itms.eq(i).fadeIn();
+
+              i++;
+
+              setTimeout(OneShow, 300);
+            }
+          }
         -->
         </script>
       </footer>

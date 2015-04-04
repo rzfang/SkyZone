@@ -1,8 +1,47 @@
 'use strict';
 
+//==== Library =========================================================================================================
+
+//==== Z Check API =====================================================================================================
+
+function Z_Check_API ()
+{
+  if (window)
+  { window.Is = Is(); }
+
+  return;
+
+  function Is () {
+    return {
+      Boolean: function (Obj)
+        { return (typeof Obj === 'boolean'); },
+      Number: function (Obj)
+        { return (typeof Obj === 'number'); },
+      String: function (Obj)
+      { return (typeof Obj === 'string'); },
+      Function: function (Obj)
+        { return (typeof Obj === 'function'); },
+      Object: function (Obj)
+        { return (typeof Obj === 'object'); },
+      Undefined: function (Obj)
+        { return (typeof Obj === 'undefined'); },
+      Array: function (Obj)
+        { return (Obj instanceof Array); },
+      EMail: function (Str)
+        {
+          if (typeof Str !== 'string')
+          { return false; }
+
+          return (/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/).test(Str);
+        }
+    };
+  }
+}
+Z_Check_API();
+
 //==== Tool Function ===================================================================================================
 
-function Trim(Str)
+function Trim (Str)
 {
   return Str.replace(/^\s+|\s+$/g, '');
 }
@@ -10,7 +49,7 @@ function Trim(Str)
 /* count a String Length, chinese word count as 2 because of full-width.
   'Str' = String passing in.
   Return: string length.*/
-function StringLength(Str)
+function StringLength (Str)
 {
   if (typeof Str !== 'string')
   { return 0; }
@@ -34,7 +73,7 @@ function StringLength(Str)
   'Ofst' = Offset of substring.
   'Lmt' = Limit of substring.
   Return: fixed substring. */
-function SubStrFx(Str, Ofst, Lmt)
+function SubStrFx (Str, Ofst, Lmt)
 {
   if (typeof Str !== 'string')
   { Str = Str.toString(); }
@@ -67,7 +106,7 @@ function SubStrFx(Str, Ofst, Lmt)
   'CSSStr' = CSS String.
   'ID' = element 'style' ID. optional. give to skip if style exist.
   Return: 0 as OK, < 0 as error. */
-function CSSAdd(CSSStr, ID)
+function CSSAdd (CSSStr, ID)
 {
   if (typeof CSSStr !== 'string' || CSSStr.length === 0)
   { return -1; }
@@ -103,7 +142,7 @@ function CSSAdd(CSSStr, ID)
   'ExtObj' = Extend Object.
   'Md' = Mode, 0: Union mode in default, 1: Intersection mode.
   Return: new object after combined, or null as error. */
-function ObjectCombine(BsObj, ExtObj, Md)
+function ObjectCombine (BsObj, ExtObj, Md)
 {
   if (typeof BsObj !== 'object' || typeof ExtObj !== 'object')
   { return null; }
@@ -141,7 +180,7 @@ function ObjectCombine(BsObj, ExtObj, Md)
   'Chr' = Character. optional, default '0';
   'Sd' = Side. optional, default 'l'. 'l'|'L': left padding, 'r'|'R': right padding.
   Return: string after handle. */
-function CharPad(Str, Lth, Chr, Sd)
+function CharPad (Str, Lth, Chr, Sd)
 {
   if (typeof Str !== 'string')
   { Str = Str.toString(); }
@@ -183,7 +222,7 @@ function CharPad(Str, Lth, Chr, Sd)
     2: YYYYMMDDHHIISS.
   Return: datatime string.
   Need: CharPad(). */
-function Second2Datetime(Scd, Fmt)
+function Second2Datetime (Scd, Fmt)
 {
   var Dt = new Date(Scd * 1000), // 'Dt' = Date.
       DtStr = '',
@@ -224,7 +263,7 @@ function Second2Datetime(Scd, Fmt)
 /* parse bytes number to be normailize size string.
   'Byte' = file size, should be a number.
   Return: size string. */
-function FileSizeNormalize(Byte)
+function FileSizeNormalize (Byte)
 {
   if (typeof Byte !== 'number')
   { Byte = parseInt(Byte, 10); }
@@ -252,7 +291,7 @@ function FileSizeNormalize(Byte)
   'TmStr' = String.
   Return: true | false.
   Need: RECheck(). */
-function IsTimeStamp(TmStr)
+function IsTimeStamp (TmStr)
 {
   if (typeof TmStr !== 'string' || TmStr.length === 0)
   { return false; }
@@ -264,7 +303,7 @@ function IsTimeStamp(TmStr)
   'Str' = String.
   Return: true | false.
   Need: RECheck(). */
-function IsEMail(Str)
+function IsEMail (Str)
 {
   return RECheck(/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/, Str);
 }
@@ -273,7 +312,7 @@ function IsEMail(Str)
   'Ptm' = Pettam, can be a RegExp Object, or a String.
   'Str' = String for testing.
   Return: true / false of rule match. */
-function RECheck(Ptm, Str)
+function RECheck (Ptm, Str)
 {
   if ((typeof Ptm != 'function' && //for chrome, a RegExp is a function.
       typeof Ptm != 'object' && typeof Ptm != 'string') || typeof Str != 'string')
@@ -293,7 +332,7 @@ function RECheck(Ptm, Str)
   'Pth' = Path. optional.
   'Dmn' = Domain. optional.
   Return: 0 as OK, < 0 as error. */
-function CookieSet(Nm, V, Exp, Pth, Dmn)
+function CookieSet (Nm, V, Exp, Pth, Dmn)
 {
   if (typeof Nm !== 'string' || typeof V === 'undefined' || V === null || typeof Exp !== 'number' || Exp === null)
   { return -1; }
@@ -317,7 +356,7 @@ function CookieSet(Nm, V, Exp, Pth, Dmn)
 
 /* parse Cookie Parameters in a object.
   Return: object. */
-function CookieParam()
+function CookieParam ()
 {
   var CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
       CO = {};
@@ -334,7 +373,7 @@ function CookieParam()
 
 /* turn to another page. give empty string to reload current page.
   'URL' = URL to go. optional, default ''. */
-function PageTurn(URL)
+function PageTurn (URL)
 {
   if (typeof URL !== 'string')
   { return 0; }
@@ -347,7 +386,7 @@ function PageTurn(URL)
 
 /* get the Window View Size.
   Return: [W, H]. */
-function WindowViewSize()
+function WindowViewSize ()
 {
   var Sz = [0, 0];
 
@@ -361,7 +400,7 @@ function WindowViewSize()
 
 /* Get now Page Name without parent directories.
   Return: page name, maybe empty string as index.php, index.html, etc. */
-function PageNameGet()
+function PageNameGet ()
 {
   var PthA = window.location.pathname.split('/');
 
@@ -369,7 +408,7 @@ function PageNameGet()
 }
 
 /* Deny web page embeded into another page by frame or iframe. */
-function EmbedDeny()
+function EmbedDeny ()
 {
   if (top != self)
   { window.location.href = 'about:blank'; }
@@ -379,7 +418,7 @@ function EmbedDeny()
   'Txt' = Text to parse.
   'Flg' = encode/decode Flag. true: encode | false: decode.
   Return: parsed string, or '' as error. */
-function HTMLSpecialCharsEnDeCode(Txt, Flg)
+function HTMLSpecialCharsEnDeCode (Txt, Flg)
 {
   if (typeof Txt !== 'string' || typeof Flg !== 'boolean')
   { return ''; }
@@ -405,7 +444,7 @@ function HTMLSpecialCharsEnDeCode(Txt, Flg)
 /* transform traditional text to be HTML code for convenient render & read.
   'Txt' = Text string.
   Return: HTML string for render. */
-function TextToHTML(Txt)
+function TextToHTML (Txt)
 {
   if (typeof Txt !== 'string' || Txt.length === 0)
   { return Txt; }
@@ -420,7 +459,7 @@ function TextToHTML(Txt)
   'Max' = maximum number.
   'Dcm' = Decimal. optional, default 0. give -1 to keep original decimal.
   Return: random number in the range, or 0 as error. */
-function RandomRange(Min, Max, Dcm)
+function RandomRange (Min, Max, Dcm)
 {
   if (typeof Min !== 'number' || typeof Max !== 'number')
   { return 0; }
@@ -451,7 +490,7 @@ function RandomRange(Min, Max, Dcm)
   return Nbr;
 }
 
-function URLParameters()
+function URLParameters ()
 {
   var PrmStr = window.location.search, // 'PrmStr' = Parameters String.
       URLPrms = {};
@@ -484,7 +523,7 @@ function URLParameters()
   Return: Tab Box JQuery object, or null as error.
   Need: CSSAdd function.
   Notice: tab name is decide by attribute data-tab-name, name or the index of the tab themself. */
-function TabBox(BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
+function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
 {
   if (typeof BxOS === 'undefined' || typeof TbCSSS !== 'string')
   {
@@ -642,7 +681,7 @@ function TabBox(BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
   'CSSS' = CSS Selector string.
   Return: 'Button0' element JQuery objects, or null.
   Need: JQuery API, CSSAdd(). */
-function Button0(CSSS)
+function Button0 (CSSS)
 {
   if (typeof CSSS !== 'string')
   {
@@ -710,7 +749,7 @@ function Button0(CSSS)
   Return: JQuery object of 'BxOS'.
   Extend: PageGet(), Recount(), LimitSet(), NowPage().
   Need: ObjectCombine(). */
-function ItemList(BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
+function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 {
   if (typeof BxOS === 'undefined' || typeof URL !== 'string' || isNaN(Lmt) || typeof Data !== 'object' ||
      typeof OneItmF !== 'function')
@@ -955,6 +994,206 @@ function ItemList(BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
   }
 }
 
+/*
+  'BxOS' = Box as a DOM Object, or a JQuery Selector, must be a container.
+  'OneItmCrt' = One Item Create. function, optional.
+  'Cln' = Clean, to clean old list. boolean, optional, default true.
+  'AftItmsCrt' = After Items Create. function, optional.
+  Return: Box DOM object, or null as error. */
+function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
+{
+  var Bx,
+      BxDOM;
+
+  if (Is.Undefined(BxOS) || !Is.String(URL) || !Is.Object(Data) || !Is.Function(OneItmCrt))
+  {
+    console.log('create a \'ItemListV2\' failed. please check out passing values.');
+
+    return null;
+  }
+
+  Bx = $(BxOS);
+
+  if (!Bx.length)
+  { return null; }
+
+  if (!Is.Number(Data.Lmt) || Data.Lmt < 0)
+  { Data.Lmt = 10; }
+
+  if (!Is.Number(Data.Ofst) || Data.Ofst < 0)
+  { Data.Ofst = 0; }
+
+  BxDOM = Bx[0];
+  BxDOM.URL = URL;
+  BxDOM.Data = Data;
+  BxDOM.Cln = Is.Boolean(Cln) ? Cln : true;
+  BxDOM.NowPage = parseInt(BxDOM.Data.Ofst / BxDOM.Data.Lmt, 10);
+  BxDOM.PageGet = PageGet;
+  BxDOM.NowPageGet = function () { return this.NowPage; };
+  BxDOM.OneItemCreate = OneItmCrt;
+  BxDOM.AfterItemsCreate = AftItmsCrt || function () {};
+
+  return BxDOM;
+
+  /*
+    'Pg' = Page. optional, default is next page.
+    Need: function ObjectCombine. */
+  function PageGet(Pg)
+  {
+    var self = this;
+
+    if (!Is.Number(Pg))
+    { Pg = this.NowPage + 1; }
+
+    $.ajax(
+      {
+        'type': 'POST',
+        'dataType': 'json',
+        'timeout' : 20000,
+        'url': this.URL,
+        'data': this.Data,
+        // 'beforeSend': function(JQXHR, Set){},
+        'error' : function (JQXHR, TxtSt, ErrThr) {},
+        // 'complete' : function(JQXHR, TxtSt){},
+        'success': function (Rtn, TxtSt, JQXHR)
+          {
+            var Bx;
+
+            if (Rtn.Index != 0 || !Is.Array(Rtn.Extend))
+            {
+              alert(Rtn.Index + ', ' + Rtn.Message);
+
+              return;
+            }
+
+            Bx = $(self);
+
+            if (self.Cln)
+            { Bx.empty(); }
+
+            for (var i = 0; i < Rtn.Extend.length; i++)
+            { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
+
+            self.Data.Ofst += self.Data.Lmt;
+            self.NowPage = Pg;
+
+            self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
+          }
+      });
+  }
+}
+
+/*
+  'Bx' = Box, where the component will insert into.
+  Return: 0 as OK, < 0 as error. */
+function PageIndex (Bx)
+{
+  var IdxBx = $('<div/>');
+
+  if (!Bx || typeof Bx !== 'object')
+  { return -1; }
+
+  if (gj() < 0)
+  { return -2; }
+
+  Bx.append(IdxBx);
+
+  return;
+
+  function gj()
+  {
+    var TC = ['', '']; // 'TC' = Temptory Class.
+
+    if (typeof IdxCls !== 'object' || IdxCls.length === 0)
+    { return 0; }
+
+    IdxLst.addClass('ItmLstIdxBx') // 20120727 by RZ. for solve 'on - click' event point multiple element, use class to focus on the index box.
+          .css({'textAlign': 'center', 'marginTop': 10});
+
+    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0)
+    { TC[0] = IdxCls[0]; }
+
+    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0)
+    { TC[1] = IdxCls[1]; }
+
+    /*==== first & prev page tag. ====*/
+
+    $('<span/>').addClass(NwPg > 0 ? TC[0] : TC[1])
+                .attr({'name': NwPg > 0 ? 0 : -1, 'title': 1})
+                .text('╞')
+                .appendTo(IdxLst); // first page.
+
+    $('<span/>').addClass(NwPg == 0 ? TC[1] : TC[0])
+                .attr({'name': NwPg - 1})
+                .text('◁')
+                .appendTo(IdxLst); // prev page.
+
+    /*==== now page tag. ====*/
+
+    var Nw = $('<span/>').addClass(TC[1])
+                         .attr('name', NwPg)
+                         .text(NwPg + 1)
+                         .appendTo(IdxLst); // 'Nw' = Now page.
+
+    /*==== last & next page tag. ====*/
+
+    $('<span/>').addClass(NwPg >= MxPg ? TC[1] : TC[0])
+                .attr({'name': NwPg + 1})
+                .text('▷')
+                .appendTo(IdxLst); // next page.
+
+    $('<span/>').addClass(NwPg < MxPg ? TC[0] : TC[1])
+                .attr({'name': NwPg < MxPg ? MxPg : (MxPg + 1), 'title': MxPg + 1})
+                .text('╡')
+                .appendTo(IdxLst); // last page.
+
+    /*==== page index range handle. ====*/
+
+    var PrvBgn = NwPg - PgTgRng,
+        PrvEnd = NwPg,
+        NxtBgn = NwPg + PgTgRng,
+        NxtEnd = NwPg;
+
+    if (PrvBgn < 0)
+    {
+      NxtBgn -= PrvBgn;
+      PrvBgn = 0;
+
+      if (NxtBgn > MxPg)
+      { NxtBgn = MxPg; }
+    }
+
+    if (NxtBgn > MxPg)
+    {
+      PrvBgn -= (NxtBgn - MxPg);
+      NxtBgn = MxPg;
+
+      if (PrvBgn < 0)
+      { PrvBgn = 0; }
+    }
+
+    /*==== prev page tags. ====*/
+
+    for (var i = PrvBgn; i < PrvEnd; i++) // prev range page tags.
+    {
+      $('<span/>').addClass(TC[0])
+                  .attr({'name': i})
+                  .text(i + 1)
+                  .insertBefore(Nw);
+    }
+
+    /*==== next page tags. ====*/
+
+    for (var i = NxtBgn; i > NxtEnd; i--)
+    {
+      $('<span/>').addClass(TC[0])
+                  .attr({'name': i})
+                  .text(i + 1)
+                  .insertAfter(Nw);
+    }
+  }
+}
+
 /* create a 'Frame' object.
   'PrtOS' =  Parent DOM Object or JQuery Selector.
   'W' = frame Width.
@@ -962,10 +1201,10 @@ function ItemList(BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
   'CtxLdF' = Context Load Function. return DOM to inserted to frame.
   'CSSCls' = CSS Class name.
   'Ttl' = Title. optional.
-  'SltBldB' = Silent Build Bool. optional, default false.
+  'SltBldB' = Silent Build Boolean. optional, default false.
   Return: 'Frame' element JQuery object.
   Need: JQuery API, CSSAdd(). */
-function Frame(PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
+function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 {
   var FIBCID = 'FrmIcnBtn'; // 'FIBCID' = Frame Icon Button Class ID.
 
@@ -1332,7 +1571,7 @@ function Frame(PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
     'Ctx' = canvas Context object.
     'Sz' = Size object includes {'W', 'H'};
   'BgDrwF' = Background Draw Function. optional. */
-function Animation(DO, ItmDrwFA, BgDrwF)
+function Animation (DO, ItmDrwFA, BgDrwF)
 {
   if (typeof DO !== 'object' || DO === null || typeof ItmDrwFA !== 'object' || typeof ItmDrwFA.length !== 'number')
   {

@@ -490,7 +490,7 @@ class Blog
 
     if (empty($TgIDA)) // list without tag condition.
     {
-      $SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, file AS Fl, type AS Tp, datetime AS Dt, ' .
+      $SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt, ' .
              'password AS Pswd FROM Blog ' .
              "ORDER BY datetime DESC $PgCdn;";
       $Rsc = Db::Query($SQL);
@@ -498,7 +498,7 @@ class Blog
     else // list with tag condition.
     {
       $SQL0 = substr($SQL0, 0, -2);
-      $SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.summary as Smry, Blog.file AS Fl, Blog.type AS Tp, ' .
+      $SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.summary as Smry, Blog.type AS Tp, ' .
              'Blog.datetime AS Dt, Blog.password AS Pswd ' .
              "FROM Blog, TagLink WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN ($SQL0) " .
              "ORDER BY Blog.datetime DESC $PgCdn;";

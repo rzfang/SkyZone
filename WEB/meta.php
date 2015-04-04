@@ -3,6 +3,7 @@
 <meta name='description' content='RZ 的個人網站。我的天空，我在其中，在我這裡，自由放空。'/>
 <meta name='keywords' content='空域, RZ, 個人網站'/>
 <meta name='author' content='RZ Fang'/>
+<meta name='viewport' content='initial-scale=1.0, user-scalable=0'>
 
 <meta property='og:title' content='<?= WEBSITE; ?>'/>
 <meta property='og:description' content='RZ 的個人網站。我的天空，我在其中，在我這裡，自由放空。'/>
