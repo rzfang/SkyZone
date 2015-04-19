@@ -5,19 +5,18 @@ require('../global.php');
 require(WEB_PTH . 'pdo_db.php');
 require(WEB_PTH . 'api.php');
 
-$PckTg = ''; // 'PckTg' = Picked Tag.
-$Tgs = array(); // '$Tgs' = Tags.
+$PckTgs = array(); // 'PckTgs' = Picked Tag IDs.
+
+if (Db::Db0Connect() < 0)
+{ return header('Location: 500.php'); }
 
 if (!empty($_GET['t']) && is_string($_GET['t']))
-{ $PckTg = $_GET['t']; }
-
-if (Db::Db0Connect() === 0)
-{ $Tgs = Tag::TagList(); }
+{ $PckTgs[] = $_GET['t']; }
 ?>
 <!DOCTYPE HTML>
 <html>
   <head>
-    <? require(WEB_PTH . 'meta.php'); ?>
+    <? require(VW_PTH . 'meta.php'); ?>
   </head>
   <body id='BlgsPg'>
     <div id='Template'>
@@ -33,26 +32,14 @@ if (Db::Db0Connect() === 0)
     </div>
     <div id='Base'>
       <header id='Head'>
-        <? require(WEB_PTH . 'header.php'); ?>
+        <? require(VW_PTH . 'navigation.php'); ?>
       </header>
       <main id='Main'>
-        <div id='TgBx'>
-          <span id='TgTtl'>分類標籤</span>
-          <?
-            if (!empty($PckTg))
-              echo "<a href='blogs.php'>取消</a>\n";
+        <?
+          $VwData = array('Tgs' => Tag::TagList(), 'PckIDs' => $PckTgs);
 
-            echo '<br/>';
-
-            foreach ($Tgs as $V)
-            {
-              if ($V['ID'] === $PckTg)
-                echo "<span class='Tg Pckd'>{$V['Nm']}</span>\n";
-              else
-                echo "<a class='Tg' href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n";
-            }
-          ?>
-        </div>
+          require(VW_PTH . 'tags.php');
+        ?>
         <div id='BlgBx'>
         </div>
         <div id='ExtBx'>
@@ -61,7 +48,7 @@ if (Db::Db0Connect() === 0)
         </div>
       </main>
       <footer id='Tail'>
-        <? require(WEB_PTH . 'footer.php'); ?>
+        <? require(VW_PTH . 'footer.php'); ?>
         <script type='text/javascript'>
         <!--
           var BxDOM;
@@ -71,7 +58,7 @@ if (Db::Db0Connect() === 0)
               BxDOM = ItemList2(
                         '#BlgBx',
                         'service.php',
-                        { Cmd: 1, Lmt: 6, Ofst: 0, TgIDA: ['<?= $PckTg; ?>'] },
+                        { Cmd: 1, Lmt: 5, Ofst: 0, TgIDA: ['<?= $PckTgs; ?>'] },
                         OneBlogCreate,
                         false,
                         AfterBlogsCreate);
@@ -91,7 +78,7 @@ if (Db::Db0Connect() === 0)
             Blg.children('div').first().children('i').addClass(TpClsMp[BlgInfo.Tp])
                                                      .end()
                                        .children('a').text(BlgInfo.Ttl)
-                                                     .attr('href', 'zone.php?Blog=' + BlgInfo.ID)
+                                                     .attr('href', BlgInfo.Tp + '.php?b=' + BlgInfo.ID)
                                                      .end()
                                        .end()
                                .last().text(BlgInfo.Dt)

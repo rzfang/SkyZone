@@ -6,12 +6,12 @@ require('../global.php');
 <!DOCTYPE HTML>
 <html>
   <head>
-    <? require('../meta.php'); ?>
+    <? require(VW_PTH . 'meta.php'); ?>
   </head>
   <body id='AboutPage'>
     <div id='Base'>
       <header id='Head'>
-        <? require('../header.php'); ?>
+        <? require(VW_PTH . 'navigation.php'); ?>
       </header>
       <main id='Main'>
         <div id='AbtBx' class='TbBx'>
@@ -79,7 +79,7 @@ require('../global.php');
         </div>
       </main>
       <footer id='Tail'>
-        <? require('../footer.php'); ?>
+        <? require(VW_PTH . 'footer.php'); ?>
         <script type='text/javascript'>
         <!--
           $(function()

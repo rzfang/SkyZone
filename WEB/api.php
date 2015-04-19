@@ -752,8 +752,8 @@ class Blog
       $ID =  $Rst[0]['id'];
     }
 
-    $SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.type AS Tp, Blog.datetime AS Dt, ' .
-           'Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' .
+    $SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' .
+           'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' .
            'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id WHERE Blog.id = ? ' .
            'GROUP BY Ttl, Fl, Tp, Dt, Pswd;';
     $Rsc = Db::QryPrm($SQL, array($ID));
