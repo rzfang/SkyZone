@@ -58,7 +58,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
               BxDOM = ItemList2(
                         '#BlgBx',
                         'service.php',
-                        { Cmd: 1, Lmt: 5, Ofst: 0, TgIDA: ['<?= $PckTgs; ?>'] },
+                        {Cmd: 1, Lmt: 5, Ofst: 0, TgIDA: <?= json_encode($PckTgs); ?>},
                         OneBlogCreate,
                         false,
                         AfterBlogsCreate);

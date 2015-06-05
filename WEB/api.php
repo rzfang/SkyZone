@@ -1,4 +1,4 @@
-<?php
+<?
 /* Need: global.php */
 
 class System

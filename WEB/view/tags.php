@@ -10,13 +10,16 @@
   {
     if (empty($VwData['Tgs']) || !is_array($VwData['Tgs']))
     { $VwData['Tgs'] = array(); }
-    
+
     if (empty($VwData['PckIDs']) || !is_array($VwData['PckIDs']))
     { $VwData['PckIDs'] = array(); }
 
     if (empty($VwData['NoCcl']) || !is_bool($VwData['NoCcl']))
     { $VwData['NoCcl'] = false; }
   }
+
+  if (empty($VwData['Tgs']))
+  { return; }
 ?>
 <div id='TgBx'>
   <i class='icon icon-tags' title='分類標籤'></i>

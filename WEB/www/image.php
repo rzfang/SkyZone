@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=utf-8');
 require('../global.php');
 require(WEB_PTH . 'pdo_db.php');
 require(WEB_PTH . 'api.php');
+require(WEB_PTH . 'resource/Tar.php');
 
 $ID = $_GET['b'] ? $_GET['b'] : '';
 
@@ -22,12 +23,13 @@ if (empty($Blog))
 <html>
   <head>
     <?
-      $VwData = array('Ttl' => $Blog['Ttl'], 'Smry' => $Blog['Smry'], 'URL' => $Blog['URL']);
+      $VwData = array('Ttl' => $Blog['Ttl'], 'Smry' => $Blog['Smry'], 'URL' => $Blog['URL'],
+                      'ImgURL' => WEBSITE_URL . $Blog['Info']['ImgURL']);
 
       require(VW_PTH . 'meta.php');
     ?>
   </head>
-  <body id='TxtPg'>
+  <body id='ImgPg'>
     <div id='Template'></div>
     <div id='Base'>
       <header id='Head'>
@@ -46,7 +48,12 @@ if (empty($Blog))
             <?= $Blog['Dt']; ?>
           </div>
         </div>
-        <pre><?= $Blog['Info']['Str']; ?></pre>
+        <div id='ImgBx'>
+          <img src='<?= $Blog['Info']['ImgURL']; ?>' />
+          <div>
+            <pre><?= $Blog['Info']['Str']; ?></pre>
+          </div>
+        </div>
         <?
           $VwData = array('URL' => $Blog['URL']);
 
@@ -62,7 +69,8 @@ if (empty($Blog))
         <!--
           $(function ()
             {
-              $('#ToTop').on('click', function () { window.scrollTo(0, 0); });
+              $('#ToTop').on('click', function (Evt) { window.scrollTo(0, 0); });
+              $('#ImgBx').on('click', function (Evt) { $(this).children('pre').fadeToggle(300); });
             });
         -->
         </script>

@@ -36,6 +36,13 @@ $Clr_Lnk_1: #ffc463;
 	text-transform: none;
 	line-height: 1;
 
+  &:before
+  {
+    display: inline-block;
+    width: 1.3em;
+    text-align: center;
+  }
+
 	// Better Font Rendering.
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -173,19 +180,28 @@ h1
 #ShrBx
 {
   margin: 20px 0;
+  padding: 0;
+
+  li
+  {
+    display: table-cell;
+
+    &:first-child
+    { padding-right: 10px; }
+  }
 
   .icon
   { font-size: 1.5rem; }
 
   .icon-facebook
   { color: #47639d; }
-  
+
   .icon-twitter
   { color: #55acee; }
-  
+
   .icon-tumblr
   { color: #36465d; }
-  
+
   .icon-google-plus
   { color: #d73d32; }
 }
@@ -212,7 +228,7 @@ h1
   #Main
   {
     text-align: center;
-  
+
     pre
     {
       display: inline-block;
@@ -262,6 +278,68 @@ h1
 }
 
 #ImgPg
-{}
+{
+  #ImgBx
+  {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+
+    img
+    { max-width: 100%; }
+
+    div > pre
+    {
+      display: inline-block;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+  }
+}
+
+@keyframes ImageShow
+{
+  from
+  { opacity: 0; }
+
+  to
+  { opacity: 1; }
+}
+
+#ImgsPg
+{
+  #ImgsBx
+  {
+    text-align: center;
+
+    div
+    {
+      margin-bottom: 20px;
+
+      img
+      {
+        opacity: 0;
+        max-width: 100%;
+
+        &.Show
+        {
+          animation-name: ImageShow;
+          animation-fill-mode: forwards;
+          animation-duration: 1s;
+        }
+      }
+
+      pre
+      {
+        display: inline-block;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        max-width: 100%;
+        text-align: left;
+      }
+  }
+    }
+}
 
 //======================================================================================================================

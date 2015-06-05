@@ -1,4 +1,4 @@
-<?php
+<?
 $Kw = array( // 'Kw' = Keyword.
   'RM' => array( // 'RM' = Result Message.
     'NotLogin'        => '尚未登入。',
