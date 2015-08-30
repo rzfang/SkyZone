@@ -1,4 +1,4 @@
-<?php
+<?
 header('Content-Type: text/html; charset=utf-8');
 
 require('../global.php');
@@ -16,7 +16,11 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
 <!DOCTYPE HTML>
 <html>
   <head>
-    <? require(VW_PTH . 'meta.php'); ?>
+    <?
+      $VwData = array('Ttl' => '網誌');
+
+      require(VW_PTH . 'meta.php');
+    ?>
   </head>
   <body id='BlgsPg'>
     <div id='Template'>
@@ -27,7 +31,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
         </div>
         <pre></pre>
         <div></div>
-        <div></div>
+        <div class='Dt'></div>
       </div>
     </div>
     <div id='Base'>
@@ -40,7 +44,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
 
           require(VW_PTH . 'tags.php');
         ?>
-        <div id='BlgBx'>
+        <div id='BlgBx' class='LstBx'>
         </div>
         <div id='ExtBx'>
           <a id='LdMr' href='javascript:void(0);'>載入更多</a>
@@ -61,60 +65,40 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
                         {Cmd: 1, Lmt: 5, Ofst: 0, TgIDA: <?= json_encode($PckTgs); ?>},
                         OneBlogCreate,
                         false,
-                        AfterBlogsCreate);
+                        OneByOneFadeIn);
 
-              BxDOM.PageGet();
+              BxDOM.OnePageGet();
 
-              $('#LdMr').on('click', function () { BxDOM.PageGet(); });
+              $('#LdMr').on('click', function () { BxDOM.OnePageGet(); });
               $('#ToTop').on('click', function () { window.scrollTo(0, 0); });
+
+              return;
+
+              function OneBlogCreate (BlgInfo, Idx)
+              {
+                var TpClsMp = { image: 'icon-image', images: 'icon-images', text: 'icon-text', book: 'icon-book' },
+                    Blg = $('#Blg').clone().removeAttr('id').hide(),
+                    Tgs = [];
+
+                Blg.children('div').first().children('i').addClass(TpClsMp[BlgInfo.Tp])
+                                                         .end()
+                                           .children('a').text(BlgInfo.Ttl)
+                                                         .attr('href', BlgInfo.Tp + '.php?b=' + BlgInfo.ID)
+                                                         .end()
+                                           .end()
+                                   .last().text(BlgInfo.Dt)
+                                          .end()
+                                   .end()
+                   .children('pre:first').text(BlgInfo.Smry);
+
+                for (var i = 0; i < BlgInfo.Tg.length; i++)
+                { Tgs.push($('<span/>').text(BlgInfo.Tg[i].Nm)); }
+
+                Blg.children('div:eq(1)').append(Tgs);
+
+                return Blg;
+              }
             });
-
-          function OneBlogCreate (BlgInfo, Idx)
-          {
-            var TpClsMp = { image: 'icon-image', images: 'icon-images', text: 'icon-text', book: 'icon-book' },
-                Blg = $('#Blg').clone().removeAttr('id').hide(),
-                Tgs = [];
-
-            Blg.children('div').first().children('i').addClass(TpClsMp[BlgInfo.Tp])
-                                                     .end()
-                                       .children('a').text(BlgInfo.Ttl)
-                                                     .attr('href', BlgInfo.Tp + '.php?b=' + BlgInfo.ID)
-                                                     .end()
-                                       .end()
-                               .last().text(BlgInfo.Dt)
-                                      .end()
-                               .end()
-               .children('pre:first').text(BlgInfo.Smry);
-
-            for (var i = 0; i < BlgInfo.Tg.length; i++)
-            { Tgs.push($('<span/>').text(BlgInfo.Tg[i].Nm)); }
-
-            Blg.children('div:eq(1)').append(Tgs);
-
-            return Blg;
-          }
-
-          function AfterBlogsCreate (Cnt)
-          {
-            var Itms = $(this).find('> *:not(:visible)'),
-                i = 0;
-
-            OneShow();
-
-            return;
-
-            function OneShow ()
-            {
-              if (i > Cnt)
-              { return; }
-
-              Itms.eq(i).fadeIn();
-
-              i++;
-
-              setTimeout(OneShow, 300);
-            }
-          }
         -->
         </script>
       </footer>

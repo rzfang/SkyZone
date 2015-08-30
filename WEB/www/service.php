@@ -194,19 +194,19 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
   case 210:
     echo RZTool::UploadCodeMapSave($_POST);
     break;
-    
+
   case 211:
     echo RZTool::FeedGroupRename($_POST);
     break;
-    
+
   case 212:
     echo RZTool::FeedGroupAdd($_POST);
     break;
-    
+
   case 213:
     echo RZTool::FeedGroupDel($_POST);
     break;
-    
+
   case 214:
     echo RZTool::FeedroupChange($_POST);
     break;

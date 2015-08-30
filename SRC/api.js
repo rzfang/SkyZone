@@ -1665,3 +1665,26 @@ function KeyboardCommand(Pg)
     { Dcm.data('KyBfr', KyBfr); }
   }
 }
+
+/* for list box using, one by one fade in items of list. */
+function OneByOneFadeIn (Cnt)
+{
+  var Itms = $(this).find('> *:not(:visible)'),
+      i = 0;
+
+  OneShow();
+
+  return;
+
+  function OneShow ()
+  {
+    if (i > Cnt)
+    { return; }
+
+    Itms.eq(i).fadeIn();
+
+    i++;
+
+    setTimeout(OneShow, 300);
+  }
+}

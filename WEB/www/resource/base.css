@@ -1,6 +1,12 @@
 #Template { display: none; }
-@media screen and (min-device-width: 640px) { #Base { max-width: 1000px; } #Base #Tail { text-align: center; } }
-#Base { position: relative; margin: 0px auto; } #Base #Head > nav { line-height: 2rem; } #Base #Head > nav > div { display: inline-block; padding: 5px; } #Base #Main { min-height: 500px; } #Base #Tail { line-height: 2rem; }
+@media screen and (min-device-width: 640px) { #Base { max-width: 1000px; } #Base
+#Tail { text-align: center; } }
+#Base { position: relative; margin: 0px auto; } #Base
+#Head > nav { line-height: 2rem; } #Base
+#Head > nav
+> div { display: inline-block; padding: 5px; } #Base
+#Main { min-height: 500px; } #Base
+#Tail { line-height: 2rem; }
 .Block { display: inline-block; vertical-align: top; }
 .ClickItem { cursor: pointer; } .ClickItem:hover { color: #ff0000; }
 .TextTitle { display: inline-block; min-width: 70px; text-align: center; vertical-align: middle; }

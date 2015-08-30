@@ -239,8 +239,8 @@ class System
   {
     global $Kw;
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
+    // $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 1;
+    // $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     $DirPth = DAT_PTH . 'tutorial/';
@@ -264,8 +264,6 @@ class Tag
     if (empty($IA))
     { $IA = array(); }
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -281,9 +279,9 @@ class Tag
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ? ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) : '';
-
-    $SQL = "SELECT id AS ID, name AS Nm FROM Tag ORDER BY Nm $PgCdn";
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
+    $SQL = "SELECT id AS ID, name AS Nm FROM Tag ORDER BY Nm LIMIT $Lmt OFFSET $Ofst";
     $Rsc = Db::Query($SQL);
 
     if (empty($Rsc))
@@ -443,8 +441,6 @@ class Blog
     if (empty($IA))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
     $TgIDA = array();
     $SQL0 = '';
@@ -486,13 +482,14 @@ class Blog
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ? ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) : '';
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
 
     if (empty($TgIDA)) // list without tag condition.
     {
       $SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt, ' .
              'password AS Pswd FROM Blog ' .
-             "ORDER BY datetime DESC $PgCdn;";
+             "ORDER BY datetime DESC LIMIT $Lmt OFFSET $Ofst;";
       $Rsc = Db::Query($SQL);
     }
     else // list with tag condition.
@@ -501,7 +498,7 @@ class Blog
       $SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.summary as Smry, Blog.type AS Tp, ' .
              'Blog.datetime AS Dt, Blog.password AS Pswd ' .
              "FROM Blog, TagLink WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN ($SQL0) " .
-             "ORDER BY Blog.datetime DESC $PgCdn;";
+             "ORDER BY Blog.datetime DESC LIMIT $Lmt OFFSET $Ofst;";
       $Rsc = Db::QryPrm($SQL, $TgIDA);
     }
 
@@ -1182,8 +1179,6 @@ class Blog
     if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array(0));
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -1199,10 +1194,10 @@ class Blog
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ? ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) : '';
-
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, comment AS Cmt FROM BlogComment ' .
-           "WHERE blog_id = ? ORDER BY Dt $PgCdn";
+           "WHERE blog_id = ? ORDER BY Dt LIMIT $Lmt OFFSET $Ofst";
     $Rsc = Db::QryPrm($SQL, array($IA['ID']));
 
     if (empty($Rsc))
@@ -1284,8 +1279,6 @@ class Message
   {
     global $Kw;
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -1301,15 +1294,14 @@ class Message
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ?
-             ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) :
-             '';
-
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $PsV0 = 'CASE WHEN ChnDt IS NULL THEN datetime ELSE ChnDt END AS ChnDt'; // '$PsV0' = Parse Value 0.
     $PsV1 = 'CASE WHEN ChnCnt IS NULL THEN 0 ELSE  ChnCnt END AS ChnCnt';
     $SbSQL = 'SELECT COUNT(id) AS ChnCnt, MAX(datetime) AS ChnDt, target AS ChnTgt FROM Message GROUP BY ChnTgt'; // 'SbSQL' = Sub SQL.
     $SQL = "SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, $PsV0, $PsV1, message AS Msg " .
-           "FROM Message LEFT JOIN ($SbSQL) AS Chn ON Chn.ChnTgt = ID WHERE target IS NULL ORDER BY ChnDt DESC $PgCdn;";
+           "FROM Message LEFT JOIN ($SbSQL) AS Chn ON Chn.ChnTgt = ID WHERE target IS NULL " .
+           "ORDER BY ChnDt DESC LIMIT $Lmt OFFSET $Ofst;";
     $Rsc = Db::Query($SQL);
 
     if (empty($Rsc))
@@ -1330,8 +1322,6 @@ class Message
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], array());
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -1347,12 +1337,10 @@ class Message
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ?
-           ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) :
-           '';
-
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $SQL = 'SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, message AS Msg, target AS Tgt ' .
-           "FROM Message ORDER BY Dt DESC $PgCdn;";
+           "FROM Message ORDER BY Dt DESC LIMIT $Lmt OFFSET $Ofst;";
     $Rsc = Db::Query($SQL);
 
     if (empty($Rsc))
@@ -1408,8 +1396,6 @@ class Message
     if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -1425,8 +1411,10 @@ class Message
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, message AS Msg FROM Message WHERE target = \'' . $IA['ID'] .
-           '\' ORDER BY Dt;';
+           "' ORDER BY Dt LIMIT $Lmt OFFSET $Ofst;";
     $Rsc = Db::Query($SQL);
 
     if (empty($Rsc))
@@ -1472,8 +1460,6 @@ class GoodWords
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : 0;
-    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
     $Cnt = !empty($IA['Cnt']) ? true : false;
 
     if ($Cnt)
@@ -1489,11 +1475,9 @@ class GoodWords
       return ReturnPack(0, $Kw['RM']['Done'], $R[0]);
     }
 
-    $PgCdn = ($Lmt > 0) ?
-             ('LIMIT ' . ($Ofst > 0 ? "$Ofst, " : '') . $Lmt) :
-             '';
-
-    $SQL = "SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC $PgCdn;";
+    $Lmt = (isset($IA['Lmt']) && is_numeric($IA['Lmt']) && $IA['Lmt'] > 0) ? (int)$IA['Lmt'] : -1;
+    $Ofst = (isset($IA['Ofst']) && is_numeric($IA['Ofst']) && $IA['Ofst'] > 0) ? (int)$IA['Ofst'] : 0;
+    $SQL = "SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC LIMIT $Lmt OFFSET $Ofst;";
     $Rsc = Db::Query($SQL);
 
     if (empty($Rsc))

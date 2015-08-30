@@ -79,7 +79,7 @@ Block;
           $(function ()
             {
               var Win = $(window),
-                  Win3_4H = Win.height() / 4 * 3,
+                  WinH = Win.height() - 20,
                   IsOn = false;
 
               $('#ToTop').on('click', function (Evt) { window.scrollTo(0, 0); });
@@ -105,7 +105,7 @@ Block;
                     return;
                   }
 
-                  if (ScrlY > ($(DOMs[0]).offset().top - Win3_4H))
+                  if (ScrlY > ($(DOMs[0]).offset().top - WinH))
                   { SomeImagesLoad(DOMs); }
 
                   IsOn = false;

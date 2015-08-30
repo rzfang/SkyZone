@@ -100,7 +100,10 @@ ul, ol
 { margin: 5px 0px 10px 0px; }
 
 pre
-{ margin: 0; }
+{
+  margin: 0;
+  white-space: pre-wrap;
+}
 
 h1
 {
@@ -221,6 +224,18 @@ h1
   }
 }
 
+//==== rules cross pages. ====
+
+.LstBx > *
+{
+  display: block;
+  margin: 20px 0;
+  line-height: 1.5;
+
+  .Nm, .Dt
+  { color: $Clr_Grey; }
+}
+
 //==== pages. ====
 
 #HTTPCdPg
@@ -253,19 +268,18 @@ h1
 
   #BlgBx > .Blg
   {
-    display: block;
-    margin: 20px 0;
-    line-height: 1.5;
-
     > div:first-child > a
     { font-size: 1.3rem; }
 
-    > div:nth-child(3), div:last-child
+    > pre
+    { white-space: pre-line; }
+
+    > div:nth-child(3)
     { color: $Clr_Grey; }
   }
 }
 
-#TxtPg, #ImgPg
+#TxtPg, #ImgPg, #ImgsPg
 {
   #InfoBx
   { margin: 20px 0; }
@@ -292,7 +306,6 @@ h1
     {
       display: inline-block;
       margin-top: 20px;
-      white-space: pre-wrap;
       text-align: left;
     }
   }
@@ -340,6 +353,37 @@ h1
       }
   }
     }
+}
+
+#MsgsPg
+{
+  .Msg
+  {
+    .RplBx
+    {
+      margin-left: 20px;
+
+      &>form
+      {
+        position: relative;
+
+        input[type=text], input[type=email], textarea
+        {
+          box-sizing: border-box;
+          width: 100%;
+        }
+
+        input[type=checkbox]
+        { vertical-align: middle; }
+
+        a
+        {
+          position: absolute;
+          right: 0;
+        }
+      }
+    }
+  }
 }
 
 //======================================================================================================================

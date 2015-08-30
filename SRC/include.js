@@ -13,27 +13,21 @@ function Z_Check_API ()
 
   function Is () {
     return {
-      Boolean: function (Obj)
-        { return (typeof Obj === 'boolean'); },
-      Number: function (Obj)
-        { return (typeof Obj === 'number'); },
-      String: function (Obj)
-      { return (typeof Obj === 'string'); },
-      Function: function (Obj)
-        { return (typeof Obj === 'function'); },
-      Object: function (Obj)
-        { return (typeof Obj === 'object'); },
-      Undefined: function (Obj)
-        { return (typeof Obj === 'undefined'); },
-      Array: function (Obj)
-        { return (Obj instanceof Array); },
+      Boolean: function (Obj) { return (typeof Obj === 'boolean'); },
+      Number: function (Obj) { return (typeof Obj === 'number'); },
+      String: function (Obj) { return (typeof Obj === 'string'); },
+      Function: function (Obj) { return (typeof Obj === 'function'); },
+      Object: function (Obj) { return (typeof Obj === 'object'); },
+      Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
+      Array: function (Obj) { return (Obj instanceof Array); },
       EMail: function (Str)
         {
           if (typeof Str !== 'string')
           { return false; }
 
           return (/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/).test(Str);
-        }
+        },
+      jQuery: function (Obj) { return (Obj instanceof jQuery); }
     };
   }
 }
@@ -355,17 +349,37 @@ function CookieSet (Nm, V, Exp, Pth, Dmn)
 }
 
 /* parse Cookie Parameters in a object.
+  'Ky' = Key name of cookie. optional, give to return it only.
   Return: object. */
-function CookieParam ()
+function CookieParam (Ky)
 {
   var CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
       CO = {};
 
   for (var i in CSA)
   {
-    var T = CSA[i].replace(/^\s+|\s+$/g, '').split('=');
+    var T;
+
+    if (!CSA.hasOwnProperty(i))
+    { continue; }
+
+    T = CSA[i].replace(/^\s+|\s+$/g, '').split('='); // trim each data.
 
     CO[T[0]] = decodeURIComponent(T[1]);
+  }
+
+  if (Ky && typeof Ky === 'string')
+  {
+    for (var i in CO)
+    {
+      if (!CO.hasOwnProperty(i))
+      { continue; }
+
+      if (i === Ky)
+      { return CO[i]; }
+    }
+
+    return null;
   }
 
   return CO;
@@ -510,17 +524,17 @@ function URLParameters ()
   return URLPrms;
 }
 
-//==== Independent Module, may need JQuery API. ========================================================================
+//==== Independent Module, may need jQuery API. ========================================================================
 
 /* set a Tab Box.
-  'BxOS' = Box as a DOM Object, or a JQuery Selector, must be a container.
+  'BxOS' = Box as a DOM Object, or a jQuery Selector, must be a container.
   'TbCSSS' = Tab CSS Selector.
   'PrmIdx' = Prime Index. optional, default 0.
   'TbSwF(OO, NO)' = Tab Switch Function. optional.
-    'OO' = Old tab JQuery Object.
-    'NO' = Now tab JQuery Object.
+    'OO' = Old tab jQuery Object.
+    'NO' = Now tab jQuery Object.
   'HshKy' = Hash Key string.
-  Return: Tab Box JQuery object, or null as error.
+  Return: Tab Box jQuery object, or null as error.
   Need: CSSAdd function.
   Notice: tab name is decide by attribute data-tab-name, name or the index of the tab themself. */
 function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
@@ -679,8 +693,8 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
 /* set all element matched with given CSS selector string to be Button0 objects,
    even if the object is not created yet.
   'CSSS' = CSS Selector string.
-  Return: 'Button0' element JQuery objects, or null.
-  Need: JQuery API, CSSAdd(). */
+  Return: 'Button0' element jQuery objects, or null.
+  Need: jQuery API, CSSAdd(). */
 function Button0 (CSSS)
 {
   if (typeof CSSS !== 'string')
@@ -731,7 +745,7 @@ function Button0 (CSSS)
 }
 
 /* set a HTML element to be a Item Lister object.
-  'BxOS' = Box DOM Object, JQuery Selector.
+  'BxOS' = Box DOM Object, jQuery Selector.
   'URL' = service URL.
   'Lmt' = Limit number of one page, give < 1 as no limit.
   'Data' = post Data, a JSON.
@@ -746,7 +760,7 @@ function Button0 (CSSS)
   'AftItmsF(Cnt, Data)' = After Items build Function. optional.
     'Cnt' = Count of data.
     'Data' = origin Data array.
-  Return: JQuery object of 'BxOS'.
+  Return: jQuery object of 'BxOS'.
   Extend: PageGet(), Recount(), LimitSet(), NowPage().
   Need: ObjectCombine(). */
 function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
@@ -995,7 +1009,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 }
 
 /*
-  'BxOS' = Box as a DOM Object, or a JQuery Selector, must be a container.
+  'BxOS' = Box as a DOM Object, or a jQuery Selector, must be a container.
   'OneItmCrt' = One Item Create. function, optional.
   'Cln' = Clean, to clean old list. boolean, optional, default true.
   'AftItmsCrt' = After Items Create. function, optional.
@@ -1027,35 +1041,31 @@ function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
   BxDOM.URL = URL;
   BxDOM.Data = Data;
   BxDOM.Cln = Is.Boolean(Cln) ? Cln : true;
-  BxDOM.NowPage = parseInt(BxDOM.Data.Ofst / BxDOM.Data.Lmt, 10);
-  BxDOM.PageGet = PageGet;
-  BxDOM.NowPageGet = function () { return this.NowPage; };
+  BxDOM.OnePageGet = OnePageGet;
+  BxDOM.Get = Get;
+  BxDOM.NowCount = function () { return BxDOM.Data.Ofst; };
   BxDOM.OneItemCreate = OneItmCrt;
   BxDOM.AfterItemsCreate = AftItmsCrt || function () {};
 
   return BxDOM;
 
   /*
-    'Pg' = Page. optional, default is next page.
     Need: function ObjectCombine. */
-  function PageGet(Pg)
+  function OnePageGet()
   {
     var self = this;
 
-    if (!Is.Number(Pg))
-    { Pg = this.NowPage + 1; }
-
     $.ajax(
       {
-        'type': 'POST',
-        'dataType': 'json',
-        'timeout' : 20000,
-        'url': this.URL,
-        'data': this.Data,
-        // 'beforeSend': function(JQXHR, Set){},
-        'error' : function (JQXHR, TxtSt, ErrThr) {},
-        // 'complete' : function(JQXHR, TxtSt){},
-        'success': function (Rtn, TxtSt, JQXHR)
+        type: 'POST',
+        dataType: 'json',
+        timeout : 20000,
+        url: this.URL,
+        data: this.Data,
+        // beforeSend: function(JQXHR, Set){},
+        error : function (JQXHR, TxtSt, ErrThr) { alert('無法取得資料。'); },
+        // complete : function(JQXHR, TxtSt){},
+        success: function (Rtn, TxtSt, JQXHR)
           {
             var Bx;
 
@@ -1074,8 +1084,57 @@ function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
             for (var i = 0; i < Rtn.Extend.length; i++)
             { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
 
-            self.Data.Ofst += self.Data.Lmt;
-            self.NowPage = Pg;
+            self.Data.Ofst += Rtn.Extend.length;
+
+            self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
+          }
+      });
+  }
+
+  function Get (Lmt, Ofst, IsCln)
+  {
+    var self = this,
+        Data = ObjectCombine({}, this.Data);
+
+    if (!Is.Number(Lmt))
+    { Data.Lmt = Data; }
+
+    if (!Is.Number(Ofst))
+    { Data.Ofst = Ofst; }
+
+    if (!Is.Boolean(IsCln))
+    { IsCln = false; }
+
+    $.ajax(
+      {
+        type: 'POST',
+        dataType: 'json',
+        timeout : 20000,
+        url: this.URL,
+        data: Data,
+        // beforeSend: function(JQXHR, Set){},
+        error : function (JQXHR, TxtSt, ErrThr) { alert('無法取得資料。'); },
+        // complete : function(JQXHR, TxtSt){},
+        success: function (Rtn, TxtSt, JQXHR)
+          {
+            var Bx;
+
+            if (Rtn.Index != 0 || !Is.Array(Rtn.Extend))
+            {
+              alert(Rtn.Index + ', ' + Rtn.Message);
+
+              return;
+            }
+
+            Bx = $(self);
+
+            if (IsCln)
+            { Bx.empty(); }
+
+            for (var i = 0; i < Rtn.Extend.length; i++)
+            { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
+
+            self.Data.Ofst = Data.Ofst + Rtn.Extend.length;
 
             self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
           }
@@ -1195,15 +1254,15 @@ function PageIndex (Bx)
 }
 
 /* create a 'Frame' object.
-  'PrtOS' =  Parent DOM Object or JQuery Selector.
+  'PrtOS' =  Parent DOM Object or jQuery Selector.
   'W' = frame Width.
   'H' = frame Height.
   'CtxLdF' = Context Load Function. return DOM to inserted to frame.
   'CSSCls' = CSS Class name.
   'Ttl' = Title. optional.
   'SltBldB' = Silent Build Boolean. optional, default false.
-  Return: 'Frame' element JQuery object.
-  Need: JQuery API, CSSAdd(). */
+  Return: 'Frame' element jQuery object.
+  Need: jQuery API, CSSAdd(). */
 function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 {
   var FIBCID = 'FrmIcnBtn'; // 'FIBCID' = Frame Icon Button Class ID.
