@@ -1,4 +1,4 @@
-<?php
+<?
 header('Content-Type: text/html; charset=utf-8');
 
 require('../global.php');
@@ -23,10 +23,11 @@ if (empty($Blog))
 <html>
   <head>
     <?
-      $VwData = array('Ttl' => $Blog['Ttl'], 'Smry' => $Blog['Smry'], 'URL' => $Blog['URL'],
-                      'ImgURL' => WEBSITE_URL . $Blog['Lst'][0]['TbnURL']);
-
-      require(VW_PTH . 'meta.php');
+      PartView(
+        'meta',
+        array(
+          'Ttl' => $Blog['Ttl'], 'Smry' => $Blog['Smry'], 'URL' => $Blog['URL'],
+          'ImgURL' => WEBSITE_URL . $Blog['Lst'][0]['TbnURL']));
     ?>
   </head>
   <body id='ImgsPg'>
@@ -34,16 +35,12 @@ if (empty($Blog))
     </div>
     <div id='Base'>
       <header id='Head'>
-        <? require(VW_PTH . 'navigation.php'); ?>
+        <? PartView('navigation'); ?>
       </header>
       <main id='Main'>
         <h1><?= $Blog['Ttl']; ?></h1>
         <div id='InfoBx'>
-          <?
-            $VwData = array('Tgs' => $Blog['TgA']);
-
-            require(VW_PTH . 'tags.php');
-          ?>
+          <? PartView('tags', array('Tgs' => $Blog['TgA'])); ?>
           <div>
             <i class='icon icon-calendar' title='發佈時間'></i>
             <?= $Blog['Dt']; ?>
@@ -64,17 +61,13 @@ Block;
             }
           ?>
         </div>
-        <?
-          $VwData = array('URL' => $Blog['URL']);
-
-          require(VW_PTH . 'share.php');
-        ?>
+        <? PartView('share', array('URL' => $Blog['URL'])); ?>
         <div id='ExtBx'>
           <a id='ToTop' href='javascript:void(0);'>回到頂端</a>
         </div>
       </main>
       <footer id='Tail'>
-        <? require(VW_PTH . 'footer.php'); ?>
+        <? PartView('footer'); ?>
         <script type='text/javascript'>
           $(function ()
             {

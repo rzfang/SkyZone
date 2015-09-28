@@ -23,6 +23,15 @@ ErrorHintHandle(); // this also start session.
 
 //==== Tool Function ===================================================================================================
 
+function PartView ($VwNm, $Data = null)
+{
+  global $Kw;
+
+  $VwData = $Data;
+
+  require(VW_PTH . $VwNm . '.php');
+}
+
 /* check if the service request Is AJAX.
   Return: true | false. */
 function IsAJAX ()

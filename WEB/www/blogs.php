@@ -16,11 +16,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
 <!DOCTYPE HTML>
 <html>
   <head>
-    <?
-      $VwData = array('Ttl' => '網誌');
-
-      require(VW_PTH . 'meta.php');
-    ?>
+    <? PartView('meta', array('Ttl' => '網誌')); ?>
   </head>
   <body id='BlgsPg'>
     <div id='Template'>
@@ -36,14 +32,10 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
     </div>
     <div id='Base'>
       <header id='Head'>
-        <? require(VW_PTH . 'navigation.php'); ?>
+        <? PartView('navigation'); ?>
       </header>
       <main id='Main'>
-        <?
-          $VwData = array('Tgs' => Tag::TagList(), 'PckIDs' => $PckTgs);
-
-          require(VW_PTH . 'tags.php');
-        ?>
+        <? PartView('tags', array('Tgs' => Tag::TagList(), 'PckIDs' => $PckTgs)); ?>
         <div id='BlgBx' class='LstBx'>
         </div>
         <div id='ExtBx'>
@@ -52,7 +44,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
         </div>
       </main>
       <footer id='Tail'>
-        <? require(VW_PTH . 'footer.php'); ?>
+        <? PartView('footer'); ?>
         <script type='text/javascript'>
         <!--
           var BxDOM;

@@ -16,11 +16,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
 <!DOCTYPE HTML>
 <html>
   <head>
-    <?
-      $VwData = array('Ttl' => '留言');
-
-      require(VW_PTH . 'meta.php');
-    ?>
+    <? PartView('meta', array('Ttl' => '留言')); ?>
   </head>
   <body id='MsgsPg'>
     <div id='Template'>
@@ -51,7 +47,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
     </div>
     <div id='Base'>
       <header id='Head'>
-        <? require(VW_PTH . 'navigation.php'); ?>
+        <? PartView('navigation'); ?>
       </header>
       <main id='Main'>
         <div id='MsgBx' class='LstBx'></div>
@@ -61,7 +57,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
         </div>
       </main>
       <footer id='Tail'>
-        <? require(VW_PTH . 'footer.php'); ?>
+        <? PartView('footer'); ?>
         <script type='text/javascript'>
         <!--
           $(function ()
