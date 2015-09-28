@@ -72,29 +72,33 @@ require('../global.php');
             Logo = new Image(),
             Anm = new Animation($('#Entry').get(0), []);
 
-        var Blds0 = BuildingsInitialize(Anm,
-                                        [160, 160, 192, 1],
-                                        {'X': 0, 'Y': 150, 'W': Anm.ScnSz.W, 'H': 100},
-                                        {'XMn': 3, 'XMx': 8, 'YMn': 5, 'YMx': 15},
-                                        0.2); // 'Blds0' = Buildings 0.
+        var Blds0 = BuildingsInitialize(
+              Anm,
+              [160, 160, 192, 1],
+              {'X': 0, 'Y': 150, 'W': Anm.ScnSz.W, 'H': 100},
+              {'XMn': 3, 'XMx': 8, 'YMn': 5, 'YMx': 15},
+              0.2); // 'Blds0' = Buildings 0.
 
-        var Blds1 = BuildingsInitialize(Anm,
-                                        [128, 128, 160, 1],
-                                        {'X': 0, 'Y': 170, 'W': Anm.ScnSz.W, 'H': 100},
-                                        {'XMn': 5, 'XMx': 20, 'YMn': 5, 'YMx': 30},
-                                        0.5);
+        var Blds1 = BuildingsInitialize(
+              Anm,
+              [128, 128, 160, 1],
+              {'X': 0, 'Y': 170, 'W': Anm.ScnSz.W, 'H': 100},
+              {'XMn': 5, 'XMx': 20, 'YMn': 5, 'YMx': 30},
+              0.5);
 
-        var Blds2 = BuildingsInitialize(Anm,
-                                        [96, 96, 128, 1],
-                                        {'X': 0, 'Y': 180, 'W': Anm.ScnSz.W, 'H': 120},
-                                        {'XMn': 15, 'XMx': 35, 'YMn': 10, 'YMx': 40},
-                                        0.8);
+        var Blds2 = BuildingsInitialize(
+              Anm,
+              [96, 96, 128, 1],
+              {'X': 0, 'Y': 180, 'W': Anm.ScnSz.W, 'H': 120},
+              {'XMn': 15, 'XMx': 35, 'YMn': 10, 'YMx': 40},
+              0.8);
 
-        var Blds3 = BuildingsInitialize(Anm,
-                                        [64, 64, 96, 1],
-                                        {'X': 0, 'Y': 200, 'W': Anm.ScnSz.W, 'H': 180},
-                                        {'XMn': 35, 'XMx': 60, 'YMn': 20, 'YMx': 80},
-                                        1.3);
+        var Blds3 = BuildingsInitialize(
+              Anm,
+              [64, 64, 96, 1],
+              {'X': 0, 'Y': 200, 'W': Anm.ScnSz.W, 'H': 180},
+              {'XMn': 35, 'XMx': 60, 'YMn': 20, 'YMx': 80},
+              1.3);
 
         Logo.src = 'image/logo_bg_b.png';
 
