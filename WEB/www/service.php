@@ -171,9 +171,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     echo RZTool::NoteSave($_POST);
     break;
 
-  case 205:
-    echo RZTool::ShareFileList($_POST);
-    break;
+  // case 205 RZTool::ShareFileList is sunset.
 
   case 206:
     echo RZTool::FeedList($_POST);

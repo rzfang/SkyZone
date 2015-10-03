@@ -25,8 +25,7 @@ if (isset($_SESSION['RZPswd']))
     <link rel='stylesheet' type='text/css' href='resource/base.css'/>
     <style type='text/css'>
     <!--
-      .TbBx > .Tb { padding: 5px; }
-      .TbBx > ul > li, .TbBx > .Tb { border-color: #808080; }
+      .TbBx > ul > li, .TbBx > .Tb { border-width: 1px; border-color: #808080; padding: 5px; }
 
       .OneShr:hover { background-color: #c0e0ff; }
 
@@ -119,6 +118,9 @@ if (isset($_SESSION['RZPswd']))
       {
         var Idx = NO.index(),
             TbBx = $('#TbBx > .Tb:eq(' + Idx + ')');
+
+        OO.css('fontWeight', '');
+        NO.css('fontWeight', 'bold');
 
         switch (Idx)
         {
@@ -769,31 +771,12 @@ if (isset($_SESSION['RZPswd']))
       {
         if (!JO.data('IsInit'))
         {
-          TabBox('#FlTbBx', '#FlTbBx > .Tb', 0, FileTabSwitch);
-
           $('#CdMpSvBtn').on('click', CodeMapSave);
-
+          UploadFileManage($('#FlBx'));
           JO.data('IsInit', true);
         }
 
         return 0;
-
-        function FileTabSwitch (OO, NO)
-        {
-          var Idx = NO.index(),
-              TbBx = $('#FlTbBx > .Tb:eq(' + Idx.toString() + ')');
-
-          switch (Idx)
-          {
-            case 0:
-              PackageFileList(TbBx);
-              break;
-
-            case 1:
-              UploadFileManage(TbBx);
-              break;
-          }
-        }
 
         function CodeMapSave (Evt)
         {
@@ -801,14 +784,14 @@ if (isset($_SESSION['RZPswd']))
 
           $.ajax(
             {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 210, 'CdMp': CdMpStr},
-              'beforeSend': function (JQXHR, St) { $(Evt.currentTarget).prop('disabled', true); },
-              'complete': function (JQXHR, TxtSt) { $(Evt.currentTarget).prop('disabled', false); },
-              'success': function (Rtn, TxtSt, JQXHR)
+              type: 'POST',
+              dataType: 'json',
+              timeout : 20000,
+              url: 'service.php',
+              data: {Cmd: 210, CdMp: CdMpStr},
+              beforeSend: function (JQXHR, St) { $(Evt.currentTarget).prop('disabled', true); },
+              complete: function (JQXHR, TxtSt) { $(Evt.currentTarget).prop('disabled', false); },
+              success: function (Rtn, TxtSt, JQXHR)
                 {
                   if (Rtn.Index < 0)
                   { alert(Rtn.Message); }
@@ -825,12 +808,12 @@ if (isset($_SESSION['RZPswd']))
 
           $.ajax(
             {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 209},
-              'success': function (Rtn, TxtSt, JQXHR)
+              type: 'POST',
+              dataType: 'json',
+              timeout : 20000,
+              url: 'service.php',
+              data: {Cmd: 209},
+              success: function (Rtn, TxtSt, JQXHR)
                 {
                   if (Rtn.Index < 0)
                   { alert(Rtn.Message); }
@@ -846,44 +829,6 @@ if (isset($_SESSION['RZPswd']))
                   }
                 }
             });
-        }
-
-        function PackageFileList (JO)
-        {
-          if (JO.children().length > 0)
-          { return 0; }
-
-          var Tlt = $('#OneShr'),
-              LstBx = ItemList(JO, 'service.php', 15, {'Cmd': 205}, OneShare, ['GJ'], TitleBuild);
-
-          return 0;
-
-          function OneShare (Data, Idx)
-          {
-            var One = Tlt.clone().removeAttr('id');
-
-            One.children('span').first().text(Data.Fl)
-                                        .end()
-                                .eq(1).text((Math.round(Data.Sz / 1048576 * 10) / 10) + ' MB')
-                                      .end()
-                                .eq(2).children('a').attr({'href': Data.URL, 'target': '_blank'})
-                                                    .text(Data.URL);
-
-            return One;
-          }
-
-          function TitleBuild (Cnt, Data)
-          {
-            var Ttl = LstBx.children('div.OneShr:first').clone();
-
-            Ttl.prependTo(LstBx)
-               .removeClass('OneShr')
-               .children('span').first().text('檔名')
-                                        .end()
-                                .eq(1).text('大小(MB)')
-                                      .end()
-                                .eq(2).text('網址');
-          }
         }
       }
 <?php } ?>
@@ -904,7 +849,7 @@ if (isset($_SESSION['RZPswd']))
         <div></div>
         <div>
           <input type='button' value='設定群組'/>
-        	<input type='button' value='刪除'/>
+          <input type='button' value='刪除'/>
         </div>
       </div>
       <div id='OneFd' class='OneFd'>
@@ -917,72 +862,69 @@ if (isset($_SESSION['RZPswd']))
     <div id='Base'> <!-- Base -->
       <div id='Main'>
 <?php if (!$IsLgn){ ?>
-	      <div style='text-align: center;'>
-	        RZ 個人工具<br/>
-	        密碼： <input type='password' id='Pswd' maxlength='16' onkeypress='Login(event);' placeholder='請輸入密碼'/>
-	        <input type='button' id='LgnBtn' value='登入' onclick='Login();'/>
-	      </div>
+        <div style='text-align: center;'>
+          RZ 個人工具<br/>
+          密碼： <input type='password' id='Pswd' maxlength='16' onkeypress='Login(event);' placeholder='請輸入密碼'/>
+          <input type='button' id='LgnBtn' value='登入' onclick='Login();'/>
+        </div>
 <?php } else { ?>
-	      <div id='TbBx' class='TbBx'>
-	        <div class='Tb' style='text-align: center;' data-tab-name='線上記事本'>
-	          <span id='NtBx' class='Block'>
-	            <textarea cols='80' rows='25' placeholder='尚未載入/寫入筆記。'></textarea>
-	            <span style='display: inline-block; text-align: left; vertical-align: bottom;'>
-	              <input type='text' id='CmdIpt' value='輸入指令…' style='width: 180px; color: #808080;'/><br/><br/>
-	              <input type='button' value='(L) 載入'/><br/><br/>
-	              插入文字：<br/>
-	              <input type='button' value='(D) 時間戳'/><br/>
-	              <input type='button' value='(R) 分隔線'/>
-	              符號<input type='text' value='=' maxlength='1' style='width: 18px;'/>
-	              長度<input type='text' value='80' maxlength='3' style='width: 30px;'/><br/><br/>
-	              其它選項：<br/>
-	              <input type='checkbox' checked='true'/><span>(T) 存檔時去除行尾空白</span><br/><br/>
-	            	<input type='button' value='(S) 儲存' disabled='true'/>
-	            </span>
-	          </span>
-	        </div>
-	        <div class='Tb' data-tab-name='Feeds 消息'>
-	          <div style='text-align: center;'>
-	            <div style='display: inline-block; padding: 5px; border-width: 1px; border-radius: 5px; text-align: left;'>
-	              <div id='FdGrpFctnBx'>
-	                群組
-	                <select autocomplete='off'>
-	                  <option>全部</option>
-	                </select>
-	                <input type='text' style='width: 100px;'/>
-	                <input type='button' value='更命'/>
-	                <input type='button' value='新增'/>
-	                <input type='button' value='刪除'/>
-	              </div>
-	              <div id='FdFctnBx'>
-	                來源
-	                <input type='url' style='width: 300px;'/>
-	                <input type='button' id='FdAddBtn' value='新增'/>
-	              </div>
-	            </div>
-	          </div>
-	          <div id='FdBx' style='width: 1000px; margin: 0px auto;'>
-	          </div>
-	          <div id='FdGrpBx' style='display: inline-block; position: absolute; visibility: hidden; min-width: 150px; padding: 5px; border-width: 1px; border-radius: 5px; background: #ffffff;'>
-	            <select></select>
-	            <input type='button' value='取消'/>
-	          </div>
-	        </div>
-	        <div id='FlTbBx' class='TbBx Tb' data-tab-name='檔案管理'>
-	          <div class='Tb' data-tab-name='分享檔案列表'></div>
-	          <div class='Tb' style='padding: 10px 5px;' data-tab-name='上傳檔案管理'>
-	            Code Map 格式： [驗證碼(索引)] // [註解]<br/><br/>
-	            <textarea rows='7' style='width: 400px;' placeholder='請輸入驗證碼。一行一組。//後可寫註解。'></textarea>
-	            <input type='button' id='CdMpSvBtn' value='儲存'><br/><br/>
-	            檔案格式： [上傳時間]-[索引].[原副檔名]
-	            <div></div>
-	          </div>
-	        </div>
-	        <div class='Tb' data-tab-name='系統'>
-	          <input type='button' id='LgtBtn' value='登出' onclick='Logout();'/>
-	        </div>
-	      </div>
-	<?php } ?>
+        <div id='TbBx' class='TbBx'>
+          <div class='Tb' style='text-align: center;' data-tab-name='線上記事本'>
+            <span id='NtBx' class='Block'>
+              <textarea cols='65' rows='25' placeholder='尚未載入/寫入筆記。'></textarea>
+              <span style='display: inline-block; text-align: left; vertical-align: bottom;'>
+                <input type='text' id='CmdIpt' value='輸入指令…' style='width: 180px; color: #808080;'/><br/><br/>
+                <input type='button' value='(L) 載入'/><br/><br/>
+                插入文字：<br/>
+                <input type='button' value='(D) 時間戳'/><br/>
+                <input type='button' value='(R) 分隔線'/>
+                符號<input type='text' value='=' maxlength='1' style='width: 18px;'/>
+                長度<input type='text' value='80' maxlength='3' style='width: 30px;'/><br/><br/>
+                其它選項：<br/>
+                <input type='checkbox' checked='true'/><span>(T) 存檔時去除行尾空白</span><br/><br/>
+                <input type='button' value='(S) 儲存' disabled='true'/>
+              </span>
+            </span>
+          </div>
+          <div class='Tb' data-tab-name='Feeds 消息'>
+            <div style='text-align: center;'>
+              <div style='display: inline-block; padding: 5px; border-width: 1px; border-radius: 5px; text-align: left;'>
+                <div id='FdGrpFctnBx'>
+                  群組
+                  <select autocomplete='off'>
+                    <option>全部</option>
+                  </select>
+                  <input type='text' style='width: 100px;'/>
+                  <input type='button' value='更命'/>
+                  <input type='button' value='新增'/>
+                  <input type='button' value='刪除'/>
+                </div>
+                <div id='FdFctnBx'>
+                  來源
+                  <input type='url' style='width: 300px;'/>
+                  <input type='button' id='FdAddBtn' value='新增'/>
+                </div>
+              </div>
+            </div>
+            <div id='FdBx' style='margin: 0px auto;'>
+            </div>
+            <div id='FdGrpBx' style='display: inline-block; position: absolute; visibility: hidden; min-width: 150px; padding: 5px; border-width: 1px; border-radius: 5px; background: #ffffff;'>
+              <select></select>
+              <input type='button' value='取消'/>
+            </div>
+          </div>
+          <div id='FlBx' class='Tb' data-tab-name='上傳檔案管理'>
+            Code Map 格式： [驗證碼(索引)] // [註解]<br/><br/>
+            <textarea rows='7' style='width: 400px;' placeholder='請輸入驗證碼。一行一組。//後可寫註解。'></textarea>
+            <input type='button' id='CdMpSvBtn' value='儲存'><br/><br/>
+            檔案格式： [上傳時間]-[索引].[原副檔名]
+            <div></div>
+          </div>
+          <div class='Tb' data-tab-name='系統'>
+            <input type='button' id='LgtBtn' value='登出' onclick='Logout();'/>
+          </div>
+        </div>
+  <?php } ?>
       </div>
     </div>
   </body>

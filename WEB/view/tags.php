@@ -37,10 +37,9 @@
       {
         foreach ($VwData['PckIDs'] as $V1)
         {
-          if ($V['ID'] === $V1)
-          { echo "<a class='Tg Pckd' href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n"; }
-          else
-          { echo "<a class='Tg' href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n"; }
+          echo ($V['ID'] === $V1) ?
+            "<span class='Tg Pckd'>{$V['Nm']}</span>\n" :
+            "<a class='Tg' href='blogs.php?t={$V['ID']}'>{$V['Nm']}</a>\n";
         }
       }
     }

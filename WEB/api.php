@@ -1989,35 +1989,6 @@ class RZTool
   }
 
   /*
-    '$IA' = Info Array, often link '$_POST'.
-    Return: JSON string | array of shared files, or empty array as error. */
-  public static function ShareFileList($IA)
-  {
-    global $Kw;
-
-    if (!System::SessionIsLogin(self::$Pswd, self::$PswdSsnNm))
-      return ReturnPack(-1, $Kw['RM']['NotLogin'], array());
-
-    $FA0 = preg_grep('/\.zip$|\.7z$|\.rar$|\.gz$|\.bz2$|\.tar$/', scandir(WEB_PTH . 'www/')); // 20120701 by RZ. this will be no more.
-    $FA = array_slice(scandir(DAT_PTH . 'share/', 0), 2);
-
-    if (isset($IA['Cnt']))
-      return ReturnPack(0, $Kw['RM']['Done'], count($FA0) + count($FA));
-
-    $RA = array();
-
-    foreach($FA0 as $V)
-      $RA[] = array('Fl' => $V, 'URL' => WEBSITE_URL . $V, 'Sz' => filesize(WEB_PTH . "www/$V"));
-
-    foreach($FA as $V)
-    {
-      $RA[] = array('Fl' => $V, 'URL' => WEBSITE_URL . 'file.php?S=' . urlencode($V), 'Sz' => filesize(DAT_PTH . "share/$V"));
-    }
-
-    return ReturnPack(0, $Kw['RM']['Done'], $RA);
-  }
-
-  /*
     '$FdFlPth' = Feed File Path.
     Return: feed info array, or empty array as error. */
   private static function FeedInfoLoad($FdFlPth)
