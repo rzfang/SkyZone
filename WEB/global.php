@@ -113,6 +113,41 @@ function UUID ($B32 = false)
          substr($ID, 20, 12);
 }
 
+/* create a UUID format string.
+  '$Tp' = Type, the type of UUID, can be 13, 23, 32, 36, default 5.
+  Return: UUID format string. */
+function UUID_1 ($Tp = 13)
+{
+  $TpMp = array(13, 23, 32, 36);
+  $ID;
+
+  if (!in_array($Tp, $TpMp))
+  { $Tp = 13; }
+
+  switch ($Tp) {
+    case 23:
+      $ID = uniqid(mt_rand());
+
+      break;
+
+    case 32:
+      $ID = md5(uniqid(mt_rand(), true));
+      break;
+
+    case 36:
+      $ID = md5(uniqid(mt_rand(), true));
+      $ID = substr($ID, 0, 8) . '-' . substr($ID, 8, 4) . '-' . substr($ID, 12, 4) . '-' . substr($ID, 16, 4) . '-' .
+            substr($ID, 20, 12);
+      break;
+
+    case 13:
+    default:
+      $ID = uniqid();
+  }
+
+  return $ID;
+}
+
 /* Try to get client IP.
   Return: getting IP. */
 function GetIP ()

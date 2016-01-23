@@ -86,7 +86,7 @@ class System
     '$TarFlPth' = Tar File Path.
     '$TarObj' = Archive_Tar Object out of function, give to avoid new another if one is exist.
     Return: the number of image cached, < 0 as error.
-    Need: GD library. Tar.php. */
+    Need: GD library. pear/archive_tar. */
   public static function ImagesCacheFromTar ($TarFlPth, $TarObj = null)
   {
     if (empty($TarFlPth) || !is_string($TarFlPth) || !is_file($TarFlPth))
@@ -173,7 +173,7 @@ class System
     '$TarFlPth' = Tar File Path.
     '$ImgFlNm' = Image File Name.
     Return: 0 as OK, < 0 as error.
-    Need: GD library. Tar.php. */
+    Need: GD library. pear/archive_tar. */
   public static function TarImageOut ($TarFlPth, $ImgFlNm)
   {
     $TFP = WEB_PTH . 'www/image/null.png'; // '$TFP' = Temp File Path.
@@ -876,7 +876,7 @@ class Blog
     '&$RtnA' = referenced Return Array.
     '$FlPth' = tar File Path.
     Return: 0 as OK, < 0 as error.
-    Need: Tar.php. */
+    Need: pear/archive_tar. */
   private static function OneImagesGet (&$RtnA, $FlPth)
   {
     if (empty($RtnA) || !is_array($RtnA) || empty($FlPth) || !is_string($FlPth) || !is_file($FlPth))
@@ -1603,7 +1603,7 @@ class ArtCorner
 
   /* Get One Random ArtCorner info.
     Return: JSON | info array of an ArtCorner, or empty array as error.
-    Need: Tar.php. */
+    Need: pear/archive_tar. */
   public static function RandomOneGet()
   {
     global $Kw;
@@ -1636,7 +1636,7 @@ class ArtCorner
     '$IA' = Info Array. often as '$_POST'.
     '$FA' = File info Array. must be'$_FILES'.
     Return: JSON string. | 0 as OK, or < 0 error.
-    Need: Tar.php. */
+    Need: pear/archive_tar. */
   public static function Create($IA, $FA)
   {
     global $Kw;

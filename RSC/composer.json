@@ -1,0 +1,5 @@
+{
+  "require": {
+    "pear/archive_tar": "1.4.*"
+  }
+}

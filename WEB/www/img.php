@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=utf-8');
 
 require('../global.php');
+require(RSC_PTH . 'vendor/autoload.php');
 require(WEB_PTH . 'api.php');
 
 ini_set('memory_limit', '32M');
@@ -40,8 +41,6 @@ else if(!empty($_GET['B'])) // 'B' = Blog.
     exit;
   }
 
-  require(WEB_PTH . 'resource/Tar.php');
-
   System::TarImageOut($TarFP, $ImgFN);
 }
 else if(!empty($_GET['A'])) // 'A' = ArtCorner.
@@ -62,8 +61,6 @@ else if(!empty($_GET['A'])) // 'A' = ArtCorner.
     ImageFileOut($CchFP);
     exit;
   }
-
-  require(WEB_PTH . 'resource/Tar.php');
 
   System::TarImageOut($TarFP, $ImgFN);
 }

@@ -2,8 +2,10 @@
 header('Content-Type: text/html; charset=utf-8');
 
 require('../global.php');
+require(RSC_PTH . 'vendor/autoload.php');
 require(WEB_PTH . 'pdo_db.php');
 require(WEB_PTH . 'api.php');
+
 
 if(empty($_POST) || !isset($_POST['Cmd']) || !filter_input(INPUT_POST, 'Cmd', FILTER_VALIDATE_INT))
 {
@@ -20,7 +22,6 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 2:
-    require(WEB_PTH . 'resource/Tar.php');
     echo Blog::OneRead($_POST);
     break;
 
@@ -37,7 +38,6 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 6:
-    require(WEB_PTH . 'resource/Tar.php');
     echo ArtCorner::RandomOneGet();
     break;
 
@@ -93,7 +93,6 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 108:
-    require(WEB_PTH . 'resource/Tar.php');
     echo ArtCorner::Create($_POST, $_FILES);
     break;
 

@@ -30,10 +30,12 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
     <link rel='stylesheet' type='text/css' href='resource/base.css'/>
     <style type='text/css'>
     <!--
+      .TbBx > ul > li { padding: 2px; }
       .TbBx > .Tb { padding: 5px; }
+      .TbBx .PckTb { font-weight: bold; }
       .TbBx > ul > li,
       .TbBx > .Tb
-        { border-color: #808080; }
+        { border: 1px solid #808080; }
 
       .Tab:hover { background-color: #c0c0c0; }
       .Icon0 { max-width: 20px; max-height: 20px; vertical-align: middle; }
