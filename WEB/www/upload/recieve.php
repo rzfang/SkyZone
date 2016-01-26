@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../../global.php');
+require '../../global.php';
 
 // ini_set('memory_limit', '55M');
 // ini_set('upload_max_filesize', '50M');

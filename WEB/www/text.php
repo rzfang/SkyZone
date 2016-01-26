@@ -1,9 +1,9 @@
 <?
 header('Content-Type: text/html; charset=utf-8');
 
-require('../global.php');
-require(WEB_PTH . 'pdo_db.php');
-require(WEB_PTH . 'api.php');
+require '../global.php';
+require WEB_PTH . 'pdo_db.php';
+require WEB_PTH . 'api.php';
 
 $ID = $_GET['b'] ? $_GET['b'] : '';
 

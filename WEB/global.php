@@ -2,7 +2,7 @@
 //==== Constant ========================================================================================================
 
 define('RT_PTH', dirname(__FILE__) . '/../');
-require(RT_PTH . 'SRC/constants.php');
+require RT_PTH . 'SRC/constants.php';
 
 if (DEV)
 {
@@ -17,7 +17,7 @@ else
 
 //==== Initialize ======================================================================================================
 
-require(WEB_PTH . 'keyword.php'); // import keyword values.
+require WEB_PTH . 'keyword.php'; // import keyword values.
 
 ErrorHintHandle(); // this also start session.
 
@@ -29,7 +29,7 @@ function PartView ($VwNm, $Data = null)
 
   $VwData = $Data;
 
-  require(VW_PTH . $VwNm . '.php');
+  require VW_PTH . $VwNm . '.php';
 }
 
 /* check if the service request Is AJAX.

@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../global.php');
-require(RSC_PTH . 'vendor/autoload.php');
-require(WEB_PTH . 'api.php');
+require '../global.php';
+require RSC_PTH . 'vendor/autoload.php';
+require WEB_PTH . 'api.php';
 
 ini_set('memory_limit', '32M');
 

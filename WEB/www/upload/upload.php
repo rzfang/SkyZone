@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../../global.php');
+require '../../global.php';
 
 $Cd = (!empty($_GET) && !empty($_GET['Cd']) && is_string($_GET['Cd'])) ? $_GET['Cd'] : '';
 ?>

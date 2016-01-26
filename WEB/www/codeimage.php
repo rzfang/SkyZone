@@ -1,6 +1,6 @@
 <?php
 
-require('../global.php');
+require '../global.php';
 
 CodeImage();
 return 0;

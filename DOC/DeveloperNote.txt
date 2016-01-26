@@ -107,6 +107,10 @@ function ...($IA)
 
 ==== To Do List ========================================================================================================
 
+* 20160124
+  include, require function call to statement.
+  migrate jQuery to React.js .
+
 * 20150000
   縮短 ID。
 

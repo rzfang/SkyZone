@@ -1,8 +1,8 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../global.php');
-require(WEB_PTH . 'api.php');
+require '../global.php';
+require WEB_PTH . 'api.php';
 
 $WrnMsg = '此檔案不存在 或是 已經不再提供下載了。';
 $FP = '';

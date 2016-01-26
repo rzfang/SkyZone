@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../global.php');
+require '../global.php';
 
 $IsLgn = false;
 

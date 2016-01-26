@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 
-require('../global.php');
-require(RSC_PTH . 'vendor/autoload.php');
-require(WEB_PTH . 'pdo_db.php');
-require(WEB_PTH . 'api.php');
+require '../global.php';
+require RSC_PTH . 'vendor/autoload.php';
+require WEB_PTH . 'pdo_db.php';
+require WEB_PTH . 'api.php';
 
 $BlogID = '';
 $Blog = array();
