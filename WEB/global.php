@@ -1,8 +1,7 @@
 <?
 //==== Constant ========================================================================================================
 
-define('RT_PTH', dirname(__FILE__) . '/../');
-require RT_PTH . 'SRC/constants.php';
+require __DIR__ . '/constants.php';
 
 if (DEV)
 {
