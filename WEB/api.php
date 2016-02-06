@@ -327,7 +327,7 @@ class Tag
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA['ID']) || !is_string($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA['ID']) || !is_string($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
     $SQL = 'DELETE FROM TagLink WHERE tag_id = ?;';
@@ -357,7 +357,7 @@ class Tag
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA['ID']) || !is_string($IA['ID']) || !IsUUID($IA['ID'], true) ||
+    if (empty($IA['ID']) || !is_string($IA['ID']) || !IsUUID($IA['ID']) ||
        empty($IA['Nm']) || !is_string($IA['Nm']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
@@ -385,7 +385,7 @@ class Tag
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1, $RtnMd);
 
-    if (empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2, $RtnMd);
 
     $SQL = 'DELETE FROM TagLink WHERE link_id = ?;';
@@ -402,7 +402,7 @@ class Tag
 
     foreach($IA['TgIDA'] as $V)
     {
-      if (!IsUUID($V, true))
+      if (!IsUUID($V))
         continue;
 
       $SQL .= '(?, ?, ?), ';
@@ -449,7 +449,7 @@ class Blog
     {
       foreach($IA['TgIDA'] as $V)
       {
-        if (IsUUID($V, true))
+        if (IsUUID($V))
         {
           $TgIDA[] = $V;
           $SQL0 .= '?, ';
@@ -673,7 +673,7 @@ class Blog
   {
     global $Kw;
 
-    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
 
     $SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, file AS Fl, type AS Tp, password AS Pswd ' .
@@ -730,7 +730,7 @@ class Blog
   {
     global $Kw;
 
-    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
 
     $ID = '';
@@ -999,7 +999,7 @@ class Blog
 
     //==== add new row into Db. ====
 
-    $ID = UUID(true);
+    $ID = UUID();
     $Tp = empty($IA['Tp']) ? 'text' : $IA['Tp'];
     $Pswd = (empty($IA['Pswd']) || !is_string($IA['Pswd'])) ? '' : $IA['Pswd'];
 
@@ -1032,7 +1032,7 @@ class Blog
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
     //==== base info update. ====
@@ -1102,7 +1102,7 @@ class Blog
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], '');
 
-    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], -1);
 
     //==== delete tag link of this blog. ====
@@ -1176,7 +1176,7 @@ class Blog
   {
     global $Kw;
 
-    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || !is_array($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array(0));
 
     $Cnt = !empty($IA['Cnt']) ? true : false;
@@ -1224,7 +1224,7 @@ class Blog
 
     if (empty($IA) || !is_array($IA) || empty($IA['Nm']) || !is_string($IA['Nm']) ||
        empty($IA['Ml']) || !IsEMail($IA['Ml']) || empty($IA['Cmt']) || !is_string($IA['Cmt']) ||
-       empty($IA['TgtID']) || !IsUUID($IA['TgtID'], true))
+       empty($IA['TgtID']) || !IsUUID($IA['TgtID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], -1);
 
     $ID = UUID(true);
@@ -1257,7 +1257,7 @@ class Blog
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
     $SQL = 'DELETE FROM BlogComment WHERE id = ?;';
@@ -1362,7 +1362,7 @@ class Message
     global $Kw;
 
     if (empty($IA) || empty($IA['Nm']) || !is_string($IA['Nm']) || empty($IA['Ml']) || !IsEMail($IA['Ml']) ||
-       empty($IA['Msg']) || !is_string($IA['Msg']) || (isset($IA['Tgt']) && !IsUUID($IA['Tgt'], true)))
+       empty($IA['Msg']) || !is_string($IA['Msg']) || (isset($IA['Tgt']) && !IsUUID($IA['Tgt'])))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], -1);
 
     $ID = UUID(true);
@@ -1393,7 +1393,7 @@ class Message
   {
     global $Kw;
 
-    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-1, $Kw['RM']['StrangeValue'], array());
 
     $Cnt = !empty($IA['Cnt']) ? true : false;
@@ -1435,7 +1435,7 @@ class Message
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin']);
 
-    if (empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA['ID']) || !IsUUID($IA['ID']))
      return ReturnPack(-2, $Kw['RM']['StrangeValue']);
 
     $SQL = 'DELETE FROM Message WHERE id = ? OR target = ?;';
@@ -1535,7 +1535,7 @@ class GoodWords
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true) || empty($IA['Wds']) || !is_string($IA['Wds']))
+    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID']) || empty($IA['Wds']) || !is_string($IA['Wds']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
     $SHA1 = sha1($IA['Wds']);
@@ -1559,7 +1559,7 @@ class GoodWords
     if (!System::SessionIsLogin(System::$AdminPswd, System::$AdminPswdSsnNm))
       return ReturnPack(-1, $Kw['RM']['NotLogin'], -1);
 
-    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID'], true))
+    if (empty($IA) || empty($IA['ID']) || !IsUUID($IA['ID']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
     $SQL = 'DELETE FROM GoodWords WHERE id = ?;';

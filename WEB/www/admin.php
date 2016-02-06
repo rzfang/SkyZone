@@ -306,7 +306,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
               Bx = This.closest('.OneBlog'),
               ID = Bx.find('> table:first tr:eq(1) > td:eq(1)').text();
 
-          if (ID.length < 32)
+          if (ID.length < 13)
           {
             alert('找不到正確的 Blog ID。');
 

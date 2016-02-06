@@ -67,52 +67,35 @@ function IsTimeStamp ($TmStr)
 }
 
 /* Check is a string is UUID.
-  '$B32' = UUID be 32 bits, without '-' in default 36 bits.
   Return: UUID format string. */
-function IsUUID ($IDStr, $B32 = false)
+function IsUUID ($IDStr)
 {
   if (empty($IDStr) || !is_string($IDStr))
     return false;
 
-  $Chk = 0;
+  if (preg_match("/^[0-9a-fA-F]{32}$/", $IDStr) ||
+      preg_match("/^[0-9a-fA-F]{13}$/", $IDStr) ||
+      preg_match("/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/", $IDStr) ||
+      preg_match("/^[0-9a-fA-F]{22}$/", $IDStr))
+    return true;
 
-  if (!is_bool($B32) || !$B32)
-    $Chk = preg_match("/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/", $IDStr);
-  else
-    $Chk = preg_match("/^[0-9a-fA-F]{32}$/", $IDStr);
-
-  return $Chk > 0 ? true : false;
-}
-
-/* Create a UUID format string.
-  '$B32' = UUID be 32 bits, without '-' in default 36 bits.
-  Return: UUID format string. */
-function UUID ($B32 = false)
-{
-  $ID = md5(uniqid(mt_rand(), true));
-
-  if ($B32)
-    return $ID;
-
-  return substr($ID, 0, 8) . '-' . substr($ID, 8, 4) . '-' . substr($ID, 12, 4) . '-' . substr($ID, 16, 4) . '-' .
-         substr($ID, 20, 12);
+  return false;
 }
 
 /* create a UUID format string.
-  '$Tp' = Type, the type of UUID, can be 13, 23, 32, 36, default 13.
+  '$Tp' = Type, the type of UUID, can be 13, 22, 32, 36, default 13.
   Return: UUID format string. */
-function UUID_1 ($Tp = 13)
+function UUID ($Tp = 13)
 {
-  $TpMp = array(13, 23, 32, 36);
+  $TpMp = array(13, 22, 32, 36); // '$TpMp' = Type Map.
   $ID;
 
-  if (!in_array($Tp, $TpMp))
-  { $Tp = 13; }
+  if (!is_numeric($Tp) || !in_array($Tp, $TpMp))
+    $Tp = 13;
 
   switch ($Tp) {
-    case 23:
+    case 22:
       $ID = uniqid(mt_rand());
-
       break;
 
     case 32:

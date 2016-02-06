@@ -9,7 +9,7 @@ require WEB_PTH . 'api.php';
 $BlogID = '';
 $Blog = array();
 
-if (isset($_GET['Blog']) && IsUUID($_GET['Blog'], true))
+if (isset($_GET['Blog']) && IsUUID($_GET['Blog']))
 {
   Db::Db0Connect();
 
