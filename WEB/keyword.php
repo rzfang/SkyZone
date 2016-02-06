@@ -15,6 +15,6 @@ $Kw = array( // 'Kw' = Keyword.
     'StepTest'        => 'Step Test.',
     'Done'            => '完成。',),
   'Hnt' => array(
-    'Copyright' => '©2011-2014 RZ Fang',
+    'Copyright' => '©2011-2015 RZ Fang',
     'TailHint' => ''));
 ?>

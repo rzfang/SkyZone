@@ -1,24 +1,10 @@
 <?
-//==== Constant ========================================================================================================
-
-require __DIR__ . '/constants.php';
-
-if (DEV)
-{
-  // website URL.
-  define('WEBSITE_URL', 'http://127.0.0.1/skyzone/');
-}
-else
-{
-  // website URL.
-  define('WEBSITE_URL', 'http://skyzone.zii.tw/');
-}
-
 //==== Initialize ======================================================================================================
 
+require __DIR__ . '/constants.php';
 require WEB_PTH . 'keyword.php'; // import keyword values.
 
-ErrorHintHandle(); // this also start session.
+ErrorHintHandle(DEV); // this also start session.
 
 //==== Tool Function ===================================================================================================
 
@@ -113,7 +99,7 @@ function UUID ($B32 = false)
 }
 
 /* create a UUID format string.
-  '$Tp' = Type, the type of UUID, can be 13, 23, 32, 36, default 5.
+  '$Tp' = Type, the type of UUID, can be 13, 23, 32, 36, default 13.
   Return: UUID format string. */
 function UUID_1 ($Tp = 13)
 {
@@ -161,7 +147,7 @@ function GetIP ()
     return 'none';
 }
 
-/* response a XML from ajax request.
+/* response a JSON from ajax request.
   '$Idx' = Index.
   '$Msg' = Message.
   '$Ext' = Extend Array.
@@ -455,13 +441,14 @@ function SymbolString ($Str, &$VA)
 
 //==== Sky Zone Function  ==============================================================================================
 
-/* handle the error message shown or hidden. this will start the session. */
-function ErrorHintHandle ()
+/* handle the error message shown or hidden. this will start the session.
+  'DvMd' = Developement mode. optional, default false */
+function ErrorHintHandle ($DvMd = false)
 {
   if (session_id() === '')
     session_start();
 
-  if (DEV || (isset($_SESSION[SSN_ERR_HNT]) && $_SESSION[SSN_ERR_HNT]))
+  if ($DvMd || (isset($_SESSION[SSN_ERR_HNT]) && $_SESSION[SSN_ERR_HNT]))
   {
     ini_set('display_errors', 1);
     ini_set('error_reporting', E_ALL);
