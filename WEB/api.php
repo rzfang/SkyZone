@@ -759,7 +759,6 @@ class Blog
       return ReturnPack(-2, $Kw['RM']['DbCrash'], array());
 
     $Rst = $Rsc->fetch();
-    $Rst['URL'] = WEBSITE_URL . 'zone.php?Blog=' . $Rst['ID'];
     $Rst['TgA'] = array();
 
     if (empty($Rst))
@@ -795,19 +794,23 @@ class Blog
     {
       case 'image':
         $RstCd = self::OneImageGet($Rst, $FP);
+        $Rst['URL'] = WEBSITE_URL . 'image.php?b=' . $Rst['ID'];
         break;
 
       case 'images':
         $RstCd = self::OneImagesGet($Rst, $FP);
+        $Rst['URL'] = WEBSITE_URL . 'images.php?b=' . $Rst['ID'];
         break;
 
       case 'html':
         // $Rst['URL'] = 'html.php?T=' . StringEnDeCode($IA['ID']);
+        // $Rst['URL'] = WEBSITE_URL . 'html.php?b=' . $Rst['ID'];
         break;
 
       case 'text':
       default:
         $RstCd = self::OneTextGet($Rst, $FP);
+        $Rst['URL'] = WEBSITE_URL . 'text.php?b=' . $Rst['ID'];
     }
 
     if ($RstCd < 0)

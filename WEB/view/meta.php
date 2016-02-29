@@ -15,7 +15,7 @@
     $VwData['Smry'] =
       (empty($VwData['Smry']) || !is_string($VwData['Smry'])) ?
       'RZ 的個人網站。我的天空，我在其中，在我這裡，自由放空。' :
-      str_replace("\n", '', $VwData['Smry']) ;
+      str_replace("\n", '', $VwData['Smry']);
     $VwData['URL'] = (empty($VwData['URL']) || !is_string($VwData['URL'])) ? WEBSITE_URL : $VwData['URL'];
     $VwData['ImgURL'] =
       (empty($VwData['ImgURL']) || !is_string($VwData['ImgURL'])) ?
