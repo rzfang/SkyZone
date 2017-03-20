@@ -4,10 +4,7 @@ Disallow: /*.css$
 Disallow: /*.zip$
 Disallow: /admin.php
 Disallow: /codeimage.php
-Disallow: /file.php
 Disallow: /img.php
-Disallow: /rz.php
 Disallow: /service.php
 Disallow: /image/
 Disallow: /resource/
-Disallow: /upload/

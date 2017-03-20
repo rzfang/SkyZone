@@ -4,34 +4,34 @@
 
 //==== Z Check API =====================================================================================================
 
-function Z_Check_API ()
-{
-  if (window)
-  { window.Is = Is(); }
+(function Z_Check_API () {
+  var Is;
 
-  return;
+  Is = {
+    Boolean: function (Obj) { return (typeof Obj === 'boolean'); },
+    Number: function (Obj) { return (typeof Obj === 'number'); },
+    String: function (Obj) { return (typeof Obj === 'string'); },
+    Function: function (Obj) { return (typeof Obj === 'function'); },
+    Object: function (Obj) { return (typeof Obj === 'object'); },
+    Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
+    Array: function (Obj) { return (Obj instanceof Array); },
+    Promise: function (Obj)
+    { return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch')) },
+    EMail: function (Str)
+    {
+      if (typeof Str !== 'string')
+      { return false; }
 
-  function Is () {
-    return {
-      Boolean: function (Obj) { return (typeof Obj === 'boolean'); },
-      Number: function (Obj) { return (typeof Obj === 'number'); },
-      String: function (Obj) { return (typeof Obj === 'string'); },
-      Function: function (Obj) { return (typeof Obj === 'function'); },
-      Object: function (Obj) { return (typeof Obj === 'object'); },
-      Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
-      Array: function (Obj) { return (Obj instanceof Array); },
-      EMail: function (Str)
-        {
-          if (typeof Str !== 'string')
-          { return false; }
+      return (/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/).test(Str);
+    },
+    jQuery: function (Obj) { return (typeof jQuery !== 'undefined' && Obj instanceof jQuery); }
+  };
 
-          return (/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/).test(Str);
-        },
-      jQuery: function (Obj) { return (Obj instanceof jQuery); }
-    };
-  }
-}
-Z_Check_API();
+  if (typeof exports !== 'undefined')
+  { exports = Is; }
+  else if (typeof window !== 'undefined')
+  { window.Is = Is; }
+})();
 
 //==== Tool Function ===================================================================================================
 

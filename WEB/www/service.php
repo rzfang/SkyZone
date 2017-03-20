@@ -152,62 +152,6 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     echo GoodWords::Update($_POST);
     break;
 
-  //==== 200+ are RZ tool functions. ====
-
-  case 201:
-    echo System::SessionLogout($_POST, RZTool::$PswdSsnNm);
-    break;
-
-  case 202:
-    echo System::SessionLogin($_POST, RZTool::$Pswd, RZTool::$PswdSsnNm);
-    break;
-
-  case 203:
-    echo RZTool::NoteLoad();
-    break;
-
-  case 204:
-    echo RZTool::NoteSave($_POST);
-    break;
-
-  // case 205 RZTool::ShareFileList is sunset.
-
-  case 206:
-    echo RZTool::FeedList($_POST);
-    break;
-
-  case 207:
-    echo RZTool::FeedAdd($_POST);
-    break;
-
-  case 208:
-    echo RZTool::FeedDel($_POST);
-    break;
-
-  case 209:
-    echo RZTool::UploadCodeMapLoad($_POST);
-    break;
-
-  case 210:
-    echo RZTool::UploadCodeMapSave($_POST);
-    break;
-
-  case 211:
-    echo RZTool::FeedGroupRename($_POST);
-    break;
-
-  case 212:
-    echo RZTool::FeedGroupAdd($_POST);
-    break;
-
-  case 213:
-    echo RZTool::FeedGroupDel($_POST);
-    break;
-
-  case 214:
-    echo RZTool::FeedroupChange($_POST);
-    break;
-
   case 0:
   default:
     echo JSONString(-2, 'unhandle request.');

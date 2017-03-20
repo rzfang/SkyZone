@@ -107,12 +107,13 @@ function ...($IA)
 
 ==== To Do List ========================================================================================================
 
-* 20160124
-  include, require function call to statement.
-  migrate jQuery to React.js .
+* 20160229
+  Facebook share icon is gone.
+  reference this
+    http://stackoverflow.com/questions/18835027/new-ogimage-size-for-facebook-share
 
-* 20150000
-  縮短 ID。
+* 20160211
+  replace the function IsEMail with Is library.
 
 * 20141007
   自製 markdown parser (call z-markdown maybe)
@@ -139,9 +140,6 @@ function ...($IA)
 
 * 20130301
   TabBox 導入對 URL Hash 的支援，但觀察發現效能不好，而且程式碼可優化。
-
-* 20130217
-  個人頁上傳檔案資訊顯示功能。
 
 * 20130123
   網誌留言，訪客的後續關注功能。
@@ -174,21 +172,11 @@ function ...($IA)
 * 舊貨交換平台。
   201207??
 
-* Bug。管理頁，上傳角落藝廊功能，不支援中文名圖檔。
-  20120624
-
-* 分享檔案管理。
-  透過管理頁管理檔案的公開、關閉、刪除、註解。
-  20120527
-
 * 框格彼此可具有父子關係。
   父子框格可彼此黏合，一起拖曳。
   父框格的關閉，可引發子框格事件；子框格的關閉，可引發父框格的事件。
   一個父框格可以有多個子框格；一個子框格只會有一個父框格。
   20120300
-
-* 網址帶參數，直接開啟目標框格。
-  20111200
 
 * 開辦「藝術角落」，向善繪友人徵圖。
   20120331
