@@ -1,0 +1,33 @@
+{
+  "name": "sky_zone",
+  "version": "0.0.1",
+  "description": "Sky Zone",
+  "main": "server.js",
+  "dependencies": {
+    "node-sass": "^4.4.2",
+    "uglify-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^3.13.1",
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "dev": "nodemon -d 3 -e js,scss,html,php,tag -w SRC/ SRC/server.js",
+    "lint": "eslint UTL/server.js SRC/*.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rzfang/SkyZone.git"
+  },
+  "keywords": [
+    "web",
+    "tool"
+  ],
+  "author": "RZ Fang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rzfang/SkyZone/issues"
+  },
+  "homepage": "https://github.com/rzfang/SkyZone#readme"
+}

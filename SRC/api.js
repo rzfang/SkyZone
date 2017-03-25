@@ -1654,16 +1654,6 @@ function KeyboardCommand(Pg)
     else if (KyBfr.indexOf(MpA[1]) >= 0)
     {
       Dcm.data('KyBfr', '');
-      PageTurn('rz.php');
-    }
-    else if (KyBfr.indexOf(MpA[2]) >= 0)
-    {
-      Dcm.data('KyBfr', '');
-      PageTurn('upload/upload.php');
-    }
-    else if (KyBfr.indexOf(MpA[3]) >= 0)
-    {
-      Dcm.data('KyBfr', '');
       PageTurn('blogs.php');
     }
     else

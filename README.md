@@ -1,11 +1,23 @@
 # SkyZone
-RZ website
+=======
+
+RZ's website.
 
 ## note
 this project needs the key file to get everything fine.
 
-## install
+## this project uses
+* HTML, Js, CSS
+* [npm](https://www.npmjs.com/)
+* [SASS](http://sass-lang.com/)
+* [UglifyJs](http://lisperator.net/uglifyjs/)
+
+## set up dev enviroment
 ```
-cd SkyZone
 ./UTL/precompile.js
+```
+
+## run dev server
+```
+./UTL/dev_run.sh
 ```
