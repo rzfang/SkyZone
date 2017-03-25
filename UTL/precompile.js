@@ -12,9 +12,7 @@ var fs = require('fs'),
 SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
 SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
 SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
-JsCompress([SrcPth + 'api.js'], RscPth + 'api.min.js');
-JsCompress([SrcPth + 'include.js'], RscPth + 'include.min.js');
-JsCompress([SrcPth + 'include.js', SrcPth + 'api.js'], RscPth + 'api2.min.js');
+JsCompress([SrcPth + 'include.js', SrcPth + 'api.js', SrcPth + 'RZ-Js-Is.js'], RscPth + 'api2.min.js');
 JsCompress([SrcPth + 'RZ-Js-RiotMixin.js'], RscPth + 'api3.min.js');
 
 return 0;

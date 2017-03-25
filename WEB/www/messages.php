@@ -229,7 +229,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
 
             if (!Ml || !Is.String(Ml) || Ml.length === 0)
             { Hnt += '尚未填寫 E-Mail。\n'; }
-            else if (!IsEMail(Ml))
+            else if (!Z.Is.EMail(Ml))
             { Hnt += 'E-Mail 不符合標準格式。\n'; }
 
             if (!Msg || !Is.String(Msg) || Msg.length === 0)

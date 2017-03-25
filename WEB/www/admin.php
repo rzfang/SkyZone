@@ -81,7 +81,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
     -->
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
-    <script type='text/javascript' src='resource/include.min.js'></script>
+    <script type='text/javascript' src='resource/api2.min.js'></script>
     <script type='text/javascript'>
     <!--
 <?php if (!$IsLgn){ ?>
@@ -683,7 +683,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
           { Hnt += "尚未填寫作者。\n"; }
           if (Ml.length === 0)
           { Hnt += "尚未填寫 E-Mail。\n"; }
-          else if (!IsEMail(Ml))
+          else if (!Z.Is.EMail(Ml))
           { Hnt += "E-Mail 格式不正確。\n";  }
           if (Dt.length === 0)
           { Hnt += "尚未填寫時間。\n"; }

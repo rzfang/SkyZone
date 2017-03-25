@@ -112,9 +112,6 @@ function ...($IA)
   reference this
     http://stackoverflow.com/questions/18835027/new-ogimage-size-for-facebook-share
 
-* 20160211
-  replace the function IsEMail with Is library.
-
 * 20141007
   自製 markdown parser (call z-markdown maybe)
   http://pages.tzengyuxio.me/pandoc/

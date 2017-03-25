@@ -871,7 +871,7 @@ function BlogCommentListFrame(Evt)
 
     if (SndData.Ml.length === 0)
     { ChkStr += "尚未填寫 E-Mail。\n"; }
-    else if (!IsEMail(SndData.Ml))
+    else if (!Z.Is.EMail(SndData.Ml))
     { ChkStr += "E-Mail 不符合標準格式。\n"; }
 
     if (SndData.Cmt.length === 0)
@@ -1196,7 +1196,7 @@ function MessageListFrame(Ttl)
 
     if (SndData.Ml.length === 0)
     { ChkStr += "尚未填寫 E-Mail。\n"; }
-    else if (!IsEMail(SndData.Ml))
+    else if (!Z.Is.EMail(SndData.Ml))
     { ChkStr += "E-Mail 不符合標準格式。\n"; }
 
     if (SndData.Msg.length === 0)

@@ -73,8 +73,7 @@ if (isset($_GET['Blog']) && IsUUID($_GET['Blog']))
     -->
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
-    <script type='text/javascript' src='resource/include.min.js'></script>
-    <script type='text/javascript' src='resource/api.min.js'></script>
+    <script type='text/javascript' src='resource/api2.min.js'></script>
     <script type='text/javascript'>
     <!--
       EmbedDeny();

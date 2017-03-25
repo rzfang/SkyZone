@@ -1,6 +1,5 @@
 <?
-  if (empty($VwData) || !is_array($VwData))
-  {
+  if (empty($VwData) || !is_array($VwData)) {
     $VwData =
       array(
         'Ttl'     => WEBSITE,
@@ -9,8 +8,7 @@
         'ImgURL'  => WEBSITE_URL . 'image/logo.jpg'
       );
   }
-  else
-  {
+  else {
     $VwData['Ttl'] = WEBSITE . (empty($VwData['Ttl']) || !is_string($VwData['Ttl']) ? '' : " - {$VwData['Ttl']}");
     $VwData['Smry'] =
       (empty($VwData['Smry']) || !is_string($VwData['Smry'])) ?

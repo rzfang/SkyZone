@@ -293,15 +293,6 @@ function IsTimeStamp (TmStr)
   return RECheck(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, TmStr);
 }
 
-/* test if a string is a E-Mail.
-  'Str' = String.
-  Return: true | false.
-  Need: RECheck(). */
-function IsEMail (Str)
-{
-  return RECheck(/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/, Str);
-}
-
 /* Check if 'Str' is matched with rule 'Ptm' of Regular Expression.
   'Ptm' = Pettam, can be a RegExp Object, or a String.
   'Str' = String for testing.
