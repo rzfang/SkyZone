@@ -1637,7 +1637,7 @@ function KeyboardCommand(Pg)
   function ToAdminCheck(Evt)
   {
     var KyBfr = Dcm.data('KyBfr') + Evt.keyCode.toString(16),
-        MpA = ['41444d494e', '525a', '55504c4f4144', '5632'], // ['admin', 'rz', 'upload', 'v2'].
+        MpA = ['41444d494e', '5632'], // ['admin', 'v2'].
         MpL = 0;
 
     for (var i in MpA)

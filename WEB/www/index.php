@@ -325,7 +325,7 @@ require '../global.php';
     <div id='Base'>
       <header id='Head'> <!-- Head -->
         <nav>
-          <a href='http://webtool.zii.tw'>線上程式工具</a>
+          <a href='http://webtool.zii.tw'>線上工具</a>
           <a href='zone.php'>空域</a>
           <!-- <a href='http://mrname.zii.tw'>單機程式工具</a> -->
           <!-- <a href='zakool.zii.php'>雜酷-舊物交流網</a> -->
