@@ -43,6 +43,7 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
         <script type='riot/tag' src='resource/bloglist.tag'></script>
         <script>
           riot.mixin('Z.RM', Z.RM);
+          riot.mount('icon-tags');
           riot.mount('bloglist', { TgIDA: <?= json_encode($PckTgs); ?> });
         </script>
       </footer>

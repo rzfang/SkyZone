@@ -41,7 +41,7 @@ if (empty($Blog))
         <div id='InfoBx'>
           <? PartView('tags', array('Tgs' => $Blog['TgA'])); ?>
           <div>
-            <i class='icon icon-calendar' title='發佈時間'></i>
+            <icon-calendar title='發佈時間'></icon-calendar>
             <?= $Blog['Dt']; ?>
           </div>
         </div>
@@ -51,7 +51,7 @@ if (empty($Blog))
             <pre><?= $Blog['Info']['Str']; ?></pre>
           </div>
         </div>
-        <? PartView('share', array('URL' => $Blog['URL'])); ?>
+        <share-box ecdurl='<?= urlencode($Blog['URL']); ?>'></share-box>
         <div id='ExtBx'>
           <a id='ToTop' href='javascript:void(0);'>回到頂端</a>
         </div>
@@ -59,13 +59,15 @@ if (empty($Blog))
       <footer id='Tail'>
         <? PartView('footer'); ?>
         <script type='text/javascript'>
-        <!--
+          riot.mount('icon-tags');
+          riot.mount('icon-calendar');
+          riot.mount('share-box');
+
           $(function ()
             {
               $('#ToTop').on('click', function (Evt) { window.scrollTo(0, 0); });
               $('#ImgBx').on('click', function (Evt) { $(this).children('pre').fadeToggle(300); });
             });
-        -->
         </script>
       </footer>
     </div>

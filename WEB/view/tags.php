@@ -22,7 +22,7 @@
   { return; }
 ?>
 <div id='TgBx'>
-  <i class='icon icon-tags' title='分類標籤'></i>
+  <icon-tags title='分類標籤'></icon-tags>
   <?
     if (empty($VwData['PckIDs']))
     {

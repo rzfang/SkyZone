@@ -46,7 +46,7 @@
 
 <blog>
   <div>
-    <i class='icon icon-{opts.info.Tp}'></i>
+    <i data-is='icon-{opts.info.Tp}'/>
     <a href='{opts.info.Tp}.php?b={opts.info.ID}'>{opts.info.Ttl}</a>
   </div>
   <pre>{opts.info.Smry}</pre>
@@ -56,7 +56,7 @@
   <div>{opts.info.Dt}</div>
   <style scoped>
     :scope { margin: 20px 0; line-height: 1.5; }
-    :scope>div:first-child>a { font-size: 1.3rem; }
+    :scope>div:first-child>a { font-size: 1.3rem; vertical-align: middle; }
     :scope>pre { white-space: pre-line; }
     :scope>pre~div { color: #808080; }
   </style>
