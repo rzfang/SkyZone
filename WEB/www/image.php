@@ -39,9 +39,9 @@ if (empty($Blog))
       <main id='Main'>
         <h1><?= $Blog['Ttl']; ?></h1>
         <div id='InfoBx'>
-          <? PartView('tags', array('Tgs' => $Blog['TgA'])); ?>
+          <tags></tags>
           <div>
-            <icon-calendar title='發佈時間'></icon-calendar>
+            <icon title='發佈時間' nm='calendar'></icon>
             <?= $Blog['Dt']; ?>
           </div>
         </div>
@@ -58,9 +58,11 @@ if (empty($Blog))
       </main>
       <footer id='Tail'>
         <? PartView('footer'); ?>
+        <script type='riot/tag' src='resource/tags.tag'></script>
+        <script type='riot/tag' src='resource/sharebox.tag'></script>
         <script type='text/javascript'>
-          riot.mount('icon-tags');
-          riot.mount('icon-calendar');
+          riot.mount('icon');
+          riot.mount('tags', { tgs: <?= json_encode($Blog['TgA']); ?> });
           riot.mount('share-box');
 
           $(function ()

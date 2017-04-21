@@ -9,7 +9,6 @@
 <div>
   <script language='javascript' src='https://cdn.jsdelivr.net/riot/3.4/riot+compiler.min.js'></script>
   <script type='riot/tag' src='resource/icon.tag'></script>
-  <script type='riot/tag' src='resource/sharebox.tag'></script>
   <script type='text/javascript' src='resource/jquery.min.js'></script>
   <script type='text/javascript' src='resource/api2.min.js'></script>
   <script>

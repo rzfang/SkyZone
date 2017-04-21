@@ -46,7 +46,7 @@
 
 <blog>
   <div>
-    <i data-is='icon-{opts.info.Tp}'/>
+    <icon nm={opts.info.Tp}/>
     <a href='{opts.info.Tp}.php?b={opts.info.ID}'>{opts.info.Ttl}</a>
   </div>
   <pre>{opts.info.Smry}</pre>
