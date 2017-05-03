@@ -107,11 +107,6 @@ function ...($IA)
 
 ==== To Do List ========================================================================================================
 
-* 20160229
-  Facebook share icon is gone.
-  reference this
-    http://stackoverflow.com/questions/18835027/new-ogimage-size-for-facebook-share
-
 * 20141007
   自製 markdown parser (call z-markdown maybe)
   http://pages.tzengyuxio.me/pandoc/

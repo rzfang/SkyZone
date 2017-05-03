@@ -82,6 +82,8 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
     <script type='text/javascript' src='resource/api2.min.js'></script>
+    <script language='javascript' src='https://cdn.jsdelivr.net/riot/3.4/riot+compiler.min.js'></script>
+    <script type='riot/tag' src='resource/admin.tag'></script>
     <script type='text/javascript'>
     <!--
 <?php if (!$IsLgn){ ?>
@@ -123,7 +125,10 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
           TabBox('#BlogTb', '#BlogTb > .Tb', 0, BlogTabSwitch);
           BlogUploadSet();
           FeedManageSet();
-          TagManageSet();
+
+          riot.mixin('Z.RM', Z.RM);
+          riot.mount('tags');
+
           GoodWordsMakeSet();
           ArtCornerMakeSet();
           CacheImageManageSet();
@@ -952,158 +957,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
         }
       }
 
-      function TagManageSet()
-      {
-        var TgLst = $('#TgLst');
-
-        if (TgLst.children().length > 0)
-        { return 0; }
-
-        $('#TgAddBtn').click(TagAdd);
-        ItemList(TgLst, 'service.php', -1, {'Cmd': 7}, OneTag, [], TagTemplateSet);
-
-        TgLst.on('click', '> .OneTg > input:button:nth-child(3)', TagRename)
-             .on('click', '> .OneTg > input:button:last-child', TagDel);
-
-        return 0;
-
-        function TagAdd(Evt)
-        {
-          var This = $(Evt.currentTarget),
-              Nm = Trim(This.prev().val());
-
-          if (Nm.length === 0)
-          {
-            alert('尚未填寫標籤名字。');
-
-            return 0;
-          }
-
-          var IsOK = true;
-
-          TgLst.find('> .OneTg > span:nth-child(2)').each(function(Idx)
-            {
-              if ($(this).text() === Nm)
-              {
-                IsOK = false;
-
-                return 0;
-              }
-            });
-
-          if (!IsOK)
-          {
-            alert('這個標籤名稱已經在使用了。');
-
-            return 0;
-          }
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 113, 'Nm': Nm},
-              'success': function(Rtn, TxtSt, JQXHR)
-                {
-                  if (Rtn.Index < 0)
-                  { alert(Rtn.Message); }
-                  else
-                  { $('#TgLst').get(0).PageGet(); }
-                }
-            });
-        }
-
-        function TagRename(Evt)
-        {
-          var This = $(this),
-              ID = This.prevAll('span:last').text(),
-              Nm = Trim(This.prevAll('input:text:first').val());
-
-          if (ID.length < 32)
-          {
-            alert('請勿用前端開發工具亂改 ID。');
-
-            return -1;
-          }
-
-          if (Nm.length === 0)
-          {
-            alert('名稱不能為空白。');
-
-            return -2;
-          }
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 118, 'ID': ID, 'Nm': Nm},
-              'success': function(Rtn, TxtSt, JQXHR)
-                {
-                  alert(Rtn.Message);
-
-                  if (Rtn.Index == 0)
-                  { $('#TgLst').get(0).PageGet(); }
-                }
-            });
-        }
-
-        function TagDel(Evt)
-        {
-          var ID = $(this).prevAll('span:last').text();
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 114, 'ID': ID},
-              'success': function(Rtn, TxtSt, JQXHR)
-                {
-                  alert(Rtn.Message);
-
-                  if (Rtn.Index == 0)
-                  { $('#TgLst').get(0).PageGet(); }
-                }
-            });
-        }
-
-        function OneTag(Data)
-        {
-          var One = $('#OneTg').clone().removeAttr('id');
-
-          One.children().first().text(Data.ID)
-                                .end()
-                        .filter('input:text:first').val(Data.Nm);
-
-          return One;
-        }
-
-        function TagTemplateSet(Cnt, Data)
-        {
-          var TgChkBx = $('#TgChkBx').empty(),
-              TgChkTlt = $('<label><input type="checkbox"/><span/></label>');
-
-          for (var i in Data)
-          {
-            TgChkTlt.clone().appendTo(TgChkBx)
-                            .children('input:checkbox').val(Data[i].ID)
-                                                       .end()
-                            .children('span').text(Data[i].Nm);
-          }
-
-          var BlogLstBx = $('#BlogLstBx');
-
-          if (BlogLstBx.children('.OneBlog').length > 0)
-          { BlogLstBx.get(0).PageGet(); }
-        }
-      }
-
       function ErrorHintSwitch()
       {
         var Bx = $('#ErrHntCtrlBx'),
@@ -1350,13 +1203,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
             </div>
             <div id='BlogLstBx' class='Tb' data-tab-name='網誌列表'></div>
             <div class='Tb' data-tab-name='標籤管理'>
-              <div>
-                <input type='text' maxlength='16' placeholder='在此輸入新的標籤名稱。'/>
-                <input type='button' id='TgAddBtn' value='增加新的標籤'/>
-              </div><br/>
-              <div><span class='Block' style='width: 350px; text-align: center;'>ID</span>名稱</div>
-              <div id='TgLst'>
-              </div>
+              <tags></tags>
             </div>
             <div id='AbmCtnEdtBx' class='Tb' data-tab-name='相簿型網誌內容編輯器'>
               <div style='text-align: center;'>

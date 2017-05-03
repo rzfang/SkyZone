@@ -1,35 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title></title>
-    <meta http-equiv='content-type' content='text/html; charset=utf-8'/>
-    <meta name='description' content=''/>
-    <meta name='keywords' content=''/>
-    <meta name='author' content=''/>
-    <style type='text/css'>
-    <!--
-      body { margin: 0; padding: 0; }
-      .Tbl { display: table; width: 100%; }
-      .Tbl > div { display: table-cell; width: 50%; }
-      .Tbl > div > textarea { width: 99%; }
-    -->
-    </style>
-    <script type='text/javascript' src='resource/jquery.min.js'></script>
-    <script type='text/javascript' src='resource/api2.min.js'></script>
-    <script type='text/javascript'>
-    <!--
-      $(function () {
-        $('div.Tbl input:button').on('click', InputParse);
-
-        return;
-
-        function InputParse (Evt) {
-          var This = $(this);
-
-          $('#Rst').html(Z.ZFT($(this).prev().val()));
-        }
-      });
-
 (function Z_ZFT () {
   var Trim = function (Str) {
     return Str.replace(/^\s+|\s+$/g, '');
@@ -130,22 +98,3 @@
     else { window.Z.ZFT = ZFT; }
   }
 })();
-
-    -->
-    </script>
-  </head>
-  <body>
-    <div class='Tbl'>
-      <div>
-        <h1>input</h1>
-        <textarea></textarea>
-        <input type='button' value='parse'/>
-      </div>
-      <div>
-        <h1>output</h1>
-        <pre id='Rst'></pre>
-      </div>
-    </div>
-  </body>
-</html>
-<!--=================================================================================================================-->

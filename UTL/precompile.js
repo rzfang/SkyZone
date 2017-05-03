@@ -13,11 +13,11 @@ SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
 SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
 SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
 JsCompress(
-  [
-    SrcPth + 'include.js',
+  [ SrcPth + 'include.js',
     SrcPth + 'api.js',
     SrcPth + 'RZ-Js-Is.js',
-    SrcPth + 'RZ-Js-RiotMixin.js' ],
+    SrcPth + 'RZ-Js-RiotMixin.js',
+    SrcPth + 'RZ-Js-ZFT.js' ],
   RscPth + 'api2.min.js');
 
 return 0;

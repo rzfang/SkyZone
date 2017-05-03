@@ -305,13 +305,14 @@ class Tag
     if (empty($IA['Nm']) || !is_string($IA['Nm']))
       return ReturnPack(-2, $Kw['RM']['StrangeValue'], -2);
 
+    $ID = UUID(true);
     $SQL = 'INSERT INTO Tag (id, name) VALUES (?, ?);';
-    $Rsc = Db::QryPrm($SQL, array(UUID(true), $IA['Nm']));
+    $Rsc = Db::QryPrm($SQL, array($ID, $IA['Nm']));
 
     if (empty($Rsc))
       return ReturnPack(-3, $Kw['RM']['DbCrash'], -3);
 
-    return ReturnPack(0, $Kw['RM']['Done'], 0);
+    return ReturnPack(0, $Kw['RM']['Done'], $ID);
   }
 
   /* delete a tag.

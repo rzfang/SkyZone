@@ -30,7 +30,7 @@
 
   if (typeof module !== 'undefined') { module.exports = Is; }
   else if (typeof window !== 'undefined') {
-    if (!window.Z || typeof window.Z !== 'object') { window.Z = {Is: Is}; }
+    if (!window.Z || typeof window.Z !== 'object') { window.Z = { Is: Is }; }
     else { window.Z.Is = Is; }
   }
 })();
