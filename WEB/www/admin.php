@@ -128,6 +128,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
 
           riot.mixin('Z.RM', Z.RM);
           riot.mount('tags');
+          riot.mount('blogs');
 
           GoodWordsMakeSet();
           ArtCornerMakeSet();
@@ -172,7 +173,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
       function BlogTabSwitch(OO, NO)
       {
         var Idx = NO.index(),
-            TbBx = $('#BlogTb > .Tb:eq(' + Idx + ')');
+            TbBx = $('#BlogTb > .Tb:eq(' + Idx + ') > div:first-child');
 
         if (Idx == 2)
         { BlogList(TbBx); }
@@ -1201,7 +1202,10 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
               最後一次發佈消是在： <span><?= $FdLstDt; ?></span><br/>
               <input type='button' id='FdUpdBtn' value='更新網誌消息'/>
             </div>
-            <div id='BlogLstBx' class='Tb' data-tab-name='網誌列表'></div>
+            <div id='BlogLstBx' class='Tb' data-tab-name='網誌列表'>
+              <div></div>
+              <blogs></blogs>
+            </div>
             <div class='Tb' data-tab-name='標籤管理'>
               <tags></tags>
             </div>

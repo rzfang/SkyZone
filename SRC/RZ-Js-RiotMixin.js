@@ -1,5 +1,8 @@
 (function Z_RiotMixin_API () {
-  var RM; // 'RM' = RiotMixin.
+  var Srvc = { // service.
+        Rprt: {} // report.
+      },
+      RM; // 'RM' = RiotMixin.
 
   /* make a AJAX request.
     @ AJAX Info object, key-value pairs.
@@ -111,14 +114,44 @@
     return true;
   }
 
+  function Trim (Str) {
+    if (typeof Str !== 'string') { return ''; }
+
+    return Str.replace(/^\s+|\s+$/g, '');
+  }
+
+  /*
+    Tsk = task, a string of task name.
+    Thn() = then, a function when the task done. */
+  function ServiceListen (Tsk, Thn) {
+    var Clbcks = Srvc.Rprt[Tsk] || null;
+
+    if (!Clbcks || !Array.isArray(Clbcks)) {
+      Srvc.Rprt[Tsk] = [];
+      Clbcks = Srvc.Rprt[Tsk];
+    }
+
+    Srvc.Rprt[Tsk].push(Thn);
+  }
+
+  function ServiceUpdate (Tsk, Data) {
+    var Tsk = Srvc.Rprt[Tsk] || [],
+        Lnth = Tsk && Array.isArray(Tsk) && Tsk.length || 0;
+
+    for (var i = 0; i < Lnth; i++) { Tsk[i](Data); }
+  }
+
   RM = {
     OnBrowser: OnBrowser,
-    OnNode: OnNode
+    OnNode: OnNode,
+    Trim: Trim
   };
 
   if (typeof module !== 'undefined') { module.exports = RM; }
   else if (typeof window !== 'undefined') {
     RM.AJAX = AJAX;
+    RM.ServiceListen = ServiceListen;
+    RM.ServiceUpdate = ServiceUpdate;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }
     else { window.Z.RM = RM; }
