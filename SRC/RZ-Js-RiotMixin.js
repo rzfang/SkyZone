@@ -141,6 +141,26 @@
     for (var i = 0; i < Lnth; i++) { Tsk[i](Data); }
   }
 
+  /*
+    Tsk = task, a string of task name.
+    Data = data object passed to service.
+    ExtInfo = extend info object passed to task chain. */
+  function ServiceAsk (Tsk, Data, ExtInfo) {
+    AJAX({
+      URL: 'service.php',
+      Mthd: 'POST',
+      Data: Data,
+      Err: function (Sts) { console.log('BG'); },
+      OK: function (RspnsTxt, Sts) {
+        var Rst = JSON.parse(RspnsTxt),
+            Tsks = Srvc.Rprt[Tsk] || [],
+            Lnth = Tsks && Array.isArray(Tsks) && Tsks.length || 0;
+
+        for (var i = 0; i < Lnth; i++) { Tsks[i](Rst, Data, ExtInfo); }
+      }
+    });
+  }
+
   RM = {
     OnBrowser: OnBrowser,
     OnNode: OnNode,
@@ -152,6 +172,7 @@
     RM.AJAX = AJAX;
     RM.ServiceListen = ServiceListen;
     RM.ServiceUpdate = ServiceUpdate;
+    RM.ServiceAsk = ServiceAsk;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }
     else { window.Z.RM = RM; }

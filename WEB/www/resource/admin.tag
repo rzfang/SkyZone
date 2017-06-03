@@ -239,7 +239,7 @@
             <td>標籤</td>
             <td colspan="4">
               <label each={parent.Tgs}>
-                <input type="checkbox" value={ID} checked={TagCheck(ID, Itm.Tg)} />
+                <input type="checkbox" value={ID} checked={TagCheck(ID, Itm.Tg)}/>
                 {Nm}
               </label>
             </td>
@@ -247,20 +247,19 @@
         </tbody>
       </table>
       <div if={Itm.ShwCmt}>
-        <blog-comments blog-id={Itm.ID}/>
+        <blog-comments blg-id={Itm.ID} cmts={Itm.Cmts} remove={CommentRemove}/>
       </div>
     </li>
   </ul>
   <list-index cnt={Cnt} pg={Pg} lmt={Lmt} pageturn={PageTurn}/>
   <style scoped>
-    :scope ul { margin: 0; padding: 0; }
-    :scope li { list-style-type: none; margin: 0; padding: 10px 0; border-bottom: 1px solid #c0c0c0; }
-    :scope li:last-child { border-width: 0; };
-    :scope li:hover { background-color: #c0e0ff; }
+    :scope>ul { margin: 0; padding: 0; }
+    :scope>ul>li { list-style-type: none; margin: 0; padding: 10px 0; border-bottom: 1px solid #c0c0c0; }
+    :scope>ul>li:last-child { border-width: 0; }
     :scope tr:last-child label { display: inline-block; margin-right: 20px; }
     :scope td { vertical-align: top; }
-    :scope td:nth-child(2) { min-width: 290px; };
-    :scope td:nth-child(6)>button { display: block; };
+    :scope td:nth-child(2) { min-width: 290px; }
+    :scope td:nth-child(6)>button { display: block; }
   </style>
   <script>
     this.Blgs = [];
@@ -292,6 +291,66 @@
 
     this.ServiceListen('TAGS', (Rst) => {
       this.update({ Tgs: Rst });
+    });
+
+    this.ServiceListen('COMMENTS', (Rst, Prms) => {
+      let Blg;
+
+      if (Rst.Index < 0) { return alert(Rst.Message); }
+
+      for (let i = 0; i < this.Blgs.length; i++) {
+        if (Prms.ID === this.Blgs[i].ID) {
+          Blg = this.Blgs[i];
+
+          break;
+        }
+      }
+
+      if (!Blg) { return; }
+
+      if (!Blg.Cmts) { Blg.Cmts = []; }
+
+      Blg.ShwCmt = true;
+      Blg.Cmts = Rst.Extend;
+
+      this.update();
+    });
+
+    this.ServiceListen('COMMENT_REMOVE', (Rst, Prms, ExtInfo) => {
+      let Blg;
+
+      if (Rst.Index < 0) {
+        alert(Rst.Message);
+
+        return -1;
+      }
+
+      if (!ExtInfo || !ExtInfo.BlgId || !ExtInfo.CmtId) {
+        alert('出錯了。');
+
+        return -2;
+      }
+
+      for (let i = 0; i < this.Blgs.length; i++) {
+        if (this.Blgs[i].ID === ExtInfo.BlgId) {
+          Blg = this.Blgs[i];
+
+          break;
+        }
+      }
+
+      if (!Blg) { return 1; }
+
+      for (let i = 0; i < Blg.Cmts.length; i++) {
+        if (Blg.Cmts[i].ID === ExtInfo.CmtId) {
+          Blg.Cmts.splice(i, 1);
+          Blg.CmtCnt = Blg.Cmts.length;
+
+          break;
+        }
+      }
+
+      this.update();
     });
 
     TagCheck (ID, Tgs) {
@@ -456,18 +515,51 @@
     CommentsToggle (Evt) {
       let Blg = this.Blgs[Evt.target.value];
 
-      Blg.ShwCmt = true;
+      if (Blg.ShwCmt) {
+        Blg.ShwCmt = false;
 
-      this.update();
+        return;
+      }
+
+      if (Blg.Cmts) {
+        Blg.ShwCmt = true;
+
+        this.update();
+
+        return;
+      }
+
+      this.ServiceAsk('COMMENTS', { Cmd: 8, ID: Blg.ID });
+    }
+
+    CommentRemove (BlgId, CmtId) {
+      this.ServiceAsk('COMMENT_REMOVE', { Cmd: 109, ID: CmtId }, { BlgId, CmtId });
     }
   </script>
 </blogs>
 
 <blog-comments>
-  <div>GJ</div>
+  <ul>
+    <li each={opts.cmts} id={ID}>
+      <div>
+        {Nm}<br/>
+        {Dt}
+      </div>
+      <pre>{Cmt}</pre>
+      <div>
+        <button onclick={Remove}>刪除</button>
+      </div>
+    </li>
+  </ul>
+  <style scoped>
+    :scope>ul { padding-left: 20px; }
+    :scope>ul>li { display: flex; margin: 5px; border-top: 1px solid #c0c0c0; padding: 5px; }
+    :scope>ul>li>div:first-child { flex: 0 0 200px; }
+    :scope>ul>li>pre { flex: 1 0 0; margin: 0; }
+  </style>
   <script>
-    this.on('update', () => {
-      console.log('haha');
-    });
+    Remove (Evt) {
+      Evt.item.ID && this.opts.remove && this.opts.remove(this.opts.blgId, Evt.item.ID);
+    }
   </script>
 </blog-comments>
