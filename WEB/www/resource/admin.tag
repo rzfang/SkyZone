@@ -264,7 +264,7 @@
   <script>
     this.Blgs = [];
     this.Tgs = [];
-    this.Lmt = 7;
+    this.Lmt = 5;
     this.Cnt = 0;
     this.Pg = 1;
 
