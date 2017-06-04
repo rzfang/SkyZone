@@ -1,6 +1,7 @@
 (function Z_RiotMixin_API () {
   var Srvc = { // service.
-        Rprt: {} // report.
+        Rprt: {}, // report.
+        Sto: {} // data store.
       },
       RM; // 'RM' = RiotMixin.
 
@@ -134,31 +135,31 @@
     Srvc.Rprt[Tsk].push(Thn);
   }
 
-  function ServiceUpdate (Tsk, Data) {
-    var Tsk = Srvc.Rprt[Tsk] || [],
-        Lnth = Tsk && Array.isArray(Tsk) && Tsk.length || 0;
-
-    for (var i = 0; i < Lnth; i++) { Tsk[i](Data); }
-  }
-
   /*
-    Tsk = task, a string of task name.
-    Data = data object passed to service.
-    ExtInfo = extend info object passed to task chain. */
-  function ServiceAsk (Tsk, Data, ExtInfo) {
+    Prms = params object to call service.
+    StoNm = name to locate the store.
+    NewStoreGet = the function to get new store, this must return something to replace original store.
+    PrmsToTsk = params object passing to each task. */
+  function ServiceCall (Prms, StoNm, NewStoreGet, PrmsToTsk) {
+    if (!StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
+
     AJAX({
       URL: 'service.php',
       Mthd: 'POST',
-      Data: Data,
+      Data: Prms,
       Err: function (Sts) { console.log('BG'); },
       OK: function (RspnsTxt, Sts) {
         var Rst = JSON.parse(RspnsTxt),
-            Tsks = Srvc.Rprt[Tsk] || [],
+            Tsks = Srvc.Rprt[StoNm] || [],
             Lnth = Tsks && Array.isArray(Tsks) && Tsks.length || 0;
 
-        for (var i = 0; i < Lnth; i++) { Tsks[i](Rst, Data, ExtInfo); }
+        Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], Rst);
+
+        for (var i = 0; i < Lnth; i++) { Tsks[i](Srvc.Sto[StoNm], PrmsToTsk); }
       }
     });
+
+    return 0;
   }
 
   RM = {
@@ -171,8 +172,7 @@
   else if (typeof window !== 'undefined') {
     RM.AJAX = AJAX;
     RM.ServiceListen = ServiceListen;
-    RM.ServiceUpdate = ServiceUpdate;
-    RM.ServiceAsk = ServiceAsk;
+    RM.ServiceCall = ServiceCall;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }
     else { window.Z.RM = RM; }

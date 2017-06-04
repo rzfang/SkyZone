@@ -89,20 +89,22 @@
     this.mixin('Z.RM');
 
     this.on('mount', () => {
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 7 },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
+      this.ServiceCall(
+        { Cmd: 7 },
+        'TAGS',
+        (Sto, Rst) => {
+          if (Rst.Index < 0) {
+            alert(Rst.Message);
 
-          if (Rst.Index < 0) { return alert(Rst.Message); }
+            return Sto;
+          }
 
-          this.update({ Tgs: Rst.Extend });
-          this.ServiceUpdate('TAGS', Rst.Extend);
-        }
-      });
+          return Rst.Extend;
+        });
+    });
+
+    this.ServiceListen('TAGS', (Sto) => {
+      this.update({ Tgs: Sto });
     });
 
     TagAdd (Evt) {
@@ -122,23 +124,16 @@
         }
       }
 
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 113, Nm },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
-
+      this.ServiceCall(
+        { Cmd: 113, Nm },
+        'TAGS',
+        (Sto, Rst) => {
           alert(Rst.Message);
 
-          if (Rst.Index > -1) {
-            this.Tgs.push({ ID: Rst.Extend, Nm });
-            this.update();
-            this.ServiceUpdate('TAGS', this.Tgs);
-          }
-        }
-      });
+          if (Rst.Index > -1) { Sto.push({ ID: Rst.Extend, Nm }); }
+
+          return Sto;
+        });
     }
 
     TagRename (Evt) {
@@ -151,45 +146,45 @@
         return -1;
       }
 
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 118, ID, Nm },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
-
+      this.ServiceCall(
+        { Cmd: 118, ID, Nm },
+        'TAGS',
+        (Sto, Rst) => {
           alert(Rst.Message);
 
-          for (var i = 0; i < this.Tgs.length; i++) {
-            if (this.Tgs[i].ID === ID) {
-              this.Tgs[i].Nm = Nm;
+          if (Rst.Index > -1) {
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === ID) {
+                Sto[i].Nm = Nm;
 
-              break;
+                break;
+              }
             }
           }
 
-          this.ServiceUpdate('TAGS', this.Tgs);
-        }
-      });
+          return Sto;
+        });
     }
 
     TagDelete (Evt) {
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 114, ID: Evt.item.ID },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
-
+      this.ServiceCall(
+        { Cmd: 114, ID: Evt.item.ID },
+        'TAGS',
+        (Sto, Rst) => {
           alert(Rst.Message);
 
-          this.Tgs.splice(this.Tgs.indexOf(Evt.item), 1);
-          this.update();
-          this.ServiceUpdate('TAGS', this.Tgs);
-        }
-      });
+          if (Rst.Index > -1) {
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === Evt.item.ID) {
+                Sto.splice(i, 1);
+
+                break;
+              }
+            }
+          }
+
+          return Sto;
+        });
     }
   </script>
 </tags>
@@ -289,65 +284,29 @@
           }});
       });
 
-    this.ServiceListen('TAGS', (Rst) => {
-      this.update({ Tgs: Rst });
+    this.ServiceListen('TAGS', (Sto) => {
+      this.update({ Tgs: Sto });
     });
 
-    this.ServiceListen('COMMENTS', (Rst, Prms) => {
+    this.ServiceListen('BLOG_COMMENTS', (Sto, TskPrms) => {
       let Blg;
 
-      if (Rst.Index < 0) { return alert(Rst.Message); }
+      if (!TskPrms.BlgId) { return -1; }
 
       for (let i = 0; i < this.Blgs.length; i++) {
-        if (Prms.ID === this.Blgs[i].ID) {
+        if (TskPrms.BlgId && this.Blgs[i].ID === TskPrms.BlgId) {
           Blg = this.Blgs[i];
 
           break;
         }
       }
 
-      if (!Blg) { return; }
+      if (!Blg) { return -2; }
 
-      if (!Blg.Cmts) { Blg.Cmts = []; }
-
-      Blg.ShwCmt = true;
-      Blg.Cmts = Rst.Extend;
-
-      this.update();
-    });
-
-    this.ServiceListen('COMMENT_REMOVE', (Rst, Prms, ExtInfo) => {
-      let Blg;
-
-      if (Rst.Index < 0) {
-        alert(Rst.Message);
-
-        return -1;
-      }
-
-      if (!ExtInfo || !ExtInfo.BlgId || !ExtInfo.CmtId) {
-        alert('出錯了。');
-
-        return -2;
-      }
-
-      for (let i = 0; i < this.Blgs.length; i++) {
-        if (this.Blgs[i].ID === ExtInfo.BlgId) {
-          Blg = this.Blgs[i];
-
-          break;
-        }
-      }
-
-      if (!Blg) { return 1; }
-
-      for (let i = 0; i < Blg.Cmts.length; i++) {
-        if (Blg.Cmts[i].ID === ExtInfo.CmtId) {
-          Blg.Cmts.splice(i, 1);
-          Blg.CmtCnt = Blg.Cmts.length;
-
-          break;
-        }
+      if (Sto[Blg.ID]) {
+        Blg.ShwCmt = true;
+        Blg.Cmts = Sto[Blg.ID];
+        Blg.CmtCnt = Blg.Cmts.length;
       }
 
       this.update();
@@ -529,11 +488,41 @@
         return;
       }
 
-      this.ServiceAsk('COMMENTS', { Cmd: 8, ID: Blg.ID });
+      this.ServiceCall(
+        { Cmd: 8, ID: Blg.ID },
+        'BLOG_COMMENTS',
+        (Sto, Rst) => {
+          if (!Sto) { Sto = {}; }
+
+          if (Rst.Index > -1) { Sto[Blg.ID] = Rst.Extend; }
+
+          return Sto;
+        },
+        { BlgId: Blg.ID });
     }
 
     CommentRemove (BlgId, CmtId) {
-      this.ServiceAsk('COMMENT_REMOVE', { Cmd: 109, ID: CmtId }, { BlgId, CmtId });
+      this.ServiceCall(
+        { Cmd: 109, ID: CmtId },
+        'BLOG_COMMENTS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
+
+          if (Rst.Index > -1 && Sto[BlgId] && Sto[BlgId].length) {
+            let Cmts = Sto[BlgId];
+
+            for (let i = 0; i < Cmts.length; i++) {
+              if (Cmts[i].ID === CmtId) {
+                Cmts.splice(i, 1);
+
+                break;
+              }
+            }
+          }
+
+          return Sto;
+        },
+        { BlgId: BlgId });
     }
   </script>
 </blogs>
