@@ -288,6 +288,10 @@
       this.update({ Tgs: Sto });
     });
 
+    this.ServiceListen('BLOGS', (Sto, TskPrms) => {
+      this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
+    });
+
     this.ServiceListen('BLOG_COMMENTS', (Sto, TskPrms) => {
       let Blg;
 
@@ -323,18 +327,15 @@
     }
 
     PageTurn (Evt, Pg) {
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 103, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
+      this.ServiceCall(
+        { Cmd: 103, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        'BLOGS',
+        (Sto, Rst) => {
+          if (Rst.Index > -1) { Sto = Rst.Extend; }
 
-          if (Rst.Index < 0) { return alert(Rst.Message); }
-
-          this.update({ Blgs: Rst.Extend, Pg: Pg });
-        }});
+          return Sto;
+        },
+        { Pg: Pg });
     }
 
     Update (Evt) {
@@ -367,16 +368,34 @@
 
       Data.Cmd = 105;
 
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: Data,
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
+      this.ServiceCall(
+        Data,
+        'BLOGS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
 
-          if (Rst.Index < 0) { return alert(Rst.Message); }
-        }});
+          if (Rst.Index > -1) {
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === Data.ID) {
+                Sto[i].Tp = Data.Tp;
+                Sto[i].Ttl = Data.Ttl;
+                Sto[i].Dt = Data.Dt;
+                Sto[i].Pswd = Data.Pswd;
+                Sto[i].Smry = Data.Smry;
+
+                Sto[i].Tg = this.Tgs.filter((Tg) => {
+                  for (let j = 0; j < Data.TgIDA.length; j++) {
+                    if (Tg.ID === Data.TgIDA[j]) { return true; }
+                  }
+
+                  return false;
+                });
+              }
+            }
+          }
+
+          return Sto;
+        });
     }
 
     Create (Evt) {
@@ -393,7 +412,7 @@
             TgIDA: [] },
           ChkStr = '';
 
-      for (var i = 0; i < ChkBxNds.length; i++) {
+      for (let i = 0; i < ChkBxNds.length; i++) {
         Data.TgIDA.push(ChkBxNds[i].value);
       }
 
@@ -411,36 +430,37 @@
 
       Data.Cmd = 104;
 
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: Data,
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt),
-              Blg = this.Blgs[Evt.target.value];
+      this.ServiceCall(
+        Data,
+        'BLOGS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
 
-          if (Rst.Index < 0) { return alert(Rst.Message); }
+          if (Rst.Index > -1) {
+            for(let i = 0; i < Sto.length; i++) {
+              if (Sto[i].Fl === Data.Fl) {
+                Sto[i].ID = Rst.Extend;
+                Sto[i].Tp = Data.Tp;
+                Sto[i].Ttl = Data.Ttl;
+                Sto[i].Dt = Data.Dt;
+                Sto[i].Pswd = Data.Pswd;
+                Sto[i].Smry = Data.Smry;
 
-          Blg.ID = Rst.Extend;
-          Blg.Ttl = Data.Ttl;
-          Blg.Dt = Data.Dt;
-          Blg.Pswd = Data.Pswd;
-          Blg.Tp = Data.Tp;
-          Blg.Smry = Data.Smry;
+                Sto[i].Tg = this.Tgs.filter((Tg) => {
+                  for (let j = 0; j < Data.TgIDA.length; j++) {
+                    if (Tg.ID === Data.TgIDA[j]) { return true; }
+                  }
 
-          for (var i = 0; i < Data.TgIDA.length; i++) {
-            for (var j = 0; j < this.Tgs.length; j++) {
-              if (Data.TgIDA[i] === this.Tgs[j].ID) {
-                Blg.Tg.push(this.Tgs[j]);
+                  return false;
+                });
 
                 break;
               }
             }
           }
 
-          this.update();
-        }});
+          return Sto;
+        });
     }
 
     Delete (Evt) {
@@ -448,27 +468,28 @@
 
       if (Blg.ID.length < 13) { return alert('找不到正確的 Blog ID。'); }
 
-      this.AJAX({
-        URL: 'service.php',
-        Mthd: 'POST',
-        Data: { Cmd: 110, ID: Blg.ID },
-        Err: (Sts) => { alert('BG'); },
-        OK: (RspnsTxt, Sts) => {
-          let Rst = JSON.parse(RspnsTxt);
+      this.ServiceCall(
+        { Cmd: 110, ID: Blg.ID },
+        'BLOGS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
 
-          if (Rst.Index < 0) { return alert(Rst.Message); }
+          if (Rst.Index > -1) {
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === Blg.ID) {
+                Sto[i].ID = '';
+                Sto[i].Ttl = '';
+                Sto[i].Tp = '';
+                Sto[i].Dt = '';
+                Sto[i].Pswd = '';
+                Sto[i].Smry = '';
+                Sto[i].Tg = [];
+              }
+            }
+          }
 
-          Blg.ID = '';
-          Blg.Ttl = '';
-          Blg.Tp = '';
-          Blg.Dt = '';
-          Blg.Pswd = '';
-          Blg.Smry = '';
-          Blg.CmtCnt = 0;
-          Blg.Tg = [];
-
-          this.update();
-        }});
+          return Sto;
+        });
     }
 
     CommentsToggle (Evt) {
