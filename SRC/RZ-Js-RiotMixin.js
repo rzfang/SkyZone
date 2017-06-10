@@ -53,6 +53,7 @@
       for (var i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.File[Kys[i]]); }
     }
 
+    XHR.timeout = 3000;
     XHR.onreadystatechange = StateChange;
     XHR.upload.onprogress =  function (Evt) { Info.Pgs(Evt.loaded, Evt.total, Evt); };
 

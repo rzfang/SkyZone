@@ -47,22 +47,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
       .LstIdxTgDsb { display: inline-block; min-width: 20px; margin: 0px 2px; border: 1px solid; text-align: center;
                      color: #808080; background-color: #c0c0c0; }
 
-      .OneBlog { margin: 5px 0px; }
-      .OneBlog > table { display: inline-block; vertical-align: top; }
-      .OneBlog > textarea { width: 250px; height: 85px; vertical-align: top; }
-
-      .OneCmt { margin: 5px 0px 0px 20px; padding: 5px; }
-      .OneCmt > * { vertical-align: top; }
-      .OneCmt > pre { display: inline-block; width: 400px; min-height: 50px; margin: 0px; padding: 5px;
-                      border-width: 1px; border-radius: 5px; }
-
-      .OneMsg { margin: 8px 0px; }
-      .OneMsg td:nth-child(odd) { border-right-width: 1px; }
-
-      .OneBlog:hover,
-      .OneCmt:hover,
-      .OneMsg:hover,
-      .OneTg:hover,
       .OneWds:hover
         { background-color: #c0e0ff; }
 
@@ -82,7 +66,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
     </style>
     <script type='text/javascript' src='resource/jquery.min.js'></script>
     <script type='text/javascript' src='resource/api2.min.js'></script>
-    <script language='javascript' src='https://cdn.jsdelivr.net/riot/3.4/riot+compiler.min.js'></script>
+    <script language='javascript' src='https://cdn.jsdelivr.net/npm/riot@3.6/riot+compiler.min.js'></script>
     <script type='riot/tag' src='resource/admin.tag'></script>
     <script type='text/javascript'>
     <!--
@@ -122,13 +106,13 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
       $(function()
         {
           TabBox('#TbBx', '#TbBx > .Tb', 0, DataTabSwitch); // main tab switch.
-          TabBox('#BlogTb', '#BlogTb > .Tb', 0);
+          TabBox('#BlogTb', '#BlogTb > .Tb', 0, BlogTabSwitch);
           BlogUploadSet();
           FeedManageSet();
 
+          riot.settings.autoUpdate = false;
+
           riot.mixin('Z.RM', Z.RM);
-          riot.mount('tags');
-          riot.mount('blogs');
 
           GoodWordsMakeSet();
           ArtCornerMakeSet();
@@ -161,7 +145,8 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
         switch (NO.index())
         {
           case 1:
-            MessageList($('#MsgTb'));
+            if ($('#MsgTb>messages>*').length === 0) { riot.mount('messages'); }
+
             break;
 
           case 2:
@@ -170,57 +155,20 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
         }
       }
 
-      function MessageList(JO)
-      {
-        if (JO.children().length === 0)
-        { ItemList(JO, 'service.php', 8, {'Cmd': 106}, OneMsg, ['GJ']); }
+      function BlogTabSwitch (OO, NO) {
+        switch (NO.index()) {
+          case 1:
+            break;
 
-        return 0;
+          case 2:
+            if ($('#BlogTb blogs>*').length === 0) { riot.mount('blogs'); }
 
-        function OneMsg(Data)
-        {
-          var One = $('#OneMsg').clone().removeAttr('id');
+            break;
 
-          One.find('> span td:odd').first().text(Data.ID)
-                                           .end()
-                                   .eq(1).text(Data.Dt)
-                                         .end()
-                                   .eq(2).text(Data.Tgt)
-                                         .end()
-                                   .end()
-             .children('textarea').val(Data.Msg)
-                                  .end()
-             .children('input:button:first').click(OneMessageDelete);
+          case 3:
+            if ($('#BlogTb tags>*').length === 0) { riot.mount('tags'); }
 
-          if (Data.Tgt === null || Data.Tgt.length === 0)
-          {
-            One.append('<span/>')
-               .children('span:last').css('verticalAlign', 'top')
-                                     .text('(刪除整個留言串)');
-          }
-
-          return One;
-        }
-
-        function OneMessageDelete(Evt)
-        {
-          var This = $(Evt.currentTarget),
-              ID = This.siblings('span:first').find('td:eq(1)').text();
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 107, 'ID': ID},
-              'success': function(Rtn, TxtSt, JQXHR)
-                {
-                  JO.get(0).PageGet();
-
-                  alert(Rtn.Message);
-                }
-            });
+            break;
         }
       }
 
@@ -749,62 +697,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
   </head>
   <body>
     <div id='Template'> <!-- Template -->
-      <div id='OneBlog' class='OneBlog'>
-        <table>
-          <tr><td>檔名</td><td><input type='text' readonly='true' style='width: 330px;'/></td></tr>
-          <tr><td>ID</td><td style='display: inline-block; width: 330px; height: 19px; padding: 3px; border-width: 1px; border-radius: 4px;'></td></tr>
-          <tr>
-            <td>類型</td>
-            <td>
-              <select>
-                <option value='text'>text</option>
-                <option value='image'>image</option>
-                <option value='images'>images</option>
-                <option value='html'>html</option>
-              </select>
-            </td>
-          </tr>
-        </table>
-        <table>
-          <tr><td>標題</td><td><input type='text' placeholder='尚未輸入標題。'/></td></tr>
-          <tr><td>日期</td><td><input type='text' placeholder='請輸入日期時間。'/></td></tr>
-          <tr><td>密碼</td><td><input type='text' placeholder='未設定瀏覽密碼。'/></td></tr>
-        </table>
-        <textarea placeholder='未輸入副標文字。'></textarea>
-        <span class='Block'></span>
-        <span class='Block'>
-          <input type='button' value='建立'/>
-          <input type='button' style='display: none;' value='更新'/><br/>
-          <input type='button' style='display: none;' value='刪除'/><br/>
-          <input type='button' value='留言'/><br/>
-        </span>
-        <div style='display: none; background-color: #ffffff;'></div>
-      </div>
-      <div id='OneCmt' class='OneCmt'>
-        <span class='Block'>
-          <span></span><br/>
-          <span></span>
-        </span>
-        <pre></pre>
-        <input type='button' value='刪除'/>
-      </div>
-      <div id='OneMsg' class='OneMsg'>
-        <span class='Block'>
-          <table>
-            <tr><td>ID</td><td></td></tr>
-            <tr><td>建立時間</td><td></td></tr>
-            <tr><td>源訊息 ID</td><td></td></tr>
-          </table>
-        </span>
-        <textarea cols='30' rows='3' readonly='true'></textarea>
-        <input type='button' style='vertical-align: top;' value='刪除'/>
-      </div>
-      <div id='OneTg' class='OneTg' style='margin: 5px 0px;'>
-        <span style='display: inline-block; min-width: 330px; padding: 3px;'></span>
-        <input type='text' placeholder='請輸入標籤名稱。' style='width: 150px;'/>
-        <input type='button' value='更名'/>
-        <input type='button' value='刪除'/>
-      </div>
       <div id='OneWds' class='OneWds'>
       	<textarea rows='3'></textarea>
       	<div class='Block'>
@@ -903,7 +795,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
               <input type='button' id='FdUpdBtn' value='更新網誌消息'/>
             </div>
             <div id='BlogLstBx' class='Tb' data-tab-name='網誌列表'>
-              <div></div>
               <blogs></blogs>
             </div>
             <div class='Tb' data-tab-name='標籤管理'>
@@ -931,6 +822,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
             </div>
           </div>
           <div id='MsgTb' class='Tb' data-tab-name='留言板管理'>
+            <messages></messages>
           </div>
           <div id='GdWdsTb' class='Tb' data-tab-name='佳言錄'>
             <div id='GdWdsMkBx'>

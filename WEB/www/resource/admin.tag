@@ -573,3 +573,100 @@
     }
   </script>
 </blog-comments>
+
+<messages>
+  <ul>
+    <li each={Itm, Idx in Msgs}>
+      <div>
+        ID<br/>
+        建立時間<br/>
+        源訊息 ID
+      </div>
+      <div>
+        {Itm.ID}<br/>
+        {Itm.Dt}<br/>
+        {Itm.Tgt}
+      </div>
+      <div>
+        <textarea cols="30" rows="3">{Itm.Msg}</textarea>
+      </div>
+      <div>
+        <button value={Idx} onclick={Delete}>刪除</button><br/>
+        <span if={!Itm.Tgt}>(刪除整個留言串)</span>
+      </div>
+    </li>
+  </ul>
+  <list-index cnt={Cnt} pg={Pg} lmt={Lmt} pageturn={PageTurn}/>
+  <style scoped>
+    :scope>ul>li { display: flex; margin-bottom: 10px; }
+    /*:scope>ul>li>div { flex: 0; }*/
+    :scope>ul>li>div:first-child { flex: 0 0 80px; }
+    :scope>ul>li>div:nth-child(2) { flex: 0 0 300px; }
+    :scope>ul>li>div:nth-child(3) { flex: 0 0 370px; }
+    :scope>ul>li>div:last-child { flex: 1; }
+  </style>
+  <script>
+    this.Msgs = [];
+    this.Lmt = 8;
+    this.Cnt = 0;
+    this.Pg = 1;
+
+    this.mixin('Z.RM');
+
+    this.on(
+      'mount',
+      () => {
+        this.AJAX({
+          URL: 'service.php',
+          Mthd: 'POST',
+          Data: { Cmd: 106, Cnt: 1 },
+          Err: (Sts) => { alert('BG'); },
+          OK: (RspnsTxt, Sts) => {
+            let Rst = JSON.parse(RspnsTxt);
+
+            if (Rst.Index < 0) { return alert(Rst.Message); }
+
+            this.Cnt = Rst.Extend;
+
+            this.PageTurn(null, 1);
+          }});
+      });
+
+    this.ServiceListen('MESSAGES', (Sto, TskPrms) => {
+      this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
+    });
+
+    PageTurn (Evt, Pg) {
+      this.ServiceCall(
+        { Cmd: 106, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        'MESSAGES',
+        (Sto, Rst) => {
+          if (Rst.Index > -1) { Sto = Rst.Extend; }
+
+          return Sto;
+        },
+        { Pg: Pg });
+    }
+
+    Delete (Evt) {
+      let Msg = this.Msgs[Evt.target.value];
+
+      this.ServiceCall(
+        { Cmd: 107, ID: Msg.ID },
+        'MESSAGES',
+        (Sto, Rst) => {
+          if (Rst.Index < 0) {
+            alert(Rst.Message);
+
+            return Sto;
+          }
+
+          Sto.splice(Evt.target.value, 1);
+
+          this.Cnt -= 1;
+
+          return Sto;
+        });
+    }
+  </script>
+</messages>
