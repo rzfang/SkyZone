@@ -670,3 +670,139 @@
     }
   </script>
 </messages>
+
+<good-words>
+  <ul ref='GdWds'>
+    <li>
+        <textarea rows="3"></textarea>
+        <div>
+          <button value={Idx} onclick={Create}>新增</button>
+        </div>
+    </li>
+    <li each={Itm, Idx in GdWds}>
+        <textarea rows="3">{Itm.Wds}</textarea>
+        <div>
+          {Itm.ID}<br/>
+          <button value={Idx} onclick={Update}>更新</button><br/>
+          <button value={Idx} onclick={Delete}>刪除</button>
+        </div>
+    </li>
+  </ul>
+  <list-index cnt={Cnt} pg={Pg} lmt={Lmt} pageturn={PageTurn}/>
+  <style scoped>
+    :scope>ul { margin: 0; padding: 0; }
+    :scope>ul>li { display: flex; margin-bottom: 10px; }
+    :scope>ul>li>textarea { flex: 0 1 0; margin-right: 10px; }
+    :scope>ul>li>div { flex: 1 0 0; }
+  </style>
+  <script>
+    this.GdWds = [];
+    this.Lmt = 8;
+    this.Cnt = 0;
+    this.Pg = 1;
+
+    this.mixin('Z.RM');
+
+    this.on(
+      'mount',
+      () => {
+        this.AJAX({
+          URL: 'service.php',
+          Mthd: 'POST',
+          Data: { Cmd: 119, Cnt: 1 },
+          Err: (Sts) => { alert('BG'); },
+          OK: (RspnsTxt, Sts) => {
+            let Rst = JSON.parse(RspnsTxt);
+
+            if (Rst.Index < 0) { return alert(Rst.Message); }
+
+            this.Cnt = Rst.Extend;
+
+            this.PageTurn(null, 1);
+          }});
+      });
+
+    this.ServiceListen(
+      'GOOD_WORDS',
+      (Sto, TskPrms) => {
+        this.update({ GdWds: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
+      });
+
+    Create (Evt) {
+      let WdsNd = this.refs.GdWds.querySelector('li:first-child>textarea');
+          Wds = this.Trim(WdsNd.value);
+
+      if (!Wds) {
+        alert('尚未填寫佳言。');
+
+        return -1;
+      }
+
+      this.ServiceCall(
+        { Cmd: 120, Wds: Wds },
+        'GOOD_WORDS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
+
+          if (Rst.Index > -1) {
+            Sto.push({ ID: Rst.Extend, Wds });
+
+            WdsNd.value = '';
+            this.Cnt += 1;
+          }
+
+          return Sto;
+        })
+    }
+
+    PageTurn (Evt, Pg) {
+      this.ServiceCall(
+        { Cmd: 119, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        'GOOD_WORDS',
+        (Sto, Rst) => {
+          if (Rst.Index > -1) { Sto = Rst.Extend; }
+
+          return Sto;
+        },
+        { Pg: Pg });
+    }
+
+    Update (Evt) {
+      let Wds = this.refs.GdWds.querySelector('li:nth-child(' + (Evt.item.Idx + 1) + ')>textarea').value;
+
+      if (this.Trim(Wds).length === 0) {
+        alert('不能為空。');
+
+        return -1;
+      }
+
+      this.ServiceCall(
+        { Cmd: 122, ID: Evt.item.Itm.ID, Wds },
+        'GOOD_WORDS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
+
+          return Sto;
+        });
+    }
+
+    Delete (Evt) {
+      let GdWd = this.GdWds[Evt.item.Idx];
+
+      this.ServiceCall(
+        { Cmd: 121, ID: Evt.item.Itm.ID },
+        'GOOD_WORDS',
+        (Sto, Rst) => {
+          alert(Rst.Message);
+
+          if (Rst.Index < 0) { return Sto; }
+
+          Sto.splice(Evt.item.Idx, 1);
+
+          this.Cnt -= 1;
+
+          return Sto;
+        });
+    }
+  </script>
+</good-words>

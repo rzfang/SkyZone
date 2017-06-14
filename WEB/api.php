@@ -1516,12 +1516,13 @@ class GoodWords
       return ReturnPack(-4, $Kw['RM']['DuplicateData'], -4);
 
     $SQL = 'INSERT INTO GoodWords (id, words, sha1, datetime) VALUES (?, ?, ?, ?);';
-    $Rsc = Db::QryPrm($SQL, array(UUID(true), $Wds, $SHA1, date('Y-m-d H:i:s')));
+    $ID = UUID(true);
+    $Rsc = Db::QryPrm($SQL, array($ID, $Wds, $SHA1, date('Y-m-d H:i:s')));
 
     if (empty($Rsc))
       return ReturnPack(-5, $Kw['RM']['DbCrash'], -5);
 
-    return ReturnPack(0, $Kw['RM']['Done'], 0);
+    return ReturnPack(0, $Kw['RM']['Done'], $ID);
   }
 
   /* update a GoodWords.

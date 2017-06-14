@@ -114,7 +114,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
 
           riot.mixin('Z.RM', Z.RM);
 
-          GoodWordsMakeSet();
           ArtCornerMakeSet();
           CacheImageManageSet();
 
@@ -150,7 +149,8 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
             break;
 
           case 2:
-            GoodWordsList($('#GdWdsLstBx'));
+            if ($('#GdWdsTb>good-words>*').length === 0) { riot.mount('good-words'); }
+
             break;
         }
       }
@@ -170,102 +170,6 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
 
             break;
         }
-      }
-
-      function GoodWordsList(JO)
-      {
-        if (JO.children().length === 0)
-        { ItemList(JO, 'service.php', 8, {'Cmd': 119}, OneWds, ['GJ']); }
-
-        JO.on('click', '> .OneWds input:button:even', null, OneGoodWordsUpdateSet)
-          .on('click', '> .OneWds input:button:odd', null, OneGoodWordsDeleteSet);
-
-        return 0;
-
-        function OneWds(Data)
-        {
-          var One = $('#OneWds').clone().removeAttr('id');
-
-          One.children('textarea').val(Data.Wds)
-                                  .end()
-             .children('div').children('span').text(Data.ID);
-
-          return One;
-        }
-
-        function OneGoodWordsUpdateSet(Evt)
-        {
-          var This = $(this),
-              ID = This.prevAll('span:first').text(),
-              Wds = This.parent().prev('textarea').val();
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 122, 'ID': ID, 'Wds': Wds},
-              'success': function(Rtn, TxtSt, JQXHR){ alert(Rtn.Message); }
-            });
-        }
-
-        function OneGoodWordsDeleteSet(Evt)
-        {
-          var This = $(this),
-              ID = This.prevAll('span:first').text();
-
-          $.ajax(
-            {
-              'type': 'POST',
-              'dataType': 'json',
-              'timeout' : 20000,
-              'url': 'service.php',
-              'data': {'Cmd': 121, 'ID': ID},
-              'success': function(Rtn, TxtSt, JQXHR)
-                {
-                  alert(Rtn.Message);
-
-                  if (Rtn.Index == 0)
-                  { JO.get(0).PageGet(); }
-                }
-            });
-        }
-      }
-
-      function GoodWordsMakeSet()
-      {
-        $('#GdWdsMkBx > input:button:first').on('click', function(Evt)
-          {
-            var This = $(this),
-                Txt = This.prev(),
-                Wds = Txt.val();
-
-            if (Trim(Wds) === '')
-            {
-              alert('尚未填寫佳言。');
-              return -1;
-            }
-
-            $.ajax(
-              {
-                'type': 'POST',
-                'dataType': 'json',
-                'timeout' : 20000,
-                'url': 'service.php',
-                'data': {'Cmd': 120, 'Wds': Wds},
-                'success': function(Rtn, TxtSt, JQXHR)
-                  {
-                    alert(Rtn.Message);
-
-                    if (Rtn.Index == 0)
-                    {
-                      Txt.val('');
-                      This.parent().nextAll('div#GdWdsLstBx').get(0).PageGet();
-                    }
-                  }
-              });
-          });
       }
 
       function ArtCornerMakeSet()
@@ -825,12 +729,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
             <messages></messages>
           </div>
           <div id='GdWdsTb' class='Tb' data-tab-name='佳言錄'>
-            <div id='GdWdsMkBx'>
-              新增佳言<br/>
-              <textarea rows='3'></textarea>
-              <input type='button' value='新增'/>
-            </div><br/>
-            <div id='GdWdsLstBx'></div>
+            <good-words></good-words>
           </div>
           <div id='ArtCnrTb' class='Tb' data-tab-name='角落藝廊管理'>
             <div id='AtCnrMkBx' class='Tb' name='建立新的角落藝廊' style='text-align: center;'>
