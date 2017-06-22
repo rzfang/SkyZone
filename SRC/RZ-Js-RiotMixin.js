@@ -134,6 +134,8 @@
     }
 
     Srvc.Rprt[Tsk].push(Thn);
+
+    if (Srvc.Sto[Tsk]) { Thn(Srvc.Sto[Tsk], null); } // if the task store is ready, call once first.
   }
 
   /*

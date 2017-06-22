@@ -112,9 +112,7 @@
 
     this.mixin('Z.RM');
 
-    this.ServiceListen('TAGS', (Sto) => {
-      this.update({ Tgs: Sto });
-    });
+    this.ServiceListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
     TagAdd (Evt) {
       let Nm = this.Trim(Evt.target.parentElement.querySelector('input').value);
@@ -294,37 +292,37 @@
           }});
       });
 
-    this.ServiceListen('TAGS', (Sto) => {
-      this.update({ Tgs: Sto });
-    });
+    this.ServiceListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
-    this.ServiceListen('BLOGS', (Sto, TskPrms) => {
-      this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
-    });
+    this.ServiceListen(
+      'BLOGS',
+      (Sto, TskPrms) => { this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
-    this.ServiceListen('BLOG_COMMENTS', (Sto, TskPrms) => {
-      let Blg;
+    this.ServiceListen(
+      'BLOG_COMMENTS',
+      (Sto, TskPrms) => {
+        let Blg;
 
-      if (!TskPrms.BlgId) { return -1; }
+        if (!TskPrms || !TskPrms.BlgId) { return -1; }
 
-      for (let i = 0; i < this.Blgs.length; i++) {
-        if (TskPrms.BlgId && this.Blgs[i].ID === TskPrms.BlgId) {
-          Blg = this.Blgs[i];
+        for (let i = 0; i < this.Blgs.length; i++) {
+          if (TskPrms.BlgId && this.Blgs[i].ID === TskPrms.BlgId) {
+            Blg = this.Blgs[i];
 
-          break;
+            break;
+          }
         }
-      }
 
-      if (!Blg) { return -2; }
+        if (!Blg) { return -2; }
 
-      if (Sto[Blg.ID]) {
-        Blg.ShwCmt = true;
-        Blg.Cmts = Sto[Blg.ID];
-        Blg.CmtCnt = Blg.Cmts.length;
-      }
+        if (Sto[Blg.ID]) {
+          Blg.ShwCmt = true;
+          Blg.Cmts = Sto[Blg.ID];
+          Blg.CmtCnt = Blg.Cmts.length;
+        }
 
-      this.update();
-    });
+        this.update();
+      });
 
     TagCheck (ID, Tgs) {
       if (!Tgs || !Tgs.length) { return false; }
@@ -642,9 +640,9 @@
           }});
       });
 
-    this.ServiceListen('MESSAGES', (Sto, TskPrms) => {
-      this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
-    });
+    this.ServiceListen(
+      'MESSAGES',
+      (Sto, TskPrms) => { this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
@@ -734,9 +732,7 @@
 
     this.ServiceListen(
       'GOOD_WORDS',
-      (Sto, TskPrms) => {
-        this.update({ GdWds: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
-      });
+      (Sto, TskPrms) => { this.update({ GdWds: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
     Create (Evt) {
       let WdsNd = this.refs.GdWds.querySelector('li:first-child>textarea');
