@@ -1,3 +1,26 @@
+<store-tags>
+  <script>
+    this.mixin('Z.RM');
+
+    this.on('mount', () => {
+      if (this.StoreGet('TAGS')) { return; }
+
+      this.ServiceCall(
+        { Cmd: 7 },
+        'TAGS',
+        (Sto, Rst) => {
+          if (Rst.Index < 0) {
+            alert(Rst.Message);
+
+            return Sto;
+          }
+
+          return Rst.Extend;
+        });
+    });
+  </script>
+</store-tags>
+
 <list-index>
   <div>
     <button each={Pgs} onclick={parent.PageTurn} value={Pg} disabled={Pg === parent.opts.pg}>{Shw}</button>
@@ -83,25 +106,11 @@
     :scope li:hover { background-color: #c0e0ff; }
     :scope li>span { display: inline-block; min-width: 330px; padding: 3px; }
   </style>
+  <store-tags/>
   <script>
     this.Tgs = [];
 
     this.mixin('Z.RM');
-
-    this.on('mount', () => {
-      this.ServiceCall(
-        { Cmd: 7 },
-        'TAGS',
-        (Sto, Rst) => {
-          if (Rst.Index < 0) {
-            alert(Rst.Message);
-
-            return Sto;
-          }
-
-          return Rst.Extend;
-        });
-    });
 
     this.ServiceListen('TAGS', (Sto) => {
       this.update({ Tgs: Sto });
@@ -256,6 +265,7 @@
     :scope td:nth-child(2) { min-width: 290px; }
     :scope td:nth-child(6)>button { display: block; }
   </style>
+  <store-tags/>
   <script>
     this.Blgs = [];
     this.Tgs = [];

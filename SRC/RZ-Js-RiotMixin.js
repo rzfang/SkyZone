@@ -163,6 +163,15 @@
     return 0;
   }
 
+  /* get a store.
+    Ky = a string of store key.
+    return: store object, or null. */
+  function StoreGet(Ky) {
+    if (!Ky || typeof Ky !== 'string') { return null; }
+
+    return Srvc.Sto[Ky] || null;
+  }
+
   RM = {
     OnBrowser: OnBrowser,
     OnNode: OnNode,
@@ -174,6 +183,7 @@
     RM.AJAX = AJAX;
     RM.ServiceListen = ServiceListen;
     RM.ServiceCall = ServiceCall;
+    RM.StoreGet = StoreGet;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }
     else { window.Z.RM = RM; }
