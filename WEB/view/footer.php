@@ -1,5 +1,5 @@
 <?= $Kw['Hnt']['TailHint'] . ' ' . $Kw['Hnt']['Copyright']; ?>
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
   <img
     alt="創用 CC 授權條款"
     style="vertical-align: middle; border-width: 0"

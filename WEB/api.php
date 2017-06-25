@@ -687,7 +687,7 @@ class Blog
       return ReturnPack(-3, $Kw['RM']['DbCrash'], array());
 
     $Rst['Smry'] = str_replace("\n", '', $Rst['Smry']);
-    $Rst['TbnURL'] = 'http://' . WEBSITE_URL . 'image/logo.jpg';
+    $Rst['TbnURL'] = 'https://' . WEBSITE_URL . 'image/logo.jpg';
 
     if (!empty($Rst['Pswd'])) // check password.
       return ReturnPack(0, $Kw['RM']['PasswordNeed'], $Rst);

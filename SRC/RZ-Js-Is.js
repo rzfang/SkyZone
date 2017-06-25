@@ -25,7 +25,7 @@
       if (typeof Obj !== 'string') { return false; }
 
       return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/).test(Obj);
-    } // from here : http://stackoverflow.com/questions/1701898/how-to-detect-whether-a-string-is-in-url-format-using-javascript
+    } // from here : https://stackoverflow.com/questions/1701898/how-to-detect-whether-a-string-is-in-url-format-using-javascript
   };
 
   if (typeof module !== 'undefined') { module.exports = Is; }

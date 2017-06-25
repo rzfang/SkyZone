@@ -494,10 +494,10 @@ function BlogOneFrame(ID, Rdm, Ttl, TrgDOM, Pswd)
 
           var ShrLnk = $('<div><span/><a/><a/><a/><a/><a/></div>'),
               URL = encodeURIComponent(Data.Extend.URL),
-              Facebook = 'http://www.facebook.com/share.php?u=' + URL,
+              Facebook = 'https://www.facebook.com/share.php?u=' + URL,
               GooglePlus = 'https://plus.google.com/share?url=' + URL,
-              Twitter = 'http://twitter.com/intent/tweet?url=' + URL,
-              Plurk = 'http://www.plurk.com/?qualifier=shares&status=' + URL + ' (' + Ttl +')'; // post to Plurk.
+              Twitter = 'https://twitter.com/intent/tweet?url=' + URL,
+              Plurk = 'https://www.plurk.com/?qualifier=shares&status=' + URL + ' (' + Ttl +')'; // post to Plurk.
 
           ShrLnk.appendTo(ExBx.children('span:first'))
                 .children('span:first').text('分享網址：')
