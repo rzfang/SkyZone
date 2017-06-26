@@ -9,11 +9,12 @@
   },
   "devDependencies": {
     "eslint": "^3.13.1",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "pre-commit": "^1.2.2"
   },
   "scripts": {
     "dev": "nodemon -d 3 -e js,scss,html,php,tag -w SRC/ SRC/server.js",
-    "lint": "eslint UTL/server.js SRC/*.js",
+    "lint": "eslint SRC/*.js",
     "test": "test"
   },
   "repository": {
@@ -29,5 +30,15 @@
   "bugs": {
     "url": "https://github.com/rzfang/SkyZone/issues"
   },
-  "homepage": "https://github.com/rzfang/SkyZone#readme"
+  "homepage": "https://github.com/rzfang/SkyZone#readme",
+  "pre-commit": [],
+  "eslintConfig": {
+    "env": { "browser": true, "es6": true, "jquery": true, "node": true },
+    "extends": "eslint:recommended",
+    "parserOptions": { "sourceType": "module" },
+    "rules": {
+      "no-console": [ "warn", { "allow": [ "warn", "error" ]}],
+      "no-redeclare": [ "warn", { "builtinGlobals": true }]
+    }
+  }
 }
