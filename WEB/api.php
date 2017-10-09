@@ -6,7 +6,7 @@ class System
   public static $AdminPswd = ADMIN_PSWD;
   public static $AdminPswdSsnNm = SSN_ADMIN_PSWD;
 
-  public static $BlogTpA = array('text', 'html', 'image', 'images'); // Blog Type Array.
+  public static $BlogTpA = array('text', 'html', 'image', 'images', 'zft'); // Blog Type Array.
 
   /* check if user is login.
     '$SvrPswd' = Server Password.

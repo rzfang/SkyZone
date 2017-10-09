@@ -11,7 +11,7 @@
 
   var Tag = function (Str) {
     return Str
-      .replace(/(https?:\/\/\S+)(\s)?/g, '<a href="$1">$1</a>$2');
+      .replace(/(https?:\/\/\S+)(\s)?/g, '<a href="$1" target="_blank">$1</a>$2');
       // .replace(/(\[[^\[\]]+\])/g, '<i>$1</i>');
   };
 
@@ -33,7 +33,7 @@
 
       Anchr.Nm = Encode(Anchr.Ttl.replace(/\s/g, '_'));
       HTML +=
-        '<h4 name="' + Anchr.Nm + '"><a href="#' + Anchr.Nm + '">' + Ttls[i].replace(/\n$/, '</a></h4>\n') +
+        '<h4 id="' + Anchr.Nm + '"><a href="#' + Anchr.Nm + '">' + Ttls[i].replace(/\n$/, '</a></h4>\n') +
         '<p>' + Trim(Tag(Encode(Prgrphs[i]))) + '</p>\n';
 
       Anchrs.push(Anchr);
@@ -66,7 +66,7 @@
       Rst = ParagraphParse(Chptrs[i]);
       Anchr.Nm = Encode(Anchr.Ttl.replace(/\s/g, '_'));
       HTML +=
-        '<h3 name="' + Anchr.Nm + '"><a href="#' + Anchr.Nm + '">' + Ttls[i].replace(/\n$/, '</a></h3>\n') +
+        '<h3 id="' + Anchr.Nm + '"><a href="#' + Anchr.Nm + '">' + Ttls[i].replace(/\n$/, '</a></h3>\n') +
         Rst.HTML;
 
       Anchrs.push(Anchr);
