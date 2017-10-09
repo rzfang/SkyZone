@@ -19,7 +19,7 @@ require '../global.php';
             <a href='blogs.php'>網誌</a>
             RZ 不定期分享的自言自語、碎碎唸等沒營養垃圾文章。
 
-            <a href='message.php'>留言板</a>
+            <a href='messages.php'>留言板</a>
             開放給客倌隨意留言，沒什麼限制，就是請大家多注意網路禮儀哦。
 
             <a href='feed.php'>訂閱</a>

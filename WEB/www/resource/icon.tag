@@ -34,7 +34,10 @@
 </icon-images>
 
 <icon-zft>
-  <i data-is='icon-text' sz={opts.sz || 18} clr={opts.clr}/>
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" riot-width={opts.sz} riot-height={opts.sz} viewBox="0 0 512 512">
+    <path fill={opts.clr || '#202020'} d="M448 64v416h-336c-26.513 0-48-21.49-48-48s21.487-48 48-48h304v-384h-320c-35.199 0-64 28.8-64 64v384c0 35.2 28.801 64 64 64h384v-448h-32z"></path>
+    <path fill={opts.clr || '#202020'} d="M112.028 416v0c-0.009 0.001-0.019 0-0.028 0-8.836 0-16 7.163-16 16s7.164 16 16 16c0.009 0 0.019-0.001 0.028-0.001v0.001h303.945v-32h-303.945z"></path>
+  </svg>
 </icon-zft>
 
 <icon-tags>

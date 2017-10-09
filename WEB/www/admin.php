@@ -638,7 +638,7 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
                   <tbody>
                     <tr><th>類型</th><th>檔案格式</th><th>說明</th></tr>
                     <tr>
-                      <td>Text</td>
+                      <td>Text<br/>ZFT</td>
                       <td>文字檔</td>
                       <td>任意檔名的純文字檔, *.txt</td>
                     </tr>
