@@ -53,7 +53,7 @@
       for (var i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.File[Kys[i]]); }
     }
 
-    XHR.timeout = 3000;
+    XHR.timeout = 5000;
     XHR.onreadystatechange = StateChange;
     XHR.upload.onprogress =  function (Evt) { Info.Pgs(Evt.loaded, Evt.total, Evt); };
 
@@ -84,7 +84,7 @@
           break;
 
         case 4:
-          if (this.status === 200) { Info.OK(this.responseText, this.status); }
+          if (this.status === 200) { Info.OK(this.responseText, this.status, this); }
           else { Info.Err(this.status); }
 
           Info.End();
@@ -123,44 +123,80 @@
   }
 
   /*
-    Tsk = task, a string of task name.
-    Thn() = then, a function when the task done. */
-  function ServiceListen (Tsk, Thn) {
-    var Clbcks = Srvc.Rprt[Tsk] || null;
+    StoNm = name to locate the store.
+    Thn(Sto, Rst) = then, a function when the task done.
+      Sto = the store object. */
+  function StoreListen (StoNm, Thn) {
+    var Clbcks = Srvc.Rprt[StoNm] || null;
 
     if (!Clbcks || !Array.isArray(Clbcks)) {
-      Srvc.Rprt[Tsk] = [];
-      Clbcks = Srvc.Rprt[Tsk];
+      Srvc.Rprt[StoNm] = [];
+      Clbcks = Srvc.Rprt[StoNm];
     }
 
-    Srvc.Rprt[Tsk].push(Thn);
+    Srvc.Rprt[StoNm].push(Thn);
 
-    if (Srvc.Sto[Tsk]) { Thn(Srvc.Sto[Tsk], null); } // if the task store is ready, call once first.
+    if (Srvc.Sto[StoNm]) { Thn(Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
   }
 
   /*
+    URL = URL string, the service entry point.
     Prms = params object to call service.
     StoNm = name to locate the store.
-    NewStoreGet = the function to get new store, this must return something to replace original store.
+    NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
+      Sto = original store data.
+      Rst = result from API.
     PrmsToTsk = params object passing to each task. */
-  function ServiceCall (Prms, StoNm, NewStoreGet, PrmsToTsk) {
-    if (!StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
+  function ServiceCall (URL, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+    if (!URL || typeof URL !== 'string' ||
+        !StoNm || typeof StoNm !== 'string' ||
+        !NewStoreGet || typeof NewStoreGet !== 'function')
+    { return -1; }
 
     AJAX({
-      URL: 'service.php',
+      URL: URL,
       Mthd: 'POST',
       Data: Prms,
-      Err: function (Sts) { console.log('BG'); },
-      OK: function (RspnsTxt, Sts) {
-        var Rst = JSON.parse(RspnsTxt),
-            Tsks = Srvc.Rprt[StoNm] || [],
-            Lnth = Tsks && Array.isArray(Tsks) && Tsks.length || 0;
+      Err: function (Sts) {
+        console.log('---- AJAX query fail ----\nURL: ' + URL + '\nparams:');
+        console.log(Prms);
+        console.log('----\n');
+
+        Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], '');
+      },
+      OK: function (RspnsTxt, Sts, XHR) {
+        var CntTp = XHR.getResponseHeader('content-type'),
+            Rst = RspnsTxt,
+            Rprt = Srvc.Rprt[StoNm] || [],
+            Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
+
+        if (Rst && (CntTp.indexOf('application/json') > -1 || CntTp.indexOf('text/json') > -1)) {
+          Rst = JSON.parse(Rst);
+        }
 
         Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], Rst);
 
-        for (var i = 0; i < Lnth; i++) { Tsks[i](Srvc.Sto[StoNm], PrmsToTsk); }
+        for (var i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
       }
     });
+
+    return 0;
+  }
+
+  /*
+    StoNm = name to locate the store.
+    NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
+      Sto = original store data.
+    PrmsToTsk = params object passing to each task. */
+  function StoreSet (StoNm, NewStoreGet, PrmsToTsk) {
+    if (!StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
+
+    var Rprt = Srvc.Rprt[StoNm] || [],
+        Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
+
+    Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm]);
+
+    for (var i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
 
     return 0;
   }
@@ -168,7 +204,7 @@
   /* get a store.
     Ky = a string of store key.
     return: store object, or null. */
-  function StoreGet(Ky) {
+  function StoreGet (Ky) {
     if (!Ky || typeof Ky !== 'string') { return null; }
 
     return Srvc.Sto[Ky] || null;
@@ -183,8 +219,9 @@
   if (typeof module !== 'undefined') { module.exports = RM; }
   else if (typeof window !== 'undefined') {
     RM.AJAX = AJAX;
-    RM.ServiceListen = ServiceListen;
+    RM.StoreListen = StoreListen;
     RM.ServiceCall = ServiceCall;
+    RM.StoreSet = StoreSet;
     RM.StoreGet = StoreGet;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }

@@ -1,11 +1,10 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
+header('Content-Type: text/json; charset=utf-8');
 
 require '../global.php';
 require RSC_PTH . 'vendor/autoload.php';
 require WEB_PTH . 'pdo_db.php';
 require WEB_PTH . 'api.php';
-
 
 if(empty($_POST) || !isset($_POST['Cmd']) || !filter_input(INPUT_POST, 'Cmd', FILTER_VALIDATE_INT))
 {

@@ -6,6 +6,7 @@
       if (this.StoreGet('TAGS')) { return; }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 7 },
         'TAGS',
         (Sto, Rst) => {
@@ -112,7 +113,7 @@
 
     this.mixin('Z.RM');
 
-    this.ServiceListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
+    this.StoreListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
     TagAdd (Evt) {
       let Nm = this.Trim(Evt.target.parentElement.querySelector('input').value);
@@ -132,6 +133,7 @@
       }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 113, Nm },
         'TAGS',
         (Sto, Rst) => {
@@ -154,6 +156,7 @@
       }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 118, ID, Nm },
         'TAGS',
         (Sto, Rst) => {
@@ -175,6 +178,7 @@
 
     TagDelete (Evt) {
       this.ServiceCall(
+        '/service.php',
         { Cmd: 114, ID: Evt.item.ID },
         'TAGS',
         (Sto, Rst) => {
@@ -292,13 +296,13 @@
           }});
       });
 
-    this.ServiceListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
+    this.StoreListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
-    this.ServiceListen(
+    this.StoreListen(
       'BLOGS',
       (Sto, TskPrms) => { this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
-    this.ServiceListen(
+    this.StoreListen(
       'BLOG_COMMENTS',
       (Sto, TskPrms) => {
         let Blg;
@@ -336,6 +340,7 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
+        '/service.php',
         { Cmd: 103, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'BLOGS',
         (Sto, Rst) => {
@@ -377,6 +382,7 @@
       Data.Cmd = 105;
 
       this.ServiceCall(
+        '/service.php',
         Data,
         'BLOGS',
         (Sto, Rst) => {
@@ -439,6 +445,7 @@
       Data.Cmd = 104;
 
       this.ServiceCall(
+        '/service.php',
         Data,
         'BLOGS',
         (Sto, Rst) => {
@@ -477,6 +484,7 @@
       if (Blg.ID.length < 13) { return alert('找不到正確的 Blog ID。'); }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 110, ID: Blg.ID },
         'BLOGS',
         (Sto, Rst) => {
@@ -518,6 +526,7 @@
       }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 8, ID: Blg.ID },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
@@ -532,6 +541,7 @@
 
     CommentRemove (BlgId, CmtId) {
       this.ServiceCall(
+        '/service.php',
         { Cmd: 109, ID: CmtId },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
@@ -640,12 +650,13 @@
           }});
       });
 
-    this.ServiceListen(
+    this.StoreListen(
       'MESSAGES',
       (Sto, TskPrms) => { this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
+        '/service.php',
         { Cmd: 106, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'MESSAGES',
         (Sto, Rst) => {
@@ -660,6 +671,7 @@
       let Msg = this.Msgs[Evt.target.value];
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 107, ID: Msg.ID },
         'MESSAGES',
         (Sto, Rst) => {
@@ -730,7 +742,7 @@
           }});
       });
 
-    this.ServiceListen(
+    this.StoreListen(
       'GOOD_WORDS',
       (Sto, TskPrms) => { this.update({ GdWds: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
 
@@ -745,6 +757,7 @@
       }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 120, Wds: Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -763,6 +776,7 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
+        '/service.php',
         { Cmd: 119, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -783,6 +797,7 @@
       }
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 122, ID: Evt.item.Itm.ID, Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -796,6 +811,7 @@
       let GdWd = this.GdWds[Evt.item.Idx];
 
       this.ServiceCall(
+        '/service.php',
         { Cmd: 121, ID: Evt.item.Itm.ID },
         'GOOD_WORDS',
         (Sto, Rst) => {
