@@ -111,9 +111,6 @@ function ...($IA)
   自製 markdown parser (call z-markdown maybe)
   http://pages.tzengyuxio.me/pandoc/
 
-* 20141026
-  教學文章整進 Blog.
-
 * 201410??
   系統寄信方案研究。
 
@@ -157,9 +154,6 @@ function ...($IA)
 
 * 管理頁，留言板可以顯示整個留言串，方便維護時的觀察。
   20120707
-
-* 記數器。給分享檔案下載用，但可實作的彈性一點。
-  20120701
 
 * 舊貨交換平台。
   201207??

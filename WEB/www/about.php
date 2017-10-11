@@ -84,7 +84,6 @@ require '../global.php';
         <!--
           $(function()
             {
-              Button0('.Btn0');
               TabBox('#AbtBx', '#AbtBx > .AbtPg', 0);
             });
         -->

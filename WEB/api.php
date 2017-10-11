@@ -597,7 +597,7 @@ class Blog
 
       foreach($DbRst as $V1)
       {
-        if ($V0 == $V1['Fl'])
+        if ($V0 == htmlspecialchars_decode($V1['Fl'])) // once no html special char case, this can be removed.
         {
           $R = $V1;
           break;
@@ -1002,10 +1002,11 @@ class Blog
 
     $ID = UUID();
     $Tp = empty($IA['Tp']) ? 'text' : $IA['Tp'];
+    $Fl = htmlspecialchars_decode($IA['Fl']);
     $Pswd = (empty($IA['Pswd']) || !is_string($IA['Pswd'])) ? '' : $IA['Pswd'];
 
     $SQL = 'INSERT INTO Blog (id, title, file, type, datetime, password, summary) VALUES (?, ?, ?, ?, ?, ?, ?);';
-    $Rsc = Db::QryPrm($SQL, array($ID, $IA['Ttl'], $IA['Fl'], $IA['Tp'], $IA['Dt'], $Pswd, $IA['Smry']));
+    $Rsc = Db::QryPrm( $SQL, array($ID, $IA['Ttl'], $Fl, $Tp, $IA['Dt'], $Pswd, $IA['Smry']));
 
     if (empty($Rsc))
       return ReturnPack(-3, $Kw['RM']['DbCrash'], '');
