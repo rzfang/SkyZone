@@ -1,8 +1,8 @@
 <tags>
   <div if={opts.tgs.length}>
     <icon title='分類標籤' nm='tags'></icon>
-    <a if={opts.pckids} href='blogs.php'>取消</a>
-    <br if={opts.pckids}/>
+    <a if={opts.pckids && opts.pckids.length} href='blogs.php'>取消</a>
+    <br if={opts.pckids && opts.pckids.length}/>
     <div each={opts.tgs}>
       <span if={IsPck}>{Nm}</span>
       <a if={!IsPck} href='blogs.php?t={ID}'>{Nm}</a>
