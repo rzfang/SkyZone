@@ -1,4 +1,4 @@
-# SkyZone
+SkyZone
 =======
 
 RZ's website.
@@ -8,12 +8,13 @@ this project needs the key file to get everything fine.
 
 ## this project uses
 * HTML, Js, CSS
-* [npm](https://www.npmjs.com/)
+* [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)
 * [SASS](http://sass-lang.com/)
 * [UglifyJs](http://lisperator.net/uglifyjs/)
 
 ## to be a HTTP server, this project also uses
 * [nginx](http://nginx.org/)
+* [PM2](http://pm2.keymetrics.io/)
 
 P.S. for security reason, these files don't join the git.
 * nginx config file.
@@ -24,6 +25,11 @@ P.S. for security reason, these files don't join the git.
 ```
 
 ## run dev server
+open the first terminal and run:
 ```
-./UTL/dev_run.sh
+./UTL/dev_run.sh php
+```
+then, open the second terminal and run:
+```
+./UTL/dev_run.sh node
 ```

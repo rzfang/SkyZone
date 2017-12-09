@@ -250,12 +250,12 @@ class Db
     return ($R[0] > 0);
   }
 
-  /* check if a row is exist in a table.
+  /* get the row number of a table.
     '$Tbl' =  Table name.
     '$Fld' = Field name. optional, default ''.
     '$VA' = Value Array. optional, default null.
     '$Db' = PDO Database object. give nothing to use default object.
-    Return: nuumber of table rows, or < 0 as error. */
+    Return: number of table rows, or < 0 as error. */
   public static function TableRows ($Tbl, $Fld = '', $VA = null, $Db = null)
   {
     if (empty($Tbl) || !is_string($Tbl) || preg_match('/^[a-zA-Z0-9_-]+$/', $Tbl) === 0)

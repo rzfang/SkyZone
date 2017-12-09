@@ -4,16 +4,18 @@
   "description": "Sky Zone",
   "main": "server.js",
   "dependencies": {
-    "node-sass": "^4.4.2",
-    "uglify-js": "^2.6.2"
+    "async": "^2.1.4",
+    "sqlite3": "^3.1.13"
   },
   "devDependencies": {
     "eslint": "^3.13.1",
+    "node-sass": "^4.4.2",
     "nodemon": "^1.11.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "uglify-js": "^2.6.2"
   },
   "scripts": {
-    "dev": "nodemon -d 3 -e js,scss,html,php,tag -w SRC/ SRC/server.js",
+    "dev": "nodemon -d 3 -e js,scss,html,tag -w SRC/ SRC/RZ-Nd-HTTPServer.js",
     "lint": "eslint SRC/*.js",
     "test": "test"
   },
