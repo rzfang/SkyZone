@@ -3,28 +3,28 @@
     switch (Lv) {
       case 0:
       case 'error':
-        console.error('\n---- [ERROR] ----');
+        console.error('\x1b[41m%s\x1b[0m', '\n[ERROR]');
         console.error(Info);
 
         break;
 
       case 1:
       case 'warn':
-        console.warn('\n---- [WARN ] ----');
+        console.warn('\x1b[41m%s\x1b[0m', '\n[WARN ]');
         console.warn(Info);
 
         break;
 
       case 2:
       case 'log':
-        console.log('\n---- [ LOG ] ----');
+        console.log('\x1b[42m%s\x1b[0m', '\n[ LOG ]');
         console.log(Info);
 
         break;
 
       case 3:
       case 'debug':
-        console.log('\n---- [DEBUG] ----');
+        console.log('\x1b[30m\x1b[47m%s\x1b[0m', '\n[DEBUG]');
         console.log(Info);
 
         break;

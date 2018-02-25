@@ -37,7 +37,7 @@
     for (var i = 0; i < Kys.length; i++) {
       var Tp = typeof Info.Data[Kys[i]];
 
-      if (Array.isArray(Info.Data[Kys[i]])) {
+      if (Array.isArray(Info.Data[Kys[i]])) { // array type data handle.
         var Ky = Kys[i] + '[]',
             Vl = Info.Data[Kys[i]],
             Lth = Vl.length;
@@ -60,6 +60,8 @@
     // XHR.overrideMimeType('text/xml');
     XHR.open(Info.Mthd, Info.URL);
     XHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // to use AJAX way.
+
+    // if (Info.Mthd === 'POST') { XHR.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); } // header for POST.
 
     if (typeof Info.Hdrs === 'object' && Info.Hdrs !== null) {
       Kys = Object.keys(Info.Hdrs);

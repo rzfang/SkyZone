@@ -10,7 +10,7 @@
     Function: function (Obj) { return (typeof Obj === 'function'); },
     Object: function (Obj) { return (typeof Obj === 'object'); },
     Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
-    Array: function (Obj) { return (Obj instanceof Array); },
+    Array: function (Obj) { return Array.isArray(Obj); },
     Date: function (Obj) { return (Obj instanceof Date); },
     Promise: function (Obj) {
       return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch'));
@@ -25,7 +25,16 @@
       if (typeof Obj !== 'string') { return false; }
 
       return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/).test(Obj);
-    } // from here : https://stackoverflow.com/questions/1701898/how-to-detect-whether-a-string-is-in-url-format-using-javascript
+    }, // from here : https://stackoverflow.com/questions/1701898/how-to-detect-whether-a-string-is-in-url-format-using-javascript
+    UUID: function (Obj) {
+      if (typeof Obj !== 'string') { return false; }
+
+      return (
+          Obj.match(/^[0-9a-fA-F]{32}$/) ||
+          Obj.match(/^[0-9a-fA-F]{13}$/) ||
+          Obj.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/) ||
+          Obj.match(/^[0-9a-fA-F]{22}$/)) ? true : false;
+    }
   };
 
   if (typeof module !== 'undefined') { module.exports = Is; }
