@@ -1,10 +1,23 @@
+const Svc = require('./service');
+
 module.exports = {
+  port: 9004,
   riot: {
     componentPath: '../WEB/www/resource'
   },
   resources: {
     path: '../WEB/www/resource',
     fileMask: /[^\/]+\.(js|css|txt|xml)$/
+  },
+  service: {
+    urlPattern: /^\/service\/(.+)/, // if regular expression can not match a case, the default case will be used.
+    cases: {
+      'blog/list': Svc.BlogList,
+      'comment/list': Svc.CommentList,
+      'tag/list': Svc.TagList,
+      'words/nowone': Svc.WordsNowOneGet
+    },
+    default: Svc.DefaultCall
   },
   pages: {
     // '/read': {
@@ -39,8 +52,5 @@ module.exports = {
       body: [
         'header.tag',
         'keycode.part.html',
-        'footer.part.html' ]}},
-  services: {
-    default: () => { return {}; }
-  }
+        'footer.part.html' ]}}
 }

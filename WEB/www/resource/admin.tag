@@ -6,8 +6,8 @@
       if (this.StoreGet('TAGS')) { return; }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 7 },
+        '/service/tag/list',
+        null,
         'TAGS',
         (Sto, Rst) => {
           if (Rst.Index < 0) {
@@ -526,8 +526,8 @@
       }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 8, ID: Blg.ID },
+        '/service/comment/list',
+        { ID: Blg.ID },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
           if (!Sto) { Sto = {}; }

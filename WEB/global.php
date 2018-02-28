@@ -74,7 +74,7 @@ function IsUUID ($IDStr)
     return false;
 
   if (preg_match("/^[0-9a-fA-F]{32}$/", $IDStr) ||
-      preg_match("/^[0-9a-fA-F]{13}$/", $IDStr) ||
+      preg_match("/^[0-9a-fA-F]{13}$/", $IDStr) || // new short id.
       preg_match("/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/", $IDStr) ||
       preg_match("/^[0-9a-fA-F]{22}$/", $IDStr))
     return true;

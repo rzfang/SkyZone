@@ -10,6 +10,8 @@ if [ "$1" == 'php' ]; then
 elif [ "$1" == 'node' ]; then
   cd $BscPth'/..';
   npm run dev;
+elif [ "$1" == 'nginx' ]; then
+  sudo service nginx start;
 else
-  echo -e '\nhow to use: '$0' [php|node]\n';
+  echo -e '\nhow to use: '$0' [php|node|nginx]\n';
 fi;

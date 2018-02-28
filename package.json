@@ -10,7 +10,7 @@
   "devDependencies": {
     "eslint": "^3.13.1",
     "node-sass": "^4.4.2",
-    "nodemon": "^1.11.0",
+    "nodemon": "^1.17.1",
     "pre-commit": "^1.2.2",
     "uglify-js": "^2.6.2"
   },
@@ -35,12 +35,32 @@
   "homepage": "https://github.com/rzfang/SkyZone#readme",
   "pre-commit": [],
   "eslintConfig": {
-    "env": { "browser": true, "es6": true, "jquery": true, "node": true },
+    "env": {
+      "browser": true,
+      "es6": true,
+      "jquery": true,
+      "node": true
+    },
     "extends": "eslint:recommended",
-    "parserOptions": { "sourceType": "module" },
+    "parserOptions": {
+      "sourceType": "module"
+    },
     "rules": {
-      "no-console": [ "warn", { "allow": [ "warn", "error" ]}],
-      "no-redeclare": [ "warn", { "builtinGlobals": true }]
+      "no-console": [
+        "warn",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ],
+      "no-redeclare": [
+        "warn",
+        {
+          "builtinGlobals": true
+        }
+      ]
     }
   }
 }

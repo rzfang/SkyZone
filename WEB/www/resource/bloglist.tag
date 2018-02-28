@@ -22,9 +22,9 @@
 
     BlogsLoad () {
       this.AJAX({
-        URL: 'service.php',
+        URL: '/service/blog/list',
         Mthd: 'POST',
-        Data: { Cmd: 1, Lmt: 5, Ofst: Ofst, TgIDA: this.opts.TgIDA },
+        Data: { Lmt: 5, Ofst: Ofst, TgIDA: this.opts.TgIDA },
         Err: (Sts) => { alert('BG.'); },
         OK: (RspnsTxt, Sts) => {
           let Rst = JSON.parse(RspnsTxt);

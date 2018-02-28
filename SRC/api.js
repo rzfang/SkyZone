@@ -189,7 +189,7 @@ function BlogListFrame(Ttl)
         BlogBx = LstBx.parent(),
         OptnBtn = BlogBx.find('> div:first > input:button');
 
-    ItemList(LstBx, 'service.php', 5, {'Cmd': 1}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+    ItemList(LstBx, '/service/blog/list', 5, {}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
 
     OptnBtn.first().on('click', TagListFrame)
                    .end()
@@ -287,8 +287,8 @@ function BlogListFrame(Ttl)
         'type': 'POST',
         'dataType': 'json',
         'timeout' : 20000,
-        'url': 'service.php',
-        'data': {'Cmd': 7},
+        'url': '/service/tag/list',
+        'data': {},
         'success': function(Rtn, TxtSt, JQXHR)
           {
             if (Rtn.Index < 0)
@@ -335,7 +335,7 @@ function BlogListFrame(Ttl)
 
       $(this).closest('div').prev('div').find('input:checkbox').prop('checked', false);
 
-      ItemList('#BlogLstBx', 'service.php', 5, {'Cmd': 1, 'TgIDA': []}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+      ItemList('#BlogLstBx', '/service/blog/list', 5, {'TgIDA': []}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
       FrameHide(Frm);
     }
 
@@ -348,7 +348,7 @@ function BlogListFrame(Ttl)
       $(this).closest('div').prev('div').find('input:checkbox:checked').each(function(Idx)
         { TgIDA.push($(this).val()); });
 
-      ItemList('#BlogLstBx', 'service.php', 5, {'Cmd': 1, 'TgIDA': TgIDA}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+      ItemList('#BlogLstBx', '/service/blog/list', 5, {'TgIDA': TgIDA}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
       FrameHide(Frm);
     }
   }
@@ -1441,8 +1441,8 @@ function GoodWordsSet()
         'type': 'POST',
         'dataType': 'json',
         'timeout' : 20000,
-        'url': 'service.php',
-        'data': {'Cmd': 11},
+        'url': 'service/words/nowone',
+        'data': null,
         'success': function(Data, TxtSt, JQXHR)
           {
             if (Data.Index < 0)

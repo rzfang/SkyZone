@@ -17,7 +17,7 @@ Db::Db0Connect();
 switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300: for RZ.
 {
   case 1:
-    echo Blog::BlogList($_POST);
+    echo Blog::BlogList($_POST); // migrated.
     break;
 
   case 2:
@@ -25,7 +25,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 3:
-    echo Message::MessageList($_POST);
+    echo Message::MessageList($_POST); // migrated.
     break;
 
   case 4:
@@ -41,15 +41,15 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 7:
-    echo Tag::TagList($_POST);
+    echo Tag::TagList($_POST); // migrated.
     break;
 
   case 8:
-    echo Blog::CommentList($_POST);
+    echo Blog::CommentList($_POST); // migrated.
     break;
 
   case 9:
-    echo Blog::CommentLeave($_POST);
+    echo Blog::CommentLeave($_POST); // migrated.
     break;
 
   case 10:
@@ -57,7 +57,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 11:
-    echo GoodWords::NowOneGet();
+    echo GoodWords::NowOneGet(); // migrated.
     break;
 
   //==== 100+ are Admin functions. ====
