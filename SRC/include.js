@@ -870,7 +870,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
         // 'complete' : function(JQXHR, TxtSt){},
         'success': function(Rtn, TxtSt, JQXHR)
           {
-            if (Rtn.Index != 0)
+            if (Rtn.Index < 0)
             {
               alert(Rtn.Index + ', ' + Rtn.Message);
               return 0;

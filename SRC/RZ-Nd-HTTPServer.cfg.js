@@ -14,6 +14,8 @@ module.exports = {
     cases: {
       'blog/list': Svc.BlogList,
       'comment/list': Svc.CommentList,
+      'message/chainlist': Svc.MessageChainList,
+      'message/list': Svc.MessageList,
       'tag/list': Svc.TagList,
       'words/nowone': Svc.WordsNowOneGet
     },

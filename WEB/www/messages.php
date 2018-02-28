@@ -64,8 +64,8 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
             {
               var BxDOM = ItemList2(
                             '#MsgBx',
-                            'service.php',
-                            {Cmd: 3, Lmt: 5},
+                            '/service/message/list',
+                            { Lmt: 5 },
                             OneMessageCreate,
                             false,
                             OneByOneFadeIn);
@@ -118,7 +118,13 @@ if (!empty($_GET['t']) && is_string($_GET['t']))
             }
 
             ID = Msg.attr('id')
-            LstBxDOM = ItemList2(LstBx, 'service.php', {Cmd: 5, ID: ID}, OneReplyCreate, true, CountUpdate);
+            LstBxDOM = ItemList2(
+                        LstBx,
+                        '/service/message/chainlist',
+                        { ID: ID },
+                        OneReplyCreate,
+                        true,
+                        CountUpdate);
 
             LstBxDOM.Get(-1, 0);
             LstBx.data('IsLoaded', true);

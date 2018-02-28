@@ -313,6 +313,36 @@ module.exports = {
           PckEnd(0, Kwd.RM.Done, Rst);
         })
         .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
+    },
+    ChainList: (Rqst, Prm, End) => {
+      if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+
+      const Db = new SQLite(DB_PTH);
+
+      if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
+
+      const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+      if (!Prm.ID || !Is.UUID(Prm.ID)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
+
+      if (parseInt(Prm.Cnt, 10)) {
+        return Db.TableRows('Message', { Fld: 'target', Prms: [ Prm.ID ]})
+          .then(Cnt => { PckEnd(1, Kwd.RM.Done, Cnt); })
+          .catch(Cd => { PckEnd(Cd * 10 + -3, Kwd.RM.DbCrash); });
+      }
+
+      const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || -1, // default -1.
+            Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+            SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, message AS Msg FROM ' +
+                  'Message WHERE target = ? ORDER BY Dt LIMIT ? OFFSET ?;';
+
+      Db.Query(SQL, [ Prm.ID, Lmt, Ofst ])
+        .then(Rst => {
+          if (!Rst) { return PckEnd(-4, Kwd.RM.NoSuchData); }
+
+          PckEnd(0, Kwd.RM.Done, Rst);
+        })
+        .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
     }
   },
   Wds: { // good words.

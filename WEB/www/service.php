@@ -33,7 +33,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 5:
-    echo Message::ChainList($_POST);
+    echo Message::ChainList($_POST); // migrated.
     break;
 
   case 6:

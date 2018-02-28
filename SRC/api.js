@@ -968,7 +968,7 @@ function MessageListFrame(Ttl)
 
   function MessageListFrameSet()
   {
-    ItemList(LstBx, 'service.php', 5, {'Cmd': 3}, OneMessage, ['LstIdxTg', 'LstIdxTgDsb']);
+    ItemList(LstBx, '/service/message/list', 5, null, OneMessage, ['LstIdxTg', 'LstIdxTgDsb']);
 
     $('#NewMsgBtn').on('click', MessageLeaveFrame);
     $('#RldMsgLstBtn').on('click', MessageListReflash);
@@ -1112,7 +1112,7 @@ function MessageListFrame(Ttl)
                                                          .css({'padding': 5, 'borderWidth': 1, 'borderRadius': 5})
                                                          .children('input:button:last').on('click', MessageLeave);
 
-      ItemList(MsgChnBx.children('div:eq(1)'), 'service.php', -1, {'Cmd': 5, 'ID': ID}, OneChain, []);
+      ItemList(MsgChnBx.children('div:eq(1)'), '/service/message/chainlist', -1, {'ID': ID}, OneChain, []);
 
       return MsgChnBx;
     }

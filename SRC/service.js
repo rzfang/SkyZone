@@ -48,6 +48,18 @@ module.exports = {
 
     return Blog.CommentList(Rqst, MxPrm, PckEnd);
   },
+  MessageList: (Rqst, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Msg.List(Rqst, MxPrm, PckEnd);
+  },
+  MessageChainList: (Rqst, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Msg.ChainList(Rqst, MxPrm, PckEnd);
+  },
   DefaultCall: (Rqst, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           Cmd = MxPrm.Cmd && parseInt(MxPrm.Cmd, 10) || -1, // command.
@@ -56,9 +68,6 @@ module.exports = {
     if (Cmd < 0) { return End(-1, null); }
 
     switch (Cmd) {
-      case 3:
-        return Msg.List(Rqst, MxPrm, PckEnd);
-
       case 9:
         return Blog.CommentLeave(Rqst, MxPrm, PckEnd);
     }
