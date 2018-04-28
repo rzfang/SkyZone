@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BscPth=`dirname $0`; # basic path.
+BscPth=`realpath $BscPth`;
 
 if [ "$1" == 'php' ]; then
   PgPth=$BscPth'/../WEB/www/'; # page root path.
