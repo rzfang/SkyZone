@@ -2,7 +2,8 @@
 //==== Initialize ======================================================================================================
 
 require __DIR__ . '/constants.php';
-require WEB_PTH . 'keyword.php'; // import keyword values.
+
+$Kw = json_decode(file_get_contents(SRC_PTH . "keyword.json"), true);
 
 ErrorHintHandle(DEV); // this also start session.
 
