@@ -12,7 +12,7 @@ const { port: Pt = 9004,
           componentPath: CpnPth = '.' }, // component path.
         resources: {
           path: RscPth, // resource path.
-          fileMask: RscFlMsk = /[^\/]+\.(js|css|tag|html|txt|xml)$/ }, // resrouce file mask.
+          fileMask: RscFlMsk = /[^/]+\.(js|css|tag|html|txt|xml)$/ }, // resrouce file mask.
         service: {
           urlPattern: SvcUrlPtn, // service url pattern.
           cases: SvcCss = {}, // service cases.

@@ -1,8 +1,5 @@
-const querystring = require('querystring'),
-      url = require('url');
-
 const Is = require('./RZ-Js-Is');
-const Log = require('./RZ-Js-Log');
+// const Log = require('./RZ-Js-Log');
 const { Blog, Tag, Msg, Wds } = require('./library');
 
 

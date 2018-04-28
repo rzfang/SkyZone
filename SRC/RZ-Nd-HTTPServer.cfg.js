@@ -7,7 +7,7 @@ module.exports = {
   },
   resources: {
     path: '../WEB/www/resource',
-    fileMask: /[^\/]+\.(js|css|txt|xml)$/
+    fileMask: /[^/]+\.(js|css|txt|xml)$/
   },
   service: {
     urlPattern: /^\/service\/(.+)/, // if regular expression can not match a case, the default case will be used.

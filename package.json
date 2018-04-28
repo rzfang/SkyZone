@@ -8,15 +8,16 @@
     "sqlite3": "^3.1.13"
   },
   "devDependencies": {
-    "eslint": "^3.13.1",
-    "node-sass": "^4.4.2",
-    "nodemon": "^1.17.1",
+    "eslint": "^4.19.1",
+    "eslint-plugin-json": "^1.2.0",
+    "node-sass": "^4.9.0",
+    "nodemon": "^1.17.3",
     "pre-commit": "^1.2.2",
     "uglify-js": "^2.6.2"
   },
   "scripts": {
     "dev": "nodemon -d 3 -e js,scss,html,tag -w SRC/ SRC/RZ-Nd-HTTPServer.js",
-    "lint": "eslint SRC/*.js",
+    "lint": "eslint --ext .js,.json SRC/*.js",
     "test": "test"
   },
   "repository": {
@@ -45,6 +46,9 @@
     "parserOptions": {
       "sourceType": "module"
     },
+    "plugins": [
+      "json"
+    ],
     "rules": {
       "no-console": [
         "warn",
@@ -62,5 +66,9 @@
         }
       ]
     }
-  }
+  },
+  "eslintIgnore": [
+    "SRC/api.js",
+    "SRC/include.js"
+  ]
 }
