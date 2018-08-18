@@ -4,14 +4,16 @@
   "description": "Sky Zone",
   "main": "server.js",
   "dependencies": {
-    "async": "^2.1.4",
-    "sqlite3": "^3.1.13"
+    "async": "^2.6.1",
+    "cookie": "^0.3.1",
+    "riot": "^3.11.1",
+    "sqlite3": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "eslint-plugin-json": "^1.2.0",
-    "node-sass": "^4.9.0",
-    "nodemon": "^1.17.3",
+    "eslint-plugin-json": "^1.2.1",
+    "node-sass": "^4.9.3",
+    "nodemon": "^1.18.3",
     "pre-commit": "^1.2.2",
     "uglify-js": "^2.6.2"
   },
