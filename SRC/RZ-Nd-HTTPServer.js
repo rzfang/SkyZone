@@ -2,22 +2,22 @@ const async = require('async'),
       http = require('http'),
       path = require('path'),
       querystring = require('querystring'),
+      riot = require('riot'),
       url = require('url'),
       Is = require('./RZ-Js-Is'),
       Cch = require('./RZ-Nd-Cache'),
       Log = require('./RZ-Js-Log');
 
 const { port: Pt = 9004,
-        riot: {
-          componentPath: CpnPth = '.' }, // component path.
-        resources: {
-          path: RscPth, // resource path.
-          fileMask: RscFlMsk = /[^/]+\.(js|css|tag|html|txt|xml)$/ }, // resrouce file mask.
+        keyword: Kwd = {},
+        resource: {
+          mimeTypeMap: MmTpMp = {},
+          locationMap: LctnMp = []}, // resource file location map.
         service: {
           urlPattern: SvcUrlPtn, // service url pattern.
           cases: SvcCss = {}, // service cases.
           default: SvcDftCs = null }, // service default case.
-        pages: Pgs } = require('./RZ-Nd-HTTPServer.cfg.js');
+        page: Pg } = require('./RZ-Nd-HTTPServer.cfg.js');
 
 let IdCnt = 0; // id count, for giving a unique id for each request.
 
@@ -26,7 +26,7 @@ let IdCnt = 0; // id count, for giving a unique id for each request.
   @ response object.
   @ file path.
   @ mine type. */
-function StaticFileResponse (Rqst, Rspns, FlPth, MmTp) {
+function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
   if (Rqst.headers['if-modified-since']) {
     let Dt = (new Date(Rqst.headers['if-modified-since'])).getTime(); // date number.
 
@@ -45,11 +45,11 @@ function StaticFileResponse (Rqst, Rspns, FlPth, MmTp) {
 
   Cch.FileLoad(
     FlPth,
-    function (Err, Str) {
+    (Err, Str) => {
       if (Err < 0) {
         Rspns.writeHead(404, { 'Content-Type': MmTp });
         Rspns.write('can not found the content.');
-        Log(`FileLoad(${Err}) - can not load file.`, 'error');
+        Log(`FileLoad(${Err}) - can not load file. ${FlPth}`, 'error');
       }
       else {
         Rspns.writeHead(
@@ -67,13 +67,11 @@ function StaticFileResponse (Rqst, Rspns, FlPth, MmTp) {
 /*
   @ response object.
   @ path name. */
-function Render (Rspns, UrlInfo) {
-  let PthNm = UrlInfo.pathname,
-      Pg = Object.assign({}, Pgs.default, Pgs[PthNm] || {}), // page info object.
-      LdScrpts = '', // loading scripts.
-      MntScrpts = '';  // mount scripts.
+function PageRespond (Rqst, Rspns, UrlInfo) {
+  const PthNm = UrlInfo.pathname,
+        PgInfo = Object.assign({}, Pg.default, Pg[PthNm] || {}); // page info object.
 
-  if (!Pg.body) {
+  if (!PgInfo.body) {
     Rspns.writeHead(404, {'Content-Type': 'text/html'});
     Rspns.write('can not found the content.');
     Rspns.end();
@@ -82,120 +80,133 @@ function Render (Rspns, UrlInfo) {
     return;
   }
 
+  let LdScrpts = '', // loading scripts.
+      MntScrpts = '';  // mount scripts.
+
+  function FileRender (Bd, Clbck) {
+    const { base: Bs, ext: Ext, name: Nm } = path.parse(Bd); // path info.
+
+    if (Ext === '.html') {
+      Cch.FileLoad(
+        path.resolve(__dirname, Bd),
+        (Err, FlStr) => { // error, file string.
+          if (Err < 0) {
+            Clbck('FileLoad', '<!-- can not load this component. -->');
+            Log(`FileLoad(${Err}) - ${Bd} - load file failed.`, 'error');
+
+            return;
+          }
+
+          Clbck(null, FlStr);
+        });
+
+      return;
+    }
+
+    if (Ext === '.tag') {
+      LdScrpts += `<script type='riot/tag' src='${Bs}'></script>\n`;
+      MntScrpts += `riot.mount('${Nm}');\n`;
+
+      return Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);
+    }
+
+    Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);
+  }
+
   async.map(
-    Pg.body,
-    function (Bd, Clbck) { // body info object|string, callback function.
+    PgInfo.body,
+    (Bd, Clbck) => { // body info object|string, callback function.
       const Tp = typeof Bd;
 
-      if (Tp === 'string') {
-        const Cmpnt = Bd.substr(0, Bd.lastIndexOf('.')), // component name.
-              Ext = Bd.substr(Bd.lastIndexOf('.') + 1); // extension name.
+      if (Tp === 'string') { return FileRender(Bd, Clbck); }
+      else if (Tp === 'object' && Bd.type === 'riot' && Bd.component && Is.String(Bd.component)) { // to do.
+          const { base: Bs, ext: Ext, name: Nm } = path.parse(Bd.component); // path info.
 
-        if (Ext === 'html') {
-          Cch.FileLoad(
-            path.resolve(__dirname, CpnPth, Bd),
-            function (Err, FlStr) { // error, file string.
-              if (Err < 0) {
-                Clbck('FileLoad', '<!-- can not load this component. -->');
-                Log(`FileLoad(${Err}) - ${Bd} - load file failed.`, 'error');
+          LdScrpts += `<script type='riot/tag' src='${Bs}'></script>\n`;
 
-                return;
-              }
+          if (!Bd.initialize || !Is.Function(Bd.initialize)) {
+            MntScrpts += `riot.mount('${Nm}');\n`;
 
-              Clbck(null, FlStr);
+            Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);
+
+            return;
+          }
+
+          Bd.initialize(
+            Rqst,
+            UrlInfo,
+            (Cd, Dt) => {
+              if (Cd < 0) { return Clbck(`<!-- can not render '${Nm}' component. -->`); }
+
+              const Jsn = JSON.stringify(Dt);
+
+              MntScrpts += `riot.mount('${Nm}', ${Jsn});\n`;
+
+              Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);
             });
 
           return;
-        }
-
-        if (Ext === 'tag') {
-          LdScrpts += `<script type='riot/tag' src='/${Bd}'></script>\n`;
-          MntScrpts += `riot.mount('${Cmpnt}');\n`;
-
-          Clbck(null, `<${Cmpnt}><!-- this will be replaced by riot.mount. --></${Cmpnt}>`);
-
-          return;
-        }
-      }
-
-      if (Tp === 'function') {
-        Bd(
-          UrlInfo,
-          function (Cd, Rst) {
-            if (Cd < 0) {
-              Clbck('Render', '<!-- can not render for this task. -->');
-              Log('task run failed.');
-
-              return;
-            }
-
-            if (!Rst.Js || !Rst.HTML || !Is.String(Rst.Js) || !Is.String(Rst.HTML)) {
-              Clbck('Render', '<!-- can not render for this task. -->');
-              Log('task give wrong format result.', 'warn');
-            }
-
-            MntScrpts += Rst.Js;
-
-            Clbck(null, Rst.HTML);
-          });
-
-        return;
       }
 
       Clbck('Render', '<!-- can not render this component. -->');
       Log('do not know how to deal this component.', 'error');
     },
-    function (Err, BdStrs) {
+    (Err, BdStrs) => {
       let HdStr = ''; // head string.
 
       if (Err) {
         Rspns.writeHead(404, {'Content-Type': 'text/html'});
         Rspns.write('can not found the content.');
         Rspns.end();
-        Log(PthNm + ' ' + Pg.body + '\nload the body file failed.', 'warn');
+        Log(PthNm + ' ' + PgInfo.body + '\nload the body file failed.', 'warn');
 
         return;
       }
 
-      if (Pg.title) {
-        HdStr += '<title>' + Pg.title + "</title>\n";
+      if (PgInfo.title) {
+        HdStr += '<title>' + PgInfo.title + "</title>\n";
       }
 
-      if (Pg.description) {
-        HdStr += "<meta name='description' content='" + Pg.description + "'/>\n";
+      if (PgInfo.description) {
+        HdStr += "<meta name='description' content='" + PgInfo.description + "'/>\n";
       }
 
-      if (Pg.keywords) {
-        HdStr += "<meta name='keywords' content='" + Pg.keywords + "'/>\n";
+      if (PgInfo.keywords) {
+        HdStr += "<meta name='keywords' content='" + PgInfo.keywords + "'/>\n";
       }
 
-      if (Pg.author) {
-        HdStr += "<meta name='author' content='" + Pg.author + "'/>\n";
+      if (PgInfo.author) {
+        HdStr += "<meta name='author' content='" + PgInfo.author + "'/>\n";
       }
 
-      if (Pg.favicon) {
-        HdStr += "<link rel='icon' href='favicon.ico' type='" + Pg.favicon + "'/>\n";
+      if (PgInfo.favicon) {
+        HdStr += "<link rel='icon' href='favicon.ico' type='" + PgInfo.favicon + "'/>\n";
       }
 
-      if (Pg.css && Pg.css.length) {
-        for (let i = 0; i < Pg.css.length; i++) {
-          HdStr += "<link rel='stylesheet' type='text/css' href='" + Pg.css[i] + "'/>\n";
+      if (PgInfo.css && PgInfo.css.length) {
+        for (let i = 0; i < PgInfo.css.length; i++) {
+          HdStr += "<link rel='stylesheet' type='text/css' href='" + PgInfo.css[i] + "'/>\n";
         }
       }
 
-      if (Pg.js && Pg.js.length) {
-        let Scrpts = '';
+      if (PgInfo.js && PgInfo.js.length) {
+        for (let i = 0; i < PgInfo.js.length; i++) {
+          const { base: Bs, ext: Ext } = path.parse(PgInfo.js[i]); // extension name.
+          let Scrpts = ''; // scripts.
 
-        for (let i = 0; i < Pg.js.length; i++) {
-          const Ext = Pg.js[i].substr(Pg.js[i].lastIndexOf('.') + 1); // extension name.
+          Scrpts += (Ext === '.tag') ?
+            `<script type='riot/tag' src='${Bs}'></script>\n` :
+            `<script language='javascript' src='${PgInfo.js[i]}'></script>\n`;
 
-          Scrpts += (Ext === 'tag') ?
-            `<script type='riot/tag' src='${Pg.js[i]}'></script>\n` :
-            `<script language='javascript' src='${Pg.js[i]}'></script>\n`;
+          LdScrpts = Scrpts + LdScrpts;
         }
-
-        LdScrpts = Scrpts + LdScrpts;
       }
+
+      // make browser supports keyword data.
+      const KwdScrpt =
+        'if (!window.Z) { window.Z = {}; }\n' +
+        'if (!window.Z.Kwd) { window.Z.Kwd = {}; }\n' +
+        'window.Z.Kwd = ' + JSON.stringify(Kwd) + ';';
 
       Rspns.writeHead(200, {'Content-Type': 'text/html'});
       Rspns.write(
@@ -206,7 +217,7 @@ function Render (Rspns, UrlInfo) {
         "</head>\n<body>\n<div id='Base'>\n" +
         BdStrs.join('\n') +
         '</div>\n' +
-        `<script>\nriot.mixin('Z.RM', Z.RM);\n${MntScrpts}</script>\n` +
+        `<script>${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\n${MntScrpts}</script>\n` +
         '</body>\n</html>\n');
       Rspns.end();
     });
@@ -215,9 +226,10 @@ function Render (Rspns, UrlInfo) {
 /*
   @ request object.
   @ response object.
+  @ url info object.
   @ post body.
   @ service function. */
-function ServiceResponse (Rqst, Rspns, UrlInfo, Bd, Svc) {
+function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
   if (!Svc) {
     Rspns.writeHead(404, {'Content-Type': 'application/json'});
     Rspns.write('can not found the content.');
@@ -260,25 +272,41 @@ function ServiceResponse (Rqst, Rspns, UrlInfo, Bd, Svc) {
 
   Svc(
     Rqst,
+    Rspns,
     Prm,
-    function (Cd, RstObj) { // code, result object.
+    (Cd, RstObj) => { // code, result object.
       if (Cd < 0) {
         Rspns.writeHead(400, {'Content-Type': 'text/html'});
-        Rspns.write('error');
-      }
-      else if (!RstObj) {
-        Rspns.writeHead(200, {'Content-Type': 'text/html'});
-        Rspns.write('');
-      }
-      else if (!Is.Object(RstObj)) {
-        Rspns.writeHead(200, {'Content-Type': 'text/html'});
-        Rspns.write(RstObj);
-      }
-      else {
-        Rspns.writeHead(200, {'Content-Type': 'application/json'});
-        Rspns.write(JSON.stringify(RstObj));
+        Rspns.write(Is.String(RstObj) ? RstObj : 'error');
+        Rspns.end();
+
+        return;
       }
 
+      if (!RstObj) {
+        Rspns.writeHead(204, {'Content-Type': 'text/html'});
+        Rspns.write('');
+        Rspns.end();
+
+        return;
+      }
+
+      if (Is.Function(RstObj)) { // take over whole process to end.
+        RstObj(Rspns, () => { Rspns.end(); });
+
+        return;
+      }
+
+      if (!Is.Object(RstObj)) {
+        Rspns.writeHead(200, {'Content-Type': 'text/html'});
+        Rspns.write(RstObj);
+        Rspns.end();
+
+        return;
+      }
+
+      Rspns.writeHead(200, {'Content-Type': 'application/json'});
+      Rspns.write(JSON.stringify(RstObj));
       Rspns.end();
     });
 }
@@ -291,7 +319,7 @@ function Route (Rqst, Rspns) {
 
   Rqst.on(
     'data',
-    function (Chnk) { // chunk.
+    (Chnk) => { // chunk.
       PstBdy += Chnk;
 
       // if (body.length > 1e6) { // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
@@ -301,44 +329,35 @@ function Route (Rqst, Rspns) {
 
   Rqst.on(
     'end',
-    function () {
+    () => {
       // ==== static file response. ====
 
-      const RscFlChk = RscFlMsk.exec(UrlInfo.pathname); // static file check.
+      for (let i = 0; i < LctnMp.length; i++) {
+        if (LctnMp[i].pattern.test(UrlInfo.pathname)) {
+          const [ FlNm, Ext ] = /[^/]+\.(.+)/.exec(UrlInfo.pathname), // file name, extesion.
+                MmTp = MmTpMp[Ext] || 'text/plain'; // mime type.
 
-      if (RscFlChk && RscFlChk.length && RscFlChk.length > 1) {
-        const MmTp = {
-                js: 'application/javascript',
-                css: 'text/css',
-                tag: 'text/plain',
-                html: 'text/html',
-                txt: 'text/plain',
-                xml: 'text/xml' }; // mine type.
-
-        if (RscFlChk[1] === 'tag') {
-          return StaticFileResponse(Rqst, Rspns, path.resolve(__dirname, CpnPth, RscFlChk[0]), MmTp[RscFlChk[1]]);
+          return StaticFileRespond(Rqst, Rspns, path.resolve(__dirname, LctnMp[i].location, FlNm), MmTp);
         }
-
-        return StaticFileResponse(Rqst, Rspns, path.resolve(__dirname, RscPth, RscFlChk[0]), MmTp[RscFlChk[1]]);
       }
 
       // ==== service response. ====
 
       const SvcChk = SvcUrlPtn.exec(UrlInfo.pathname);
 
-      if (SvcChk) { return ServiceResponse(Rqst, Rspns, UrlInfo, PstBdy, SvcCss[SvcChk[1]] || SvcDftCs || null); }
+      if (SvcChk) { return ServiceRespond(Rqst, Rspns, UrlInfo, PstBdy, SvcCss[SvcChk[1]] || SvcDftCs || null); }
 
       // ====
 
       if (UrlInfo.pathname.indexOf('/.well-known/acme-challenge/') > -1) { // for SSL cert.
-        return StaticFileResponse(
+        return StaticFileRespond(
           Rqst,
           Rspns,
           'WEB/' + UrlInfo.pathname.substr(UrlInfo.pathname.lastIndexOf('/') + 1),
           'text/plain');
       }
 
-      Render(Rspns, UrlInfo);
+      PageRespond(Rqst, Rspns, UrlInfo);
     });
 }
 
