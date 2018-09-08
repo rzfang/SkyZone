@@ -325,13 +325,13 @@ require '../global.php';
       <header id='Head'> <!-- Head -->
         <nav>
           <a href='https://webtool.zii.tw'>線上工具</a>
-          <a href='zone.php'>空域</a>
+          <a href='blogs.php'>空域</a>
           <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
           <!-- <a href='zakool.zii.php'>雜酷-舊物交流網</a> -->
         </nav>
       </header>
       <div id='Main'> <!-- Main -->
-        <a href='zone.php'>
+        <a href='blogs.php'>
           <canvas id='Entry' width='640' height='480' style='box-shadow: 0px 0px 5px;'>您的瀏覽器不支援動畫。</canvas>
         </a>
         <div>
