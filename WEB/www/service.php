@@ -64,15 +64,15 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
 
   case 101:
     unset($_SESSION[SSN_ERR_HNT]);
-    echo System::SessionLogout($_POST, Admin::$PswdSsnNm);
+    echo System::SessionLogout($_POST, Admin::$PswdSsnNm); // migrated.
     break;
 
   case 102:
-    echo System::SessionLogin($_POST, Admin::$Pswd, Admin::$PswdSsnNm);
+    echo System::SessionLogin($_POST, Admin::$Pswd, Admin::$PswdSsnNm); // migrated.
     break;
 
   case 103:
-    echo Blog::AdminList($_POST);
+    echo Blog::AdminList($_POST); // migrated, but doesn't handle files.
     break;
 
   case 104:
@@ -112,15 +112,15 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 113:
-    echo Tag::Create($_POST);
+    echo Tag::Create($_POST); // migrated.
     break;
 
   case 114:
-    echo Tag::Delete($_POST);
+    echo Tag::Delete($_POST); // migrated.
     break;
 
   case 115:
-    echo Admin::FeedPublish($_POST);
+    echo Admin::FeedPublish($_POST); // migrated.
     break;
 
   case 116:
@@ -132,7 +132,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 118:
-    echo Tag::Rename($_POST);
+    echo Tag::Rename($_POST); // migrated.
     break;
 
   case 119:

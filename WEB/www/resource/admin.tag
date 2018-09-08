@@ -1,3 +1,54 @@
+<admin>
+  <login if={!opts.IsLgd}/>
+  <tabbox if={opts.IsLgd} tbs={Tbs}/>
+  <script>
+    const Dt2BlgMngr = { FdLstDt: this.opts.FdLstDt || '' }; // data to blog manager, feed last date.
+
+    this.Tbs = [
+      { Nm: '網誌管理', Cmpnt: 'blogs-manager', Dt: Dt2BlgMngr },
+      { Nm: '留言板管理', Cmpnt: 'blog-comments' },
+      { Nm: '佳言錄', Cmpnt: '' },
+      { Nm: '角落藝廊管理', Cmpnt: '' },
+      { Nm: '系統管理', Cmpnt: '' }
+    ];
+  </script>
+</admin>
+
+<login>
+  <div>
+    管理員工具<br/>
+    密碼： <input ref='Pswd' type='password' id='Pswd' maxlength='16' placeholder='請輸入密碼。' onkeypress={Login}/>
+    <input type='button' id='LgnBtn' value='登入' onclick={Login}/>
+  </div>
+  <style scoped>
+    :scope>div { text-align: center; }
+  </style>
+  <script>
+    this.mixin('Z.RM');
+
+    Login (Evt) {
+      if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+
+      const Pswd = this.refs.Pswd.value;
+
+      if (!Pswd) { return alert(this.Keyword('PasswordNeed')); }
+
+      this.ServiceCall(
+        '/service/session/login',
+        { Pswd },
+        'LOGIN',
+        (Sto, Rst) => {
+          alert(Rst.Message);
+
+          if (Rst.Index > -1) { window.location.reload(true); }
+
+          return Sto;
+        });
+    }
+  </script>
+</login>
+
+<!-- shared data to be a tag as a store. -->
 <store-tags>
   <script>
     this.mixin('Z.RM');
@@ -85,6 +136,127 @@
   </script>
 </list-index>
 
+<blogs-manager>
+  <tabbox tbs={Tbs}/>
+  <script>
+    const Dt2Fd = { FdLstDt: this.opts.FdLstDt || '' }; // data to feed.
+
+    this.Tbs = [
+      { Nm: '網誌上傳', Cmpnt: 'blog-uploader' },
+      { Nm: '訂閱消息', Cmpnt: 'feed', Dt: Dt2Fd },
+      { Nm: '網誌列表', Cmpnt: 'blogs', Dt: { IsPblshd: true }}, // IsPblshd = is published.
+      { Nm: '未建立網誌', Cmpnt: 'blogs'},
+      { Nm: '標籤管理', Cmpnt: 'tags' },
+      { Nm: '相簿型網誌內容編輯器', Cmpnt: 'blog-album-editor' }
+    ];
+  </script>
+</blogs-manager>
+
+<!-- not finish. -->
+<blog-uploader>
+  <div>
+    <span class='Block' style='border-width: 1px;'>
+      檔案格式說明
+      <table>
+        <tbody>
+          <tr><th>類型</th><th>檔案格式</th><th>說明</th></tr>
+          <tr>
+            <td>Text<br/>ZFT</td>
+            <td>文字檔</td>
+            <td>任意檔名的純文字檔, *.txt</td>
+          </tr>
+          <tr>
+            <td>Image</td>
+            <td>Tar 打包檔<br/>├ 圖片檔<br/>└ comment.txt</td>
+            <td>
+              打包檔名稱不限。<br/>
+              圖片檔名稱不限。<br/>
+              comment.txt 內容為對圖片檔的說明。
+            </td>
+          </tr>
+          <tr>
+            <td>Images</td>
+            <td>
+              Tar 打包檔<br/>
+              ├ 001.*<br/>
+              ...<br/>
+              ├ 999.*<br/>
+              └ comment.txt<br/>
+              ---- or ----<br/>
+              Tar 打包檔<br/>
+              ├ [圖檔名].*<br/>
+              ...<br/>
+              ├ [圖檔名].*<br/>
+              └ comment.json<br/>
+            </td>
+            <td>
+              打包檔名稱不限。<br/>
+              001.* ~ 999.* 為圖片檔，呈現時將依檔名排序。<br/>comment.txt 內容為對圖片檔的說明。<br/>其中以 \n====\n 做為每張圖片說明的分隔。<br/>
+              或是<br/>
+              透過「相簿型網誌內容編輯器」產生說明文，<br/>存入名為 comment.json 的文字檔。<br/>然後將圖檔與文字檔一同打包。
+            </td>
+          </tr>
+          <tr>
+            <td>HTML</td>
+            <td>(還在規畫)</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </span>
+    <span class='Block' style='text-align: left;'>
+      注意事項：
+      <ul>
+        <li>檔案最大限制 <?= ini_get('upload_max_filesize'); ?></li>
+        <li>若檔名一樣，會直接覆蓋。</li>
+        <li>上傳過程，請不要進行其它操作或是離開本頁。</li>
+      </ul>
+      <span class='TextTitle'>檔案</span>
+      <input type='file' id='BlogFl'/><br/>
+      <input type='button' id='BlogUpldBtn' value='上傳'/>
+      <progress value='0' max='100'></progress><br/>
+    </span>
+  </div>
+  <style scoped>
+    :scope { text-align: center; }
+    th,td { border: 1px solid; padding: 5px; text-align: left; }
+  </style>
+</blog-uploader>
+
+<feed>
+  最後一次發佈消是在： <span>{FdLstDt}</span><br/>
+  <button onclick={Publish}>更新網誌消息</button>
+  <style scope>
+    :scope { text-align: center; }
+  </style>
+  <script>
+    this.mixin('Z.RM');
+
+    this.FdLstDt = this.StoreGet('FEED_LAST_DATE') || this.opts.FdLstDt || '';
+
+    this.StoreListen(
+      'FEED_LAST_DATE',
+      (Sto, Rst) => { if (Sto) { this.update({ FdLstDt: Sto }); }});
+
+    Publish (Evt) {
+      this.ServiceCall(
+        '/service/feed/publish',
+        null,
+        'FEED_LAST_DATE',
+        (Sto, Rst) => {
+          if (Rst.Index < 0) {
+            alert(Rst.Message);
+
+            return null;
+          }
+
+          return Rst.Extend.replace('T', ' ').replace('Z', '');
+        });
+    }
+  </script>
+</feed>
+
+<!-- not finish. -->
 <tags>
   <div>
     <input type='text' placeholder='在此輸入新的標籤名稱。' maxlength='16'>
@@ -133,8 +305,8 @@
       }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 113, Nm },
+        '/service/tag/add',
+        { Nm },
         'TAGS',
         (Sto, Rst) => {
           alert(Rst.Message);
@@ -156,8 +328,8 @@
       }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 118, ID, Nm },
+        '/service/tag/rename',
+        { ID, Nm },
         'TAGS',
         (Sto, Rst) => {
           alert(Rst.Message);
@@ -178,8 +350,8 @@
 
     TagDelete (Evt) {
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 114, ID: Evt.item.ID },
+        '/service/tag/delete',
+        { ID: Evt.item.ID },
         'TAGS',
         (Sto, Rst) => {
           alert(Rst.Message);
@@ -200,6 +372,7 @@
   </script>
 </tags>
 
+<!-- not finish. -->
 <blogs>
   <ul>
     <li each={Itm, Idx in Blgs}>
@@ -225,7 +398,9 @@
             <td>ID</td>
             <td>{Itm.ID}</td>
             <td>日期</td>
-            <td><input placeholder='請輸入日期時間。' type='date' value={Itm.Dt}></td>
+            <td>
+              <input placeholder='請輸入日期。' type='text' pattern='\d\{4\}-\d\{2\}-\d\{2\} \d\{2\}:\d\{2\}:\d\{2\}' value={Itm.Dt}>
+            </td>
           </tr>
           <tr>
             <td>類型</td>
@@ -280,27 +455,66 @@
     this.on(
       'mount',
       () => {
-        this.AJAX({
-          URL: 'service.php',
-          Mthd: 'POST',
-          Data: { Cmd: 103, Cnt: 1 },
-          Err: (Sts) => { alert('BG'); },
-          OK: (RspnsTxt, Sts) => {
-            let Rst = JSON.parse(RspnsTxt);
+        if (this.opts.IsPblshd) {
+          this.AJAX({
+            URL: '/service/blog/list/admin',
+            Mthd: 'POST',
+            Data: { Cnt: 1 },
+            Err: (Sts) => { alert('BG'); },
+            OK: (RspnsTxt, Sts) => {
+              let Rst = JSON.parse(RspnsTxt);
+
+              if (Rst.Index < 0) { return alert(Rst.Message); }
+
+              this.Cnt = Rst.Extend;
+              this.Lmt = 5;
+
+              this.PageTurn(null, 1);
+            }});
+
+          return;
+        }
+
+        this.ServiceCall(
+          '/service/blog/unpublished',
+          {},
+          'NON_BLOGS',
+          (Sto, Rst) => {
+            if (!Rst || !Is.Number(Rst.Index) || !Is.Array(Rst.Extend)) { return alert('something wrong!'); }
 
             if (Rst.Index < 0) { return alert(Rst.Message); }
 
-            this.Cnt = Rst.Extend;
+            this.Cnt = Rst.Extend.length;
 
-            this.PageTurn(null, 1);
-          }});
+            return Rst.Extend;
+          });
       });
 
     this.StoreListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
     this.StoreListen(
       'BLOGS',
-      (Sto, TskPrms) => { this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
+      (Sto, TskPrms) => {
+        this.update({ Blgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
+      });
+
+    this.StoreListen(
+      'NON_BLOGS',
+      (Sto, TskPrms) => {
+        if (!Is.Array(Sto)) { return; }
+
+        let Blgs = [];
+
+        for (let i = 0; i < Sto.length; i++) {
+          Blgs.push({
+            Fl: Sto[i]
+          });
+        }
+
+        const Lnth = Sto.length;
+
+        this.update({ Blgs, Cnt: Lnth, Lmt: Lnth });
+      });
 
     this.StoreListen(
       'BLOG_COMMENTS',
@@ -340,8 +554,8 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 103, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        '/service/blog/list/admin',
+        { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'BLOGS',
         (Sto, Rst) => {
           if (Rst.Index > -1) { Sto = Rst.Extend; }
@@ -566,6 +780,7 @@
   </script>
 </blogs>
 
+<!-- not finish. -->
 <blog-comments>
   <ul>
     <li each={opts.cmts} id={ID}>
@@ -592,6 +807,100 @@
   </script>
 </blog-comments>
 
+<blog-album-editor>
+  <div>
+    挑選圖檔 <input type='file' multiple='true'/>
+    <input type='button' value='檢視檔案' onclick={AlbumView}/>
+  </div><hr/>
+  <div>
+    <div>
+      整體排序 (還沒實作)
+      <button>時間 新 > 舊</button>
+      <button>時間 舊 > 新</button>
+      <button>名稱 A > Z</button>
+      <button>名稱 Z > A</button>
+    </div>
+    <div each={AbmEdtImgs} id={Id} class='Itm'>
+      <img src='#'/><br>
+      <div>
+        {Nm}<br/>
+        {Dt}<br/>
+        <textarea cols='20' rows='3' placeholder='輸入文字或保留空白。'></textarea>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div>
+    <input type='button' value='輸出內容' onclick={AlbumPrint}/><br/>
+    <textarea cols='30' rows='5'></textarea>
+  </div>
+  <style scoped>
+    :scope>div { text-align: center; }
+    :scope .Itm { display: inline-block; margin: 10px 5px; }
+    :scope .Itm>div { display: inline-block; text-align: left; }
+    :scope .Itm>img { max-width: 320px; max-height: 240px; }
+  </style>
+  <script>
+    this.mixin('Z.RM');
+
+    this.AbmEdtImgs = []
+
+    AlbumView (Evt) {
+      const FlsBx = this.root.querySelector('input[type=file]') || null;
+
+      if (!FlsBx) {
+        alert('尚未選擇圖檔。');
+
+        return -1;
+      }
+
+      const Fls = FlsBx.files;
+
+      if (Fls.length === 0) {
+        alert('尚未選擇圖檔。');
+
+        return -2;
+      }
+
+      let Itms = [], // items.
+          Hnt = ''; // hint.
+
+      for (let i = 0; i < Fls.length; i++) {
+        const Fl = Fls[i];
+
+        if (Fl.type !== 'image/jpeg' && Fl.type !== 'image/png') {
+          Hnt += '檔案 ' + Fl.name + ' 不是允許的圖檔，將被忽略。\n';
+
+          continue;
+        }
+
+        const Id = 'AbmImg_' + i,
+              FR = new FileReader();
+
+        Itms.push({ Id, Nm: Fl.name, Dt: this.Second2Datetime(Fl.lastModified) });
+
+        FR.targetId = Id;
+        FR.onloadend = function (Evt) {
+          let Img = document.querySelector('#' + this.targetId + ' > img');
+
+          if (!Img) { return; }
+
+          Img.src = this.result;
+        };
+
+        FR.readAsDataURL(Fl);
+      }
+
+      this.update({ AbmEdtImgs: Itms });
+    }
+
+    AlbumPrint (Evt) {
+
+    }
+  </script>
+</blog-album-editor>
+
+<!-- not finish. -->
 <messages>
   <ul>
     <li each={Itm, Idx in Msgs}>
@@ -691,6 +1000,7 @@
   </script>
 </messages>
 
+<!-- not finish. -->
 <good-words>
   <ul ref='GdWds'>
     <li>
