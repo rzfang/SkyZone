@@ -31,7 +31,7 @@ module.exports = class SQLite {
     @ SQL command string.
     @ parameters. should be an array.
     < a Promise object. */
-  Query (SQL, Prms) {
+  Query (SQL, Prms = []) {
     return new Promise ((Resolve, Reject) => {
       if (!this.Db) { return Reject(-1); }
 

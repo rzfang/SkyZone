@@ -24,7 +24,8 @@ module.exports = {
   },
   /*
     @ key name.
-    @ date number. */
+    @ date number.
+    < true | false. */
   IsFileCached (Ky, Dt) {
     let FlInfo = this.Cchs.Fls && this.Cchs.Fls[Ky] || null;
 
