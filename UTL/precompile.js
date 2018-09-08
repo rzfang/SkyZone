@@ -3,8 +3,7 @@
 'use strict';
 
 const fs = require('fs'),
-      sass = require('node-sass'),
-      uglifyjs = require('uglify-js'),
+      sass = require('node-sass');
 
 const RtPth = __dirname + '/../', // 'RtPth' = Root Path.
       RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
@@ -31,7 +30,17 @@ function SCSS_CSS (FrmPth, ToPth) {
 }
 
 function JsCompress (FrmPthA, ToPth) {
-  const Js = uglifyjs.minify(FrmPthA, { mangle: true }).code;
+  let Js = '';
+
+  for (let i = 0; i < FrmPthA.length; i++) {
+    let PtJs = fs.readFileSync(FrmPthA[i], { encoding: 'utf8' })
+      .replace(/\n +/g, '\n')
+      .replace(/\n\/\/.+/g, '')
+      .replace(/\n+/g, '\n')
+      + '\n\n\n';
+
+    Js += PtJs;
+  }
 
   fs.writeFileSync(ToPth, Js);
 }
