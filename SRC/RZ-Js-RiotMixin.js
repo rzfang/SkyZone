@@ -1,5 +1,7 @@
+'use strict';
+
 (function Z_RiotMixin_API () {
-  var Srvc = { // service.
+  let Srvc = { // service.
         Rprt: {}, // report.
         Sto: {} // data store.
       },
@@ -124,21 +126,35 @@
     return Str.replace(/^\s+|\s+$/g, '');
   }
 
+  function Second2Datetime (Scd) {
+    if (!Scd) { return ''; }
+
+    const Dt = new Date(Scd);
+
+    return Dt.getFullYear().toString() + '-' + (Dt.getMonth() + 1).toString() + '-' + Dt.getDate().toString() + ' ' +
+           Dt.getHours().toString() + ':' + Dt.getMinutes().toString() + ':' + Dt.getSeconds().toString();
+  }
+
   /*
     StoNm = name to locate the store.
-    Thn(Sto, Rst) = then, a function when the task done.
+    Then(Sto, Rst) = then, a function when the task done.
       Sto = the store object. */
-  function StoreListen (StoNm, Thn) {
-    var Clbcks = Srvc.Rprt[StoNm] || null;
+  function StoreListen (StoNm, Then) {
+    if (!this.StoLsnr) { this.StoLsnr = {}; }
 
-    if (!Clbcks || !Array.isArray(Clbcks)) {
-      Srvc.Rprt[StoNm] = [];
-      Clbcks = Srvc.Rprt[StoNm];
+    if (this.StoLsnr[StoNm]) {
+      return console.log('---- RiotMixin error ----\nthe listener to the store "' + StoNm + '" has been registered.');
     }
 
-    Srvc.Rprt[StoNm].push(Thn);
+    this.StoLsnr[StoNm] = Then;
 
-    if (Srvc.Sto[StoNm]) { Thn(Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
+    if (!Srvc.Rprt[StoNm]) { Srvc.Rprt[StoNm] = []; }
+
+    let Rprt = Srvc.Rprt[StoNm]; // report.
+
+    if (Rprt.indexOf(Then) < 0) { Rprt.push(Then); }
+
+    if (Srvc.Sto[StoNm]) { Then(Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
   }
 
   /*
@@ -167,10 +183,9 @@
         Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], '');
       },
       OK: function (RspnsTxt, Sts, XHR) {
-        var CntTp = XHR.getResponseHeader('content-type'),
-            Rst = RspnsTxt,
-            Rprt = Srvc.Rprt[StoNm] || [],
-            Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
+        const CntTp = XHR.getResponseHeader('content-type');
+
+        let Rst = RspnsTxt;
 
         if (Rst && (CntTp.indexOf('application/json') > -1 || CntTp.indexOf('text/json') > -1)) {
           Rst = JSON.parse(Rst);
@@ -178,7 +193,15 @@
 
         Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], Rst);
 
-        for (var i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
+        //==== pass result to every store listeners. ====
+
+        if (!Srvc.Rprt[StoNm] || !Array.isArray(Srvc.Rprt[StoNm])) { return; }
+
+        const Rprt = Srvc.Rprt[StoNm];
+
+        for (let i = 0; i < Rprt.length; i++) {
+          Rprt[i](Srvc.Sto[StoNm], PrmsToTsk);
+        }
       }
     });
 
@@ -193,12 +216,13 @@
   function StoreSet (StoNm, NewStoreGet, PrmsToTsk) {
     if (!StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
 
-    var Rprt = Srvc.Rprt[StoNm] || [],
-        Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
+    let Rprt = Srvc.Rprt[StoNm] || [];
 
     Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm]);
 
-    for (var i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
+    for (let i = 0; i < Rprt.length; i++) {
+      Rprt[i](Srvc.Sto[StoNm], PrmsToTsk);
+    }
 
     return 0;
   }
@@ -212,21 +236,52 @@
     return Srvc.Sto[Ky] || null;
   }
 
+  /* get RZ-Nd-HTTPServer keyword feature if support.
+    @ key.
+    < keyword. */
+  function Keyword (Ky) {
+    return window.Z && window.Z.Kwd && window.Z.Kwd[Ky] || '';
+  }
+
   RM = {
     OnBrowser: OnBrowser,
     OnNode: OnNode,
+    Second2Datetime: Second2Datetime,
     Trim: Trim
   };
 
   if (typeof module !== 'undefined') { module.exports = RM; }
   else if (typeof window !== 'undefined') {
-    RM.AJAX = AJAX;
-    RM.StoreListen = StoreListen;
-    RM.ServiceCall = ServiceCall;
-    RM.StoreSet = StoreSet;
-    RM.StoreGet = StoreGet;
+    RM.Debug = () => { console.log(Srvc); };
 
-    if (!window.Z || typeof window.Z !== 'object') { window.Z = {RM: RM}; }
+    RM.AJAX = AJAX;
+    RM.Keyword = Keyword;
+    RM.ServiceCall = ServiceCall;
+    RM.StoreGet = StoreGet;
+    RM.StoreListen = StoreListen;
+    RM.StoreSet = StoreSet;
+    RM.init = function (opts) {
+      this.on(
+        'unmount',
+        function () {
+          const StoNms = Object.keys(this.StoLsnr || {});
+
+          for (let i = 0; i < StoNms.length; i++) {
+            const StoLsnr = this.StoLsnr[StoNms[i]];
+            let Rprt = Srvc.Rprt[StoNms[i]];
+
+            for (let j = 0; j < Rprt.length; j++) {
+              if (StoLsnr === Rprt[j]) {
+                Rprt.splice(j, 1);
+
+                break;
+              }
+            }
+          }
+        });
+    };
+
+    if (!window.Z || typeof window.Z !== 'object') { window.Z = { RM }; }
     else { window.Z.RM = RM; }
   }
 })();
