@@ -217,7 +217,7 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
         "</head>\n<body>\n<div id='Base'>\n" +
         BdStrs.join('\n') +
         '</div>\n' +
-        `<script>${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\n${MntScrpts}</script>\n` +
+        `<script>${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\nriot.compile(() => {\n${MntScrpts}});\n</script>\n` +
         '</body>\n</html>\n');
       Rspns.end();
     });
