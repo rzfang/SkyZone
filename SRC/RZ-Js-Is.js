@@ -34,6 +34,19 @@
           Obj.match(/^[0-9a-fA-F]{13}$/) ||
           Obj.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/) ||
           Obj.match(/^[0-9a-fA-F]{22}$/)) ? true : false;
+    },
+    ArrayEqual: function (A, B) {
+      if (!Array.isArray(A) || !Array.isArray(B)) { false; }
+
+      if (A === B) { return true; }
+
+      if (A.length !== B.length) { return false; }
+
+      for (let i = 0; i < A.length; i++) {
+        if (A[i] !== B[i]) { return false; }
+      }
+
+      return true;
     }
   };
 

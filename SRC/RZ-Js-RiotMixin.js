@@ -99,23 +99,23 @@
   }
 
   /* do the 'Tsk' function is on the browser environment.
-    @ the task function will run on client (browser) side.
+    @ the task function will run on client (browser) side. optional.
     return: bool. */
   function OnBrowser (Tsk) {
-    if (typeof window === 'undefined' || typeof Tsk !== 'function') { return false; }
+    if (typeof window === 'undefined') { return false; }
 
-    Tsk();
+    if (typeof Tsk === 'function') { Tsk(); }
 
     return true;
   }
 
   /* do the 'Tsk' function if on the node environment.
-    @ the task function will run on server (node) side.
+    @ the task function will run on server (node) side. optional.
     return: bool. */
   function OnNode (Tsk) {
-    if (typeof module === 'undefined' || typeof Tsk !== 'function') { return false; }
+    if (typeof module === 'undefined') { return false; }
 
-    Tsk();
+    if (typeof Tsk === 'function') { Tsk(); }
 
     return true;
   }
