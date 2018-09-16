@@ -1654,7 +1654,7 @@ function KeyboardCommand(Pg)
     else if (KyBfr.indexOf(MpA[1]) >= 0)
     {
       Dcm.data('KyBfr', '');
-      PageTurn('blogs.php');
+      PageTurn('/blogs');
     }
     else
     { Dcm.data('KyBfr', KyBfr); }

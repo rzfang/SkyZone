@@ -20,8 +20,12 @@ module.exports = {
         location: './component'
       },
       {
-        pattern: /(about|header|footer).tag$/,
+        pattern: /(about|header|footer)\.tag$/,
         location: './component'
+      },
+      {
+        pattern: /(blogs)\.tag$/,
+        location: './page'
       },
       {
         pattern: /\.(js|css|tag)$/,
@@ -70,8 +74,15 @@ module.exports = {
       ]
     },
     '/blogs': {
+      js: [
+        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
+        'api2.min.js',
+        'icon.tag',
+        'tags.tag'
+      ],
       body: [
         'header.tag',
+        'blogs.tag',
         'footer.tag'
       ]
     },
