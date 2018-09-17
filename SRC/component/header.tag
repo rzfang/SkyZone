@@ -14,6 +14,10 @@
   <script>
     this.on(
       'mount',
-      () => { this.root.querySelector(`a[href='${window.location.pathname}']`).className = 'Crnt'; });
+      () => {
+        let Anchr = this.root.querySelector(`a[href='${window.location.pathname}']`);
+
+        if (Anchr) { Anchr.className = 'Crnt'; }
+      });
   </script>
 </header>

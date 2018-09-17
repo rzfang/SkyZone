@@ -471,6 +471,65 @@ const Blog = {
             PckEnd(0, Kwd.RM.Done, LstDt);
           });
       });
+  },
+  Read: (Rqst, Prm, End) => {
+    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+
+    if (!Is.String(Prm.Id)) { return End(-1, Kwd.RM.StrangeValue); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); }); // packed end function.
+    let SQL = 'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
+              'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
+              'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
+              'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;',
+        SqlRst; // SQL result.
+
+    Db.Query(SQL, [ Prm.Id ])
+      .then(Rst => {
+        if (!Rst || !Is.Array(Rst) || !Rst.length) { return PckEnd(-3, Kwd.RM.NoSuchData); }
+
+        SqlRst = Rst[0];
+        SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm FROM Tag, TagLink ' +
+              'WHERE Tag.id = TagLink.tag_id AND TagLink.link_id = ?;';
+
+        return Db.Query(SQL, [ SqlRst.Id ]);
+      })
+      .then(Rst => {
+        if (Rst || Is.Array(Rst) || Rst.length) { SqlRst.Tgs = Rst; }
+
+        switch (SqlRst.Tp) {
+          case 'text':
+            SqlRst.Url = 'https://skyzone.zii.tw/text?b=' + SqlRst.Id;
+
+            Cch.FileLoad(
+              `${BLG_PTH}/${SqlRst.Fl}`,
+              (Cd, Str) => {
+                if (Cd < 0) { return PckEnd(1, Kwd.RM.SystemError); }
+
+                SqlRst.Info = Str;
+
+                PckEnd(0, Kwd.RM.Done, SqlRst);
+              });
+
+            return;
+
+          case 'image':
+          case 'images':
+          default:
+            return PckEnd(1, Kwd.RM.StepTest);
+        }
+      })
+      .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
+  },
+  ImageRead: () => {
+
+  },
+  ImagesRead: () => {
+
   }
 };
 

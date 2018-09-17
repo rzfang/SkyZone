@@ -24,7 +24,7 @@ module.exports = {
         location: './component'
       },
       {
-        pattern: /(blogs)\.tag$/,
+        pattern: /(blogs|text)\.tag$/,
         location: './page'
       },
       {
@@ -39,6 +39,7 @@ module.exports = {
       'blog/list': Svc.BlogList,
       'blog/list/admin': Svc.BlogAdminList,
       'blog/unpublished': Svc.BlogUnpublishedList,
+      'blog': Svc.BlogRead,
       'comment/list': Svc.CommentList,
       'feed/publish': Svc.FeedPublish,
       'message/chainlist': Svc.MessageChainList,
@@ -83,6 +84,20 @@ module.exports = {
       body: [
         'header.tag',
         'blogs.tag',
+        'footer.tag'
+      ]
+    },
+    '/text': {
+      js: [
+        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
+        'api2.min.js',
+        'icon.tag',
+        'sharebox.tag',
+        'tags.tag'
+      ],
+      body: [
+        'header.tag',
+        'text.tag',
         'footer.tag'
       ]
     },
