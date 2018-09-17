@@ -343,7 +343,8 @@ function Route (Rqst, Rspns) {
 
       // ==== service response. ====
 
-      const SvcChk = SvcUrlPtn.exec(UrlInfo.pathname);
+      const SvcChk = SvcUrlPtn.exec(UrlInfo.pathname); // service check.
+
 
       if (SvcChk) { return ServiceRespond(Rqst, Rspns, UrlInfo, PstBdy, SvcCss[SvcChk[1]] || SvcDftCs || null); }
 

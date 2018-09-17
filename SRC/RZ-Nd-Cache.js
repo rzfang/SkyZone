@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = {
-  Cchs: { Fls: {}, Dt: {} }, // caches, data.
+  Cchs: { Fls: {}, Dt: {} }, // caches, files, data.
   IsRolling: false,
   /*
     @ file path.
