@@ -3,21 +3,17 @@ const async = require('async'),
       path = require('path'),
       querystring = require('querystring'),
       riot = require('riot'),
-      url = require('url'),
+      url = require('url');
+
+const Cch = require('./RZ-Nd-Cache'),
       Is = require('./RZ-Js-Is'),
-      Cch = require('./RZ-Nd-Cache'),
       Log = require('./RZ-Js-Log');
 
 const { port: Pt = 9004,
         keyword: Kwd = {},
-        resource: {
-          mimeTypeMap: MmTpMp = {},
-          locationMap: LctnMp = []}, // resource file location map.
-        service: {
-          urlPattern: SvcUrlPtn, // service url pattern.
-          cases: SvcCss = {}, // service cases.
-          default: SvcDftCs = null }, // service default case.
-        page: Pg } = require('./RZ-Nd-HTTPServer.cfg.js');
+        page: Pg,
+        route: Rt } = require('./RZ-Nd-HTTPServer.cfg.js'),
+      RtLth = Rt.length || 0; // route length.
 
 let IdCnt = 0; // id count, for giving a unique id for each request.
 
@@ -27,25 +23,21 @@ let IdCnt = 0; // id count, for giving a unique id for each request.
   @ file path.
   @ mine type. */
 function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
-  if (Rqst.headers['if-modified-since']) {
-    let Dt = (new Date(Rqst.headers['if-modified-since'])).getTime(); // date number.
+  if (Rqst.headers['if-modified-since'] && Cch.IsFileCached(FlPth)) {
+    Rspns.writeHead(
+      304,
+      { 'Content-Type': MmTp,
+        'Cache-Control': 'public, max-age=6000',
+        'Last-Modified': Rqst.headers['if-modified-since'] });
+    Rspns.write('\n');
+    Rspns.end();
 
-    if (Cch.IsFileCached(FlPth, Dt)) {
-      Rspns.writeHead(
-        304,
-        { 'Content-Type': MmTp,
-          'Cache-Control': 'public, max-age=6000',
-          'Last-Modified': Rqst.headers['if-modified-since'] });
-      Rspns.write('\n');
-      Rspns.end();
-
-      return;
-    }
+    return;
   }
 
   Cch.FileLoad(
     FlPth,
-    (Err, Str) => {
+    (Err, Str, Dt) => {
       if (Err < 0) {
         Rspns.writeHead(404, { 'Content-Type': MmTp });
         Rspns.write('can not found the content.');
@@ -56,7 +48,7 @@ function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
           200,
           { 'Content-Type': MmTp,
             'Cache-Control': 'public, max-age=6000',
-            'Last-Modified': (new Date()).toUTCString() });
+            'Last-Modified': (new Date(Dt)).toUTCString() });
         Rspns.write(Str);
       }
 
@@ -319,8 +311,8 @@ function Route (Rqst, Rspns) {
 
   Rqst.on(
     'data',
-    (Chnk) => { // chunk.
-      PstBdy += Chnk;
+    (Chk) => { // chunk.
+      PstBdy += Chk;
 
       // if (body.length > 1e6) { // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
       //   request.connection.destroy(); // FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
@@ -330,23 +322,49 @@ function Route (Rqst, Rspns) {
   Rqst.on(
     'end',
     () => {
-      // ==== static file response. ====
+      for (let i = 0; i < RtLth; i++) {
+        const RtCs = Rt[i], // route case.
+              { path: Pth = '', type: Tp = '', location: Lctn = '' } = RtCs;
 
-      for (let i = 0; i < LctnMp.length; i++) {
-        if (LctnMp[i].pattern.test(UrlInfo.pathname)) {
-          const [ FlNm, Ext ] = /[^/]+\.(.+)/.exec(UrlInfo.pathname), // file name, extesion.
-                MmTp = MmTpMp[Ext] || 'text/plain'; // mime type.
+        if (!Pth || !Tp) {
+          Log('the route case ' + RtKy + ' misses path or type.', 'error');
 
-          return StaticFileRespond(Rqst, Rspns, path.resolve(__dirname, LctnMp[i].location, FlNm), MmTp);
+          continue;
+        }
+
+        if (!Pth.test(UrlInfo.pathname)) { continue; }
+
+        switch (Tp) {
+          case 'resource': // static file response.
+            const { location: Lctn = '', mimeType: MmTp = '' } = RtCs;
+
+            if (!Lctn || !MmTp) {
+              Log(
+                'the resource type route case ' + path.basename(UrlInfo.pathname) +
+                ' misses the location or mime type.',
+                'warn');
+
+              continue;
+            }
+
+            return StaticFileRespond(Rqst, Rspns, path.resolve(__dirname, Lctn, path.basename(UrlInfo.pathname)), MmTp);
+
+          case 'process': // process response.
+          case 'service': // service response.
+            const { process: Prcs = null } = RtCs;
+
+            if (!Is.Function(Prcs)) {
+              Log('the process/service type route case ' + path.basename(UrlInfo.pathname) + 'misses the process.',
+                  'error');
+
+              continue;
+            }
+
+            return (Tp === 'process') ?
+              Prcs(Rqst, Rspns, UrlInfo) :
+              ServiceRespond(Rqst, Rspns, UrlInfo, PstBdy, Prcs);
         }
       }
-
-      // ==== service response. ====
-
-      const SvcChk = SvcUrlPtn.exec(UrlInfo.pathname); // service check.
-
-
-      if (SvcChk) { return ServiceRespond(Rqst, Rspns, UrlInfo, PstBdy, SvcCss[SvcChk[1]] || SvcDftCs || null); }
 
       // ====
 

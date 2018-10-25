@@ -1,20 +1,22 @@
 const cookie = require('cookie'),
       crypto = require('crypto'),
       fs = require('fs'),
-      path = require('path');
+      path = require('path'),
+      tarStream = require('tar-stream');
 
 const Cch = require('./RZ-Nd-Cache'),
-      Is = require('./RZ-Js-Is'),
-      SQLite = require('./RZ-Nd-SQLite'),
       Cnst = require('./constant.json'),
-      Kwd = require('./keyword.json');
+      Img = require('./image'),
+      Is = require('./RZ-Js-Is'),
+      Kwd = require('./keyword.json'),
+      SQLite = require('./RZ-Nd-SQLite');
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
       BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
+      CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
       DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
       FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
-
 
 let Cnt = 0; // a count for any situation to create an unique thing.
 
@@ -518,6 +520,12 @@ const Blog = {
             return;
 
           case 'image':
+            SqlRst.Url = 'https://skyzone.zii.tw/image?b=' + SqlRst.Id;
+
+            Blog.ImageRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
+
+            return;
+
           case 'images':
           default:
             return PckEnd(1, Kwd.RM.StepTest);
@@ -525,8 +533,61 @@ const Blog = {
       })
       .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
   },
-  ImageRead: () => {
+  /*
+    @ SQL result.
+    @ callback(Cd) function.
+      @ result code. */
+  ImageRead: (SqlRst, Then) => {
+    if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
+    const FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
+
+    let Extr = tarStream.extract();
+
+    SqlRst.Info = { Str: '', ImgUrl: '' };
+
+    Extr.on('entry', (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
+      if (Hdr.name === 'comment.txt') {
+        let Chks = []; // chunks.
+
+        Strm.on('data', Chk => { Chks.push(Chk); });
+
+        Strm.on(
+          'end',
+          () => {
+            SqlRst.Info.Str = Chks.join('').toString('utf8');
+
+            Next();
+          });
+      }
+      else {
+        const TarNm = SqlRst.Fl.replace('.tar', ''),
+              Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`, // image file path.
+              Url = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
+
+        SqlRst.Info.ImgUrl = Url;
+
+        fs.stat(
+          Pth,
+          (Err, St) => {
+            if (Err || !St.mtime || Hdr.mtime > St.mtime) {
+              let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+
+              Strm.on('end', Next);
+              Strm.pipe(ImgFlStrm);
+
+              return;
+            }
+
+            Next();
+          });
+      }
+
+      Strm.resume();
+    });
+
+    Extr.on('finish', () => { Then(0); });
+    FlStrm.pipe(Extr);
   },
   ImagesRead: () => {
 
@@ -744,7 +805,7 @@ const Ssn = { // session.
     < true|false. */
   IsLogged (Rqst, Rspns) {
 
-    return true; // for dev.
+    // return true; // for dev.
 
     const Cks = cookie.parse(Rqst.headers.cookie || ''); // cookies.
 
