@@ -9,7 +9,13 @@ module.exports = {
   FileLoad (FlPth, Clbck) {
     const This = this;
 
-    if (this.Cchs.Fls[FlPth] && this.Cchs.Fls[FlPth]['Str']) { return Clbck(1, this.Cchs.Fls[FlPth]['Str']); }
+    if (this.Cchs.Fls[FlPth]) {
+      const { Dt = null, Str = '' } = this.Cchs.Fls[FlPth];
+
+      if (!Dt || !Str) { return Clbck(-1); }
+
+      return Clbck(1, Str, Dt);
+    }
 
     fs.readFile(
       FlPth,
@@ -17,21 +23,20 @@ module.exports = {
       function (Err, FlStr) { // error, file string.
         if (Err) { return Clbck(-1); }
 
-        This.Cchs.Fls[FlPth] = { Dt: (new Date()).getTime(), Str: FlStr };
+        const Dt = (new Date()).getTime();
 
-        Clbck(0, FlStr);
+        This.Cchs.Fls[FlPth] = { Dt, Str: FlStr };
+
+        Clbck(0, FlStr, Dt);
       });
   },
   /*
     @ key name.
-    @ date number.
     < true | false. */
-  IsFileCached (Ky, Dt) {
+  IsFileCached (Ky) {
     let FlInfo = this.Cchs.Fls && this.Cchs.Fls[Ky] || null;
 
     if (!FlInfo || !FlInfo.Dt || !FlInfo.Str) { return false; }
-
-    if ((typeof Dt !== 'number') || (Dt < FlInfo.Dt)) { return false; }
 
     return true;
   },
