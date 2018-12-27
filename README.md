@@ -9,12 +9,13 @@ this project needs the key file to get everything fine.
 ## this project uses
 * HTML, Js, CSS
 * [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)
-* [SASS](http://sass-lang.com/)
+* [SASS](https://sass-lang.com/)
 * [UglifyJs](http://lisperator.net/uglifyjs/)
+* [tar-stream](https://github.com/mafintosh/tar-stream)
 
 ## to be a HTTP server, this project also uses
-* [nginx](http://nginx.org/)
-* [PM2](http://pm2.keymetrics.io/)
+* [nginx](https://nginx.org/)
+* [PM2](https://pm2.keymetrics.io/)
 
 P.S. for security reason, these files don't join the git.
 * nginx config file.
