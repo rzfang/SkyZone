@@ -84,6 +84,21 @@ module.exports = {
         'footer.tag'
       ]
     },
+    '/images': {
+      js: [
+        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
+        'api2.min.js',
+        'icon.tag',
+        'late-img.tag',
+        'sharebox.tag',
+        'tags.tag'
+      ],
+      body: [
+        'header.tag',
+        'images-page.tag',
+        'footer.tag'
+      ]
+    },
     default: { // here should handle 404.
       title: '空域',
       description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -102,13 +117,13 @@ module.exports = {
     // ==== resource ====
 
     { // Riot component tag.
-      path: /(login|about|header|footer)\.tag$/,
+      path: /(login|about|header|footer|late-img)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './component'
     },
     { // Riot page tag.
-      path: /(blogs|text|image-page)\.tag$/,
+      path: /(blogs|text|image-page|images-page)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './page'

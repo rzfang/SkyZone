@@ -99,7 +99,7 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
       LdScrpts += `<script type='riot/tag' src='${Bs}'></script>\n`;
       MntScrpts += `riot.mount('${Nm}');\n`;
 
-      return Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);
+      return Clbck(null, `<div data-is='${Nm}'><!-- this will be replaced by riot.mount. --></div>`);
     }
 
     Clbck(null, `<${Nm}><!-- this will be replaced by riot.mount. --></${Nm}>`);

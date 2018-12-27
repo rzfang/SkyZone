@@ -527,6 +527,12 @@ const Blog = {
             return;
 
           case 'images':
+            SqlRst.Url = 'https://skyzone.zii.tw/images?b=' + SqlRst.Id;
+
+            Blog.ImagesRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
+
+            return;
+
           default:
             return PckEnd(1, Kwd.RM.StepTest);
         }
@@ -546,51 +552,123 @@ const Blog = {
 
     SqlRst.Info = { Str: '', ImgUrl: '' };
 
-    Extr.on('entry', (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
-      if (Hdr.name === 'comment.txt') {
-        let Chks = []; // chunks.
+    Extr.on(
+      'entry',
+      (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
+        if (Hdr.name === 'comment.txt') {
+          let Chks = []; // chunks.
 
-        Strm.on('data', Chk => { Chks.push(Chk); });
+          Strm.on('data', Chk => { Chks.push(Chk); });
 
-        Strm.on(
-          'end',
-          () => {
-            SqlRst.Info.Str = Chks.join('').toString('utf8');
+          Strm.on(
+            'end',
+            () => {
+              SqlRst.Info.Str = Chks.join('').toString('utf8');
 
-            Next();
-          });
-      }
-      else {
-        const TarNm = SqlRst.Fl.replace('.tar', ''),
-              Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`, // image file path.
-              Url = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
+              Next();
+            });
+        }
+        else {
+          const TarNm = SqlRst.Fl.replace('.tar', ''),
+                Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`, // image file path.
+                Url = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
 
-        SqlRst.Info.ImgUrl = Url;
+          SqlRst.Info.ImgUrl = Url;
 
-        fs.stat(
-          Pth,
-          (Err, St) => {
-            if (Err || !St.mtime || Hdr.mtime > St.mtime) {
-              let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+          fs.stat(
+            Pth,
+            (Err, St) => {
+              if (Err || !St.mtime || Hdr.mtime > St.mtime) {
+                let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
 
-              Strm.on('end', Next);
-              Strm.pipe(ImgFlStrm);
+                Strm.on('end', Next);
+                Strm.pipe(ImgFlStrm);
 
-              return;
-            }
+                return;
+              }
 
-            Next();
-          });
-      }
+              Next();
+            });
+        }
 
-      Strm.resume();
-    });
+        Strm.resume();
+      });
 
     Extr.on('finish', () => { Then(0); });
     FlStrm.pipe(Extr);
   },
-  ImagesRead: () => {
+  ImagesRead: (SqlRst, Then) => {
+    if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
+    const TarNm = SqlRst.Fl.replace('.tar', ''),
+          FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
+
+    let Extr = tarStream.extract();
+
+    SqlRst.Info = { Lst: [], Imgs: {} };
+
+    Extr.on(
+      'entry',
+      (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
+        if (Hdr.name === 'comment.json') {
+          let Chks = []; // chunks.
+
+          Strm.on('data', Chk => { Chks.push(Chk); });
+
+          Strm.on(
+            'end',
+            () => {
+              try {
+                SqlRst.Info.Lst = JSON.parse(Chks.join('').toString('utf8'));
+              }
+              catch (Err) {
+                SqlRst.Info.Lst = [];
+              }
+
+              Next();
+            });
+        }
+        else {
+          const Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`; // image file path.
+
+          SqlRst.Info.Imgs[Hdr.name] = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
+
+          fs.stat(
+            Pth,
+            (Err, St) => {
+              if (Err || !St.mtime || Hdr.mtime > St.mtime) {
+                let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+
+                Strm.on('end', Next);
+                Strm.pipe(ImgFlStrm);
+
+                return;
+              }
+
+              Next();
+            });
+
+          Next();
+        }
+
+        Strm.resume();
+      });
+
+    Extr.on(
+      'finish',
+      () => {
+        for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
+          let Itm = SqlRst.Info.Lst[i];
+
+          Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || '';
+        }
+
+        SqlRst.Info = SqlRst.Info.Lst;
+
+        Then(0);
+      });
+
+    FlStrm.pipe(Extr);
   }
 };
 
