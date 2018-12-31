@@ -3,7 +3,7 @@
     <a href='/about'>關於</a>
     <a href='/blogs'>網誌</a>
     <a href='/messages.php'>留言</a>
-    <a href='/feed.php'>訂閱</a>
+    <a href='/feed.xml'>訂閱</a>
     <a href='/index.php'>回入口</a>
   </nav>
   <style scoped>

@@ -40,5 +40,5 @@
 <meta name='twitter:image' content='<?= $VwData['ImgURL']; ?>'/>
 
 <link rel='icon' href='/favicon.ico' type='image/ico'/>
-<link rel='alternate' type='application/atom+xml' title='atom' href='feed.php'/>
+<link rel='alternate' type='application/atom+xml' title='atom' href='/feed.xml'/>
 <link rel='stylesheet' type='text/css' href='resource/style2.css'/>

@@ -105,6 +105,7 @@ module.exports = {
       keywords: '天空, 空域, RZ, 個人網站',
       author: 'RZ Fang',
       favicon: 'favicon.ico',
+      feed: '/feed.xml',
       css: [ 'base.css', 'style2.css' ],
       js: [
         'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
@@ -145,6 +146,12 @@ module.exports = {
       type: 'resource',
       mimeType: 'text/plain',
       location: '../WEB/www/resource'
+    },
+    {
+      path: /^\/feed.xml$/,
+      type: 'resource',
+      mimeType: 'application/xml',
+      location: '../DAT'
     },
 
     // ==== dynamic resource. ====

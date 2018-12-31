@@ -49,7 +49,7 @@ if (isset($_GET['Blog']) && IsUUID($_GET['Blog']))
     <meta name='twitter:image' content='<?= WEBSITE_URL . $Blog['TbnURL']; ?>'/>
 <?php } ?>
     <link rel='icon' href='/favicon.ico' type='image/ico'/>
-    <link rel='alternate' type='application/atom+xml' title='atom' href='feed.php'/>
+    <link rel='alternate' type='application/atom+xml' title='atom' href='/feed.xml'/>
     <link rel='stylesheet' type='text/css' href='resource/base.css'/>
     <link rel='stylesheet' type='text/css' href='resource/style1.css'/>
     <style type='text/css'>
@@ -254,7 +254,7 @@ if (isset($_GET['Blog']) && IsUUID($_GET['Blog']))
         	<button class='Btn0' title='留言板' onclick='MessageListFrame("留言列表");'>留言板</button>
         	<button class='Btn0' title='技術筆記' onclick='TutorialListFrame("技術筆記列表");'>技術筆記</button>
         	<button class='Btn0' title='內嵌網頁' onclick='CustomFrame("輸入網址");'>內嵌網頁</button>
-        	<a href='feed.php'><button class='Btn0' title='訂閱'>訂閱</button></a>
+        	<a href='/feed.xml'><button class='Btn0' title='訂閱'>訂閱</button></a>
         	<a href='index.php'><button class='Btn0' title='回入口'>回入口</button></a>
         </div>
       </header>

@@ -27,7 +27,7 @@ function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
     Rspns.writeHead(
       304,
       { 'Content-Type': MmTp,
-        'Cache-Control': 'public, max-age=6000',
+        'Cache-Control': 'public, max-age=3600', // 1hour.
         'Last-Modified': Rqst.headers['if-modified-since'] });
     Rspns.write('\n');
     Rspns.end();
@@ -47,7 +47,7 @@ function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
         Rspns.writeHead(
           200,
           { 'Content-Type': MmTp,
-            'Cache-Control': 'public, max-age=6000',
+            'Cache-Control': 'public, max-age=3600', // 1 hour.
             'Last-Modified': (new Date(Dt)).toUTCString() });
         Rspns.write(Str);
       }
@@ -173,6 +173,10 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
 
       if (PgInfo.favicon) {
         HdStr += "<link rel='icon' href='favicon.ico' type='" + PgInfo.favicon + "'/>\n";
+      }
+
+      if (PgInfo.feed) {
+        HdStr += "<link rel='alternate' type='application/atom+xml' title='atom' href='" + PgInfo.feed + "'/>\n";
       }
 
       if (PgInfo.css && PgInfo.css.length) {

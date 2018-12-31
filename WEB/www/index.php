@@ -22,7 +22,7 @@ require '../global.php';
     <meta name='twitter:card' content='summary'/>
     <meta name='twitter:image' content='<?= WEBSITE_URL; ?>image/logo.jpg'/>
     <link rel='icon' href='favicon.ico' type='image/ico'/>
-    <link rel='alternate' type='application/atom+xml' title='atom' href='feed.php'/>
+    <link rel='alternate' type='application/atom+xml' title='atom' href='/feed.xml'/>
     <style type='text/css'>
     <!--
       body { margin: 0px; padding: 0px; font-size: 16px; font-family: monospace; color: #202020;  }
