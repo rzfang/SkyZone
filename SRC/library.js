@@ -443,8 +443,8 @@ const Blog = {
             <id>${ID}</id>
             <updated>${EdtDt}</updated>
             <summary>${EdtSmry}</summary>
-            <link href="https://skyzone.zii.tw/text.php?b=${ID}"/>
-            <link rel="alternate" type="text/html" href="https://skyzone.zii.tw/text.php?b=${ID}"/>
+            <link href="https://skyzone.zii.tw/text?b=${ID}"/>
+            <link rel="alternate" type="text/html" href="https://skyzone.zii.tw/text?b=${ID}"/>
             <author><name>RZ</name><email>skywine13@hotmail.com</email></author>
             </entry>
             `;

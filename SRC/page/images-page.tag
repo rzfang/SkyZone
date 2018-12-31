@@ -18,6 +18,7 @@
       </div>
     </li>
   </ul>
+  <share-box ecdurl={Url}/>
   <style scoped>
     :scope>div { margin: 20px 0; }
     :scope>ul { margin: 0; padding: 0; list-style: none; }

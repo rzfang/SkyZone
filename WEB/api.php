@@ -792,12 +792,12 @@ class Blog
     {
       case 'image':
         $RstCd = self::OneImageGet($Rst, $FP);
-        $Rst['URL'] = WEBSITE_URL . 'image.php?b=' . $Rst['ID'];
+        $Rst['URL'] = WEBSITE_URL . 'image?b=' . $Rst['ID'];
         break;
 
       case 'images':
         $RstCd = self::OneImagesGet($Rst, $FP);
-        $Rst['URL'] = WEBSITE_URL . 'images.php?b=' . $Rst['ID'];
+        $Rst['URL'] = WEBSITE_URL . 'images?b=' . $Rst['ID'];
         break;
 
       case 'html':
@@ -808,7 +808,7 @@ class Blog
       case 'text':
       default:
         $RstCd = self::OneTextGet($Rst, $FP);
-        $Rst['URL'] = WEBSITE_URL . 'text.php?b=' . $Rst['ID'];
+        $Rst['URL'] = WEBSITE_URL . 'text?b=' . $Rst['ID'];
     }
 
     if ($RstCd < 0)
