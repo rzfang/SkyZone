@@ -68,6 +68,7 @@ module.exports = {
     return true;
   },
   Recycle () {
+    const NwTm = (new Date()).getTime(); // now time.
     let Kys = Object.keys(this.Cchs.Dt); // keys.
 
     for (let i = 0; i < Kys.length; i++) {
@@ -78,12 +79,9 @@ module.exports = {
         continue;
       }
 
-      let Drtn = ((new Date()).getTime() - Tgt.Dt) / 1000; // duration.
+      let Drtn = (NwTm - Tgt.Dt) / 1000; // duration.
 
-      if (Drtn > Tgt.ScndLmt) {
-        delete this.Cchs.Dt[Kys[i]];
-        continue;
-      }
+      if (Drtn > Tgt.ScndLmt) { delete this.Cchs.Dt[Kys[i]]; }
     }
   },
   /*
