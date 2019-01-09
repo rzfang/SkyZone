@@ -214,6 +214,7 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
         BdStrs.join('\n') +
         '</div>\n' +
         `<script>${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\nriot.compile(() => {\n${MntScrpts}});\n</script>\n` +
+        `<script>if (top != self) { document.body.innerHTML = ''; }</script>` + // this defend being iframe.
         '</body>\n</html>\n');
       Rspns.end();
     });
@@ -239,12 +240,16 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
   let PrsBd = {}; // parsed body.
 
   if (Rqst.headers['content-type'] && Rqst.headers['content-type'].indexOf('multipart/form-data') === 0) { // parse form data format params.
-    const BdPrts = Bd.split(/-+\d+\r\n/); // body parts.
+
+    const BrkStr = Bd.substr(0, Bd.indexOf('\n') - 1); // broken string.
+    let BdPrts = Bd.split(BrkStr);
+
+    BdPrts = BdPrts.slice(1, BdPrts.length - 1);
 
     for (let i = 0; i < BdPrts.length; i++) {
       if (!BdPrts[i]) { continue; }
 
-      const BdPrt = BdPrts[i].match(/form-data; name="([^\s]+)"\r\n\r\n([^\s]+)\r\n/); // body part.
+      const BdPrt = BdPrts[i].match(/form-data; name="([^\s]+)"\r\n\r\n([.\S\r\n]+)\r\n$/); // body part.
 
       if (!Array.isArray(BdPrt) || BdPrt.length < 2) { continue; }
 
