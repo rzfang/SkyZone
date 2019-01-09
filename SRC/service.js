@@ -98,13 +98,19 @@ module.exports = {
 
     return Msg.ChainList(Rqst, MxPrm, PckEnd);
   },
+  MessageLeave: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Msg.Leave(Rqst, Rspns, MxPrm, PckEnd);
+  },
   SessionLogIn: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.
 
     return Ssn.LogIn(Rqst, Rspns, MxPrm, PckEnd);
   },
-  SessionLogOut: () => {
+  SessionLogOut: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.
 

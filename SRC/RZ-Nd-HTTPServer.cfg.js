@@ -99,6 +99,13 @@ module.exports = {
         'footer.tag'
       ]
     },
+    '/messages': {
+      body: [
+        'header.tag',
+        'messages.tag',
+        'footer.tag'
+      ]
+    },
     default: { // here should handle 404.
       title: '空域',
       description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -118,7 +125,7 @@ module.exports = {
     // ==== resource ====
 
     { // Riot component tag.
-      path: /(login|about|header|footer|late-img)\.tag$/,
+      path: /(login|about|header|footer|late-img|messages)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './component'
@@ -208,6 +215,11 @@ module.exports = {
       path: /^\/service\/message\/list/,
       type: 'service',
       process: Svc.MessageList
+    },
+    {
+      path: /^\/service\/message\/leave/,
+      type: 'service',
+      process: Svc.MessageLeave
     },
     { // session login service.
       path: /^\/service\/session\/login/,

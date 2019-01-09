@@ -11,7 +11,7 @@ const Cch = require('./RZ-Nd-Cache'),
       Kwd = require('./keyword.json'),
       SQLite = require('./RZ-Nd-SQLite');
 
-const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire.
+const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
       BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
       CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
@@ -228,7 +228,7 @@ const Blog = {
       .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
   },
   AdminList: (Rqst, Rspns, Prm, End) => {
-    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kw.RM.NotLogin); }
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
     const Db = new SQLite(DB_PTH);
 
@@ -314,7 +314,7 @@ const Blog = {
       });
   },
   UnpublishedList: (Rqst, Rspns, Prm, End) => {
-    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kw.RM.NotLogin); }
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
     const Db = new SQLite(DB_PTH);
 
@@ -345,7 +345,7 @@ const Blog = {
       });
   },
   Update: (Rqst, Rspns, Prm, End) => {
-    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kw.RM.NotLogin); }
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
     const Db = new SQLite(DB_PTH);
 
@@ -416,7 +416,7 @@ const Blog = {
       .catch(Cd => { PckEnd(-4, Kwd.RM.DbCrash, Cd); });
   },
   FeedPublish: (Rqst, Rspns, Prm, End) => {
-    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kw.RM.NotLogin); }
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
     const Db = new SQLite(DB_PTH);
 
@@ -841,6 +841,41 @@ const Msg = { // message.
         PckEnd(0, Kwd.RM.Done, Rst);
       })
       .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
+  },
+  /*
+    @ name.
+    @ mail.
+    @ message.
+    @ target message id. */
+  Leave: (Rqst, Rspns, { Nm, Ml, Msg, Tgt }, End) => {
+    if (!Is.Function(End)) { return; }
+
+    if (!Nm || !Is.String(Nm) || !Ml || !Is.EMail(Ml) || !Msg || !Is.String(Msg))
+    { return End(-1, 0, Kwd.RM.StrangeValue); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); }),
+          Id = MakeId(),
+          IP = GetIp(Rqst),
+          Dt = GetDatetime();
+    let SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message) VALUES (?, ?, ?, ?, ?, ?);',
+        Prm = [ Id, Nm, Ml, IP, Dt, Msg ];
+
+    if (Tgt && Is.UUID(Tgt)) {
+      SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message, target) VALUES (?, ?, ?, ?, ?, ?, ?);';
+      Prm = [ Id, Nm, Ml, IP, Dt, Msg, Tgt ];
+    }
+
+    Db.Query(SQL, Prm)
+      .then(Rst => {
+        if (!Rst) { return PckEnd(-3, Kwd.RM.SystemError); }
+
+        PckEnd(0, Kwd.RM.Done, Id);
+      })
+      .catch(Cd => { PckEnd(Cd * 10 + -4, Kwd.RM.DbCrash); });
   }
 };
 

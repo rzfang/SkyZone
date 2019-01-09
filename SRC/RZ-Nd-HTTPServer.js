@@ -333,10 +333,15 @@ function Route (Rqst, Rspns) {
     () => {
       for (let i = 0; i < RtLth; i++) {
         const RtCs = Rt[i], // route case.
-              { path: Pth = '', type: Tp = '', location: Lctn = '' } = RtCs;
+              {
+                location: Lctn = '',
+                mimeType: MmTp = '',
+                path: Pth = '',
+                process: Prcs = null,
+                type: Tp = '' } = RtCs;
 
         if (!Pth || !Tp) {
-          Log('the route case ' + RtKy + ' misses path or type.', 'error');
+          Log('the route case misses path or type.', 'error');
 
           continue;
         }
@@ -345,8 +350,6 @@ function Route (Rqst, Rspns) {
 
         switch (Tp) {
           case 'resource': // static file response.
-            const { location: Lctn = '', mimeType: MmTp = '' } = RtCs;
-
             if (!Lctn || !MmTp) {
               Log(
                 'the resource type route case ' + path.basename(UrlInfo.pathname) +
@@ -360,8 +363,6 @@ function Route (Rqst, Rspns) {
 
           case 'process': // process response.
           case 'service': // service response.
-            const { process: Prcs = null } = RtCs;
-
             if (!Is.Function(Prcs)) {
               Log('the process/service type route case ' + path.basename(UrlInfo.pathname) + 'misses the process.',
                   'error');
