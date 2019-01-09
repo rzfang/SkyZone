@@ -254,6 +254,22 @@ function Second2Datetime (Scd, Fmt)
   return DtStr;
 }
 
+/*
+  @ Date object, optional, default is now.
+  < date time string with format: YYYY-MM-DD HH:II:SS. */
+function DatetimeFormat (Dt) {
+  if (!Dt) { return ''; }
+
+  Dt = new Date();
+
+  return Dt.getFullYear().toString() + '-' +
+    (Dt.getMonth() + 1).toString().padStart(2, '0') + '-' +
+    Dt.getDate().toString().padStart(2, '0') + ' ' +
+    Dt.getHours().toString().padStart(2, '0') + ':' +
+    Dt.getMinutes().toString().padStart(2, '0') + ':' +
+    Dt.getSeconds().toString().padStart(2, '0');
+}
+
 /* parse bytes number to be normailize size string.
   'Byte' = file size, should be a number.
   Return: size string. */

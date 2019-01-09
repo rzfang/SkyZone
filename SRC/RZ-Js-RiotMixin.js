@@ -126,15 +126,6 @@
     return Str.replace(/^\s+|\s+$/g, '');
   }
 
-  function Second2Datetime (Scd) {
-    if (!Scd) { return ''; }
-
-    const Dt = new Date(Scd);
-
-    return Dt.getFullYear().toString() + '-' + (Dt.getMonth() + 1).toString() + '-' + Dt.getDate().toString() + ' ' +
-           Dt.getHours().toString() + ':' + Dt.getMinutes().toString() + ':' + Dt.getSeconds().toString();
-  }
-
   /*
     StoNm = name to locate the store.
     Then(Sto, Rst) = then, a function when the task done.
@@ -246,7 +237,6 @@
   RM = {
     OnBrowser: OnBrowser,
     OnNode: OnNode,
-    Second2Datetime: Second2Datetime,
     Trim: Trim
   };
 
