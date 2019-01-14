@@ -229,12 +229,12 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
         {
           var IA = AtCnrMkBx.find('td > input:text'),
               Pgs = AtCnrMkBx.children('progress').val(0),
-              Ttl = Trim(IA.first().val()),
-              Atr = Trim(IA.eq(1).val()),
-              Ml = Trim(IA.eq(2).val()),
-              Dt = Trim(IA.eq(3).val()),
+              Ttl = IA.first().val().trim(),
+              Atr = IA.eq(1).val().trim(),
+              Ml = IA.eq(2).val().trim(),
+              Dt = IA.eq(3).val().trim(),
               Fl = AtCnrMkBx.find('td > input:file'),
-              Cmt = Trim(AtCnrMkBx.find('td > textarea').val());
+              Cmt = AtCnrMkBx.find('td > textarea').val().trim();
               Hnt = '';
 
           if (Atr.length === 0)

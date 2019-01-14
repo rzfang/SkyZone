@@ -836,8 +836,8 @@ function BlogCommentListFrame(Evt)
         MlJO = InfoBx.find('input:text.Ml'),
         CmtJO = InfoBx.find('textarea:first');
 
-    var SndData = {'Cmd': 9, 'TgtID': ID, 'Nm': Trim(InfoBx.find('input:text.Nm').val()),
-                   'Ml': Trim(MlJO.val()), 'Cmt': Trim(CmtJO.val())};
+    var SndData = {'Cmd': 9, 'TgtID': ID, 'Nm': InfoBx.find('input:text.Nm').val().trim(),
+                   'Ml': MlJO.val().trim(), 'Cmt': CmtJO.val().trim()};
 
     var RmbMe = InfoBx.find('input:checkbox.RmbMe').prop('checked'),
         ChkStr = '';
@@ -1173,9 +1173,9 @@ function MessageListFrame(Ttl)
         TgtID = This.closest('.Frm').attr('id').replace(/^Msg_|^MsgLvFrm/, '');
 
     var SndData = {'Cmd': 4,
-                   'Nm': Trim(This.prevAll('input:text.Nm:first').val()),
-                   'Ml': Trim(This.prevAll('input:text.Ml:first').val()),
-                   'Msg': Trim(This.prevAll('textarea.Msg:first').val())};
+                   'Nm': This.prevAll('input:text.Nm:first').val().trim(),
+                   'Ml': This.prevAll('input:text.Ml:first').val().trim(),
+                   'Msg': This.prevAll('textarea.Msg:first').val().trim()};
 
     var RmbMe = This.prev('label').children('input:checkbox').prop('checked'),
         ChkStr = '';

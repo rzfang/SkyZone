@@ -79,10 +79,6 @@ function GetIp (Rqst) {
          '';
 }
 
-function Trim (Str) {
-  return Str.replace(/^\s+|\s+$/g, '');
-}
-
 function GetDatetime (Scd) {
   const Dt = Scd ? new Date(Scd * 1000) : new Date(); // datetime object.
 
@@ -390,8 +386,8 @@ const Blog = {
   CommentLeave: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
-    const Nm = Prm.Nm && Is.String(Prm.Nm) && Trim(Prm.Nm) || '',
-          Cmt = Prm.Cmt && Is.String(Prm.Cmt) && Trim(Prm.Cmt) || '';
+    const Nm = Prm.Nm && Is.String(Prm.Nm) && Prm.Nm.trim() || '',
+          Cmt = Prm.Cmt && Is.String(Prm.Cmt) && Prm.Cmt.trim() || '';
 
     if (!Nm || !Prm.Ml || !Is.EMail(Prm.Ml) || !Cmt || !Prm.TgtID || !Is.UUID(Prm.TgtID)) {
       return End(-1, Kwd.RM.StrangeValue);

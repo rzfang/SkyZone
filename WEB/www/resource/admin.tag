@@ -288,7 +288,7 @@
     this.StoreListen('TAGS', (Sto) => { this.update({ Tgs: Sto }); });
 
     TagAdd (Evt) {
-      let Nm = this.Trim(Evt.target.parentElement.querySelector('input').value);
+      let Nm = Evt.target.parentElement.querySelector('input').value.trim();
 
       if (!Nm) {
         alert('尚未填寫標籤名字。');
@@ -319,7 +319,7 @@
 
     TagRename (Evt) {
       let ID = Evt.item.ID,
-          Nm = this.Trim(Evt.target.parentElement.querySelector('input').value);
+          Nm = Evt.target.parentElement.querySelector('input').value.trim();
 
       if (!Nm) {
         alert('名稱不能為空白。');
@@ -570,12 +570,12 @@
           IptNds = RtNd.querySelectorAll('input[type=text],input[type=date]'),
           ChkBxNds = RtNd.querySelectorAll('input[type=checkbox]:checked'),
           Data = {
-            ID: this.Trim(RtNd.querySelector('tr:nth-child(2)>td:nth-child(2)').innerHTML),
-            Ttl: this.Trim(IptNds[0].value),
-            Dt: this.Trim(IptNds[1].value),
-            Pswd: this.Trim(IptNds[2].value),
-            Tp: this.Trim(RtNd.querySelector('select').value),
-            Smry: this.Trim(RtNd.querySelector('textarea').value),
+            ID: RtNd.querySelector('tr:nth-child(2)>td:nth-child(2)').innerHTML.trim(),
+            Ttl: IptNds[0].value.trim(),
+            Dt: IptNds[1].value.trim(),
+            Pswd: IptNds[2].value.trim(),
+            Tp: RtNd.querySelector('select').value.trim(),
+            Smry: RtNd.querySelector('textarea').value.trim(),
             TgIDA: [] },
           ChkStr = '';
 
@@ -631,12 +631,12 @@
           IptNds = RtNd.querySelectorAll('input[type=text],input[type=date]'),
           ChkBxNds = RtNd.querySelectorAll('input[type=checkbox]:checked'),
           Data = {
-            Fl: this.Trim(RtNd.querySelector('tr:first-child>td:nth-child(2)').innerHTML),
-            Ttl: this.Trim(IptNds[0].value),
-            Dt: this.Trim(IptNds[1].value),
-            Pswd: this.Trim(IptNds[2].value),
-            Tp: this.Trim(RtNd.querySelector('select').value),
-            Smry: this.Trim(RtNd.querySelector('textarea').value),
+            Fl: RtNd.querySelector('tr:first-child>td:nth-child(2)').innerHTML.trim(),
+            Ttl: IptNds[0].value.trim(),
+            Dt: IptNds[1].value.trim(),
+            Pswd: IptNds[2].value.trim(),
+            Tp: RtNd.querySelector('select').value.trim(),
+            Smry: RtNd.querySelector('textarea').value.trim(),
             TgIDA: [] },
           ChkStr = '';
 
@@ -1058,7 +1058,7 @@
 
     Create (Evt) {
       let WdsNd = this.refs.GdWds.querySelector('li:first-child>textarea');
-          Wds = this.Trim(WdsNd.value);
+          Wds = WdsNd.value.trim();
 
       if (!Wds) {
         alert('尚未填寫佳言。');
@@ -1098,9 +1098,9 @@
     }
 
     Update (Evt) {
-      let Wds = this.refs.GdWds.querySelector('li:nth-child(' + (Evt.item.Idx + 1) + ')>textarea').value;
+      let Wds = this.refs.GdWds.querySelector('li:nth-child(' + (Evt.item.Idx + 1) + ')>textarea').value.trim();
 
-      if (this.Trim(Wds).length === 0) {
+      if (Wds.length === 0) {
         alert('不能為空。');
 
         return -1;

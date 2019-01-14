@@ -1,8 +1,4 @@
 (function Z_ZFT () {
-  var Trim = function (Str) {
-    return Str.replace(/^\s+|\s+$/g, '');
-  };
-
   var Encode = function (Str) {
     return Str
       .replace(/</g, '&lt;')
@@ -23,18 +19,18 @@
         HTML = '',
         Anchrs = [];
 
-    if (Ldr && (Ldr = Trim(Ldr))) { HTML += '<p>' + Trim(Tag(Encode(Ldr))) + '</p>\n'; }
+    if (Ldr && (Ldr = Ldr.trim())) { HTML += '<p>' + Tag(Encode(Ldr)).trim() + '</p>\n'; }
 
     for (var i = 0; i < Prgrphs.length; i++) {
       var Anchr = {
-            Ttl: Trim(Ttls[i].replace(/^=+|=+\s$/g, '')),
+            Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
             Nm: '',
             Lv: 1 };
 
       Anchr.Nm = Encode(Anchr.Ttl.replace(/\s/g, '_'));
       HTML +=
         '<h4 id="' + Anchr.Nm + '"><a href="#' + Anchr.Nm + '">' + Ttls[i].replace(/\n$/, '</a></h4>\n') +
-        '<p>' + Trim(Tag(Encode(Prgrphs[i]))) + '</p>\n';
+        '<p>' + Tag(Encode(Prgrphs[i])).trim() + '</p>\n';
 
       Anchrs.push(Anchr);
     }
@@ -59,7 +55,7 @@
 
     for (var i = 0; i < Chptrs.length; i++) {
       var Anchr = {
-            Ttl: Trim(Ttls[i].replace(/^=+|=+\s$/g, '')),
+            Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
             Nm: '',
             Lv: 0 };
 

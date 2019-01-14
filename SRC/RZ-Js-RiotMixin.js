@@ -120,12 +120,6 @@
     return true;
   }
 
-  function Trim (Str) {
-    if (typeof Str !== 'string') { return ''; }
-
-    return Str.replace(/^\s+|\s+$/g, '');
-  }
-
   /*
     StoNm = name to locate the store.
     Then(Sto, Rst) = then, a function when the task done.
@@ -236,8 +230,7 @@
 
   RM = {
     OnBrowser: OnBrowser,
-    OnNode: OnNode,
-    Trim: Trim
+    OnNode: OnNode
   };
 
   if (typeof module !== 'undefined') { module.exports = RM; }

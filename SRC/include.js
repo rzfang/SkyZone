@@ -35,11 +35,6 @@
 
 //==== Tool Function ===================================================================================================
 
-function Trim (Str)
-{
-  return Str.replace(/^\s+|\s+$/g, '');
-}
-
 /* count a String Length, chinese word count as 2 because of full-width.
   'Str' = String passing in.
   Return: string length.*/
@@ -710,7 +705,7 @@ function Button0 (CSSS)
     return null;
   }
 
-  CSSS = Trim(CSSS);
+  CSSS = CSSS.trim();
 
   $('body').on('mouseenter', CSSS, function(Evt){ Initialize(Evt.currentTarget); })
            .on('focus', CSSS, function(Evt){ Initialize(Evt.currentTarget); })
