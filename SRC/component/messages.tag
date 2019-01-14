@@ -96,14 +96,14 @@
       if (IsLst) {
         this.Lst[Idx].IsLst = false;
 
-        return this.update({ Lst: this.Lst });
+        return;
       }
 
       if (Rpls) {
         this.Lst[Idx].Rpls = Rpls;
         this.Lst[Idx].IsLst = true;
 
-        return this.update({ Lst: this.Lst });
+        return;
       }
 
       this.ServiceCall(
@@ -191,8 +191,19 @@
         if (Is.Array(this.opts.rpls) && !this.opts.rpls.length) { this.IsFmShw = true; }
       });
 
+    InputFocus () {
+      if (!this.IsFmShw) { return; }
+
+      const selector = !this.NmMl[0] ? 'input[type=text]' : 'textarea';
+
+      this.root.querySelector(selector).focus();
+    }
+
+    this.on('mount', this.InputFocus);
+    this.on('updated', this.InputFocus);
+
     FormToggle (Evt) {
-      this.update({ IsFmShw: !this.IsFmShw });
+      this.IsFmShw = !this.IsFmShw;
     }
 
     ReplyLeave (Evt) {
