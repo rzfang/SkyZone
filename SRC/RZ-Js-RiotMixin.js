@@ -11,7 +11,7 @@
     @ AJAX Info object, key-value pairs.
     Return: XMLHttpRequest object. or null as error. */
   function AJAX (Info) {
-    var DftInfo = {
+    let DftInfo = {
           URL: '',
           Data: {},
           Files: {},
@@ -36,15 +36,15 @@
     XHR = new XMLHttpRequest();
     Kys = Object.keys(Info.Data);
 
-    for (var i = 0; i < Kys.length; i++) {
-      var Tp = typeof Info.Data[Kys[i]];
+    for (i = 0; i < Kys.length; i++) {
+      let Tp = typeof Info.Data[Kys[i]];
 
       if (Array.isArray(Info.Data[Kys[i]])) { // array type data handle.
-        var Ky = Kys[i] + '[]',
+        let Ky = Kys[i] + '[]',
             Vl = Info.Data[Kys[i]],
             Lth = Vl.length;
 
-        for (var j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
+        for (let j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
       }
       else if (Tp === 'string' || Tp === 'number') { FmDt.append(Kys[i], Info.Data[Kys[i]]); }
     }
@@ -52,7 +52,7 @@
     if (typeof Info.File === 'object' && Info.File !== null) {
       Kys = Object.keys(Info.File);
 
-      for (var i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.File[Kys[i]]); }
+      for (i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.File[Kys[i]]); }
     }
 
     XHR.timeout = 5000;
@@ -68,7 +68,7 @@
     if (typeof Info.Hdrs === 'object' && Info.Hdrs !== null) {
       Kys = Object.keys(Info.Hdrs);
 
-      for (var i = 0; i < Kys.length; i++) { XHR.setRequestHeader(Kys[i], Info.Hdrs[Kys[i]]); }
+      for (i = 0; i < Kys.length; i++) { XHR.setRequestHeader(Kys[i], Info.Hdrs[Kys[i]]); }
     }
 
     XHR.send(FmDt);
