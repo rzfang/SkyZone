@@ -6,7 +6,7 @@
 
     this.Tbs = [
       { Nm: '網誌管理', Cmpnt: 'blogs-manager', Dt: Dt2BlgMngr },
-      { Nm: '留言板管理', Cmpnt: 'blog-comments' },
+      { Nm: '留言管理', Cmpnt: 'messages' },
       { Nm: '佳言錄', Cmpnt: '' },
       { Nm: '角落藝廊管理', Cmpnt: '' },
       { Nm: '系統管理', Cmpnt: '' }
@@ -127,6 +127,8 @@
       });
 
     PageTurn (Evt) {
+      // Evt && Evt.preventDefault();
+
       let TgtPg = parseInt(Evt.target.value, 10);
 
       if (TgtPg === this.opts.pg) { return -1; }
@@ -155,7 +157,7 @@
 <!-- not finish. -->
 <blog-uploader>
   <div>
-    <span class='Block' style='border-width: 1px;'>
+    <div style='border-width: 1px;'>
       檔案格式說明
       <table>
         <tbody>
@@ -203,8 +205,8 @@
           </tr>
         </tbody>
       </table>
-    </span>
-    <span class='Block' style='text-align: left;'>
+    </div>
+    <div style='text-align: left;'>
       注意事項：
       <ul>
         <li>檔案最大限制 <?= ini_get('upload_max_filesize'); ?></li>
@@ -215,10 +217,12 @@
       <input type='file' id='BlogFl'/><br/>
       <input type='button' id='BlogUpldBtn' value='上傳'/>
       <progress value='0' max='100'></progress><br/>
-    </span>
+    </div>
   </div>
   <style scoped>
     :scope { text-align: center; }
+    :scope>div { display: flex; }
+    :scope>div>div { display: inline-block; flex-grow: 1; }
     th,td { border: 1px solid; padding: 5px; text-align: left; }
   </style>
 </blog-uploader>
@@ -734,8 +738,6 @@
       if (Blg.Cmts) {
         Blg.ShwCmt = true;
 
-        this.update();
-
         return;
       }
 
@@ -823,8 +825,8 @@
     <div each={AbmEdtImgs} id={Id} class='Itm'>
       <img src='#'/><br>
       <div>
-        {Nm}<br/>
-        {Dt}<br/>
+        <div>{Nm}</div>
+        <div>{Dt}</div>
         <textarea cols='20' rows='3' placeholder='輸入文字或保留空白。'></textarea>
       </div>
     </div>
@@ -832,7 +834,7 @@
   <hr/>
   <div>
     <input type='button' value='輸出內容' onclick={AlbumPrint}/><br/>
-    <textarea cols='30' rows='5'></textarea>
+    <textarea cols='30' rows='5'>{AbmPckInfo}</textarea>
   </div>
   <style scoped>
     :scope>div { text-align: center; }
@@ -843,7 +845,8 @@
   <script>
     this.mixin('Z.RM');
 
-    this.AbmEdtImgs = []
+    this.AbmEdtImgs = []; // album editing images.
+    this.AbmPckInfo = ''; // album packed information.
 
     AlbumView (Evt) {
       const FlsBx = this.root.querySelector('input[type=file]') || null;
@@ -877,7 +880,7 @@
         const Id = 'AbmImg_' + i,
               FR = new FileReader();
 
-        Itms.push({ Id, Nm: Fl.name, Dt: this.Second2Datetime(Fl.lastModified) });
+        Itms.push({ Id, Nm: Fl.name, Dt: Second2Datetime(Fl.lastModified / 1000, 2) });
 
         FR.targetId = Id;
         FR.onloadend = function (Evt) {
@@ -891,11 +894,18 @@
         FR.readAsDataURL(Fl);
       }
 
-      this.update({ AbmEdtImgs: Itms });
+      this.AbmEdtImgs = Itms;
     }
 
     AlbumPrint (Evt) {
+      const Itms = Array.from(this.root.querySelectorAll('div.Itm') || []),
+            Info = Itms.map(Itm => {
+              const [ Fl, Cmt ] = Itm.querySelectorAll('div>div:first-child,textarea');
 
+              return { Fl: Fl.innerText, Cmt: Cmt.value };
+            });
+
+      this.AbmPckInfo = JSON.stringify(Info).replace(/,/g, ",\n").replace(/\[/g, "[\n");
     }
   </script>
 </blog-album-editor>
@@ -928,7 +938,7 @@
     :scope>ul>li { display: flex; margin-bottom: 10px; }
     /*:scope>ul>li>div { flex: 0; }*/
     :scope>ul>li>div:first-child { flex: 0 0 80px; }
-    :scope>ul>li>div:nth-child(2) { flex: 0 0 300px; }
+    :scope>ul>li>div:nth-child(2) { flex: 0 0 330px; }
     :scope>ul>li>div:nth-child(3) { flex: 0 0 370px; }
     :scope>ul>li>div:last-child { flex: 1; }
   </style>
@@ -941,7 +951,7 @@
     this.mixin('Z.RM');
 
     this.on(
-      'mount',
+      'before-mount',
       () => {
         this.AJAX({
           URL: 'service.php',
@@ -954,14 +964,16 @@
             if (Rst.Index < 0) { return alert(Rst.Message); }
 
             this.Cnt = Rst.Extend;
-
-            this.PageTurn(null, 1);
           }});
       });
 
+    this.on('mount', () => { this.PageTurn(null, 1); });
+
     this.StoreListen(
       'MESSAGES',
-      (Sto, TskPrms) => { this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg }); });
+      (Sto, TskPrms) => {
+        this.update({ Msgs: Sto, Pg: TskPrms && TskPrms.Pg || this.Pg });
+      });
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
@@ -977,6 +989,8 @@
     }
 
     Delete (Evt) {
+      Evt && Evt.preventDefault();
+
       let Msg = this.Msgs[Evt.target.value];
 
       this.ServiceCall(

@@ -30,7 +30,8 @@ module.exports = {
         'tabbox.tag'
       ],
       body: [
-        { type: 'riot', component: '../WEB/www/resource/admin.tag', initialize: AdminPage }]},
+        { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
+      ]},
     '/about': {
       js: [
         'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
@@ -125,7 +126,7 @@ module.exports = {
     // ==== resource ====
 
     { // Riot component tag.
-      path: /(login|about|header|footer|late-img|messages)\.tag$/,
+      path: /(login|about|header|footer|late-img|messages|admin)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './component'
