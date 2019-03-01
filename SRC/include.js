@@ -5,32 +5,29 @@
 //==== Z Check API =====================================================================================================
 
 (function Z_Check_API () {
-  var Is;
+  let Is;
 
   Is = {
-    Boolean: function (Obj) { return (typeof Obj === 'boolean'); },
-    Number: function (Obj) { return (typeof Obj === 'number'); },
-    String: function (Obj) { return (typeof Obj === 'string'); },
-    Function: function (Obj) { return (typeof Obj === 'function'); },
-    Object: function (Obj) { return (typeof Obj === 'object'); },
-    Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
-    Array: function (Obj) { return (Obj instanceof Array); },
-    Promise: function (Obj)
-    { return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch')) },
-    EMail: function (Str)
-    {
-      if (typeof Str !== 'string')
-      { return false; }
+    Boolean: Obj => { return (typeof Obj === 'boolean'); },
+    Number: Obj => { return (typeof Obj === 'number'); },
+    String: Obj => { return (typeof Obj === 'string'); },
+    Function: Obj => { return (typeof Obj === 'function'); },
+    Object: Obj => { return (typeof Obj === 'object'); },
+    Undefined: Obj => { return (typeof Obj === 'undefined'); },
+    Array: Obj => { return (Obj instanceof Array); },
+    Promise: Obj => {
+      return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch'))
+    },
+    EMail: Str => {
+      if (typeof Str !== 'string') { return false; }
 
       return (/^[\w.]+@.{2,16}\.[0-9a-z]{2,3}$/).test(Str);
     },
-    jQuery: function (Obj) { return (typeof jQuery !== 'undefined' && Obj instanceof jQuery); }
+    jQuery: Obj => { return (typeof jQuery !== 'undefined' && Obj instanceof jQuery); }
   };
 
-  if (typeof exports !== 'undefined')
-  { exports = Is; }
-  else if (typeof window !== 'undefined')
-  { window.Is = Is; }
+  if (typeof exports !== 'undefined') { exports = Is; }
+  else if (typeof window !== 'undefined') { window.Is = Is; }
 })();
 
 //==== Tool Function ===================================================================================================
@@ -38,20 +35,16 @@
 /* count a String Length, chinese word count as 2 because of full-width.
   'Str' = String passing in.
   Return: string length.*/
-function StringLength (Str)
-{
-  if (typeof Str !== 'string')
-  { return 0; }
+function StringLength (Str) {
+  if (typeof Str !== 'string') { return 0; }
 
-  var C = 0,
+  let C = 0,
       SL = Str.length;
 
-  for (var i = 0; i < SL; i++)
-  {
-    var Chr = Str.charCodeAt(i);
+  for (let i = 0; i < SL; i++) {
+    let Chr = Str.charCodeAt(i);
 
-    if (Chr < 32 || Chr > 126)
-    { C++; }
+    if (Chr < 32 || Chr > 126) { C++; }
   }
 
   return Str.length + C;
@@ -62,29 +55,25 @@ function StringLength (Str)
   'Ofst' = Offset of substring.
   'Lmt' = Limit of substring.
   Return: fixed substring. */
-function SubStrFx (Str, Ofst, Lmt)
-{
-  if (typeof Str !== 'string')
-  { Str = Str.toString(); }
+function SubStrFx (Str, Ofst, Lmt) {
+  if (typeof Str !== 'string') { Str = Str.toString(); }
 
-  if (typeof Ofst !== 'number' || Ofst < 0)
-  { Ofst = 0; }
+  if (typeof Ofst !== 'number' || Ofst < 0) { Ofst = 0; }
+
   Str = Str.substr(Ofst);
 
-  if (typeof Lmt !== 'number' || Lmt < 1)
-  { Lmt = Str.length; }
+  if (typeof Lmt !== 'number' || Lmt < 1) { Lmt = Str.length; }
 
-  var Rst = '',
+  let Rst = '',
       C = 0;
 
-  for (var i = 0; i < Lmt && C < Lmt; i++)
-  {
+  for (let i = 0; i < Lmt && C < Lmt; i++) {
     Rst += Str.charAt(i);
 
-    var Chr = Str.charCodeAt(i);
+    let Chr = Str.charCodeAt(i);
 
-    if (Chr < 32 || Chr > 126)
-    { ++C; }
+    if (Chr < 32 || Chr > 126) { ++C; }
+
     ++C;
   }
 
@@ -95,31 +84,23 @@ function SubStrFx (Str, Ofst, Lmt)
   'CSSStr' = CSS String.
   'ID' = element 'style' ID. optional. give to skip if style exist.
   Return: 0 as OK, < 0 as error. */
-function CSSAdd (CSSStr, ID)
-{
-  if (typeof CSSStr !== 'string' || CSSStr.length === 0)
-  { return -1; }
+function CSSAdd (CSSStr, ID) {
+  if (typeof CSSStr !== 'string' || CSSStr.length === 0) { return -1; }
 
-  if (typeof ID === 'string' && ID.length > 0)
-  {
-    if (document.getElementById(ID))
-    { return 1; }
+  if (typeof ID === 'string' && ID.length > 0) {
+    if (document.getElementById(ID)) { return 1; }
   }
-  else
-  { ID = ''; }
+  else { ID = ''; }
 
-  var Stl = document.createElement('style'), // 'Stl' = Style.
+  let Stl = document.createElement('style'), // 'Stl' = Style.
       TxtNd = document.createTextNode(CSSStr); // 'TxtNd' = CSS Text Node.
 
-  if (ID.length > 0)
-  { Stl.id = ID; }
+  if (ID.length > 0) { Stl.id = ID; }
 
   Stl.type = 'text/css';
 
-  if (Stl.styleSheet) // for IE hack.
-  { Stl.styleSheet.cssText = TxtNd.nodeValue; }
-  else
-  { Stl.appendChild(TxtNd); }
+  if (Stl.styleSheet) { Stl.styleSheet.cssText = TxtNd.nodeValue; } // for IE hack.
+  else { Stl.appendChild(TxtNd); }
 
   document.getElementsByTagName('head')[0].appendChild(Stl);
 
@@ -131,30 +112,21 @@ function CSSAdd (CSSStr, ID)
   'ExtObj' = Extend Object.
   'Md' = Mode, 0: Union mode in default, 1: Intersection mode.
   Return: new object after combined, or null as error. */
-function ObjectCombine (BsObj, ExtObj, Md)
-{
-  if (typeof BsObj !== 'object' || typeof ExtObj !== 'object')
-  { return null; }
+function ObjectCombine (BsObj, ExtObj, Md) {
+  if (typeof BsObj !== 'object' || typeof ExtObj !== 'object') { return null; }
 
-  if (typeof Md !== 'number')
-  { Md = 0; }
+  if (typeof Md !== 'number') { Md = 0; }
 
-  var RstObj = {};
+  let RstObj = {};
 
-  for (var i in BsObj)
-  { RstObj[i] = BsObj[i]; }
+  for (let i in BsObj) { RstObj[i] = BsObj[i]; }
 
-  if (Md === 0)
-  {
-    for (var i in ExtObj)
-    { RstObj[i] = ExtObj[i];}
+  if (Md === 0) {
+    for (let i in ExtObj) { RstObj[i] = ExtObj[i];}
   }
-  else
-  {
-    for (var i in ExtObj)
-    {
-      if (typeof RstObj[i] === 'undefined')
-      { continue; }
+  else {
+    for (let i in ExtObj) {
+      if (typeof RstObj[i] === 'undefined') { continue; }
 
       RstObj[i] = ExtObj[i];
     }
@@ -169,36 +141,27 @@ function ObjectCombine (BsObj, ExtObj, Md)
   'Chr' = Character. optional, default '0';
   'Sd' = Side. optional, default 'l'. 'l'|'L': left padding, 'r'|'R': right padding.
   Return: string after handle. */
-function CharPad (Str, Lth, Chr, Sd)
-{
-  if (typeof Str !== 'string')
-  { Str = Str.toString(); }
+function CharPad (Str, Lth, Chr, Sd) {
+  if (typeof Str !== 'string') { Str = Str.toString(); }
 
-  if (typeof Lth !== 'number' || Lth < 2 || Str.length >= Lth)
-  { return Str; }
+  if (typeof Lth !== 'number' || Lth < 2 || Str.length >= Lth) { return Str; }
 
-  if (typeof Chr !== 'string' || Chr.length === 0)
-  { Chr = '0'; }
+  if (typeof Chr !== 'string' || Chr.length === 0) { Chr = '0'; }
 
-  if (typeof Sd !== 'string')
-  { Sd = 'l'; }
-  else
-  {
+  if (typeof Sd !== 'string') { Sd = 'l'; }
+  else {
     Sd = Sd.toLowerCase();
 
-    if (Sd !== 'l' && Sd !== 'r')
-    { return Str; }
+    if (Sd !== 'l' && Sd !== 'r') { return Str; }
   }
 
-  var PN = Lth - Str.length, // 'PN' = Padding Number.
+  let PN = Lth - Str.length, // 'PN' = Padding Number.
       PS = ''; // 'PS' = Padding String.
 
   for (PS = ''; PS.length < PN; PS += Chr);
 
-  if (Sd === 'l')
-  { Str = PS + Str; }
-  else
-  { Str += PS; }
+  if (Sd === 'l') { Str = PS + Str; }
+  else { Str += PS; }
 
   return Str;
 }
@@ -211,32 +174,31 @@ function CharPad (Str, Lth, Chr, Sd)
     2: YYYYMMDDHHIISS.
   Return: datatime string.
   Need: CharPad(). */
-function Second2Datetime (Scd, Fmt)
-{
-  var Dt = new Date(Scd * 1000), // 'Dt' = Date.
+function Second2Datetime (Scd, Fmt) {
+  let Dt = new Date(Scd * 1000), // 'Dt' = Date.
       DtStr = '',
       TZOM = Dt.getTimezoneOffset(), // 'TZOM' = Time Zone Offset Minute.
       TZOH = TZOM / 60; // 'TZOH' = Time Zone Offset Hour.
 
   Scd = parseFloat(Scd);
 
-  if (typeof Fmt !== 'number')
-  { Fmt = 0; }
-  Fmt = parseInt(Fmt, 10);
+  if (typeof Fmt !== 'number') { Fmt = 0; }
 
+  Fmt = parseInt(Fmt, 10);
   TZOH = (TZOH > 0 ? '-' : '+') + CharPad(Math.abs(TZOH), 2);
 
-  switch (Fmt)
-  {
+  switch (Fmt) {
     case 1:
       Dt.setMinutes(Dt.getMinutes() - TZOM);
 
       DtStr = Dt.toJSON().substr(0, 19).replace('T', ' ');
+
       break;
 
     case 2:
       DtStr = '' + Dt.getFullYear() + CharPad((Dt.getMonth() + 1), 2) + CharPad(Dt.getDate(), 2) +
               CharPad(Dt.getHours(), 2) + CharPad(Dt.getMinutes(), 2) + CharPad(Dt.getSeconds(), 2);
+
       break;
 
     case 0:
@@ -268,23 +230,19 @@ function DatetimeFormat (Dt) {
 /* parse bytes number to be normailize size string.
   'Byte' = file size, should be a number.
   Return: size string. */
-function FileSizeNormalize (Byte)
-{
-  if (typeof Byte !== 'number')
-  { Byte = parseInt(Byte, 10); }
+function FileSizeNormalize (Byte) {
+  if (typeof Byte !== 'number') { Byte = parseInt(Byte, 10); }
 
-  if (isNaN(Byte) || Byte < 0)
-  { return '???'; }
+  if (isNaN(Byte) || Byte < 0) { return '???'; }
 
-  var UntA = ['KB', 'MB', 'GB'];
+  let UntA = ['KB', 'MB', 'GB'];
 
-  for (var i = UntA.length; i > 0; i--)
-  {
-    var Cmp = Math.pow(2, i * 10);
+  for (let i = UntA.length; i > 0; i--) {
+    let Cmp = Math.pow(2, i * 10);
 
-    if (Byte > Cmp)
-    {
+    if (Byte > Cmp) {
       Byte = Math.round(Byte / Cmp * 100) / 100;
+
       return Byte.toString() + ' ' + UntA[i - 1];
     }
   }
@@ -296,10 +254,8 @@ function FileSizeNormalize (Byte)
   'TmStr' = String.
   Return: true | false.
   Need: RECheck(). */
-function IsTimeStamp (TmStr)
-{
-  if (typeof TmStr !== 'string' || TmStr.length === 0)
-  { return false; }
+function IsTimeStamp (TmStr) {
+  if (typeof TmStr !== 'string' || TmStr.length === 0) { return false; }
 
   return RECheck(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, TmStr);
 }
@@ -308,13 +264,12 @@ function IsTimeStamp (TmStr)
   'Ptm' = Pettam, can be a RegExp Object, or a String.
   'Str' = String for testing.
   Return: true / false of rule match. */
-function RECheck (Ptm, Str)
-{
+function RECheck (Ptm, Str) {
   if ((typeof Ptm != 'function' && //for chrome, a RegExp is a function.
       typeof Ptm != 'object' && typeof Ptm != 'string') || typeof Str != 'string')
   { return false; }
 
-  var RE = new RegExp(Ptm);
+  let RE = new RegExp(Ptm);
 
   // alert(RE.source);
 
@@ -328,22 +283,19 @@ function RECheck (Ptm, Str)
   'Pth' = Path. optional.
   'Dmn' = Domain. optional.
   Return: 0 as OK, < 0 as error. */
-function CookieSet (Nm, V, Exp, Pth, Dmn)
-{
+function CookieSet (Nm, V, Exp, Pth, Dmn) {
   if (typeof Nm !== 'string' || typeof V === 'undefined' || V === null || typeof Exp !== 'number' || Exp === null)
   { return -1; }
 
-  var Dt = new Date();
+  let Dt = new Date();
 
   Dt.setTime(Dt.getTime() + (Exp * 1000));
 
-  var Str = Nm + '=' + encodeURIComponent(V) + ';expires=' + Dt.toUTCString() + ';';
+  let Str = Nm + '=' + encodeURIComponent(V) + ';expires=' + Dt.toUTCString() + ';';
 
-  if (typeof Pth === 'string' && Pth.length > 0)
-  { Str += 'path=' + Pth + ';'; }
+  if (typeof Pth === 'string' && Pth.length > 0) { Str += 'path=' + Pth + ';'; }
 
-  if (typeof Dmn === 'string' && Dmn.length > 5)
-  { Str += 'domain=' + Dmn + ';'; }
+  if (typeof Dmn === 'string' && Dmn.length > 5) { Str += 'domain=' + Dmn + ';'; }
 
   document.cookie = Str;
 
@@ -353,32 +305,25 @@ function CookieSet (Nm, V, Exp, Pth, Dmn)
 /* parse Cookie Parameters in a object.
   'Ky' = Key name of cookie. optional, give to return it only.
   Return: object. */
-function CookieParam (Ky)
-{
-  var CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
+function CookieParam (Ky) {
+  let CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
       CO = {};
 
-  for (var i in CSA)
-  {
-    var T;
+  for (let i in CSA) {
+    let T;
 
-    if (!CSA.hasOwnProperty(i))
-    { continue; }
+    if (!CSA.hasOwnProperty(i)) { continue; }
 
     T = CSA[i].replace(/^\s+|\s+$/g, '').split('='); // trim each data.
 
     CO[T[0]] = decodeURIComponent(T[1]);
   }
 
-  if (Ky && typeof Ky === 'string')
-  {
-    for (var i in CO)
-    {
-      if (!CO.hasOwnProperty(i))
-      { continue; }
+  if (Ky && typeof Ky === 'string') {
+    for (let i in CO) {
+      if (!CO.hasOwnProperty(i)) { continue; }
 
-      if (i === Ky)
-      { return CO[i]; }
+      if (i === Ky) { return CO[i]; }
     }
 
     return null;
@@ -389,22 +334,18 @@ function CookieParam (Ky)
 
 /* turn to another page. give empty string to reload current page.
   'URL' = URL to go. optional, default ''. */
-function PageTurn (URL)
-{
-  if (typeof URL !== 'string')
-  { return 0; }
+function PageTurn (URL) {
+  if (typeof URL !== 'string') { return 0; }
 
-  if (URL.length > 0)
-  { window.location = URL; }
-  else
-  { window.location.reload(true); }
+  if (URL.length > 0) { window.location = URL; }
+  else { window.location.reload(true); }
 }
 
 /* get the Window View Size.
   Return: [W, H]. */
 function WindowViewSize ()
 {
-  var Sz = [0, 0];
+  let Sz = [0, 0];
 
   if (document.documentElement)
   { Sz = [document.documentElement.clientWidth, document.documentElement.clientHeight]; }
@@ -416,39 +357,32 @@ function WindowViewSize ()
 
 /* Get now Page Name without parent directories.
   Return: page name, maybe empty string as index.php, index.html, etc. */
-function PageNameGet ()
-{
-  var PthA = window.location.pathname.split('/');
+function PageNameGet () {
+  let PthA = window.location.pathname.split('/');
 
   return PthA[PthA.length - 1];
 }
 
 /* Deny web page embeded into another page by frame or iframe. */
-function EmbedDeny ()
-{
-  if (top != self)
-  { window.location.href = 'about:blank'; }
+function EmbedDeny () {
+  if (top != self) { window.location.href = 'about:blank'; }
 }
 
 /* encode/decode HTML special chars.
   'Txt' = Text to parse.
   'Flg' = encode/decode Flag. true: encode | false: decode.
   Return: parsed string, or '' as error. */
-function HTMLSpecialCharsEnDeCode (Txt, Flg)
-{
-  if (typeof Txt !== 'string' || typeof Flg !== 'boolean')
-  { return ''; }
+function HTMLSpecialCharsEnDeCode (Txt, Flg) {
+  if (typeof Txt !== 'string' || typeof Flg !== 'boolean') { return ''; }
 
-  if (Flg)
-  {
+  if (Flg) {
     return Txt.replace(/&/g, '&amp;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
               .replace(/"/g, '&quot;')
               .replace(/'/g, '&#039;');
   }
-  else
-  {
+  else {
     return Txt.replace(/&amp;|&#0?38;/g, '&')
               .replace(/&lt;|&#0?60;/g, '<')
               .replace(/&gt;|&#0?62;/g, '>')
@@ -460,10 +394,8 @@ function HTMLSpecialCharsEnDeCode (Txt, Flg)
 /* transform traditional text to be HTML code for convenient render & read.
   'Txt' = Text string.
   Return: HTML string for render. */
-function TextToHTML (Txt)
-{
-  if (typeof Txt !== 'string' || Txt.length === 0)
-  { return Txt; }
+function TextToHTML (Txt) {
+  if (typeof Txt !== 'string' || Txt.length === 0) { return Txt; }
 
   Txt = Txt.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank">$1</a>');
 
@@ -475,30 +407,24 @@ function TextToHTML (Txt)
   'Max' = maximum number.
   'Dcm' = Decimal. optional, default 0. give -1 to keep original decimal.
   Return: random number in the range, or 0 as error. */
-function RandomRange (Min, Max, Dcm)
-{
-  if (typeof Min !== 'number' || typeof Max !== 'number')
-  { return 0; }
+function RandomRange (Min, Max, Dcm) {
+  if (typeof Min !== 'number' || typeof Max !== 'number') { return 0; }
 
-  if (typeof Dcm !== 'number')
-  { Dcm = 0; }
+  if (typeof Dcm !== 'number') { Dcm = 0; }
 
-  if (Min > Max || Max < Min)
-  {
-    var T = Min;
+  if (Min > Max || Max < Min) {
+    let T = Min;
 
     Min = Max;
     Max = T;
   }
 
-  var Dst =  Max - Min, // 'Dst' = Distance.
+  let Dst =  Max - Min, // 'Dst' = Distance.
       Nbr = Math.random() * Dst + Min;
 
-  if (Dcm === 0)
-  { Nbr = Math.floor(Nbr); }
-  else if (Dcm > 0)
-  {
-    var Pow = Math.pow(10, Dcm);
+  if (Dcm === 0) { Nbr = Math.floor(Nbr); }
+  else if (Dcm > 0) {
+    let Pow = Math.pow(10, Dcm);
 
     Nbr = Math.floor(Nbr * Pow) / Pow;
   }
@@ -506,18 +432,15 @@ function RandomRange (Min, Max, Dcm)
   return Nbr;
 }
 
-function URLParameters ()
-{
-  var PrmStr = window.location.search, // 'PrmStr' = Parameters String.
+function URLParameters () {
+  let PrmStr = window.location.search, // 'PrmStr' = Parameters String.
       URLPrms = {};
 
-  if (PrmStr.length > 0)
-  {
-    var TmpA0 = PrmStr.substr(1).split('&');
+  if (PrmStr.length > 0) {
+    let TmpA0 = PrmStr.substr(1).split('&');
 
-    for (var i = 0; i < TmpA0.length; i++ )
-    {
-      var TmpA1 = TmpA0[i].split('=');
+    for (let i = 0; i < TmpA0.length; i++ ) {
+      let TmpA1 = TmpA0[i].split('=');
 
       URLPrms[TmpA1[0]] = (TmpA1.length < 2) ? true : TmpA1[1];
     }
@@ -539,26 +462,23 @@ function URLParameters ()
   Return: Tab Box jQuery object, or null as error.
   Need: CSSAdd function.
   Notice: tab name is decide by attribute data-tab-name, name or the index of the tab themself. */
-function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
-{
-  if (typeof BxOS === 'undefined' || typeof TbCSSS !== 'string')
-  {
+function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy) {
+  if (typeof BxOS === 'undefined' || typeof TbCSSS !== 'string') {
     alert('Tab Bx initialize failed.');
+
     return null;
   }
 
-  if (typeof PrmIdx !== 'number' || PrmIdx < 0)
-  { PrmIdx = 0; }
+  if (typeof PrmIdx !== 'number' || PrmIdx < 0) { PrmIdx = 0; }
 
-  if (typeof TbSwF !== 'function')
-  { TbSwF = function(OO, NO){}; }
+  if (typeof TbSwF !== 'function') { TbSwF = (OO, NO) => {}; }
 
-  var Bx = $(BxOS).data('IdxRcd', [-1, -1]),
+  let Bx = $(BxOS).data('IdxRcd', [-1, -1]),
       CtxAJO = $(TbCSSS),
       TbTlt = $('<li/>'),
       CSSStr = '';
 
-  var TbBx = Bx.prepend('<ul/>')
+  let TbBx = Bx.prepend('<ul/>')
                .children('ul:first');
 
   CSSStr = BxOS + " > ul { margin: 0px; padding: 0px; }\n" +
@@ -569,38 +489,33 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
 
   CSSAdd(CSSStr);
 
-  if (typeof HshKy !== 'string' || HshKy.length === 0)
-  {
-    CtxAJO.each(function(Idx)
-      {
-        var This = $(this),
+  if (typeof HshKy !== 'string' || HshKy.length === 0) {
+    CtxAJO.each(Idx => {
+        let This = $(this),
             TbNmA = [This.data('tabName'), This.attr('name')];
 
-        var Tb = TbTlt.clone()
+        let Tb = TbTlt.clone()
                       .text(TbNmA[0] ? TbNmA[0] : (TbNmA[1] ? TbNmA[1] : Idx.toString()))
                       .appendTo(TbBx);
       });
 
     TbBx.on('click', '>  li', ClickToTabSwitch);
   }
-  else
-  {
-    var Hsh = window.location.hash.replace(/^#/, ''),
+  else {
+    let Hsh = window.location.hash.replace(/^#/, ''),
         RE = new RegExp(HshKy + '\\d+,?', 'g'),
         MchA = Hsh.match(RE);
 
-    if (MchA !== null)
-    {
+    if (MchA !== null) {
       MchA = MchA[MchA.length - 1].match(/\d+/);
       PrmIdx = parseInt(MchA[0], 10);
     }
 
-    CtxAJO.each(function(Idx)
-      {
-        var This = $(this),
+    CtxAJO.each(Idx => {
+        let This = $(this),
             TbNmA = [This.data('tabName'), This.attr('name')];
 
-        var Tb = TbTlt.clone()
+        let Tb = TbTlt.clone()
                       .text(TbNmA)
                       .attr('name', HshKy + Idx.toString())
                       .appendTo(TbBx);
@@ -614,67 +529,56 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
 
   return Bx;
 
-  function ClickToTabSwitch(Evt)
-  {
+  function ClickToTabSwitch (Evt) {
     TabSwitch($(this));
   }
 
-  function HashToTabswitch(Evt)
-  {
-    var This = $(this),
+  function HashToTabswitch (Evt) {
+    let This = $(this),
         Idx = This.index(),
         Hsh = window.location.hash.replace(/^#/, '');
 
-    if (Hsh.length === 0)
-    {
+    if (Hsh.length === 0) {
       window.location = '#' + HshKy + Idx.toString();
 
       return 0;
     }
 
-    var RE = RegExp(HshKy + '\\d+,?', 'g'),
+    let RE = RegExp(HshKy + '\\d+,?', 'g'),
         MchA = Hsh.match(RE);
 
-    if (MchA !== null)
-    { Hsh = Hsh.replace(RE, ''); }
+    if (MchA !== null) { Hsh = Hsh.replace(RE, ''); }
 
-    if (Hsh.length > 0)
-    { window.location = '#' + Hsh.replace(/,$/, '') + ',' + HshKy + Idx.toString(); }
-    else
-    { window.location = '#' + HshKy + Idx.toString(); }
+    if (Hsh.length > 0) { window.location = '#' + Hsh.replace(/,$/, '') + ',' + HshKy + Idx.toString(); }
+    else { window.location = '#' + HshKy + Idx.toString(); }
   }
 
-  function HashTrigger(Evt)
-  {
-    var Hsh = window.location.hash.replace(/^#/, '');
+  function HashTrigger (Evt) {
+    let Hsh = window.location.hash.replace(/^#/, '');
 
-    if (Hsh.length === 0)
-    {
+    if (Hsh.length === 0) {
       TabSwitch(TbBx.children(':first'));
 
       return 0;
     }
 
-    var RE = RegExp(HshKy + '\\d+,?', 'g'),
+    let RE = RegExp(HshKy + '\\d+,?', 'g'),
         MchA = Hsh.match(RE),
         Idx = 0;
 
-    if (MchA !== null)
-    { Idx = parseInt(MchA[MchA.length - 1].match(/\d+/), 10); }
+    if (MchA !== null) { Idx = parseInt(MchA[MchA.length - 1].match(/\d+/), 10); }
 
     TabSwitch(TbBx.children(':eq(' + Idx.toString() + ')'));
   }
 
-  function TabSwitch(JO)
-  {
-    var This = JO,
+  function TabSwitch (JO) {
+    let This = JO,
         Idx = This.index(),
         Rcd = Bx.data('IdxRcd');
 
-    if (Rcd[1] === Idx)
-    { return 0; }
+    if (Rcd[1] === Idx) { return 0; }
 
-    var NO = This,
+    let NO = This,
         OO = NO.siblings('.PckTb').removeClass('PckTb');
 
     NO.addClass('PckTb');
@@ -685,8 +589,7 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
     Bx.data('IdxRcd', Rcd);
     CtxAJO.eq(Rcd[1]).show();
 
-    if (Rcd[0] >= 0)
-    { CtxAJO.eq(Rcd[0]).hide(); }
+    if (Rcd[0] >= 0) { CtxAJO.eq(Rcd[0]).hide(); }
 
     TbSwF(OO, NO);
   }
@@ -697,26 +600,23 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy)
   'CSSS' = CSS Selector string.
   Return: 'Button0' element jQuery objects, or null.
   Need: jQuery API, CSSAdd(). */
-function Button0 (CSSS)
-{
-  if (typeof CSSS !== 'string')
-  {
+function Button0 (CSSS) {
+  if (typeof CSSS !== 'string') {
     alert('Set \'Button0\' object failed. Please check out passing values.');
+
     return null;
   }
 
   CSSS = CSSS.trim();
 
-  $('body').on('mouseenter', CSSS, function(Evt){ Initialize(Evt.currentTarget); })
-           .on('focus', CSSS, function(Evt){ Initialize(Evt.currentTarget); })
-           .find(CSSS).each(function(){ Initialize(this); });
+  $('body').on('mouseenter', CSSS, Evt => { Initialize(Evt.currentTarget); })
+           .on('focus', CSSS, Evt => { Initialize(Evt.currentTarget); })
+           .find(CSSS).each(() => { Initialize(this); });
 
   return 0;
 
-  function Initialize(Obj)
-  {
-    if (typeof Obj.LckFlg === 'boolean')
-    { return; }
+  function Initialize (Obj) {
+    if (typeof Obj.LckFlg === 'boolean') { return; }
 
     $(Obj).attr('autocomplete', 'off');
 
@@ -725,20 +625,18 @@ function Button0 (CSSS)
     Obj.Unlock = Unlock;
   }
 
-  function Lock()
-  {
-    if (this.LckFlg)
-    { return; }
+  function Lock () {
+    if (this.LckFlg) { return; }
+
     this.LckFlg = true;
 
     $(this).addClass('Lock')
            .prop('disabled', true);
   }
 
-  function Unlock()
-  {
-    if (!this.LckFlg)
-    { return; }
+  function Unlock () {
+    if (!this.LckFlg) { return; }
+
     this.LckFlg = false;
 
     $(this).removeClass('Lock')
@@ -765,20 +663,19 @@ function Button0 (CSSS)
   Return: jQuery object of 'BxOS'.
   Extend: PageGet(), Recount(), LimitSet(), NowPage().
   Need: ObjectCombine(). */
-function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
-{
+function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF) {
   if (typeof BxOS === 'undefined' || typeof URL !== 'string' || isNaN(Lmt) || typeof Data !== 'object' ||
-     typeof OneItmF !== 'function')
-  {
+      typeof OneItmF !== 'function') {
     alert('Create a \'ItemList\' failed. Please check out passing values.');
+
     return null;
   }
 
   Lmt = parseInt(Lmt, 10);
-  if (Lmt < 1)
-  { Lmt = 0; }
 
-  var Bx = $(BxOS),
+  if (Lmt < 1) { Lmt = 0; }
+
+  let Bx = $(BxOS),
       BxDOM = Bx.get(0),
       NwPg = 0,
       PgTgRng = 2,
@@ -790,25 +687,24 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
   BxDOM.PageGet = OnePageList;
   BxDOM.Recount = TotalCount;
   BxDOM.LimitSet = LimitSet;
-  BxDOM.NowPage = function(){ return NwPg; };
+  BxDOM.NowPage = () => { return NwPg; };
 
-  TotalCount(function(){ OnePageList(NwPg); });
+  TotalCount(() => { OnePageList(NwPg); });
 
-  if (typeof IdxCls === 'object' && IdxCls.length > 0)
-  {
+  if (typeof IdxCls === 'object' && IdxCls.length > 0) {
     Bx.off('click', 'div.ItmLstIdxBx:last-child > span')
-      .on('click', 'div.ItmLstIdxBx:last-child > span', function(Evt) // 20120727 by RZ. use class to focus on index list box.
-        {
-          var This = $(this),
+      .on(
+        'click',
+        'div.ItmLstIdxBx:last-child > span',
+        Evt => { // 20120727 by RZ. use class to focus on index list box.
+          let This = $(this),
               Idx = parseInt(This.attr('name'), 10);
 
-          if (Idx < 0 || Idx > MxPg || Idx === NwPg)
-          { return 0; }
+          if (Idx < 0 || Idx > MxPg || Idx === NwPg) { return 0; }
 
-          var TC = ['', ''];
+          let TC = ['', ''];
 
-          if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0)
-          {
+          if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0) {
             This.siblings().addBack().removeClass()
                                      .addClass(IdxCls[1]);
           }
@@ -819,118 +715,98 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 
   return Bx;
 
-  function OnePageList(Pg)
-  {
-    var Tp = typeof Pg;
+  function OnePageList (Pg) {
+    let Tp = typeof Pg;
 
-    if (Tp === 'undefined')
-    { Pg = NwPg; }
-    else if (Tp !== 'number')
-    { return 0; }
+    if (Tp === 'undefined') { Pg = NwPg; }
+    else if (Tp !== 'number') { return 0; }
 
-    var PstData = ObjectCombine(Data, {'Lmt': Lmt, 'Ofst': (Pg * Lmt)}); // 'PstData' = Post Data.
+    let PstData = ObjectCombine(Data, {'Lmt': Lmt, 'Ofst': (Pg * Lmt)}); // 'PstData' = Post Data.
 
-    $.ajax(
-      {
-        'type': 'POST',
-        'dataType': 'json',
-        'timeout' : 20000,
-        'url': URL,
-        'data': PstData,
-        // 'beforeSend': function(JQXHR, Set){},
-        // 'error' : function(JQXHR, TxtSt, ErrThr){},
-        // 'complete' : function(JQXHR, TxtSt){},
-        'success': function(Rtn, TxtSt, JQXHR)
-          {
-            if (Rtn.Index != 0)
-            {
-              alert(Rtn.Index + ', ' + Rtn.Message);
-              return 0;
-            }
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      timeout : 20000,
+      url: URL,
+      data: PstData,
+      // beforeSend: (JQXHR, Set) => {},
+      // error : (JQXHR, TxtSt, ErrThr) => {},
+      // complete : (JQXHR, TxtSt) => {},
+      success: (Rtn, TxtSt, JQXHR) => {
+        if (Rtn.Index != 0) {
+          alert(Rtn.Index + ', ' + Rtn.Message);
 
-            NwPg = Pg;
-            Bx.empty();
+          return 0;
+        }
 
-            for (var i in Rtn.Extend)
-            { Bx.append(OneItmF(Rtn.Extend[i], i)); }
+        NwPg = Pg;
+        Bx.empty();
 
-            if (typeof IdxCls === 'object' || IdxCls.length > 1)
-            { PageIndexBuild(); }
+        for (let i in Rtn.Extend) { Bx.append(OneItmF(Rtn.Extend[i], i)); }
 
-            if (typeof AftItmsF === 'function')
-            { AftItmsF((typeof Rtn.Extend === 'undefined') ? 0 : Rtn.Extend.length, Rtn.Extend); }
-          }
-      });
+        if (typeof IdxCls === 'object' || IdxCls.length > 1) { PageIndexBuild(); }
+
+        if (typeof AftItmsF === 'function') {
+          AftItmsF((typeof Rtn.Extend === 'undefined') ? 0 : Rtn.Extend.length, Rtn.Extend);
+        }
+      }});
   }
 
   /* Count Total number.
     'AftF' = After Function, called after TotalCount() finished. optional. */
-  function TotalCount(AftF)
-  {
-    var PstData = ObjectCombine(Data, {'Cnt': 1, 'Lmt': 0, 'Ofst': 0}); // 'PstData' = Post Data.
+  function TotalCount (AftF) {
+    let PstData = ObjectCombine(Data, {'Cnt': 1, 'Lmt': 0, 'Ofst': 0}); // 'PstData' = Post Data.
 
-    $.ajax(
-      {
-        'type': 'POST',
-        'dataType': 'json',
-        'timeout' : 20000,
-        'url': URL,
-        'data': PstData,
-        // 'beforeSend': function(JQXHR, Set){},
-        // 'error' : function(JQXHR, TxtSt, ErrThr){},
-        // 'complete' : function(JQXHR, TxtSt){},
-        'success': function(Rtn, TxtSt, JQXHR)
-          {
-            if (Rtn.Index < 0)
-            {
-              alert(Rtn.Index + ', ' + Rtn.Message);
-              return 0;
-            }
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        timeout : 20000,
+        url: URL,
+        data: PstData,
+        // beforeSend: (JQXHR, Set) => {},
+        // error : (JQXHR, TxtSt, ErrThr) => {},
+        // complete : (JQXHR, TxtSt) => {},
+        success: (Rtn, TxtSt, JQXHR) => {
+          if (Rtn.Index < 0) {
+            alert(Rtn.Index + ', ' + Rtn.Message);
 
-            TtlCnt = isNaN(Rtn.Extend) ? Rtn.Extend.length : Rtn.Extend;
-            MxPg = Math.ceil(TtlCnt / Lmt) - 1;
-
-            if (Rtn.Extend == 0 && typeof IdxCls === 'object' && IdxCls.length > 1)
-            { PageIndexBuild(); }
-
-            if (typeof AftF === 'function')
-            { AftF(); }
+            return 0;
           }
-      });
+
+          TtlCnt = isNaN(Rtn.Extend) ? Rtn.Extend.length : Rtn.Extend;
+          MxPg = Math.ceil(TtlCnt / Lmt) - 1;
+
+          if (Rtn.Extend == 0 && typeof IdxCls === 'object' && IdxCls.length > 1) { PageIndexBuild(); }
+
+          if (typeof AftF === 'function') { AftF(); }
+        }});
   }
 
   /* Reset Limit.
     'NwLmt' = New Limit.
     Return: real setting limit. or original limit without change. */
-  function LimitSet(NwLmt)
-  {
-    if (typeof NwLmt !== 'number' || NwLmt < 1)
-      return Limit;
+  function LimitSet (NwLmt) {
+    if (typeof NwLmt !== 'number' || NwLmt < 1) { return Limit; }
 
-    if (NwLmt > 99)
-      NwLmt = 99;
+    if (NwLmt > 99) { NwLmt = 99; }
 
     Lmt = NwLmt;
 
     return Lmt;
   }
 
-  function PageIndexBuild()
-  {
-    var IdxLst = $('<div/>').appendTo(Bx),
+  function PageIndexBuild () {
+    let IdxLst = $('<div/>').appendTo(Bx),
         TC = ['', '']; // 'TC' = Temptory Class.
 
-    if (typeof IdxCls !== 'object' || IdxCls.length === 0)
-    { return 0; }
+    if (typeof IdxCls !== 'object' || IdxCls.length === 0) { return 0; }
 
     IdxLst.addClass('ItmLstIdxBx') // 20120727 by RZ. for solve 'on - click' event point multiple element, use class to focus on the index box.
           .css({'textAlign': 'center', 'marginTop': 10});
 
-    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0)
-    { TC[0] = IdxCls[0]; }
+    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0) { TC[0] = IdxCls[0]; }
 
-    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0)
-    { TC[1] = IdxCls[1]; }
+    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0) { TC[1] = IdxCls[1]; }
 
     /*==== first & prev page tag. ====*/
 
@@ -946,7 +822,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 
     /*==== now page tag. ====*/
 
-    var Nw = $('<span/>').addClass(TC[1])
+    let Nw = $('<span/>').addClass(TC[1])
                          .attr('name', NwPg)
                          .text(NwPg + 1)
                          .appendTo(IdxLst); // 'Nw' = Now page.
@@ -965,33 +841,28 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 
     /*==== page index range handle. ====*/
 
-    var PrvBgn = NwPg - PgTgRng,
+    let PrvBgn = NwPg - PgTgRng,
         PrvEnd = NwPg,
         NxtBgn = NwPg + PgTgRng,
         NxtEnd = NwPg;
 
-    if (PrvBgn < 0)
-    {
+    if (PrvBgn < 0) {
       NxtBgn -= PrvBgn;
       PrvBgn = 0;
 
-      if (NxtBgn > MxPg)
-      { NxtBgn = MxPg; }
+      if (NxtBgn > MxPg) { NxtBgn = MxPg; }
     }
 
-    if (NxtBgn > MxPg)
-    {
+    if (NxtBgn > MxPg) {
       PrvBgn -= (NxtBgn - MxPg);
       NxtBgn = MxPg;
 
-      if (PrvBgn < 0)
-      { PrvBgn = 0; }
+      if (PrvBgn < 0) { PrvBgn = 0; }
     }
 
     /*==== prev page tags. ====*/
 
-    for (var i = PrvBgn; i < PrvEnd; i++) // prev range page tags.
-    {
+    for (let i = PrvBgn; i < PrvEnd; i++) { // prev range page tags.
       $('<span/>').addClass(TC[0])
                   .attr({'name': i})
                   .text(i + 1)
@@ -1000,8 +871,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
 
     /*==== next page tags. ====*/
 
-    for (var i = NxtBgn; i > NxtEnd; i--)
-    {
+    for (let i = NxtBgn; i > NxtEnd; i--) {
       $('<span/>').addClass(TC[0])
                   .attr({'name': i})
                   .text(i + 1)
@@ -1016,13 +886,11 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF)
   'Cln' = Clean, to clean old list. boolean, optional, default true.
   'AftItmsCrt' = After Items Create. function, optional.
   Return: Box DOM object, or null as error. */
-function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
-{
-  var Bx,
+function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt) {
+  let Bx,
       BxDOM;
 
-  if (Is.Undefined(BxOS) || !Is.String(URL) || !Is.Object(Data) || !Is.Function(OneItmCrt))
-  {
+  if (Is.Undefined(BxOS) || !Is.String(URL) || !Is.Object(Data) || !Is.Function(OneItmCrt)) {
     console.log('create a \'ItemListV2\' failed. please check out passing values.');
 
     return null;
@@ -1030,14 +898,11 @@ function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
 
   Bx = $(BxOS);
 
-  if (!Bx.length)
-  { return null; }
+  if (!Bx.length) { return null; }
 
-  if (!Is.Number(Data.Lmt) || Data.Lmt < 0)
-  { Data.Lmt = 10; }
+  if (!Is.Number(Data.Lmt) || Data.Lmt < 0) { Data.Lmt = 10; }
 
-  if (!Is.Number(Data.Ofst) || Data.Ofst < 0)
-  { Data.Ofst = 0; }
+  if (!Is.Number(Data.Ofst) || Data.Ofst < 0) { Data.Ofst = 0; }
 
   BxDOM = Bx[0];
   BxDOM.URL = URL;
@@ -1045,137 +910,114 @@ function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt)
   BxDOM.Cln = Is.Boolean(Cln) ? Cln : true;
   BxDOM.OnePageGet = OnePageGet;
   BxDOM.Get = Get;
-  BxDOM.NowCount = function () { return BxDOM.Data.Ofst; };
+  BxDOM.NowCount = () => { return BxDOM.Data.Ofst; };
   BxDOM.OneItemCreate = OneItmCrt;
-  BxDOM.AfterItemsCreate = AftItmsCrt || function () {};
+  BxDOM.AfterItemsCreate = AftItmsCrt || () => {};
 
   return BxDOM;
 
   /*
     Need: function ObjectCombine. */
-  function OnePageGet()
-  {
-    var self = this;
+  function OnePageGet () {
+    let self = this;
 
-    $.ajax(
-      {
-        type: 'POST',
-        dataType: 'json',
-        timeout : 20000,
-        url: this.URL,
-        data: this.Data,
-        // beforeSend: function(JQXHR, Set){},
-        error : function (JQXHR, TxtSt, ErrThr) { alert('無法取得資料。'); },
-        // complete : function(JQXHR, TxtSt){},
-        success: function (Rtn, TxtSt, JQXHR)
-          {
-            var Bx;
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      timeout : 20000,
+      url: this.URL,
+      data: this.Data,
+      // beforeSend: (JQXHR, Set) => {},
+      error: (JQXHR, TxtSt, ErrThr) => { alert('無法取得資料。'); },
+      // complete: (JQXHR, TxtSt) => {},
+      success: (Rtn, TxtSt, JQXHR) => {
+        let Bx;
 
-            if (Rtn.Index != 0 || !Is.Array(Rtn.Extend))
-            {
-              alert(Rtn.Index + ', ' + Rtn.Message);
+        if (Rtn.Index != 0 || !Is.Array(Rtn.Extend)) {
+          alert(Rtn.Index + ', ' + Rtn.Message);
 
-              return;
-            }
+          return;
+        }
 
-            Bx = $(self);
+        Bx = $(self);
 
-            if (self.Cln)
-            { Bx.empty(); }
+        if (self.Cln) { Bx.empty(); }
 
-            for (var i = 0; i < Rtn.Extend.length; i++)
-            { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
+        for (let i = 0; i < Rtn.Extend.length; i++) { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
 
-            self.Data.Ofst += Rtn.Extend.length;
+        self.Data.Ofst += Rtn.Extend.length;
 
-            self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
-          }
-      });
+        self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
+      }});
   }
 
-  function Get (Lmt, Ofst, IsCln)
-  {
-    var self = this,
+  function Get (Lmt, Ofst, IsCln) {
+    let self = this,
         Data = ObjectCombine({}, this.Data);
 
-    if (!Is.Number(Lmt))
-    { Data.Lmt = Data; }
+    if (!Is.Number(Lmt)) { Data.Lmt = Data; }
 
-    if (!Is.Number(Ofst))
-    { Data.Ofst = Ofst; }
+    if (!Is.Number(Ofst)) { Data.Ofst = Ofst; }
 
-    if (!Is.Boolean(IsCln))
-    { IsCln = false; }
+    if (!Is.Boolean(IsCln)) { IsCln = false; }
 
-    $.ajax(
-      {
-        type: 'POST',
-        dataType: 'json',
-        timeout : 20000,
-        url: this.URL,
-        data: Data,
-        // beforeSend: function(JQXHR, Set){},
-        error : function (JQXHR, TxtSt, ErrThr) { alert('無法取得資料。'); },
-        // complete : function(JQXHR, TxtSt){},
-        success: function (Rtn, TxtSt, JQXHR)
-          {
-            var Bx;
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      timeout : 20000,
+      url: this.URL,
+      data: Data,
+      // beforeSend: (JQXHR, Set) => {},
+      error: (JQXHR, TxtSt, ErrThr) => { alert('無法取得資料。'); },
+      // complete: (JQXHR, TxtSt) => {},
+      success: (Rtn, TxtSt, JQXHR) => {
+        let Bx;
 
-            if (Rtn.Index != 0 || !Is.Array(Rtn.Extend))
-            {
-              alert(Rtn.Index + ', ' + Rtn.Message);
+        if (Rtn.Index != 0 || !Is.Array(Rtn.Extend)) {
+          alert(Rtn.Index + ', ' + Rtn.Message);
 
-              return;
-            }
+          return;
+        }
 
-            Bx = $(self);
+        Bx = $(self);
 
-            if (IsCln)
-            { Bx.empty(); }
+        if (IsCln) { Bx.empty(); }
 
-            for (var i = 0; i < Rtn.Extend.length; i++)
-            { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
+        for (let i = 0; i < Rtn.Extend.length; i++) { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
 
-            self.Data.Ofst = Data.Ofst + Rtn.Extend.length;
+        self.Data.Ofst = Data.Ofst + Rtn.Extend.length;
 
-            self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
-          }
-      });
+        self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
+      }
+    });
   }
 }
 
 /*
   'Bx' = Box, where the component will insert into.
   Return: 0 as OK, < 0 as error. */
-function PageIndex (Bx)
-{
-  var IdxBx = $('<div/>');
+function PageIndex (Bx) {
+  let IdxBx = $('<div/>');
 
-  if (!Bx || typeof Bx !== 'object')
-  { return -1; }
+  if (!Bx || typeof Bx !== 'object') { return -1; }
 
-  if (gj() < 0)
-  { return -2; }
+  if (gj() < 0) { return -2; }
 
   Bx.append(IdxBx);
 
   return;
 
-  function gj()
-  {
-    var TC = ['', '']; // 'TC' = Temptory Class.
+  function gj () {
+    let TC = ['', '']; // 'TC' = Temptory Class.
 
-    if (typeof IdxCls !== 'object' || IdxCls.length === 0)
-    { return 0; }
+    if (typeof IdxCls !== 'object' || IdxCls.length === 0) { return 0; }
 
     IdxLst.addClass('ItmLstIdxBx') // 20120727 by RZ. for solve 'on - click' event point multiple element, use class to focus on the index box.
           .css({'textAlign': 'center', 'marginTop': 10});
 
-    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0)
-    { TC[0] = IdxCls[0]; }
+    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0) { TC[0] = IdxCls[0]; }
 
-    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0)
-    { TC[1] = IdxCls[1]; }
+    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0) { TC[1] = IdxCls[1]; }
 
     /*==== first & prev page tag. ====*/
 
@@ -1191,7 +1033,7 @@ function PageIndex (Bx)
 
     /*==== now page tag. ====*/
 
-    var Nw = $('<span/>').addClass(TC[1])
+    let Nw = $('<span/>').addClass(TC[1])
                          .attr('name', NwPg)
                          .text(NwPg + 1)
                          .appendTo(IdxLst); // 'Nw' = Now page.
@@ -1210,33 +1052,28 @@ function PageIndex (Bx)
 
     /*==== page index range handle. ====*/
 
-    var PrvBgn = NwPg - PgTgRng,
+    let PrvBgn = NwPg - PgTgRng,
         PrvEnd = NwPg,
         NxtBgn = NwPg + PgTgRng,
         NxtEnd = NwPg;
 
-    if (PrvBgn < 0)
-    {
+    if (PrvBgn < 0) {
       NxtBgn -= PrvBgn;
       PrvBgn = 0;
 
-      if (NxtBgn > MxPg)
-      { NxtBgn = MxPg; }
+      if (NxtBgn > MxPg) { NxtBgn = MxPg; }
     }
 
-    if (NxtBgn > MxPg)
-    {
+    if (NxtBgn > MxPg) {
       PrvBgn -= (NxtBgn - MxPg);
       NxtBgn = MxPg;
 
-      if (PrvBgn < 0)
-      { PrvBgn = 0; }
+      if (PrvBgn < 0) { PrvBgn = 0; }
     }
 
     /*==== prev page tags. ====*/
 
-    for (var i = PrvBgn; i < PrvEnd; i++) // prev range page tags.
-    {
+    for (let i = PrvBgn; i < PrvEnd; i++) { // prev range page tags.
       $('<span/>').addClass(TC[0])
                   .attr({'name': i})
                   .text(i + 1)
@@ -1245,8 +1082,7 @@ function PageIndex (Bx)
 
     /*==== next page tags. ====*/
 
-    for (var i = NxtBgn; i > NxtEnd; i--)
-    {
+    for (let i = NxtBgn; i > NxtEnd; i--) {
       $('<span/>').addClass(TC[0])
                   .attr({'name': i})
                   .text(i + 1)
@@ -1265,17 +1101,15 @@ function PageIndex (Bx)
   'SltBldB' = Silent Build Boolean. optional, default false.
   Return: 'Frame' element jQuery object.
   Need: jQuery API, CSSAdd(). */
-function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
-{
-  var FIBCID = 'FrmIcnBtn'; // 'FIBCID' = Frame Icon Button Class ID.
+function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB) {
+  let FIBCID = 'FrmIcnBtn'; // 'FIBCID' = Frame Icon Button Class ID.
 
-  if ($('#' + FIBCID).length === 0)
-  {
-    var II = {'X': 3, 'Y': 2, 'W': 20, 'H': 20}; // 'II' = Icon image Info.
+  if ($('#' + FIBCID).length === 0) {
+    let II = {'X': 3, 'Y': 2, 'W': 20, 'H': 20}; // 'II' = Icon image Info.
 
     /*==== component 'Frame' ====*/
 
-    var CSSS = '.' + CSSCls + " > div:first-child { " +
+    let CSSS = '.' + CSSCls + " > div:first-child { " +
                " padding: 1px 5px; border-radius: 5px 5px 0px 0px; font-size: 18px; border-bottom-width: 1px; " +
                " background-image:         linear-gradient(to bottom, rgba(200, 240, 255, 1), rgba(240, 248, 255, 0.9)); " +
                " background-image: -webkit-linear-gradient(top, rgba(200, 240, 255, 1), rgba(240, 248, 255, 0.9)); }\n" +
@@ -1287,37 +1121,36 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
   }
 
   if (typeof PrtOS === 'undefined' || typeof W !== 'number' || typeof H !== 'number' || typeof CtxLdF !== 'function' ||
-     typeof CSSCls !== 'string' || CSSCls.length === 0)
-  {
+      typeof CSSCls !== 'string' || CSSCls.length === 0) {
     alert('Create a \'Frame\' object failed. Please check out passing values.');
+
     return null;
   }
 
-  if (typeof SltBldB !== 'boolean')
-  { SltBldB = false; }
+  if (typeof SltBldB !== 'boolean') { SltBldB = false; }
 
-  var Ctnr = $(PrtOS), // 'Ctnr' = Container.
+  let Ctnr = $(PrtOS), // 'Ctnr' = Container.
       TgtRtg = {'X': 0, 'Y': 0, 'W': 0, 'H': 0}, // 'TgtRtg' = Target frame Rectangle. use to controll frame moving & resizing.
       PrtFrm = null,
       WthPrtB = false;
 
-  var Frm = $('<span>' +
+  let Frm = $('<span>' +
               '<div class="Hdr"><span/><span><span/><span/><span/><span/></span></div>' +
               '<div class="Ctn"/>' +
               '</span>').data({'IsMv': false, 'IsRsz': false})
-                        .on('click', '> *', function(Evt){ ToFront(); }) // 20121205 by RZ. test new way of Frame view priority.
+                        .on('click', '> *', Evt => { ToFront(); }) // 20121205 by RZ. test new way of Frame view priority.
                         .appendTo(Ctnr);
 
-  var FrmDOM = Frm.get(0);
+  let FrmDOM = Frm.get(0);
 
-  var TtlBx = Frm.addClass(CSSCls)
+  let TtlBx = Frm.addClass(CSSCls)
                  .css({'display': 'inline-block', 'position': 'absolute'})
                  .children('div:eq(1)').css({'position': 'relative', 'width': W, 'height': H, 'overflow': 'auto', 'whiteSpace': 'nowrap'})
                                        .end()
                  .children('div:first'); // 'TtlBx' = Title Box.
 
   TtlBx.css({'position': 'relative', 'minHeight': '28px'})
-       // .click(function(Evt){ ToFront(); }) // 20121205 by RZ. test another way.
+       // .click(Evt => { ToFront(); }) // 20121205 by RZ. test another way.
        .children('span:first').css({'display': 'inline-block'})
                               .text(typeof Ttl === 'string' ? Ttl : '')
                               .end()
@@ -1344,48 +1177,41 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 
   return Frm;
 
-  function ToFront()
-  {
-    var MxZIdx = -1,
+  function ToFront () {
+    let MxZIdx = -1,
         FrmA = [];
 
-    Frm.siblings('.' + CSSCls).each(function(Idx)
-      {
-        var This = $(this),
-            ZIdx = parseInt(This.css('zIndex'), 10);
+    Frm.siblings('.' + CSSCls).each(Idx => {
+      let This = $(this),
+          ZIdx = parseInt(This.css('zIndex'), 10);
 
-        MxZIdx = Math.max(MxZIdx, ZIdx);
-        FrmA.push({'JO': This, 'ZIdx': ZIdx})
-      });
+      MxZIdx = Math.max(MxZIdx, ZIdx);
+      FrmA.push({'JO': This, 'ZIdx': ZIdx})
+    });
 
     MxZIdx++;
 
-    if (parseInt(Frm.css('zIndex'), 10) == MxZIdx)
-    { return 0; }
+    if (parseInt(Frm.css('zIndex'), 10) == MxZIdx) { return 0; }
 
     Frm.css('zIndex', MxZIdx);
     FrmA.push({'JO': Frm, 'ZIdx': MxZIdx});
 
-    var C = FrmA.length;
+    let C = FrmA.length;
 
-    if (C > 1)
-    {
+    if (C > 1) {
       FrmA.sort(SortByZIndex);
 
-      var FstIdx = FrmA[0].ZIdx;
+      let FstIdx = FrmA[0].ZIdx;
 
-      if (FrmA[0].ZIdx > 0)
-      {
+      if (FrmA[0].ZIdx > 0) {
         FrmA[0].JO.css('zIndex', 0);
         FrmA[0].ZIdx = 0;
       }
 
-      for (var i = 1; i < C; i++)
-      {
-        var GlIdx = FrmA[i - 1].ZIdx + 1;
+      for (let i = 1; i < C; i++) {
+        let GlIdx = FrmA[i - 1].ZIdx + 1;
 
-        if (FrmA[i].ZIdx > GlIdx)
-        {
+        if (FrmA[i].ZIdx > GlIdx) {
           FrmA[i].JO.css('zIndex', GlIdx);
           FrmA[i].ZIdx = GlIdx;
         }
@@ -1394,67 +1220,64 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 
     return 1;
 
-    function SortByZIndex(OA, OB)
-    {
-      if (OA.ZIdx === OB.ZIdx)
-      { return 0; }
+    function SortByZIndex (OA, OB) {
+      if (OA.ZIdx === OB.ZIdx) { return 0; }
 
       return (OA.ZIdx > OB.ZIdx ? 1 : -1);
     }
   }
 
-  function FrameOpen(Frm, SltBldB)
-  {
+  function FrameOpen (Frm, SltBldB) {
     Frm.hide();
     ToFront();
 
-    if (SltBldB)
-    {
+    if (SltBldB) {
       Frm.children('div:eq(1)').append(CtxLdF);
+
       return 0;
     }
 
-    var Rdm = Math.round(Math.random() * 3);
+    let Rdm = Math.round(Math.random() * 3);
 
-    switch (Rdm)
-    {
+    switch (Rdm) {
       case 1:
-        Frm.slideDown('normal', function(){ Frm.children('div:eq(1)').append(CtxLdF); });
+        Frm.slideDown('normal', () => { Frm.children('div:eq(1)').append(CtxLdF); });
+
         break;
 
       case 2:
-        Frm.fadeIn('normal', function(){ Frm.children('div:eq(1)').append(CtxLdF); });
+        Frm.fadeIn('normal', () => { Frm.children('div:eq(1)').append(CtxLdF); });
+
         break;
 
       case 0:
       default:
-        Frm.show('normal', function(){ Frm.children('div:eq(1)').append(CtxLdF); });
+        Frm.show('normal', () => { Frm.children('div:eq(1)').append(CtxLdF); });
     }
   }
 
-  function FrameClose(Evt)
-  {
-    var Rdm = Math.round(Math.random() * 3);
+  function FrameClose (Evt) {
+    let Rdm = Math.round(Math.random() * 3);
 
-    switch (Rdm)
-    {
+    switch (Rdm) {
       case 1:
-        Frm.slideUp('normal', function(){ $(this).remove(); });
+        Frm.slideUp('normal', () => { $(this).remove(); });
+
         break;
 
       case 2:
-        Frm.fadeOut('normal', function(){ $(this).remove(); });
+        Frm.fadeOut('normal', () => { $(this).remove(); });
+
         break;
 
       case 0:
       default:
-        Frm.hide('normal', function(){ $(this).remove(); });
+        Frm.hide('normal', () => { $(this).remove(); });
     }
   }
 
-  function FrameMoveStart(Evt)
-  {
-    var TL = Frm.offset();
+  function FrameMoveStart (Evt) {
+    let TL = Frm.offset();
 
     TgtRtg.X = Evt.pageX - TL.left;
     TgtRtg.Y = Evt.pageY - TL.top;
@@ -1473,14 +1296,12 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 
     return 0;
 
-    function FrameMove(Evt)
-    {
+    function FrameMove (Evt) {
       Frm.css({'left': Evt.pageX - TgtRtg.X, 'top': Evt.pageY - TgtRtg.Y});
     }
   }
 
-  function FrameMoveStop(Evt)
-  {
+  function FrameMoveStop (Evt) {
     Ctnr.css({'cursor': ''})
         .off('mousemove');
 
@@ -1492,9 +1313,8 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
                         .on('click', FrameMoveStart);
   }
 
-  function FrameResizeStart(Evt)
-  {
-    var TL = Frm.offset(),
+  function FrameResizeStart (Evt) {
+    let TL = Frm.offset(),
         SzTgt = Frm.children('div:eq(1)');
 
     TgtRtg.X = Evt.pageX;
@@ -1516,29 +1336,24 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 
     return 0;
 
-    function FrameResize(Evt)
-    {
-      var X = Evt.pageX - TgtRtg.X,
+    function FrameResize (Evt) {
+      let X = Evt.pageX - TgtRtg.X,
           Y = Evt.pageY - TgtRtg.Y,
           W = TgtRtg.W + X,
           H = TgtRtg.H - Y;
 
       Y += TL.top;
 
-      if (W < 200)
-      { W = 200; }
+      if (W < 200) { W = 200; }
 
-      if (H < 200)
-      { H = 200; }
-      else
-      { Frm.css('top', Y); }
+      if (H < 200) { H = 200; }
+      else { Frm.css('top', Y); }
 
       Frm.children('div:eq(1)').css({'width': W, 'height': H});
     }
   }
 
-  function FrameResizeStop(Evt)
-  {
+  function FrameResizeStop (Evt) {
     Ctnr.css({'cursor': ''})
         .off('mousemove');
 
@@ -1550,9 +1365,8 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
                         .on('click', FrameResizeStart);
   }
 
-  function FrameMaxSize(Evt)
-  {
-    var Tgt = Frm.children('div:eq(1)'),
+  function FrameMaxSize (Evt) {
+    let Tgt = Frm.children('div:eq(1)'),
         Sz = [Tgt.width(), Tgt.height()],
         Lct = Frm.offset(),
         W = Ctnr.width() - (Frm.outerWidth() - Sz[0]),
@@ -1569,11 +1383,10 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
     Tgt.css({'width': W, 'height': H});
   }
 
-  function FrameLastSize(Evt)
-  {
-    var Tgt = Frm.children('div:eq(1)');
+  function FrameLastSize (Evt) {
+    let Tgt = Frm.children('div:eq(1)');
 
-    var LstSt = $(Evt.currentTarget).off('click', FrameLastSize)
+    let LstSt = $(Evt.currentTarget).off('click', FrameLastSize)
                                     .on('click', FrameMaxSize)
                                     .prevAll('span').show()
                                                     .end()
@@ -1588,25 +1401,24 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
     'ActnF(This)' = Action Function to extend default.
       'This' = frame DOM itself.
     Return: Frm DOM itself as OK, null as error. */
-  function ActionExtend(Cmd, ActnF)
-  {
-    if (typeof Cmd !== 'string' || Cmd.length === 0 || typeof ActnF !== 'function')
-    { return null; }
+  function ActionExtend (Cmd, ActnF) {
+    if (typeof Cmd !== 'string' || Cmd.length === 0 || typeof ActnF !== 'function') { return null; }
 
-    var This = this,
+    let This = this,
         TtlBtn = TtlBx.find('> span:last > span');
 
-    switch (Cmd)
-    {
+    switch (Cmd) {
       case 'CloseButtonClick':
         TtlBtn.last().off('click')
-                     .on('click', function(Evt){ ActnF(This); });
+                     .on('click', Evt => { ActnF(This); });
+
         break;
 
       case 'SizeChange':
         TtlBtn.eq(1).on('click', SizeChange)
                     .end()
               .eq(2).on('click', SizeChange);
+
         break;
 
       default:
@@ -1614,14 +1426,13 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
 
     return this;
 
-    function SizeChange()
-    {
-      setTimeout(function()
-        {
-          if (!Frm.data('IsRsz'))
-          { ActnF(This); }
+    function SizeChange () {
+      setTimeout(
+        () => {
+          if (!Frm.data('IsRsz')) { ActnF(This); }
         },
-        0);
+        0
+      );
     }
   }
 }
@@ -1632,23 +1443,21 @@ function Frame (PrtOS, W, H, CtxLdF, CSSCls, Ttl, SltBldB)
     'Ctx' = canvas Context object.
     'Sz' = Size object includes {'W', 'H'};
   'BgDrwF' = Background Draw Function. optional. */
-function Animation (DO, ItmDrwFA, BgDrwF)
-{
-  if (typeof DO !== 'object' || DO === null || typeof ItmDrwFA !== 'object' || typeof ItmDrwFA.length !== 'number')
-  {
+function Animation (DO, ItmDrwFA, BgDrwF) {
+  if (typeof DO !== 'object' || DO === null || typeof ItmDrwFA !== 'object' || typeof ItmDrwFA.length !== 'number') {
     console.log('Animation is not going to run.');
 
     return;
   }
 
-  var This = this;
+  let This = this;
 
   // properties set.
   this.DOM = null;
   this.Ctx = DO.getContext('2d'); // 'Ctx' = Context object.
   this.ScnSz = {'W': DO.width, 'H': DO.height}; // 'ScnSz' = Scenary Size.
   this.RunB = false;
-  this.BgDrwF = function(Ctx){}; // 'BgDrwF' = Background Draw Function.
+  this.BgDrwF = Ctx => {}; // 'BgDrwF' = Background Draw Function.
   this.ItmDrwFA = []; // array of Item Draw Function.
 
   // methods set.
@@ -1658,65 +1467,51 @@ function Animation (DO, ItmDrwFA, BgDrwF)
   this.ItemDrawAdd = ItemDrawAdd;
   this.ItemDrawDel = ItemDrawDel;
 
-  for (var i = 0; i < ItmDrwFA.length; i++)
-  {
-    if (typeof ItmDrwFA[i] === 'function')
-    { this.ItmDrwFA.push(ItmDrwFA[i]); }
+  for (let i = 0; i < ItmDrwFA.length; i++) {
+    if (typeof ItmDrwFA[i] === 'function') { this.ItmDrwFA.push(ItmDrwFA[i]); }
   }
 
-  if (typeof BgDrwF === 'function')
-  { this.BgDrwF = BgDrwF; }
-  else
-  {
-    this.BgDrwF = function()
-      {
-        this.Ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+  if (typeof BgDrwF === 'function') { this.BgDrwF = BgDrwF; }
+  else {
+    this.BgDrwF = () => {
+      this.Ctx.fillStyle = 'rgba(255, 255, 255, 1)';
 
-        this.Ctx.fillRect(0, 0, this.ScnSz.W, this.ScnSz.H);
-      };
+      this.Ctx.fillRect(0, 0, this.ScnSz.W, this.ScnSz.H);
+    };
   }
 
   return;
 
-  function Start()
-  {
+  function Start () {
     this.RunB = true;
 
     this.FrameDraw();
   }
 
-  function Stop()
-  {
+  function Stop () {
     this.RunB = false;
   }
 
-  function FrameDraw()
-  {
-    if (!this.RunB)
-      return;
+  function FrameDraw () {
+    if (!this.RunB) { return; }
 
     this.BgDrwF(this.Ctx, this.ScnSz);
 
-    for (var i = 0 ; i < this.ItmDrwFA.length; i++)
-    { this.ItmDrwFA[i](this.Ctx, this.ScnSz); }
+    for (let i = 0 ; i < this.ItmDrwFA.length; i++) { this.ItmDrwFA[i](this.Ctx, this.ScnSz); }
 
-    setTimeout(function(){ This.FrameDraw(); }, 50);
+    setTimeout(() => { This.FrameDraw(); }, 50);
   }
 
-  function ItemDrawAdd(ItmDrwF)
-  {
-    if (typeof ItmDrwF !== 'function')
-    { return -1; }
+  function ItemDrawAdd (ItmDrwF) {
+    if (typeof ItmDrwF !== 'function') { return -1; }
 
     this.ItmDrwFA.push(ItmDrwF);
 
     return 0;
   }
 
-  function ItemDrawDel(Idx)
-  {
-    if (typeof Idx !== 'number' || Idx >= this.ItmDrwFA.length)
-    { return -1; }
+  function ItemDrawDel (Idx) {
+    if (typeof Idx !== 'number' || Idx >= this.ItmDrwFA.length) { return -1; }
 
     this.ItmDrwFA.splice(Idx, 1);
   }
