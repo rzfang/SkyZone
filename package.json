@@ -77,7 +77,6 @@
     }
   },
   "eslintIgnore": [
-    "SRC/api.js",
-    "SRC/include.js"
+    "SRC/api.js"
   ]
 }

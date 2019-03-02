@@ -343,8 +343,7 @@ function PageTurn (URL) {
 
 /* get the Window View Size.
   Return: [W, H]. */
-function WindowViewSize ()
-{
+function WindowViewSize () {
   let Sz = [0, 0];
 
   if (document.documentElement)
@@ -490,7 +489,7 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy) {
   CSSAdd(CSSStr);
 
   if (typeof HshKy !== 'string' || HshKy.length === 0) {
-    CtxAJO.each(Idx => {
+    CtxAJO.each(function (Idx) {
         let This = $(this),
             TbNmA = [This.data('tabName'), This.attr('name')];
 
@@ -511,7 +510,7 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy) {
       PrmIdx = parseInt(MchA[0], 10);
     }
 
-    CtxAJO.each(Idx => {
+    CtxAJO.each(function (Idx) {
         let This = $(this),
             TbNmA = [This.data('tabName'), This.attr('name')];
 
@@ -533,7 +532,7 @@ function TabBox (BxOS, TbCSSS, PrmIdx, TbSwF, HshKy) {
     TabSwitch($(this));
   }
 
-  function HashToTabswitch (Evt) {
+  function HashToTabSwitch (Evt) {
     let This = $(this),
         Idx = This.index(),
         Hsh = window.location.hash.replace(/^#/, '');
@@ -616,7 +615,7 @@ function Button0 (CSSS) {
   return 0;
 
   function Initialize (Obj) {
-    if (typeof Obj.LckFlg === 'boolean') { return; }
+    if (!Obj || typeof Obj.LckFlg === 'boolean') { return; }
 
     $(Obj).attr('autocomplete', 'off');
 
@@ -696,7 +695,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF) {
       .on(
         'click',
         'div.ItmLstIdxBx:last-child > span',
-        Evt => { // 20120727 by RZ. use class to focus on index list box.
+        function (Evt) { // 20120727 by RZ. use class to focus on index list box.
           let This = $(this),
               Idx = parseInt(This.attr('name'), 10);
 
@@ -786,7 +785,7 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF) {
     'NwLmt' = New Limit.
     Return: real setting limit. or original limit without change. */
   function LimitSet (NwLmt) {
-    if (typeof NwLmt !== 'number' || NwLmt < 1) { return Limit; }
+    if (typeof NwLmt !== 'number' || NwLmt < 1) { return Lmt; }
 
     if (NwLmt > 99) { NwLmt = 99; }
 
@@ -798,217 +797,6 @@ function ItemList (BxOS, URL, Lmt, Data, OneItmF, IdxCls, AftItmsF) {
   function PageIndexBuild () {
     let IdxLst = $('<div/>').appendTo(Bx),
         TC = ['', '']; // 'TC' = Temptory Class.
-
-    if (typeof IdxCls !== 'object' || IdxCls.length === 0) { return 0; }
-
-    IdxLst.addClass('ItmLstIdxBx') // 20120727 by RZ. for solve 'on - click' event point multiple element, use class to focus on the index box.
-          .css({'textAlign': 'center', 'marginTop': 10});
-
-    if (typeof IdxCls[0] === 'string' && IdxCls[0].length > 0) { TC[0] = IdxCls[0]; }
-
-    if (typeof IdxCls[1] === 'string' && IdxCls[1].length > 0) { TC[1] = IdxCls[1]; }
-
-    /*==== first & prev page tag. ====*/
-
-    $('<span/>').addClass(NwPg > 0 ? TC[0] : TC[1])
-                .attr({'name': NwPg > 0 ? 0 : -1, 'title': 1})
-                .text('╞')
-                .appendTo(IdxLst); // first page.
-
-    $('<span/>').addClass(NwPg == 0 ? TC[1] : TC[0])
-                .attr({'name': NwPg - 1})
-                .text('◁')
-                .appendTo(IdxLst); // prev page.
-
-    /*==== now page tag. ====*/
-
-    let Nw = $('<span/>').addClass(TC[1])
-                         .attr('name', NwPg)
-                         .text(NwPg + 1)
-                         .appendTo(IdxLst); // 'Nw' = Now page.
-
-    /*==== last & next page tag. ====*/
-
-    $('<span/>').addClass(NwPg >= MxPg ? TC[1] : TC[0])
-                .attr({'name': NwPg + 1})
-                .text('▷')
-                .appendTo(IdxLst); // next page.
-
-    $('<span/>').addClass(NwPg < MxPg ? TC[0] : TC[1])
-                .attr({'name': NwPg < MxPg ? MxPg : (MxPg + 1), 'title': MxPg + 1})
-                .text('╡')
-                .appendTo(IdxLst); // last page.
-
-    /*==== page index range handle. ====*/
-
-    let PrvBgn = NwPg - PgTgRng,
-        PrvEnd = NwPg,
-        NxtBgn = NwPg + PgTgRng,
-        NxtEnd = NwPg;
-
-    if (PrvBgn < 0) {
-      NxtBgn -= PrvBgn;
-      PrvBgn = 0;
-
-      if (NxtBgn > MxPg) { NxtBgn = MxPg; }
-    }
-
-    if (NxtBgn > MxPg) {
-      PrvBgn -= (NxtBgn - MxPg);
-      NxtBgn = MxPg;
-
-      if (PrvBgn < 0) { PrvBgn = 0; }
-    }
-
-    /*==== prev page tags. ====*/
-
-    for (let i = PrvBgn; i < PrvEnd; i++) { // prev range page tags.
-      $('<span/>').addClass(TC[0])
-                  .attr({'name': i})
-                  .text(i + 1)
-                  .insertBefore(Nw);
-    }
-
-    /*==== next page tags. ====*/
-
-    for (let i = NxtBgn; i > NxtEnd; i--) {
-      $('<span/>').addClass(TC[0])
-                  .attr({'name': i})
-                  .text(i + 1)
-                  .insertAfter(Nw);
-    }
-  }
-}
-
-/*
-  'BxOS' = Box as a DOM Object, or a jQuery Selector, must be a container.
-  'OneItmCrt' = One Item Create. function, optional.
-  'Cln' = Clean, to clean old list. boolean, optional, default true.
-  'AftItmsCrt' = After Items Create. function, optional.
-  Return: Box DOM object, or null as error. */
-function ItemList2 (BxOS, URL, Data, OneItmCrt, Cln, AftItmsCrt) {
-  let Bx,
-      BxDOM;
-
-  if (Is.Undefined(BxOS) || !Is.String(URL) || !Is.Object(Data) || !Is.Function(OneItmCrt)) {
-    console.log('create a \'ItemListV2\' failed. please check out passing values.');
-
-    return null;
-  }
-
-  Bx = $(BxOS);
-
-  if (!Bx.length) { return null; }
-
-  if (!Is.Number(Data.Lmt) || Data.Lmt < 0) { Data.Lmt = 10; }
-
-  if (!Is.Number(Data.Ofst) || Data.Ofst < 0) { Data.Ofst = 0; }
-
-  BxDOM = Bx[0];
-  BxDOM.URL = URL;
-  BxDOM.Data = Data;
-  BxDOM.Cln = Is.Boolean(Cln) ? Cln : true;
-  BxDOM.OnePageGet = OnePageGet;
-  BxDOM.Get = Get;
-  BxDOM.NowCount = () => { return BxDOM.Data.Ofst; };
-  BxDOM.OneItemCreate = OneItmCrt;
-  BxDOM.AfterItemsCreate = AftItmsCrt || () => {};
-
-  return BxDOM;
-
-  /*
-    Need: function ObjectCombine. */
-  function OnePageGet () {
-    let self = this;
-
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      timeout : 20000,
-      url: this.URL,
-      data: this.Data,
-      // beforeSend: (JQXHR, Set) => {},
-      error: (JQXHR, TxtSt, ErrThr) => { alert('無法取得資料。'); },
-      // complete: (JQXHR, TxtSt) => {},
-      success: (Rtn, TxtSt, JQXHR) => {
-        let Bx;
-
-        if (Rtn.Index != 0 || !Is.Array(Rtn.Extend)) {
-          alert(Rtn.Index + ', ' + Rtn.Message);
-
-          return;
-        }
-
-        Bx = $(self);
-
-        if (self.Cln) { Bx.empty(); }
-
-        for (let i = 0; i < Rtn.Extend.length; i++) { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
-
-        self.Data.Ofst += Rtn.Extend.length;
-
-        self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
-      }});
-  }
-
-  function Get (Lmt, Ofst, IsCln) {
-    let self = this,
-        Data = ObjectCombine({}, this.Data);
-
-    if (!Is.Number(Lmt)) { Data.Lmt = Data; }
-
-    if (!Is.Number(Ofst)) { Data.Ofst = Ofst; }
-
-    if (!Is.Boolean(IsCln)) { IsCln = false; }
-
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      timeout : 20000,
-      url: this.URL,
-      data: Data,
-      // beforeSend: (JQXHR, Set) => {},
-      error: (JQXHR, TxtSt, ErrThr) => { alert('無法取得資料。'); },
-      // complete: (JQXHR, TxtSt) => {},
-      success: (Rtn, TxtSt, JQXHR) => {
-        let Bx;
-
-        if (Rtn.Index != 0 || !Is.Array(Rtn.Extend)) {
-          alert(Rtn.Index + ', ' + Rtn.Message);
-
-          return;
-        }
-
-        Bx = $(self);
-
-        if (IsCln) { Bx.empty(); }
-
-        for (let i = 0; i < Rtn.Extend.length; i++) { Bx.append(self.OneItemCreate(Rtn.Extend[i], i)); }
-
-        self.Data.Ofst = Data.Ofst + Rtn.Extend.length;
-
-        self.AfterItemsCreate(Rtn.Extend.length, Rtn.Extend);
-      }
-    });
-  }
-}
-
-/*
-  'Bx' = Box, where the component will insert into.
-  Return: 0 as OK, < 0 as error. */
-function PageIndex (Bx) {
-  let IdxBx = $('<div/>');
-
-  if (!Bx || typeof Bx !== 'object') { return -1; }
-
-  if (gj() < 0) { return -2; }
-
-  Bx.append(IdxBx);
-
-  return;
-
-  function gj () {
-    let TC = ['', '']; // 'TC' = Temptory Class.
 
     if (typeof IdxCls !== 'object' || IdxCls.length === 0) { return 0; }
 
