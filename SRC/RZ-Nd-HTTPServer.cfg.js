@@ -256,6 +256,11 @@ module.exports = {
       path: /^\/service\/words\/nowone/,
       type: 'service',
       process: Svc.WordsNowOneGet
+    },
+    { // words now get one service.
+      path: /^\/service\/words\/list/,
+      type: 'service',
+      process: Svc.WordsList
     }
 
     // ==== page ====

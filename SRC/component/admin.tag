@@ -7,7 +7,7 @@
     this.Tbs = [
       { Nm: '網誌管理', Cmpnt: 'blogs-manager', Dt: Dt2BlgMngr },
       { Nm: '留言管理', Cmpnt: 'messages' },
-      { Nm: '佳言錄', Cmpnt: '' },
+      { Nm: '佳言錄', Cmpnt: 'good-words' },
       { Nm: '角落藝廊管理', Cmpnt: '' },
       { Nm: '系統管理', Cmpnt: '' }
     ];
@@ -1051,10 +1051,10 @@
       'mount',
       () => {
         this.AJAX({
-          URL: 'service.php',
+          URL: '/service/words/list',
           Mthd: 'POST',
-          Data: { Cmd: 119, Cnt: 1 },
-          Err: (Sts) => { alert('BG'); },
+          Data: { Cnt: 1 },
+          Err: Sts => { alert('BG'); },
           OK: (RspnsTxt, Sts) => {
             let Rst = JSON.parse(RspnsTxt);
 
@@ -1100,8 +1100,8 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 119, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        '/service/words/list',
+        { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'GOOD_WORDS',
         (Sto, Rst) => {
           if (Rst.Index > -1) { Sto = Rst.Extend; }

@@ -74,6 +74,12 @@ module.exports = {
 
     return Wds.NowOneGet(Rqst, MxPrm, PckEnd);
   },
+  WordsList: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Wds.List(Rqst, Rspns, MxPrm, PckEnd);
+  },
   CommentList: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.

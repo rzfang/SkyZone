@@ -904,6 +904,44 @@ const Wds = { // good words.
         PckEnd(0, Kwd.RM.Done, Wds[0]);
       })
       .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
+  },
+  List: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    // ==== total count. ====
+
+    if (parseInt(Prm.Cnt, 10)) {
+      Db.Query('SELECT COUNT(id) AS Cnt FROM GoodWords;')
+        .catch(Cd => { PckEnd(-3, Kwd.RM.DbCrash, Cd); })
+        .then(DbRst => {
+          (!DbRst || !DbRst[0] || !DbRst[0].Cnt) ?
+          PckEnd(-4, Kwd.RM.NoSuchData) :
+          PckEnd(1, Kwd.RM.Done, DbRst[0].Cnt);
+        });
+
+      return;
+    }
+
+    // ==== one page. ====
+
+    const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10, // limit.
+          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0; // offset.
+
+    let SQL = 'SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC LIMIT ?, ?;';
+
+    Db.Query(SQL, [ Ofst, Lmt ])
+      .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
+      .then(DbRst => {
+        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+
+        PckEnd(0, Kwd.RM.Done, DbRst);
+      });
   }
 };
 
