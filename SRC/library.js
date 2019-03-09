@@ -964,14 +964,47 @@ const Wds = { // good words.
 
     Db.IsARowExist('GoodWords', 'sha1', SHA1)
       .then(IsExt => {
-        if (IsExt) {
-          return PckEnd(-4, Kwd.RM.DuplicateData);
-        }
+        if (IsExt) { return PckEnd(-4, Kwd.RM.DuplicateData); }
 
         const SQL = 'INSERT INTO GoodWords (id, words, sha1, datetime) VALUES (?, ?, ?, ?);',
               ID = MakeId();
 
         return Db.Query(SQL, [ ID, Wds, SHA1, GetDatetime() ]);
+      })
+      .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
+      .then(DbRst => {
+        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+
+        PckEnd(0, Kwd.RM.Done, DbRst);
+      });
+  },
+  Update: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); }),
+          { ID = '', Wds = '' } = Prm;
+
+    if (!ID || !Is.UUID(ID) || !Wds || !Is.String(Wds)) {
+      return PckEnd(-3, Kwd.RM.StrangeValue);
+    }
+
+    const SHA1 = crypto.createHmac('sha1', Wds).digest('hex');
+
+    Db.IsARowExist('GoodWords', 'id', ID)
+      .then(IsExt => {
+        if (!IsExt) {
+          PckEnd(-4, Kwd.RM.NoSuchData);
+
+          return Promise.reject(-4); // stop Promise chain.
+        }
+
+        const SQL = 'UPDATE GoodWords SET words = ?, sha1 = ? WHERE id = ?;';
+
+        return Db.Query(SQL, [ Wds, SHA1, ID ]);
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {

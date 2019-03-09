@@ -86,6 +86,12 @@ module.exports = {
 
     return Wds.Create(Rqst, Rspns, MxPrm, PckEnd);
   },
+  WordsUpdate: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Wds.Update(Rqst, Rspns, MxPrm, PckEnd);
+  },
   CommentList: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.

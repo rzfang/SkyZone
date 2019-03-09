@@ -1112,7 +1112,7 @@
     }
 
     Update (Evt) {
-      let Wds = this.refs.GdWds.querySelector('li:nth-child(' + (Evt.item.Idx + 1) + ')>textarea').value.trim();
+      let Wds = this.refs.GdWds.querySelector('li:nth-child(' + (Evt.item.Idx + 2) + ')>textarea').value.trim();
 
       if (Wds.length === 0) {
         alert('不能為空。');
@@ -1121,8 +1121,8 @@
       }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 122, ID: Evt.item.Itm.ID, Wds },
+        '/service/words/update',
+        { ID: Evt.item.Itm.ID, Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {
           alert(Rst.Message);
