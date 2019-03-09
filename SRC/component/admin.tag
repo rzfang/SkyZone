@@ -1081,7 +1081,7 @@
       }
 
       this.ServiceCall(
-        '/service.php',
+        '/service/words/create',
         { Cmd: 120, Wds: Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {

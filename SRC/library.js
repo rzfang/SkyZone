@@ -79,6 +79,9 @@ function GetIp (Rqst) {
          '';
 }
 
+/* give a date time format string: YYYY-MM-DD HH:II:SS
+  @ second, optional, default is current date time second.
+  < format string. */
 function GetDatetime (Scd) {
   const Dt = Scd ? new Date(Scd * 1000) : new Date(); // datetime object.
 
@@ -936,6 +939,40 @@ const Wds = { // good words.
     let SQL = 'SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC LIMIT ?, ?;';
 
     Db.Query(SQL, [ Ofst, Lmt ])
+      .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
+      .then(DbRst => {
+        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+
+        PckEnd(0, Kwd.RM.Done, DbRst);
+      });
+  },
+  Create: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); }),
+          { Wds = '' } = Prm;
+
+    if (!Wds || !Is.String(Wds)) {
+      return PckEnd(-3, Kwd.RM.StrangeValue);
+    }
+
+    const SHA1 = crypto.createHmac('sha1', Wds).digest('hex');
+
+    Db.IsARowExist('GoodWords', 'sha1', SHA1)
+      .then(IsExt => {
+        if (IsExt) {
+          return PckEnd(-4, Kwd.RM.DuplicateData);
+        }
+
+        const SQL = 'INSERT INTO GoodWords (id, words, sha1, datetime) VALUES (?, ?, ?, ?);',
+              ID = MakeId();
+
+        return Db.Query(SQL, [ ID, Wds, SHA1, GetDatetime() ]);
+      })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
         if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }

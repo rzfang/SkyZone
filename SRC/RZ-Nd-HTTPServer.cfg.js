@@ -257,10 +257,15 @@ module.exports = {
       type: 'service',
       process: Svc.WordsNowOneGet
     },
-    { // words now get one service.
+    { // words list service.
       path: /^\/service\/words\/list/,
       type: 'service',
       process: Svc.WordsList
+    },
+    { // words create service.
+      path: /^\/service\/words\/create/,
+      type: 'service',
+      process: Svc.WordsCreate
     }
 
     // ==== page ====
