@@ -144,7 +144,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 121:
-    echo GoodWords::Delete($_POST);
+    echo GoodWords::Delete($_POST); // migrated.
     break;
 
   case 122:

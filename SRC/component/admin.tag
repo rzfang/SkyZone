@@ -1135,8 +1135,8 @@
       let GdWd = this.GdWds[Evt.item.Idx];
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 121, ID: Evt.item.Itm.ID },
+        '/service/words/delete',
+        { ID: Evt.item.Itm.ID },
         'GOOD_WORDS',
         (Sto, Rst) => {
           alert(Rst.Message);
