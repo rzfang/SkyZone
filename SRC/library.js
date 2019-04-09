@@ -538,6 +538,34 @@ const Blog = {
       })
       .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
   },
+  /* extract a file from tar file to system.
+    @ header object from tar-stream library.
+    @ stream object from tar-stream library.
+    @ file path to write to.
+    @ callback function. */
+  _TarFileWrite: (Hdr, Strm, Pth, Then) => {
+    function FileWrite () {
+      let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+
+      Strm.on('end', Then);
+      Strm.pipe(ImgFlStrm);
+    }
+
+    try {
+      const St = fs.statSync(Pth); // somehow, fs.stat is not worked.
+
+      if (!St.mtime || Hdr.mtime > St.mtime) {
+        FileWrite(Strm, Pth, Then);
+
+        return;
+      }
+
+      Then();
+    }
+    catch (Err) {
+      FileWrite(Strm, Pth, Then);
+    }
+  },
   /*
     @ SQL result.
     @ callback(Cd) function.
@@ -574,20 +602,7 @@ const Blog = {
 
           SqlRst.Info.ImgUrl = Url;
 
-          fs.stat(
-            Pth,
-            (Err, St) => {
-              if (Err || !St.mtime || Hdr.mtime > St.mtime) {
-                let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
-
-                Strm.on('end', Next);
-                Strm.pipe(ImgFlStrm);
-
-                return;
-              }
-
-              Next();
-            });
+          Blog._TarFileWrite(Hdr, Strm, Pth, Next);
         }
 
         Strm.resume();
@@ -632,22 +647,7 @@ const Blog = {
 
           SqlRst.Info.Imgs[Hdr.name] = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
 
-          fs.stat(
-            Pth,
-            (Err, St) => {
-              if (Err || !St.mtime || Hdr.mtime > St.mtime) {
-                let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
-
-                Strm.on('end', Next);
-                Strm.pipe(ImgFlStrm);
-
-                return;
-              }
-
-              Next();
-            });
-
-          Next();
+          Blog._TarFileWrite(Hdr, Strm, Pth, Next);
         }
 
         Strm.resume();
