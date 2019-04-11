@@ -217,8 +217,6 @@ function Second2Datetime (Scd, Fmt) {
 function DatetimeFormat (Dt) {
   if (!Dt) { return ''; }
 
-  Dt = new Date();
-
   return Dt.getFullYear().toString() + '-' +
     (Dt.getMonth() + 1).toString().padStart(2, '0') + '-' +
     Dt.getDate().toString().padStart(2, '0') + ' ' +

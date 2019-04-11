@@ -9,7 +9,7 @@
 
   /* make a AJAX request.
     @ AJAX Info object, key-value pairs.
-    Return: XMLHttpRequest object. or null as error. */
+    < XMLHttpRequest object. or null as error. */
   function AJAX (Info) {
     let DftInfo = {
           URL: '',
@@ -247,11 +247,11 @@
       this.on(
         'unmount',
         function () {
-          const StoNms = Object.keys(this.StoLsnr || {});
+          const StoNms = Object.keys(this.StoLsnr || {}); // store names.
 
           for (let i = 0; i < StoNms.length; i++) {
-            const StoLsnr = this.StoLsnr[StoNms[i]];
-            let Rprt = Srvc.Rprt[StoNms[i]];
+            const StoLsnr = this.StoLsnr[StoNms[i]]; // store listener.
+            let Rprt = Srvc.Rprt[StoNms[i]]; // report.
 
             for (let j = 0; j < Rprt.length; j++) {
               if (StoLsnr === Rprt[j]) {
