@@ -281,6 +281,11 @@ module.exports = {
       path: /^\/service\/cache\/clean/,
       type: 'service',
       process: Svc.SystemCacheClean
+    },
+    { // data size service.
+      path: /^\/service\/data\/size/,
+      type: 'service',
+      process: Svc.SystemDataSize
     }
 
     // ==== page ====

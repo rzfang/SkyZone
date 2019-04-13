@@ -2,6 +2,7 @@ const async = require('async'),
       cookie = require('cookie'),
       crypto = require('crypto'),
       fs = require('fs'),
+      getFolderSize = require('get-folder-size'),
       path = require('path'),
       tarStream = require('tar-stream');
 
@@ -16,6 +17,7 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
       BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
       CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
+      DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
       DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
       FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 
@@ -1085,6 +1087,59 @@ const Systm = {
           (Err, Rsts) => { // error, results.
             End(0, Kwd.RM.Done, Cnt);
           });
+      });
+  },
+  // To do.
+  // _FolderSizeGet: (Pth, Then) => {
+  //   if (!Pth || !Is.String(Pth)) { return 0; }
+
+  //   fs.stat(
+  //     Pth,
+  //     (Err, St) => {
+  //       if (Err) { return Then(-1, Err); }
+
+  //       if (!St.isDirectory()) { return Then(-2, Kwd.RM.SystemError); }
+
+  //       fs.readdir(
+  //         Pth,
+  //         (Err, Fls) => {
+  //           if (Err) { return Then(-3, Err); }
+
+  //           const Tsks = Fls.map(Fl => {
+  //             return Then => {
+  //               const FlPth = Pth + '/' + Fl;
+
+  //               fs.stat(
+  //                 FlPth,
+  //                 (Err, St) => {
+  //                   if (Err) { return Then(Err, 0); }
+
+  //                   if (St.isDirectory()) {
+  //                     Then(null, System._FolderSizeGet())
+  //                   }
+  //                 });
+  //             };
+  //           });
+  //         })
+  //     });
+  // },
+  DataSize: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    fs.readdir(
+      DAT_PTH,
+      (Err, Fls) => {
+        const Tsks = Fls.map(Fl => {
+          return Then => {
+            getFolderSize(
+              DAT_PTH + '/' + Fl,
+              (Err, Sz) => Then(Err, { Fl, Sz }));
+          };
+        });
+
+        async.parallel(
+          Tsks,
+          (Err, Rsts) => { End(0, Kwd.RM.Done, Rsts); });
       });
   }
 };

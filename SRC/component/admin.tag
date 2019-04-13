@@ -33,17 +33,18 @@
 
       if (!Pswd) { return alert(this.Keyword('PasswordNeed')); }
 
-      this.ServiceCall(
-        '/service/session/login',
-        { Pswd },
-        'LOGIN',
-        (Sto, Rst) => {
+      this.AJAX({
+        URL: '/service/session/login',
+        Mthd: 'POST',
+        Data: { Pswd },
+        Err: (Sts) => { alert('BG'); },
+        OK: (RspnsTxt, Sts) => {
+          let Rst = JSON.parse(RspnsTxt);
+
           alert(Rst.Message);
 
           if (Rst.Index > -1) { window.location.reload(true); }
-
-          return Sto;
-        });
+        }});
     }
   </script>
 </login>
@@ -1169,8 +1170,13 @@
   <div>
     系統資料夾結構使用量
     <hr/>
-    <input type='button' value='檢視'/><br/>
-    <div></div>
+    <input type='button' value='檢視' onclick={SizeUsedList} /><br/>
+    <ul>
+      <li each={DtSzs}>
+        <div>{Fl}</div>
+        <div>{Sz}</div>
+      </li>
+    </ul>
   </div>
   <div>
     <input type='button' value='登出' onclick='Logout();'/>
@@ -1178,13 +1184,33 @@
   <style scoped>
     :scope { display: flex; }
     :scope>div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px; }
+    :scope>div>ul { list-style-type: none; margin: 0; padding: 0; }
+    :scope>div>ul>li { display: flex; }
+    :scope>div>ul>li>div:first-child { flex-grow: 1; flex-basis: 150px; }
+    :scope>div>ul>li>div:last-child { flex-grow: 1; text-align: right; }
   </style>
   <script>
     this.TgtDt = '???'; // target datetime.
+    this.DtSzs = [];
 
     this.mixin('Z.RM');
 
     this.on('mount', () => this.DatetimeHint());
+
+    this.StoreListen('DATA_SIZE', (Sto, Rst) => {
+      for (let i = 0; i < Sto.length; i++) {
+        const { Sz = 0 } = Sto[i];
+
+        if (Sz > 1048576) { // 1MB.
+          Sto[i].Sz = parseInt(Sz / 1048576, 10).toString() + 'MB';
+        }
+        else if (Sz > 1024) { // 1KB.
+          Sto[i].Sz = parseInt(Sz / 1024, 10).toString() + 'KB';
+        }
+      }
+
+      this.update({ DtSzs: Sto });
+    });
 
     DatetimeHint (Evt) {
       const TgtNbr = parseInt(this.refs.TgtNbr.value, 10), // target number.
@@ -1196,7 +1222,7 @@
       if (!Evt || !Evt.target) { this.update(); }
     }
 
-    Clean () {
+    Clean (Evt) {
       const TgtNbr = parseInt(this.refs.TgtNbr.value, 10),
             TgtScd = parseInt(this.refs.TgtScd.value, 10) // target seconds.
 
@@ -1209,6 +1235,22 @@
 
           alert(Rst.Message + "\n共 " + Rst.Extend + ' 個檔案被刪除。');
         }});
+    }
+
+    SizeUsedList (Evt) {
+      this.ServiceCall(
+        '/service/data/size',
+        null,
+        'DATA_SIZE',
+        (Sto, Rst) => {
+          if (Rst.Index < 0) {
+            alert(Rst.Message);
+
+            return null;
+          }
+
+          return Rst.Extend;
+        });
     }
   </script>
 </system>

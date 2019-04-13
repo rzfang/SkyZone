@@ -134,6 +134,12 @@ module.exports = {
 
     return Systm.CacheClear(Rqst, Rspns, MxPrm, PckEnd);
   },
+  SystemDataSize: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Systm.DataSize(Rqst, Rspns, MxPrm, PckEnd);
+  },
   SessionLogIn: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.
