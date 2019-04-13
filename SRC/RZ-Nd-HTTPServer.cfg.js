@@ -276,6 +276,11 @@ module.exports = {
       path: /^\/service\/words\/delete/,
       type: 'service',
       process: Svc.WordsDelete
+    },
+    { // cache clean service.
+      path: /^\/service\/cache\/clean/,
+      type: 'service',
+      process: Svc.SystemCacheClean
     }
 
     // ==== page ====

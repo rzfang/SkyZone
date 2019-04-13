@@ -1,4 +1,5 @@
-const cookie = require('cookie'),
+const async = require('async'),
+      cookie = require('cookie'),
       crypto = require('crypto'),
       fs = require('fs'),
       path = require('path'),
@@ -1048,6 +1049,46 @@ const Wds = { // good words.
   }
 };
 
+const Systm = {
+  CacheClear: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    fs.readdir(
+      CCH_PTH,
+      (Err, Fls) => {
+        if (Err) { return End(-2, Kwd.RM.LoadDataFail, 0); }
+
+        const { Scd = 0 } = Prm,
+              ExprTm = new Date((new Date()).getTime() - (Scd * 1000));
+
+        let Cnt = 0;
+
+        const Tsks = Fls.map(Fl => { // tasks.
+          return Then => {
+            const Pth = CCH_PTH + '/' + Fl;
+
+            fs.stat(
+              Pth,
+              (Err, St) => {
+                if (Err || !St.mtime || St.mtime > ExprTm) { return Then(); }
+
+                Cnt++;
+
+                fs.unlink(Pth, () => {});
+                Then();
+              });
+          };
+        });
+
+        async.parallel(
+          Tsks,
+          (Err, Rsts) => { // error, results.
+            End(0, Kwd.RM.Done, Cnt);
+          });
+      });
+  }
+};
+
 const Ssn = { // session.
   /* check if is logged, and extend session expiration if need.
     @ request object.
@@ -1117,6 +1158,7 @@ module.exports = {
   Blog,
   Msg,
   Ssn,
+  Systm,
   Tag,
   Wds
 };

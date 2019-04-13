@@ -9,7 +9,7 @@
       { Nm: '留言管理', Cmpnt: 'messages' },
       { Nm: '佳言錄', Cmpnt: 'good-words' },
       { Nm: '角落藝廊管理', Cmpnt: '' },
-      { Nm: '系統管理', Cmpnt: '' }
+      { Nm: '系統管理', Cmpnt: 'system' }
     ];
   </script>
 </admin>
@@ -260,7 +260,6 @@
   </script>
 </feed>
 
-<!-- not finish. -->
 <tags>
   <div>
     <input type='text' placeholder='在此輸入新的標籤名稱。' maxlength='16'>
@@ -1014,7 +1013,6 @@
   </script>
 </messages>
 
-<!-- not finish. -->
 <good-words>
   <ul ref='GdWds'>
     <li>
@@ -1152,3 +1150,65 @@
     }
   </script>
 </good-words>
+
+<system>
+  <div>
+    清理圖片 cache 舊資料
+    <hr/>
+    <input ref='TgtNbr' type='number' value='1' style='width: 80px;' placeholder='數字' onchange={DatetimeHint} />
+    <select ref='TgtScd' onchange={DatetimeHint}>
+      <option value='60'>分</option>
+      <option value='3600'>時</option>
+      <option value='86400'>日</option>
+      <option value='604800'>週</option>
+      <option value='2592000' selected='true'>月(30日)</option>
+    </select><br/>
+    {TgtDt} 以前<br/>
+    <button onclick={Clean}>清理</button>
+  </div>
+  <div>
+    系統資料夾結構使用量
+    <hr/>
+    <input type='button' value='檢視'/><br/>
+    <div></div>
+  </div>
+  <div>
+    <input type='button' value='登出' onclick='Logout();'/>
+  </div>
+  <style scoped>
+    :scope { display: flex; }
+    :scope>div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px; }
+  </style>
+  <script>
+    this.TgtDt = '???'; // target datetime.
+
+    this.mixin('Z.RM');
+
+    this.on('mount', () => this.DatetimeHint());
+
+    DatetimeHint (Evt) {
+      const TgtNbr = parseInt(this.refs.TgtNbr.value, 10), // target number.
+            TgtScd = parseInt(this.refs.TgtScd.value, 10), // target seconds.
+            TgtDt = new Date((new Date()).getTime() - (TgtNbr * TgtScd * 1000)); // target date.
+
+      this.TgtDt = DatetimeFormat(TgtDt);
+
+      if (!Evt || !Evt.target) { this.update(); }
+    }
+
+    Clean () {
+      const TgtNbr = parseInt(this.refs.TgtNbr.value, 10),
+            TgtScd = parseInt(this.refs.TgtScd.value, 10) // target seconds.
+
+      this.AJAX({
+        URL: '/service/cache/clean',
+        Data: { Scd: TgtNbr * TgtScd },
+        Mthd: 'POST',
+        OK: (RspnsTxt, Sts, XHR) => {
+          const Rst = JSON.parse(RspnsTxt);
+
+          alert(Rst.Message + "\n共 " + Rst.Extend + ' 個檔案被刪除。');
+        }});
+    }
+  </script>
+</system>
