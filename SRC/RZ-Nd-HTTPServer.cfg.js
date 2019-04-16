@@ -4,6 +4,8 @@ const Kwd = require('./keyword.json'),
 const AdminPage = require('./page/admin'),
       Img = require('./image');
 
+const RIOT_CDN = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js';
+
 const DftPgRt = { // here should handle 404.
   title: '空域',
   description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -12,7 +14,7 @@ const DftPgRt = { // here should handle 404.
   favicon: 'favicon.ico',
   css: [ 'base.css', 'style2.css' ],
   js: [
-    'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
+    RIOT_CDN,
     'api2.min.js'
   ],
   body: []
@@ -24,20 +26,12 @@ module.exports = {
   page: {
     '/admin': {
       title: '空域 - 管理員',
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'tabbox.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'tabbox.tag' ],
       body: [
         { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
       ]},
     '/about': {
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'tabbox.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'tabbox.tag' ],
       body: [
         'header.tag',
         'about.tag',
@@ -45,12 +39,7 @@ module.exports = {
       ]
     },
     '/blogs': {
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'icon.tag',
-        'tags.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'blogs.tag',
@@ -58,13 +47,7 @@ module.exports = {
       ]
     },
     '/text': {
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'icon.tag',
-        'sharebox.tag',
-        'tags.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'text.tag',
@@ -72,13 +55,7 @@ module.exports = {
       ]
     },
     '/image': {
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'icon.tag',
-        'sharebox.tag',
-        'tags.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'image-page.tag',
@@ -86,17 +63,18 @@ module.exports = {
       ]
     },
     '/images': {
-      js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
-        'api2.min.js',
-        'icon.tag',
-        'late-img.tag',
-        'sharebox.tag',
-        'tags.tag'
-      ],
+      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'late-img.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'images-page.tag',
+        'footer.tag'
+      ]
+    },
+    '/zft': {
+      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      body: [
+        'header.tag',
+        'zft-page.tag',
         'footer.tag'
       ]
     },
@@ -116,7 +94,7 @@ module.exports = {
       feed: '/feed.xml',
       css: [ 'base.css', 'style2.css' ],
       js: [
-        'https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js',
+        RIOT_CDN,
         'api2.min.js'
       ],
       body: []
@@ -132,7 +110,7 @@ module.exports = {
       location: './component'
     },
     { // Riot page tag.
-      path: /(blogs|text|image-page|images-page)\.tag$/,
+      path: /(blogs|text|image-page|images-page|zft-page)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './page'
