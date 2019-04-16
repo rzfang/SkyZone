@@ -2,7 +2,7 @@ const async = require('async'),
       cookie = require('cookie'),
       crypto = require('crypto'),
       fs = require('fs'),
-      getFolderSize = require('get-folder-size'),
+      getFolderSize = require('get-folder-size'), // To do - implmenet to retire this.
       path = require('path'),
       tarStream = require('tar-stream');
 
@@ -507,6 +507,7 @@ const Blog = {
 
         switch (SqlRst.Tp) {
           case 'text':
+          case 'zft' :
             SqlRst.Url = 'https://skyzone.zii.tw/text?b=' + SqlRst.Id;
 
             Cch.FileLoad(
