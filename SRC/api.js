@@ -436,6 +436,10 @@ function BlogOneFrame(ID, Rdm, Ttl, TrgDOM, Pswd)
               TgtFrm = OneTextShow(Data.Extend);
               break;
 
+            case 'zft':
+              TgtFrm = OneZftShow(Data.Extend);
+              break;
+
             case 'image':
               TgtFrm = OneImageShow(Data.Extend);
               break;
@@ -565,6 +569,18 @@ function BlogOneFrame(ID, Rdm, Ttl, TrgDOM, Pswd)
 
     Bx.addClass('Blog Text')
       .children(':first-child').html(TextToHTML(Data.Info.Str));
+
+    var Frm = Frame('#Main', 500 + 15, 400, function(){ return Bx; }, 'Frm', Data.Ttl, true);
+
+    return Frm.attr('id', 'Frm_' + Data.ID);
+  }
+
+  function OneZftShow(Data)
+  {
+    var Bx = $('<div><pre/></div>');
+
+    Bx.addClass('Blog Text')
+      .children(':first-child').html(Z.ZFT(Data.Info.Str));
 
     var Frm = Frame('#Main', 500 + 15, 400, function(){ return Bx; }, 'Frm', Data.Ttl, true);
 
