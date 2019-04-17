@@ -88,9 +88,12 @@ module.exports = {
     '/zone': {
       css: [ 'base.css', 'style1.css' ],
       js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
-      body: [
-        'page/zone.html'
-      ]
+      body: [ 'page/zone.html' ]
+    },
+    '/': {
+      css: [],
+      js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
+      body: [ 'page/index.html' ]
     },
     default: { // here should handle 404.
       title: '空域',
