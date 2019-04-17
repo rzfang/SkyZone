@@ -4,8 +4,6 @@ const Kwd = require('./keyword.json'),
 const AdminPage = require('./page/admin'),
       Img = require('./image');
 
-const RIOT_CDN = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js';
-
 const DftPgRt = { // here should handle 404.
   title: '空域',
   description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -14,8 +12,7 @@ const DftPgRt = { // here should handle 404.
   favicon: 'favicon.ico',
   css: [ 'base.css', 'style2.css' ],
   js: [
-    RIOT_CDN,
-    'api2.min.js'
+        'api2.min.js'
   ],
   body: []
 };
@@ -23,15 +20,18 @@ const DftPgRt = { // here should handle 404.
 module.exports = {
   port: 9004,
   keyword: Kwd.RM,
+  cdn: {
+    riot: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js'
+  },
   page: {
     '/admin': {
       title: '空域 - 管理員',
-      js: [ RIOT_CDN, 'api2.min.js', 'tabbox.tag' ],
+      js: [ 'api2.min.js', 'tabbox.tag' ],
       body: [
         { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
       ]},
     '/about': {
-      js: [ RIOT_CDN, 'api2.min.js', 'tabbox.tag' ],
+      js: [ 'api2.min.js', 'tabbox.tag' ],
       body: [
         'header.tag',
         'about.tag',
@@ -39,7 +39,7 @@ module.exports = {
       ]
     },
     '/blogs': {
-      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'tags.tag' ],
+      js: [ 'api2.min.js', 'icon.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'blogs.tag',
@@ -47,7 +47,7 @@ module.exports = {
       ]
     },
     '/text': {
-      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'text.tag',
@@ -55,7 +55,7 @@ module.exports = {
       ]
     },
     '/image': {
-      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'image-page.tag',
@@ -63,7 +63,7 @@ module.exports = {
       ]
     },
     '/images': {
-      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'late-img.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ 'api2.min.js', 'icon.tag', 'late-img.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'images-page.tag',
@@ -71,7 +71,7 @@ module.exports = {
       ]
     },
     '/zft': {
-      js: [ RIOT_CDN, 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
         'zft-page.tag',
@@ -85,6 +85,13 @@ module.exports = {
         'footer.tag'
       ]
     },
+    '/zone': {
+      css: [ 'base.css', 'style1.css' ],
+      js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
+      body: [
+        'page/zone.html'
+      ]
+    },
     default: { // here should handle 404.
       title: '空域',
       description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -93,10 +100,7 @@ module.exports = {
       favicon: 'favicon.ico',
       feed: '/feed.xml',
       css: [ 'base.css', 'style2.css' ],
-      js: [
-        RIOT_CDN,
-        'api2.min.js'
-      ],
+      js: [ 'api2.min.js' ],
       body: []
     }
   },

@@ -2,7 +2,7 @@ const async = require('async'),
       http = require('http'),
       path = require('path'),
       querystring = require('querystring'),
-      riot = require('riot'),
+      // riot = require('riot'),
       url = require('url');
 
 const Cch = require('./RZ-Nd-Cache'),
@@ -11,6 +11,7 @@ const Cch = require('./RZ-Nd-Cache'),
 
 const { port: Pt = 9004,
         keyword: Kwd = {},
+        cdn: { riot: RiotUrl = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js' },
         page: Pg,
         route: Rt } = require('./RZ-Nd-HTTPServer.cfg.js'),
       RtLth = Rt.length || 0; // route length.
@@ -204,6 +205,14 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
         'if (!window.Z.Kwd) { window.Z.Kwd = {}; }\n' +
         'window.Z.Kwd = ' + JSON.stringify(Kwd) + ';';
 
+      if (MntScrpts) {
+        LdScrpts = `<script language='javascript' src='${RiotUrl}'></script>\n` + LdScrpts + '\n';
+        MntScrpts = `<script>\n${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\nriot.compile(() => {\n${MntScrpts}});\n</script>\n`;
+      }
+      else {
+        MntScrpts = `<script>\n${KwdScrpt}\n</script>\n`;
+      }
+
       Rspns.writeHead(200, {'Content-Type': 'text/html'});
       Rspns.write(
         "<!DOCTYPE HTML>\n<html>\n<head>\n<meta http-equiv='content-type' content='text/html; charset=utf-8'/>\n" +
@@ -213,7 +222,7 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
         "</head>\n<body>\n<div id='Base'>\n" +
         BdStrs.join('\n') +
         '</div>\n' +
-        `<script>${KwdScrpt}\nriot.mixin('Z.RM', Z.RM);\nriot.compile(() => {\n${MntScrpts}});\n</script>\n` +
+        MntScrpts +
         `<script>if (top != self) { document.body.innerHTML = ''; }</script>` + // this defend being iframe.
         '</body>\n</html>\n');
       Rspns.end();
