@@ -353,7 +353,7 @@ function WindowViewSize () {
 }
 
 /* Get now Page Name without parent directories.
-  Return: page name, maybe empty string as index.php, index.html, etc. */
+  Return: page name, maybe empty string as /, etc. */
 function PageNameGet () {
   let PthA = window.location.pathname.split('/');
 

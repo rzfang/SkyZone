@@ -1239,7 +1239,7 @@ class Blog
     if (empty($Rsc))
       return ReturnPack(-2, $Kw['RM']['DbCrash'], -2);
 
-    $Lnk = WEBSITE_URL . 'zone.php?Blog=' . $IA['TgtID'];
+    $Lnk = WEBSITE_URL . 'zone?Blog=' . $IA['TgtID'];
     $Ctn = $IA['Nm'] . '(' . $IA['Ml'] . ") 在網誌留言：\n$Cmt\n\n網誌網址：\n$Lnk";
 
     $Rst = MailSend(ADMIN_ML, ADMIN_ML, '[網誌]有人留言囉~', $Ctn, '空域-系統管理員');
@@ -1830,7 +1830,7 @@ class Admin
     while ($R = $Rsc->fetch())
     {
       $IDA[] = $R['ID'];
-      $R['URL'] = WEBSITE_URL . 'zone.php?Blog=' . $R['ID'];
+      $R['URL'] = WEBSITE_URL . 'zone?Blog=' . $R['ID'];
       $R['Tg'] = '';
       $BlogA[] = $R;
     }
