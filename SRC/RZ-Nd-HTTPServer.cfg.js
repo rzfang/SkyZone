@@ -147,12 +147,20 @@ module.exports = {
       location: '../DAT'
     },
 
-    // ==== dynamic resource. ====
+    // ==== dynamic image resource. ====
 
     {
       path: /^\/resource\/image\/.+/,
       type: 'process',
       process: Img.CachedFileRespond
+    },
+
+    // ==== static image resource. ====
+
+    {
+      path: /^\/image\/.+/,
+      type: 'process',
+      process: Img.StaticFileRespond
     },
 
     // ==== service ====

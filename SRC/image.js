@@ -3,7 +3,8 @@ const fs = require('fs'),
 
 const Cnst = require('./constant.json');
 
-const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
+const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cached files path.
+      STTC_PTH = path.resolve(__dirname, '../WEB/www/image'), // static files path.
       MM_TP = {
         '.bmp': 'image/x-windows-bmp',
         '.gif': 'image/gif',
@@ -11,19 +12,7 @@ const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path
         '.png': 'image/png',
         '.svg': 'image/svg+xml' }; // mime type map.
 
-function CachedFileRespond (Rqst, Rspns, UrlInfo) {
-  let FlPth = UrlInfo.pathname.match(/^\/resource\/image\/(.+)/); // file name.
-
-  if (!FlPth || FlPth.length < 2) {
-    Rspns.writeHead(404, { 'Content-Type': 'text/plain' });
-    Rspns.write('');
-    Rspns.end();
-
-    return;
-  }
-
-  FlPth = CCH_PTH + '/' + decodeURI(FlPth[1]);
-
+function FileLoad (Rqst, Rspns, FlPth) {
   fs.stat(
     FlPth,
     (Err, St) => {
@@ -69,7 +58,40 @@ function CachedFileRespond (Rqst, Rspns, UrlInfo) {
     });
 }
 
+function CachedFileRespond (Rqst, Rspns, UrlInfo) {
+  let FlPth = UrlInfo.pathname.match(/^\/resource\/image\/(.+)/); // file name.
+
+  if (!FlPth || FlPth.length < 2) {
+    Rspns.writeHead(404, { 'Content-Type': 'text/plain' });
+    Rspns.write('');
+    Rspns.end();
+
+    return;
+  }
+
+  FlPth = CCH_PTH + '/' + decodeURI(FlPth[1]);
+
+  FileLoad(Rqst, Rspns, FlPth);
+}
+
+function StaticFileRespond (Rqst, Rspns, UrlInfo) {
+  let FlPth = UrlInfo.pathname.match(/^\/image\/(.+)/); // file name.
+
+  if (!FlPth || FlPth.length < 2) {
+    Rspns.writeHead(404, { 'Content-Type': 'text/plain' });
+    Rspns.write('');
+    Rspns.end();
+
+    return;
+  }
+
+  FlPth = STTC_PTH + '/' + decodeURI(FlPth[1]);
+
+  FileLoad(Rqst, Rspns, FlPth);
+}
+
 module.exports = {
-  CachedFileRespond
+  CachedFileRespond,
+  StaticFileRespond
 };
 
