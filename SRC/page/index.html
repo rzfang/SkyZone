@@ -33,6 +33,39 @@
     }
   });
 
+  function KeyboardCommand (Pg) {
+    if (typeof Pg !== 'string') { return 0; }
+
+    let Dcm = $(document),
+        Fctn = Evt => {};
+
+    if (Pg.length === 0 || Pg === 'index.php') { Fctn = ToAdminCheck; }
+
+    Dcm.data('KyBfr', '').keyup(Fctn);
+
+    return 0;
+
+    function ToAdminCheck (Evt) {
+      let KyBfr = Dcm.data('KyBfr') + Evt.keyCode.toString(16),
+          MpA = ['41444d494e', '5631', '5a4f4e45'], // [ 'admin', 'v1', 'zone' ].
+          MpL = 0;
+
+      for (let i in MpA) { MpL = Math.max(MpL, MpA[i].length); }
+
+      if (KyBfr.length > MpL) { KyBfr = KyBfr.substr(2); }
+
+      if (KyBfr.indexOf(MpA[0]) >= 0) {
+        Dcm.data('KyBfr', '');
+        PageTurn('/admin');
+      }
+      else if (KyBfr.indexOf(MpA[1]) >= 0 || KyBfr.indexOf(MpA[2]) >= 0) {
+        Dcm.data('KyBfr', '');
+        PageTurn('/zone');
+      }
+      else { Dcm.data('KyBfr', KyBfr); }
+    }
+  }
+
   function CityView () {
     var VctA = [[1, 0], [0, 1], [1, 0], [0, -1]], // 'VctA' = Vector Array.
         Logo = new Image(),

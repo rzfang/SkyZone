@@ -1634,49 +1634,6 @@ function ArtCornerSet()
   }
 }
 
-function KeyboardCommand(Pg)
-{
-  if (typeof Pg !== 'string')
-  { return 0; }
-
-  var Dcm = $(document),
-      Fctn = function(Evt){};
-
-  if (Pg.length === 0 || Pg === 'index.php')
-  { Fctn = ToAdminCheck; }
-
-  Dcm.data('KyBfr', '')
-     .keyup(Fctn);
-
-  return 0;
-
-  function ToAdminCheck(Evt)
-  {
-    var KyBfr = Dcm.data('KyBfr') + Evt.keyCode.toString(16),
-        MpA = ['41444d494e', '5632'], // ['admin', 'v2'].
-        MpL = 0;
-
-    for (var i in MpA)
-    { MpL = Math.max(MpL, MpA[i].length); }
-
-    if (KyBfr.length > MpL)
-    { KyBfr = KyBfr.substr(2); }
-
-    if (KyBfr.indexOf(MpA[0]) >= 0)
-    {
-      Dcm.data('KyBfr', '');
-      PageTurn('admin.php');
-    }
-    else if (KyBfr.indexOf(MpA[1]) >= 0)
-    {
-      Dcm.data('KyBfr', '');
-      PageTurn('/blogs');
-    }
-    else
-    { Dcm.data('KyBfr', KyBfr); }
-  }
-}
-
 /* for list box using, one by one fade in items of list. */
 function OneByOneFadeIn (Cnt)
 {

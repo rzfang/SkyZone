@@ -4,7 +4,7 @@
     <a href='/blogs'>網誌</a>
     <a href='/messages'>留言</a>
     <a href='/feed.xml'>訂閱</a>
-    <a href='/index.php'>回入口</a>
+    <a href='/'>回入口</a>
   </nav>
   <style scoped>
     :scope { line-height: 2rem; background-color: #f0f0f0; }
