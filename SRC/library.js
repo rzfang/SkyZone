@@ -628,7 +628,7 @@ const Blog = {
     Extr.on(
       'entry',
       (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
-        if (Hdr.name === 'comment.json') {
+        if (Hdr.name === 'comment.json') { // v2 images.
           let Chks = []; // chunks.
 
           Strm.on('data', Chk => { Chks.push(Chk); });
@@ -641,6 +641,26 @@ const Blog = {
               }
               catch (Err) {
                 SqlRst.Info.Lst = [];
+              }
+
+              Next();
+            });
+        }
+        else if (Hdr.name === 'comment.txt') { // v1 images.
+          let Chks = []; // chunks.
+
+          Strm.on('data', Chk => { Chks.push(Chk); });
+
+          Strm.on(
+            'end',
+            () => {
+              const Cmts = Chks.join('').toString('utf8').split('\n====\n');
+
+              for (let i = 0; i < Cmts.length; i++) {
+                SqlRst.Info.Lst.push({
+                  Fl: (i + 1).toString().padStart(3, '0') + '.jpg',
+                  Cmt: Cmts[i]
+                });
               }
 
               Next();

@@ -21,7 +21,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 2:
-    echo Blog::OneRead($_POST);
+    echo Blog::OneRead($_POST); // migrated.
     break;
 
   case 3:
