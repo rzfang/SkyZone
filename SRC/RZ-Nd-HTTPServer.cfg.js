@@ -95,6 +95,13 @@ module.exports = {
       js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
       body: [ 'page/index.html' ]
     },
+    '/500': {
+      body: [
+        'header.tag',
+        'p500.tag',
+        'footer.tag'
+      ]
+    },
     default: { // here should handle 404.
       title: '空域',
       description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -104,7 +111,11 @@ module.exports = {
       feed: '/feed.xml',
       css: [ 'base.css', 'style2.css' ],
       js: [ 'api2.min.js' ],
-      body: []
+      body: [
+        'header.tag',
+        'p404.tag',
+        'footer.tag'
+      ]
     }
   },
   route: [
@@ -117,7 +128,7 @@ module.exports = {
       location: './component'
     },
     { // Riot page tag.
-      path: /(blogs|text|image-page|images-page|zft-page)\.tag$/,
+      path: /(blogs|text|image-page|images-page|zft-page|p500|p404)\.tag$/,
       type: 'resource',
       mimeType: 'text/plain',
       location: './page'
