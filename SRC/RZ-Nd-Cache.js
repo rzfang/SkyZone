@@ -58,7 +58,7 @@ module.exports = {
   /* set the value.
     @ key name.
     @ value.
-    @ second limit.
+    @ second limit, default 300 seconds.
     < return true or false. */
   Set (Ky, Vl, ScndLmt = 300) {
     if (typeof Ky !== 'string' || typeof ScndLmt !== 'number') { return false; }

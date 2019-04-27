@@ -1,6 +1,6 @@
 const Is = require('./RZ-Js-Is');
 // const Log = require('./RZ-Js-Log');
-const { Blog, Tag, Msg, Ssn, Systm, Wds } = require('./library');
+const { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } = require('./library');
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -127,6 +127,12 @@ module.exports = {
           PckEnd = PackedEnd(End); // packed end callback function.
 
     return Msg.Leave(Rqst, Rspns, MxPrm, PckEnd);
+  },
+  ArtCornerRandomOneGet: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return ArtCnr.RandomOneGet(Rqst, MxPrm, PckEnd);
   },
   SystemCacheClean: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.

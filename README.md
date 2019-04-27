@@ -9,9 +9,8 @@ this project needs the key file to get everything fine.
 ## this project uses
 * HTML, Js, CSS
 * [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)
-* [SASS](https://sass-lang.com/)
-* [UglifyJs](http://lisperator.net/uglifyjs/)
-* [tar-stream](https://github.com/mafintosh/tar-stream)
+* [Riot 3](https://riot.js.org/)
+* [Sass](https://sass-lang.com/)
 
 ## to be a HTTP server, this project also uses
 * [nginx](https://nginx.org/)

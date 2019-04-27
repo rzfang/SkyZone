@@ -1601,39 +1601,6 @@ function GoodWordsSet()
   }
 }
 
-function ArtCornerSet()
-{
-  var AtCnr = $('#AtCnr'),
-      AtCnrChk = $('#AtCnrChk');
-
-  AtCnrChk.on({'mouseenter': function(Evt){ AtCnr.children().show(); },
-               'mouseleave': function(Evt){ AtCnr.children().hide(); }});
-
-  RandomOne();
-
-  return AtCnr;
-
-  function RandomOne()
-  {
-    $.ajax(
-      {
-        'type': 'POST',
-        'dataType': 'json',
-        'timeout' : 20000,
-        'url': 'service.php',
-        'data': {'Cmd': 6},
-        'success': function(Data, TxtSt, JQXHR)
-          {
-            if (Data.Index < 0)
-            { return -1; }
-
-            AtCnr.css('backgroundImage', 'url("' + Data.Extend.ImgURL + '")')
-                 .children().text(Data.Extend.Ttl + "\n" + Data.Extend.Dt.substr(0, 10) + "\nby " + Data.Extend.Atr);
-          }
-      });
-  }
-}
-
 /* for list box using, one by one fade in items of list. */
 function OneByOneFadeIn (Cnt)
 {

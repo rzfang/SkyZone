@@ -15,6 +15,8 @@ const Cch = require('./RZ-Nd-Cache'),
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
+      NOW_ART_CORNER_KEY = 'NAC', // now art corner key.
+      ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH), // blog files path.
       BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
       CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
       DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
@@ -135,6 +137,28 @@ function XmlEscape (Str, Flg = false) {
   @ separated string. */
 function MakeCircularString (Arr, FlStr = '?', SpStr = ', ') {
   return (new Array(Arr.length)).fill(FlStr).join(SpStr)
+}
+
+/* extract a file from tar file to system.
+  @ header object from tar-stream library.
+  @ stream object from tar-stream library.
+  @ file path to write to.
+  @ callback function. */
+function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
+  function FileWrite () {
+    let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+
+    Strm.on('end', Then);
+    Strm.pipe(ImgFlStrm);
+  }
+
+  fs.stat(
+    Pth,
+    (Err, St) => {
+      if (Err || !St.mtime || Hdr.mtime > St.mtime) { return FileWrite(Strm, Pth, Then); }
+
+      Then();
+    });
 }
 
 const Blog = {
@@ -542,34 +566,6 @@ const Blog = {
       })
       .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
   },
-  /* extract a file from tar file to system.
-    @ header object from tar-stream library.
-    @ stream object from tar-stream library.
-    @ file path to write to.
-    @ callback function. */
-  _TarFileWrite: (Hdr, Strm, Pth, Then) => {
-    function FileWrite () {
-      let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
-
-      Strm.on('end', Then);
-      Strm.pipe(ImgFlStrm);
-    }
-
-    try {
-      const St = fs.statSync(Pth); // somehow, fs.stat is not worked.
-
-      if (!St.mtime || Hdr.mtime > St.mtime) {
-        FileWrite(Strm, Pth, Then);
-
-        return;
-      }
-
-      Then();
-    }
-    catch (Err) {
-      FileWrite(Strm, Pth, Then);
-    }
-  },
   /*
     @ SQL result.
     @ callback(Cd) function.
@@ -606,7 +602,7 @@ const Blog = {
 
           SqlRst.Info.ImgUrl = Url;
 
-          Blog._TarFileWrite(Hdr, Strm, Pth, Next);
+          TarStreamFileWrite(Hdr, Strm, Pth, Next);
         }
 
         Strm.resume();
@@ -671,7 +667,7 @@ const Blog = {
 
           SqlRst.Info.Imgs[Hdr.name] = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
 
-          Blog._TarFileWrite(Hdr, Strm, Pth, Next);
+          TarStreamFileWrite(Hdr, Strm, Pth, Next);
         }
 
         Strm.resume();
@@ -1072,6 +1068,69 @@ const Wds = { // good words.
   }
 };
 
+const ArtCnr = { // Art Corner.
+  RandomOneGet: (Rqst, Prm, End) => {
+    let Info = Cch.Get(NOW_ART_CORNER_KEY);
+
+    if (Info) { return End(1, Kwd.RM.StepTest, Info); }
+
+    fs.readdir(
+      ARTCNR_PTH,
+      (Err, Fls) => {
+        if (Err) { return End(-1, Kwd.RM.LoadDataFail, 0); }
+
+        // const Idx = parseInt(Math.random() * Fls.length, 10),
+        const Idx = 1,
+              TarFl = Fls[Idx],
+              FlStrm = fs.createReadStream(`${ARTCNR_PTH}/${TarFl}`),
+              Extr = tarStream.extract();
+
+        Info = {};
+
+        Extr.on(
+          'entry',
+          (Hdr, Strm, Next) => {
+            if (Hdr.name === 'info.xml') {
+              let Chks = []; // chunks.
+
+              Strm.on('data', Chk => { Chks.push(Chk); });
+
+              Strm.on(
+                'end',
+                () => {
+                  const Src = Chks.join('').toString('utf8');
+
+                  Info.Ttl = Src.match(/<Title>(.+)<\/Title>/)[1];
+                  Info.Atr = Src.match(/<Author>(.+)<\/Author>/)[1];
+                  Info.Dt = Src.match(/<Datetime>(.+)<\/Datetime>/)[1];
+
+                  Next();
+                });
+            }
+            else {
+              const FlNm = TarFl.replace('.tar', '') + '-' + Hdr.name;
+              const Pth = `${CCH_PTH}/${FlNm}`; // image file path.
+
+              Info.ImgUrl = '/resource/image/' + FlNm;
+
+              TarStreamFileWrite(Hdr, Strm, Pth, Next);
+            }
+
+            Strm.resume(); // this is important.
+          });
+
+        Extr.on(
+          'finish',
+          () => {
+            Cch.Set(NOW_ART_CORNER_KEY, Info);
+            End(1, Kwd.RM.StepTest, Info);
+          });
+
+        FlStrm.pipe(Extr);
+      });
+  }
+};
+
 const Systm = {
   CacheClear: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
@@ -1231,6 +1290,7 @@ const Ssn = { // session.
 };
 
 module.exports = {
+  ArtCnr,
   Blog,
   Msg,
   Ssn,

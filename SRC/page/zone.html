@@ -38,6 +38,35 @@
 
       CO.LfTm = 604800; // 7 days in second.
   });
+
+  function ArtCornerSet () {
+    var AtCnr = $('#AtCnr'),
+        AtCnrChk = $('#AtCnrChk');
+
+    AtCnrChk.on({
+      'mouseenter': function(Evt){ AtCnr.children().show(); },
+      'mouseleave': function(Evt){ AtCnr.children().hide(); }
+    });
+
+    RandomOne();
+
+    return AtCnr;
+
+    function RandomOne () {
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        timeout : 20000,
+        url: '/service/artcorner/randomone',
+        data: { Cmd: 6 },
+        success: function (Data, TxtSt, JQXHR) {
+          if (Data.Index < 0) { return -1; }
+
+          AtCnr.css('backgroundImage', 'url("' + Data.Extend.ImgUrl + '")')
+               .children().text(Data.Extend.Ttl + "\n" + Data.Extend.Dt.substr(0, 10) + "\nby " + Data.Extend.Atr);
+        }});
+    }
+  }
 </script>
 <div id='Template'> <!-- Template -->
   <div id='LvBx' class='LvBx' style='text-align: center;'>

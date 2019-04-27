@@ -281,6 +281,11 @@ module.exports = {
       type: 'service',
       process: Svc.WordsDelete
     },
+    {
+      path: /^\/service\/artcorner\/randomone/,
+      type: 'service',
+      process: Svc.ArtCornerRandomOneGet
+    },
     { // cache clean service.
       path: /^\/service\/cache\/clean/,
       type: 'service',
