@@ -4,6 +4,8 @@ const Kwd = require('./keyword.json'),
 const AdminPage = require('./page/admin'),
       Img = require('./image');
 
+const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js';
+
 const DftPgRt = { // here should handle 404.
   title: '空域',
   description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
@@ -87,12 +89,12 @@ module.exports = {
     },
     '/zone': {
       css: [ 'base.css', 'style1.css' ],
-      js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
+      js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
     '/': {
       css: [],
-      js: [ 'resource/jquery.min.js', 'resource/api2.min.js' ],
+      js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
     },
     '/500': {
@@ -110,7 +112,7 @@ module.exports = {
       favicon: 'favicon.ico',
       feed: '/feed.xml',
       css: [ 'base.css', 'style2.css' ],
-      js: [ 'api2.min.js' ],
+      js: [],
       body: [
         'header.tag',
         'p404.tag',

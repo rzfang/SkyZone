@@ -64,10 +64,9 @@ $FdLstDt = is_file($FdPth) ? date('Y-m-d H:i:s', filemtime($FdPth)) : '????-??-?
       #AtCnrMkBx table td:last-child { text-align: left; }
     -->
     </style>
-    <script type='text/javascript' src='resource/jquery.min.js'></script>
-    <script type='text/javascript' src='resource/api2.min.js'></script>
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
     <script language='javascript' src='https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js'></script>
-    <script type='riot/tag' src='resource/admin.tag'></script>
+    <script type='text/javascript' src='resource/api1.min.js'></script>
     <script type='text/javascript'>
     <!--
 <?php if (!$IsLgn){ ?>

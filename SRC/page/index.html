@@ -8,15 +8,15 @@
   #Main { padding: 10px; }
 </style>
 <script type='text/javascript'>
-  var Clk = null;
+  let Clk = null;
 
   EmbedDeny();
 
   $(function () {
-    var URLPrms = URLParameters(),
+    let URLPrms = URLParameters(),
         AnmNbr = 2;
 
-    var AnmIdx = (URLPrms.length === 0 || typeof URLPrms.Anm !== 'string') ?
+    let AnmIdx = (URLPrms.length === 0 || typeof URLPrms.Anm !== 'string') ?
                  Math.round(Math.random()) :
                  parseInt(URLPrms.Anm, 10) % AnmNbr;
 
@@ -67,41 +67,39 @@
   }
 
   function CityView () {
-    var VctA = [[1, 0], [0, 1], [1, 0], [0, -1]], // 'VctA' = Vector Array.
+    let VctA = [[1, 0], [0, 1], [1, 0], [0, -1]], // 'VctA' = Vector Array.
         Logo = new Image(),
         Anm = new Animation($('#Entry').get(0), []);
 
-    var Blds0 = BuildingsInitialize(
+    let Blds0 = BuildingsInitialize(
           Anm,
           [160, 160, 192, 1],
           {'X': 0, 'Y': 150, 'W': Anm.ScnSz.W, 'H': 100},
           {'XMn': 3, 'XMx': 8, 'YMn': 5, 'YMx': 15},
-          0.2); // 'Blds0' = Buildings 0.
+          0.05); // 'Blds0' = Buildings 0.
 
-    var Blds1 = BuildingsInitialize(
+    let Blds1 = BuildingsInitialize(
           Anm,
           [128, 128, 160, 1],
           {'X': 0, 'Y': 170, 'W': Anm.ScnSz.W, 'H': 100},
           {'XMn': 5, 'XMx': 20, 'YMn': 5, 'YMx': 30},
-          0.5);
+          0.1);
 
-    var Blds2 = BuildingsInitialize(
+    let Blds2 = BuildingsInitialize(
           Anm,
           [96, 96, 128, 1],
           {'X': 0, 'Y': 180, 'W': Anm.ScnSz.W, 'H': 120},
           {'XMn': 15, 'XMx': 35, 'YMn': 10, 'YMx': 40},
-          0.8);
+          0.5);
 
-    var Blds3 = BuildingsInitialize(
+    let Blds3 = BuildingsInitialize(
           Anm,
           [64, 64, 96, 1],
           {'X': 0, 'Y': 200, 'W': Anm.ScnSz.W, 'H': 180},
           {'XMn': 35, 'XMx': 60, 'YMn': 20, 'YMx': 80},
-          1.3);
+          1);
 
-    Logo.src = 'image/logo_bg_b.png';
-
-    Anm.ItemDrawAdd(function (Ctx, ScnSz) {
+    Anm.ItemDrawAdd((Ctx, ScnSz) => {
       BuildingsMove(Ctx, Blds0);
       BuildingsMove(Ctx, Blds1);
       BuildingsMove(Ctx, Blds2);
@@ -110,16 +108,18 @@
       Ctx.drawImage(Logo, (ScnSz.W - Logo.width) / 2, (ScnSz.H - Logo.height) / 2);
     });
 
-    Anm.Start();
+    Logo.onload = () => { Anm.Start(); };
+
+    Logo.src = 'image/logo_bg_b.png';
 
     return;
 
     /*
-      'Anm' = Animation object.
-      'LnrClr' = Linear Color object.
-      'Rng' = Range object.
-      'RdmRng' = Random Range object.
-      'Spd' = Speed. */
+      @ Animation object.
+      @ Linear Color object.
+      @ Range object.
+      @ Random Range object.
+      @ Speed. */
     function BuildingsInitialize (Anm, LnrClr, Rng, RdmRng, Spd) {
       if (typeof Anm !== 'object' || Anm === null ||
          typeof Anm.Ctx !== 'object' || Anm.Ctx === null || typeof Anm.ScnSz !== 'object' || Anm.ScnSz === null ||
@@ -129,9 +129,9 @@
          typeof Spd !== 'number')
       { return {}; }
 
-      var Cdnt = {'X': 0, 'Y': Rng.Y + (Rng.H / 2)}// 'Cdnt'  = Coordinate.
+      let Cdnt = {'X': 0, 'Y': Rng.Y + (Rng.H / 2)}// 'Cdnt'  = Coordinate.
 
-      var Blds = {'Rng': Rng,
+      let Blds = {'Rng': Rng,
                   'RdmRng': RdmRng,
                   'LnrGrdn': Anm.Ctx.createLinearGradient(Rng.X, Rng.Y, Rng.X, Rng.Y + Rng.H),
                   'PtA': [{'X': Cdnt.X, 'Y': Cdnt.Y, 'VctIdx': 3}],
@@ -140,8 +140,8 @@
       Blds.LnrGrdn.addColorStop(0, 'rgba(' + LnrClr.join(', ') + ')');
       Blds.LnrGrdn.addColorStop(1, 'rgba(255, 255, 255, 1)');
 
-      for (var i = 0; Cdnt.X < Anm.ScnSz.W; i++) {
-        var VctIdx = i % VctA.length,
+      for (let i = 0; Cdnt.X < Anm.ScnSz.W; i++) {
+        let VctIdx = i % VctA.length,
             Vct = VctA[VctIdx];
 
         Cdnt.X += RandomRange(RdmRng.XMn, RdmRng.XMx) * Vct[0];
@@ -164,7 +164,7 @@
       Ctx.beginPath();
       Ctx.moveTo(0, Blds.PtA[0].Y);
 
-      for (var i = 0; i < Blds.PtA.length; i++) {
+      for (let i = 0; i < Blds.PtA.length; i++) {
         Ctx.lineTo(Blds.PtA[i].X, Blds.PtA[i].Y);
 
         Blds.PtA[i].X += Blds.Spd;
@@ -173,7 +173,7 @@
       if (Blds.PtA[Blds.PtA.length - 2].X > Blds.Rng.W) { Blds.PtA.pop(); }
 
       if (Blds.PtA[1].X > 0) {
-        var Pt = {'X': 0, 'Y': 0, 'VctIdx': (Blds.PtA[0].VctIdx - 1 + VctA.length) % VctA.length},
+        let Pt = {'X': 0, 'Y': 0, 'VctIdx': (Blds.PtA[0].VctIdx - 1 + VctA.length) % VctA.length},
             Vct = VctA[Pt.VctIdx];
 
         Pt.X = Blds.PtA[0].X - RandomRange(Blds.RdmRng.XMn, Blds.RdmRng.XMx) * Vct[0];
@@ -197,7 +197,7 @@
   }
 
   function CloudWalk () {
-    var Anm = new Animation($('#Entry').get(0), [], BaseSceneryDraw),
+    let Anm = new Animation($('#Entry').get(0), [], BaseSceneryDraw),
         ImgA = [new Image(), new Image(), new Image()], // 'ImgA' = Image Array.
         Logo = new Image(),
         Clds = new Array(30), // 'Clds' = Cloud.
@@ -214,7 +214,7 @@
     return;
 
     function BaseSceneryInitialize (Anm) {
-      var BsClr = Anm.Ctx.createLinearGradient(0, 0, 0, Anm.ScnSz.H),
+      let BsClr = Anm.Ctx.createLinearGradient(0, 0, 0, Anm.ScnSz.H),
           Dt = new Date(),
           Hr = Dt.getHours();
 
@@ -238,11 +238,11 @@
     /*
       'SttF' = Start Function. */
     function CloudInitialize (SttF) {
-      ImgA[0].onload = function(){ LdCnt++; };
+      ImgA[0].onload = function () { LdCnt++; };
       ImgA[0].src = 'image/animate/cloud_01.png';
-      ImgA[1].onload = function(){ LdCnt++; };
+      ImgA[1].onload = function () { LdCnt++; };
       ImgA[1].src = 'image/animate/cloud_02.png';
-      ImgA[2].onload = function(){ LdCnt++; };
+      ImgA[2].onload = function () { LdCnt++; };
       ImgA[2].src = 'image/animate/cloud_03.png';
       Logo.src = 'image/logo_bg.png';
 
@@ -255,8 +255,8 @@
           function () {
             if (LdCnt !== ImgA.length) { return ReadyAndStart(); }
 
-            for (var i = 0; i < Clds.length; i++) {
-              var ImgIdx = RandomRange(0, ImgA.length - 1),
+            for (let i = 0; i < Clds.length; i++) {
+              let ImgIdx = RandomRange(0, ImgA.length - 1),
                   Rt = RandomRange(1, 10) * 5 * (1 / Clds.length);
 
               Clds[i] = {'ImgURL': ImgA[ImgIdx],
@@ -278,8 +278,8 @@
     }
 
     function CloudFly (Ctx, ScnSz) {
-      for (var i = 0; i < Clds.length; i++) {
-        var Cld = Clds[i];
+      for (let i = 0; i < Clds.length; i++) {
+        let Cld = Clds[i];
 
         Ctx.drawImage(Cld.ImgURL, Cld.Lct.X, Cld.Lct.Y, Cld.Sz.W, Cld.Sz.H);
 
