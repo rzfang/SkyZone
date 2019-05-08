@@ -78,7 +78,7 @@ function SettingMatch($FlNm, $StPth)
       #Ctn { display: inline-block; position: relative; width: 800px; padding: 10px; border-left: 1px solid; border-right: 1px solid; overflow-x: auto; }
     -->
     </style>
-    <script type='text/javascript' src='resource/jquery.min.js'></script>
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
     <script type='text/javascript'>
     <!--
       $(function()

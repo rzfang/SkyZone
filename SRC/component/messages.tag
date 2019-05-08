@@ -188,7 +188,7 @@
 
         if (NmMl) { this.NmMl = NmMl.split(';'); }
 
-        if (Is.Array(this.opts.rpls) && !this.opts.rpls.length) { this.IsFmShw = true; }
+        if (Z.Is.Array(this.opts.rpls) && !this.opts.rpls.length) { this.IsFmShw = true; }
       });
 
     InputFocus () {
@@ -260,12 +260,12 @@
     IsFormGood (Nm, Ml, Msg) {
       let Hnt = ''; // hint.
 
-      if (!Nm || !Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+      if (!Nm || !Z.Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
 
-      if (!Ml || !Is.String(Ml) || Ml.length === 0) { Hnt += '尚未填寫 E-Mail。\n'; }
+      if (!Ml || !Z.Is.String(Ml) || Ml.length === 0) { Hnt += '尚未填寫 E-Mail。\n'; }
       else if (!Z.Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
 
-      if (!Msg || !Is.String(Msg) || Msg.length === 0) { Hnt += '尚未填寫任何留言。\n'; }
+      if (!Msg || !Z.Is.String(Msg) || Msg.length === 0) { Hnt += '尚未填寫任何留言。\n'; }
       else if (Msg.length > 255) { Hnt += '留言請勿超個 255 個字。\n'; }
 
       if (Hnt.length > 0) {
