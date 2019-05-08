@@ -62,7 +62,7 @@ function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
   @ path name. */
 function PageRespond (Rqst, Rspns, UrlInfo) {
   const PthNm = UrlInfo.pathname,
-        PgInfo = Object.assign({}, Pg.default, Pg[PthNm] || {}); // page info object.
+        PgInfo = Pg[PthNm] || {}; // page info object.
 
   if (!PgInfo.body) {
     Rspns.writeHead(404, {'Content-Type': 'text/html'});

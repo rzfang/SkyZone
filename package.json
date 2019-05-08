@@ -52,6 +52,10 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+      },
       "sourceType": "module"
     },
     "plugins": [

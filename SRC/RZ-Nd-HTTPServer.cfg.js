@@ -12,11 +12,10 @@ const DftPgRt = { // here should handle 404.
   keywords: '天空, 空域, RZ, 個人網站',
   author: 'RZ Fang',
   favicon: 'favicon.ico',
+  feed: '/feed.xml',
   css: [ 'base.css', 'style2.css' ],
-  js: [
-        'api2.min.js'
-  ],
-  body: []
+  js: [ 'api2.min.js' ],
+  body: [ 'header.tag', 'p404.tag', 'footer.tag' ]
 };
 
 module.exports = {
@@ -27,28 +26,24 @@ module.exports = {
   },
   page: {
     '/admin': {
+      ...DftPgRt,
       title: '空域 - 管理員',
       js: [ 'api2.min.js', 'tabbox.tag' ],
       body: [
         { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
       ]},
     '/about': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'tabbox.tag' ],
-      body: [
-        'header.tag',
-        'about.tag',
-        'footer.tag'
-      ]
+      body: [ 'header.tag', 'about.tag', 'footer.tag' ]
     },
     '/blogs': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'icon.tag', 'tags.tag' ],
-      body: [
-        'header.tag',
-        'blogs.tag',
-        'footer.tag'
-      ]
+      body: [ 'header.tag', 'blogs.tag', 'footer.tag' ]
     },
     '/text': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
       body: [
         'header.tag',
@@ -57,65 +52,42 @@ module.exports = {
       ]
     },
     '/image': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
-      body: [
-        'header.tag',
-        'image-page.tag',
-        'footer.tag'
-      ]
+      body: [ 'header.tag', 'image-page.tag', 'footer.tag' ]
     },
     '/images': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'icon.tag', 'late-img.tag', 'sharebox.tag', 'tags.tag' ],
-      body: [
-        'header.tag',
-        'images-page.tag',
-        'footer.tag'
-      ]
+      body: [ 'header.tag', 'images-page.tag', 'footer.tag' ]
     },
     '/zft': {
+      ...DftPgRt,
       js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
-      body: [
-        'header.tag',
-        'zft-page.tag',
-        'footer.tag'
-      ]
+      body: [ 'header.tag', 'zft-page.tag', 'footer.tag' ]
     },
     '/messages': {
-      body: [
-        'header.tag',
-        'messages.tag',
-        'footer.tag'
-      ]
+      ...DftPgRt,
+      js: [ 'api2.min.js' ],
+      body: [ 'header.tag', 'messages.tag', 'footer.tag' ]
     },
     '/zone': {
+      ...DftPgRt,
       css: [ 'base.css', 'style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
     '/': {
+      ...DftPgRt,
       css: [],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
     },
     '/500': {
+      ...DftPgRt,
       body: [
         'header.tag',
         'p500.tag',
-        'footer.tag'
-      ]
-    },
-    default: { // here should handle 404.
-      title: '空域',
-      description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
-      keywords: '天空, 空域, RZ, 個人網站',
-      author: 'RZ Fang',
-      favicon: 'favicon.ico',
-      feed: '/feed.xml',
-      css: [ 'base.css', 'style2.css' ],
-      js: [],
-      body: [
-        'header.tag',
-        'p404.tag',
         'footer.tag'
       ]
     }
