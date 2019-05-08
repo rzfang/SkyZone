@@ -152,13 +152,17 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
     Strm.pipe(ImgFlStrm);
   }
 
-  fs.stat(
-    Pth,
-    (Err, St) => {
-      if (Err || !St.mtime || Hdr.mtime > St.mtime) { return FileWrite(Strm, Pth, Then); }
+  // somehow, fs.stat's error result will breaks tar-stream. here use sync way to try catch the error.
+  try {
+    const St = fs.statSync(Pth); // stat.
 
-      Then();
-    });
+    if (!St.mtime || Hdr.mtime > St.mtime) { return FileWrite(); }
+  }
+  catch (Err) {
+    return FileWrite();
+  }
+
+  Then();
 }
 
 const Blog = {
