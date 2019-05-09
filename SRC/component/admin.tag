@@ -26,6 +26,8 @@
   <script>
     this.mixin('Z.RM');
 
+    this.on('mount', () => this.OnBrowser(() => this.refs.Pswd.focus()));
+
     Login (Evt) {
       if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
