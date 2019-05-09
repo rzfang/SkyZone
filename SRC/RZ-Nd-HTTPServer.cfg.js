@@ -95,6 +95,12 @@ module.exports = {
   route: [
     // ==== resource ====
 
+    {
+      path: /\/favicon\.ico/,
+      type: 'resource',
+      mimeType: 'image/x-icon',
+      location: '../WEB/www'
+    },
     { // Riot component tag.
       path: /(login|about|header|footer|late-img|messages|admin)\.tag$/,
       type: 'resource',
