@@ -6,6 +6,7 @@ const async = require('async'),
       url = require('url');
 
 const Cch = require('./RZ-Nd-Cache'),
+      Img = require('./image.js'),
       Is = require('./RZ-Js-Is'),
       Log = require('./RZ-Js-Log');
 
@@ -23,17 +24,21 @@ let IdCnt = 0; // id count, for giving a unique id for each request.
   @ response object.
   @ file path.
   @ mine type. */
-function StaticFileRespond (Rqst, Rspns, FlPth, MmTp) {
+function StaticFileRespond (Rqst, Rspns, FlPth, MmTp = '') {
   if (Rqst.headers['if-modified-since'] && Cch.IsFileCached(FlPth)) {
     Rspns.writeHead(
       304,
       { 'Content-Type': MmTp,
-        'Cache-Control': 'public, max-age=3600', // 1hour.
+        'Cache-Control': 'public, max-age=3600', // 1 hour.
         'Last-Modified': Rqst.headers['if-modified-since'] });
     Rspns.write('\n');
     Rspns.end();
 
     return;
+  }
+
+  if (path.extname(FlPth) === '.ico') {
+    return Img.FileLoad(Rqst, Rspns, FlPth);
   }
 
   Cch.FileLoad(

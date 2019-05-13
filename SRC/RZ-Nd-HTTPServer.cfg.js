@@ -95,8 +95,8 @@ module.exports = {
   route: [
     // ==== resource ====
 
-    {
-      path: /\/favicon\.ico/,
+    { // SEO files.
+      path: /\/(favicon\.ico|robots\.txt)/,
       type: 'resource',
       mimeType: 'image/x-icon',
       location: '../WEB/www'

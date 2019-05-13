@@ -8,6 +8,7 @@ const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cached files pat
       MM_TP = {
         '.bmp': 'image/x-windows-bmp',
         '.gif': 'image/gif',
+        '.ico': 'image/x-icon',
         '.jpg': 'image/jpeg',
         '.png': 'image/png',
         '.svg': 'image/svg+xml' }; // mime type map.
@@ -27,17 +28,18 @@ function FileLoad (Rqst, Rspns, FlPth) {
         return;
       }
 
-      const Mms = St.mtimeMs || (new Date(St.mtime)).getTime(); // mtime milisecond.
+      const Mms = St.mtimeMs || (new Date(St.mtime)).getTime(), // mtime milisecond.
+            IfMdfSnc = Rqst.headers['if-modified-since']; // if-modified-since.
 
-      if (Rqst.headers['if-modified-since'] && Rqst.headers['if-modified-since'] !== 'Invalid Date') {
-        const ChkdMs = (new Date(Rqst.headers['if-modified-since'])).getTime(); // checked milisecond.
+      if (IfMdfSnc && IfMdfSnc !== 'Invalid Date') {
+        const ChkdMs = (new Date(IfMdfSnc)).getTime(); // checked milisecond.
 
         if (Mms < ChkdMs) {
           Rspns.writeHead(
             304,
             { 'Content-Type': MM_TP[path.extname(FlPth)],
-              'Cache-Control': 'public, max-age=6000',
-              'Last-Modified': Rqst.headers['if-modified-since'] });
+              'Cache-Control': 'public, max-age=6000', // 100 minutes.
+              'Last-Modified': IfMdfSnc });
 
           Rspns.write('\n');
           Rspns.end();
@@ -92,6 +94,6 @@ function StaticFileRespond (Rqst, Rspns, UrlInfo) {
 
 module.exports = {
   CachedFileRespond,
+  FileLoad,
   StaticFileRespond
 };
-
