@@ -29,7 +29,7 @@
     this.on('mount', () => this.OnBrowser(() => this.refs.Pswd.focus()));
 
     Login (Evt) {
-      if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+      if (!Z.Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
       const Pswd = this.refs.Pswd.value;
 
@@ -486,7 +486,7 @@
           {},
           'NON_BLOGS',
           (Sto, Rst) => {
-            if (!Rst || !Is.Number(Rst.Index) || !Is.Array(Rst.Extend)) { return alert('something wrong!'); }
+            if (!Rst || !Z.Is.Number(Rst.Index) || !Z.Is.Array(Rst.Extend)) { return alert('something wrong!'); }
 
             if (Rst.Index < 0) { return alert(Rst.Message); }
 
@@ -507,7 +507,7 @@
     this.StoreListen(
       'NON_BLOGS',
       (Sto, TskPrms) => {
-        if (!Is.Array(Sto)) { return; }
+        if (!Z.Is.Array(Sto)) { return; }
 
         let Blgs = [];
 
