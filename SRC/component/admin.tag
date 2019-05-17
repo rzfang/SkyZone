@@ -956,9 +956,9 @@
       'before-mount',
       () => {
         this.AJAX({
-          URL: 'service.php',
+          URL: '/service/message/adminlist',
           Mthd: 'POST',
-          Data: { Cmd: 106, Cnt: 1 },
+          Data: { Cnt: 1 },
           Err: (Sts) => { alert('BG'); },
           OK: (RspnsTxt, Sts) => {
             let Rst = JSON.parse(RspnsTxt);
@@ -979,8 +979,8 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 106, Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
+        '/service/message/adminlist',
+        { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'MESSAGES',
         (Sto, Rst) => {
           if (Rst.Index > -1) { Sto = Rst.Extend; }

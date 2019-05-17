@@ -899,6 +899,44 @@ const Msg = { // message.
         PckEnd(0, Kwd.RM.Done, Id);
       })
       .catch(Cd => { PckEnd(Cd * 10 + -4, Kwd.RM.DbCrash); });
+  },
+  AdminList: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    // ==== total count. ====
+
+    if (parseInt(Prm.Cnt, 10)) {
+      Db.Query('SELECT COUNT(id) As Cnt FROM Message;')
+        .catch(Cd => { PckEnd(-3, Kwd.RM.DbCrash, Cd); })
+        .then(DbRst => {
+          return (!DbRst || !DbRst[0] || !DbRst[0].Cnt) ?
+            PckEnd(-4, Kwd.RM.NoSuchData) :
+            PckEnd(1, Kwd.RM.Done, DbRst[0].Cnt);
+        });
+
+      return;
+    }
+
+    // ==== one page. ====
+
+    const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10, // limit.
+          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0, // offset.
+          SQL = 'SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, message AS Msg, target AS Tgt ' +
+                'FROM Message ORDER BY Dt DESC LIMIT ?, ?;';
+
+    Db.Query(SQL, [ Ofst, Lmt ])
+      .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
+      .then((DbRst) => {
+        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+
+        PckEnd(0, Kwd.RM.Done, DbRst);
+      });
   }
 };
 
