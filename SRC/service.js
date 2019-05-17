@@ -134,6 +134,12 @@ module.exports = {
 
     return Msg.AdminList(Rqst, Rspns, MxPrm, PckEnd);
   },
+  MessageDelete: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Msg.Delete(Rqst, Rspns, MxPrm, PckEnd);
+  },
   ArtCornerRandomOneGet: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.

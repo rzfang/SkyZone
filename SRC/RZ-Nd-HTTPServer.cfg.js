@@ -211,6 +211,11 @@ module.exports = {
       type: 'service',
       process: Svc.MessageAdminList
     },
+    { // message admin list service.
+      path: /^\/service\/message\/delete/,
+      type: 'service',
+      process: Svc.MessageDelete
+    },
     { // session login service.
       path: /^\/service\/session\/login/,
       type: 'service',

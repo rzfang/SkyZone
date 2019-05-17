@@ -937,6 +937,39 @@ const Msg = { // message.
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
+  },
+  Delete: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    const { ID = '' } = Prm;
+
+    if (!ID || !Is.UUID(ID)) {
+      return End(-2, Kwd.RM.StrangeValue);
+    }
+
+    const Db = new SQLite(DB_PTH),
+          PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
+
+    Db.IsARowExist('Message', 'id', ID)
+      .then(IsExt => {
+        if (!IsExt) {
+          PckEnd(-4, Kwd.RM.NoSuchData);
+
+          return Promise.reject(-4);
+        }
+
+        const SQL = 'DELETE FROM Message WHERE id = ? OR target = ?;';
+
+        return Db.Query(SQL, [ ID ]);
+      })
+      .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
+      .then(DbRst => {
+        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+
+        PckEnd(0, Kwd.RM.Done, DbRst);
+      });
   }
 };
 

@@ -996,8 +996,8 @@
       let Msg = this.Msgs[Evt.target.value];
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 107, ID: Msg.ID },
+        '/service/message/delete',
+        { ID: Msg.ID },
         'MESSAGES',
         (Sto, Rst) => {
           if (Rst.Index < 0) {
