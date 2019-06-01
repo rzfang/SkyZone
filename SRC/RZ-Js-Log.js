@@ -29,6 +29,8 @@
 
         break;
     }
+
+    return typeof Info !== 'string' ? Info.toString() : Info;
   }
 
   if (typeof module !== 'undefined') { module.exports = Log; }
