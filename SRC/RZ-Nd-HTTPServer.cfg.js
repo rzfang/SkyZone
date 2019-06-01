@@ -1,10 +1,13 @@
-const Kwd = require('./keyword.json'),
+const path = require('path');
+
+const Cnst = require('./constant.json'),
+      Kwd = require('./keyword.json'),
       Svc = require('./service');
 
-const AdminPage = require('./page/admin'),
-      Img = require('./image');
+const AdminPage = require('./page/admin');
 
-const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js';
+const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js',
+      STTC_PTH = path.resolve(__dirname, '..', Cnst.STTC_PTH);
 
 const DftPgRt = { // here should handle 404.
   title: '空域',
@@ -13,8 +16,8 @@ const DftPgRt = { // here should handle 404.
   author: 'RZ Fang',
   favicon: 'favicon.ico',
   feed: '/feed.xml',
-  css: [ 'base.css', 'style2.css' ],
-  js: [ 'api2.min.js' ],
+  css: [ '/resource/base.css', '/resource/style2.css' ],
+  js: [ '/resource/api2.min.js' ],
   body: [ 'header.tag', 'p404.tag', 'footer.tag' ]
 };
 
@@ -28,52 +31,52 @@ module.exports = {
     '/admin': {
       ...DftPgRt,
       title: '空域 - 管理員',
-      js: [ 'api2.min.js', 'tabbox.tag' ],
+      js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
       body: [
         { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
       ]},
     '/about': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'tabbox.tag' ],
+      js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
       body: [ 'header.tag', 'about.tag', 'footer.tag' ]
     },
     '/blogs': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'icon.tag', 'tags.tag' ],
+      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'blogs.tag', 'footer.tag' ]
     },
     '/text': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
-      body: [
-        'header.tag',
-        'text.tag',
-        'footer.tag'
-      ]
+      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
+      body: [ 'header.tag', 'text.tag', 'footer.tag' ]
     },
     '/image': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'image-page.tag', 'footer.tag' ]
     },
     '/images': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'icon.tag', 'late-img.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [
+        '/resource/api2.min.js',
+        '/resource/icon.tag',
+        '/resource/late-img.tag',
+        '/resource/sharebox.tag',
+        '/resource/tags.tag' ],
       body: [ 'header.tag', 'images-page.tag', 'footer.tag' ]
     },
     '/zft': {
       ...DftPgRt,
-      js: [ 'api2.min.js', 'icon.tag', 'sharebox.tag', 'tags.tag' ],
+      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'zft-page.tag', 'footer.tag' ]
     },
     '/messages': {
       ...DftPgRt,
-      js: [ 'api2.min.js' ],
       body: [ 'header.tag', 'messages.tag', 'footer.tag' ]
     },
     '/zone': {
       ...DftPgRt,
-      css: [ 'base.css', 'style1.css' ],
+      css: [ '/resource/base.css', '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
@@ -98,60 +101,46 @@ module.exports = {
     { // SEO files.
       path: /\/(favicon\.ico|robots\.txt)/,
       type: 'resource',
-      mimeType: 'image/x-icon',
       location: '../WEB/www'
     },
     { // Riot component tag.
       path: /(login|about|header|footer|late-img|messages|admin)\.tag$/,
       type: 'resource',
-      mimeType: 'text/plain',
       location: './component'
     },
     { // Riot page tag.
       path: /(blogs|text|image-page|images-page|zft-page|p500|p404)\.tag$/,
       type: 'resource',
-      mimeType: 'text/plain',
       location: './page'
     },
-    { // CSS resource.
-      path: /\.css$/,
+    { // resource: Js, CSS, old Riot tag.
+      path: /\.(css|js|tag)$/,
       type: 'resource',
-      mimeType: 'text/css',
-      location: '../WEB/www/resource'
-    },
-    { // Js resource.
-      path: /\.js$/,
-      type: 'resource',
-      mimeType: 'application/javascript',
-      location: '../WEB/www/resource'
-    },
-    { // old Riot tag.
-      path: /\.tag$/,
-      type: 'resource',
-      mimeType: 'text/plain',
-      location: '../WEB/www/resource'
+      location: STTC_PTH
     },
     {
       path: /^\/feed.xml$/,
       type: 'resource',
-      mimeType: 'application/xml',
       location: '../DAT'
     },
-
-    // ==== dynamic image resource. ====
-
-    {
-      path: /^\/resource\/image\/.+/,
-      type: 'process',
-      process: Img.CachedFileRespond
+    { // SSL For Free.
+      path: /^\/\.well-known\/acme-challenge/,
+      type: 'resource',
+      location: STTC_PTH
     },
 
-    // ==== static image resource. ====
+    // ====
 
-    {
+    { // dynamic image resource.
+      path: /^\/resource\/image\/.+/,
+      type: 'resource',
+      location: path.resolve(__dirname, '..', Cnst.CCH_PTH),
+      nameOnly: true
+    },
+    { // static image resource.
       path: /^\/image\/.+/,
-      type: 'process',
-      process: Img.StaticFileRespond
+      type: 'resource',
+      location: STTC_PTH
     },
 
     // ==== service ====

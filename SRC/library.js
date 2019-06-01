@@ -8,7 +8,6 @@ const async = require('async'),
 
 const Cch = require('./RZ-Nd-Cache'),
       Cnst = require('./constant.json'),
-      Img = require('./image'),
       Is = require('./RZ-Js-Is'),
       Kwd = require('./keyword.json'),
       SQLite = require('./RZ-Nd-SQLite');

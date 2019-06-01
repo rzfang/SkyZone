@@ -1,4 +1,5 @@
 const async = require('async'),
+      fs = require('fs'),
       http = require('http'),
       path = require('path'),
       querystring = require('querystring'),
@@ -6,9 +7,21 @@ const async = require('async'),
       url = require('url');
 
 const Cch = require('./RZ-Nd-Cache'),
-      Img = require('./image.js'),
       Is = require('./RZ-Js-Is'),
       Log = require('./RZ-Js-Log');
+
+const MM_TP = {
+  '.bmp': 'image/x-windows-bmp',
+  '.css': 'text/css',
+  '.gif': 'image/gif',
+  '.ico': 'image/x-icon',
+  '.jpg': 'image/jpeg',
+  '.js':  'application/javascript',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.tag': 'text/plain',
+  '.txt': 'text/plain',
+  '.xml': 'application/xml' }; // mime type map.
 
 const { port: Pt = 9004,
         keyword: Kwd = {},
@@ -19,46 +32,58 @@ const { port: Pt = 9004,
 
 let IdCnt = 0; // id count, for giving a unique id for each request.
 
-/*
+/* HTTP file respond. this should be the end action of a request.
   @ request object.
   @ response object.
-  @ file path.
-  @ mine type. */
-function StaticFileRespond (Rqst, Rspns, FlPth, MmTp = '') {
-  if (Rqst.headers['if-modified-since'] && Cch.IsFileCached(FlPth)) {
-    Rspns.writeHead(
-      304,
-      { 'Content-Type': MmTp,
-        'Cache-Control': 'public, max-age=3600', // 1 hour.
-        'Last-Modified': Rqst.headers['if-modified-since'] });
-    Rspns.write('\n');
-    Rspns.end();
-
-    return;
-  }
-
-  if (path.extname(FlPth) === '.ico') {
-    return Img.FileLoad(Rqst, Rspns, FlPth);
-  }
-
-  Cch.FileLoad(
+  @ file path. default 1 hour (3600 seconds).
+  @ expired second. */
+function FileRespond (Rqst, Rspns, FlPth, ExprScd = 3600) {
+  fs.stat(
     FlPth,
-    (Err, Str, Dt) => {
-      if (Err < 0) {
-        Rspns.writeHead(404, { 'Content-Type': MmTp });
-        Rspns.write('can not found the content.');
-        Log(`FileLoad(${Err}) - can not load file. ${FlPth}`, 'error');
-      }
-      else {
+    (Err, St) => {
+      const MmTp = MM_TP[path.extname(FlPth)] || 'text/plain';
+
+      if (Err) {
         Rspns.writeHead(
-          200,
+          404,
           { 'Content-Type': MmTp,
-            'Cache-Control': 'public, max-age=3600', // 1 hour.
-            'Last-Modified': (new Date(Dt)).toUTCString() });
-        Rspns.write(Str);
+            'Content-Length': 0 });
+        Rspns.write('');
+        Rspns.end();
+
+        return;
       }
 
-      Rspns.end();
+      const Expr = ExprScd.toString(), // expire seconds string.
+            Mms = St.mtimeMs || (new Date(St.mtime)).getTime(), // mtime milisecond.
+            IfMdfSnc = Rqst.headers['if-modified-since']; // if-modified-since.
+
+      if (IfMdfSnc && IfMdfSnc !== 'Invalid Date') {
+        const ChkdMs = (new Date(IfMdfSnc)).getTime(); // checked milisecond.
+
+        if (Mms < ChkdMs) {
+          Rspns.writeHead(
+            304,
+            { 'Content-Type': MmTp,
+              'Cache-Control': 'public, max-age=' + Expr,
+              'Last-Modified': IfMdfSnc });
+
+          Rspns.write('\n');
+          Rspns.end();
+
+          return;
+        }
+      }
+
+      const RdStrm = fs.createReadStream(FlPth); // ready stream.
+
+      Rspns.writeHead(
+        200,
+        { 'Content-Type': MmTp,
+          'Cache-Control': 'public, max-age=' + Expr,
+          'Last-Modified': (new Date(Mms + 1000)).toUTCString() });
+
+      RdStrm.pipe(Rspns);
     });
 }
 
@@ -193,12 +218,13 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
 
       if (PgInfo.js && PgInfo.js.length) {
         for (let i = 0; i < PgInfo.js.length; i++) {
-          const { base: Bs, ext: Ext } = path.parse(PgInfo.js[i]); // extension name.
+          const Pth = PgInfo.js[i],
+                { ext: Ext } = path.parse(Pth);
           let Scrpts = ''; // scripts.
 
           Scrpts += (Ext === '.tag') ?
-            `<script type='riot/tag' src='${Bs}'></script>\n` :
-            `<script language='javascript' src='${PgInfo.js[i]}'></script>\n`;
+            `<script type='riot/tag' src='${Pth}'></script>\n` :
+            `<script language='javascript' src='${Pth}'></script>\n`;
 
           LdScrpts = Scrpts + LdScrpts;
         }
@@ -327,8 +353,7 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
 }
 
 function Route (Rqst, Rspns) {
-  let UrlInfo = url.parse(Rqst.url),
-      PstBdy = ''; // post body.
+  let PstBdy = ''; // post body.
 
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
@@ -345,11 +370,14 @@ function Route (Rqst, Rspns) {
   Rqst.on(
     'end',
     () => {
+      const UrlInfo = url.parse(Rqst.url),
+            { pathname: PthNm } = UrlInfo,
+            PthInfo = path.parse(PthNm);
+
       for (let i = 0; i < RtLth; i++) {
         const RtCs = Rt[i], // route case.
               {
                 location: Lctn = '',
-                mimeType: MmTp = '',
                 path: Pth = '',
                 process: Prcs = null,
                 type: Tp = '' } = RtCs;
@@ -360,26 +388,27 @@ function Route (Rqst, Rspns) {
           continue;
         }
 
-        if (!Pth.test(UrlInfo.pathname)) { continue; }
+        if (!Pth.test(PthNm)) { continue; }
+
+        let FlPth;
 
         switch (Tp) {
           case 'resource': // static file response.
-            if (!Lctn || !MmTp) {
-              Log(
-                'the resource type route case ' + path.basename(UrlInfo.pathname) +
-                ' misses the location or mime type.',
-                'warn');
+            if (!Lctn) {
+              Log('the resource type route case ' + PthInfo.base + ' misses the location or mime type.', 'warn');
 
               continue;
             }
 
-            return StaticFileRespond(Rqst, Rspns, path.resolve(__dirname, Lctn, path.basename(UrlInfo.pathname)), MmTp);
+            FlPth = decodeURI(PthNm.charAt(0) === '/' ? PthNm.substr(1) : PthNm);
+            FlPth = path.resolve(__dirname, Lctn, RtCs.nameOnly ? path.basename(FlPth) : FlPth);
+
+            return FileRespond(Rqst, Rspns, FlPth);
 
           case 'process': // process response.
           case 'service': // service response.
             if (!Is.Function(Prcs)) {
-              Log('the process/service type route case ' + path.basename(UrlInfo.pathname) + 'misses the process.',
-                  'error');
+              Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
 
               continue;
             }
@@ -391,14 +420,6 @@ function Route (Rqst, Rspns) {
       }
 
       // ====
-
-      if (UrlInfo.pathname.indexOf('/.well-known/acme-challenge/') > -1) { // for SSL cert.
-        return StaticFileRespond(
-          Rqst,
-          Rspns,
-          'WEB/' + UrlInfo.pathname.substr(UrlInfo.pathname.lastIndexOf('/') + 1),
-          'text/plain');
-      }
 
       PageRespond(Rqst, Rspns, UrlInfo);
     });
