@@ -521,7 +521,7 @@ const Blog = {
 
     Db.Query(SQL, [ Prm.Id ])
       .then(Rst => {
-        if (!Rst || !Is.Array(Rst) || !Rst.length) { return PckEnd(-3, Kwd.RM.NoSuchData); }
+        if (!Rst || !Is.Array(Rst) || !Rst.length) { return Promise.reject({ Cd: -3, Msg: Kwd.RM.NoSuchData }); }
 
         SqlRst = Rst[0];
         SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm FROM Tag, TagLink ' +
@@ -567,7 +567,9 @@ const Blog = {
             return PckEnd(1, Kwd.RM.StepTest);
         }
       })
-      .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
+      .catch(({ Cd = -1, Msg = '' }) => {
+        PckEnd(Cd, Msg || Kwd.RM.DbCrash);
+      });
   },
   /*
     @ SQL result.

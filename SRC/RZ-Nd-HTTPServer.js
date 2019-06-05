@@ -35,8 +35,8 @@ let IdCnt = 0; // id count, for giving a unique id for each request.
 /* HTTP file respond. this should be the end action of a request.
   @ request object.
   @ response object.
-  @ file path. default 1 hour (3600 seconds).
-  @ expired second. */
+  @ file path.
+  @ expired second, default 1 hour (3600 seconds). */
 function FileRespond (Rqst, Rspns, FlPth, ExprScd = 3600) {
   fs.stat(
     FlPth,
