@@ -513,19 +513,36 @@ const Blog = {
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }); // packed end function.
-    let SQL = 'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
-              'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
-              'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
-              'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;',
-        SqlRst; // SQL result.
 
-    Db.Query(SQL, [ Prm.Id ])
+    let SqlRst; // SQL result.
+
+    (new Promise((Resolve, Reject) => {
+      if (!Prm.Rdm) { return Resolve(); }
+
+      Db.RandomGet('Blog')
+        .then(Rst => {
+          if (!Rst || !Rst.id) { return Reject({ Cd: -3, Msg: Kwd.RM.NoSuchData + ' can not get a random blog.' }); }
+
+          Prm.Id = Rst.id;
+
+          Resolve();
+        });
+    }))
+      .then(() => {
+        const SQL = 'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
+                  'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
+                  'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
+                  'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;';
+
+        return Db.Query(SQL, [ Prm.Id ]);
+      })
       .then(Rst => {
-        if (!Rst || !Is.Array(Rst) || !Rst.length) { return Promise.reject({ Cd: -3, Msg: Kwd.RM.NoSuchData }); }
+        if (!Rst || !Is.Array(Rst) || !Rst.length) { return Promise.reject({ Cd: -4, Msg: Kwd.RM.NoSuchData }); }
+
+        const SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm FROM Tag, TagLink ' +
+              'WHERE Tag.id = TagLink.tag_id AND TagLink.link_id = ?;';
 
         SqlRst = Rst[0];
-        SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm FROM Tag, TagLink ' +
-              'WHERE Tag.id = TagLink.tag_id AND TagLink.link_id = ?;';
 
         return Db.Query(SQL, [ SqlRst.Id ]);
       })
