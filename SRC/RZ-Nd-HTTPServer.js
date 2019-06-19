@@ -1,4 +1,5 @@
 const async = require('async'),
+      busboy = require('busboy'),
       fs = require('fs'),
       http = require('http'),
       path = require('path'),
@@ -266,8 +267,8 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
   @ url info object.
   @ post body.
   @ service function. */
-function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
-  if (!Svc) {
+function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Service) {
+  if (!Service) {
     Rspns.writeHead(404, {'Content-Type': 'application/json'});
     Rspns.write('can not found the content.');
     Rspns.end();
@@ -275,43 +276,12 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
     return;
   }
 
-  // ==== parse data. ====
-
-  let PrsBd = {}; // parsed body.
-
-  if (Rqst.headers['content-type'] && Rqst.headers['content-type'].indexOf('multipart/form-data') === 0) { // parse form data format params.
-
-    const BrkStr = Bd.substr(0, Bd.indexOf('\n') - 1); // broken string.
-    let BdPrts = Bd.split(BrkStr);
-
-    BdPrts = BdPrts.slice(1, BdPrts.length - 1);
-
-    for (let i = 0; i < BdPrts.length; i++) {
-      if (!BdPrts[i]) { continue; }
-
-      const BdPrt = BdPrts[i].match(/form-data; name="([^\s]+)"\r\n\r\n([.\S\r\n]+)\r\n$/); // body part.
-
-      if (!Array.isArray(BdPrt) || BdPrt.length < 2) { continue; }
-
-      const V = BdPrt[2] || '';
-
-      if (BdPrt[1].match(/\[\]$/)) {
-        const Ky = BdPrt[1].replace(/\[\]$/, '');
-
-        if (PrsBd.hasOwnProperty(Ky)) { PrsBd[Ky].push(V); }
-        else { PrsBd[Ky] = [ V ]; }
-      }
-      else { PrsBd[BdPrt[1]] = V; }
-    }
-  }
-  else { PrsBd = querystring.parse(Bd); }
-
-  let Prm = { // params.
-      Bd: PrsBd || null,
+  const Prm = { // params.
+      Bd: Bd || null,
       Url: UrlInfo.query ? querystring.parse(UrlInfo.query) : null
     };
 
-  Svc(
+  Service(
     Rqst,
     Rspns,
     Prm,
@@ -353,78 +323,100 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Svc) {
 }
 
 function Route (Rqst, Rspns) {
-  let PstBdy = ''; // post body.
-
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
-  Rqst.on(
-    'data',
-    (Chk) => { // chunk.
-      PstBdy += Chk;
+  if (Rqst.method !== 'POST') { return Then({ Flds: null, Fls: null }); }
 
-      // if (body.length > 1e6) { // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-      //   request.connection.destroy(); // FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
-      // }
-    });
+  const BsBy = new busboy({ headers: Rqst.headers });
+  let Flds = {};
 
-  Rqst.on(
-    'end',
-    () => {
-      const UrlInfo = url.parse(Rqst.url),
-            { pathname: PthNm } = UrlInfo,
-            PthInfo = path.parse(PthNm);
+  // BsBy.on(
+  //   'file',
+  //   function (fieldname, file, filename, encoding, mimetype) {
+  //     console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+  //     file.on('data', function(data) {
+  //       console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
+  //     });
+  //     file.on('end', function() {
+  //       console.log('File [' + fieldname + '] Finished');
+  //     });
+  //   });
 
-      for (let i = 0; i < RtLth; i++) {
-        const RtCs = Rt[i], // route case.
-              {
-                location: Lctn = '',
-                path: Pth = '',
-                process: Prcs = null,
-                type: Tp = '' } = RtCs;
+  BsBy.on(
+    'field',
+    (Ky, Vl, FldnmTrnct, VlTrnct, valTruncated, Encd, Mmtp) => { // key, value, fieldnameTruncated, fieldnameTruncated, encoding, mimetype.
+      if (Ky.substr(-2) !== '[]') {
+        Flds[Ky] = Vl;
 
-        if (!Pth || !Tp) {
-          Log('the route case misses path or type.', 'error');
-
-          continue;
-        }
-
-        if (!Pth.test(PthNm)) { continue; }
-
-        let FlPth;
-
-        switch (Tp) {
-          case 'resource': // static file response.
-            if (!Lctn) {
-              Log('the resource type route case ' + PthInfo.base + ' misses the location or mime type.', 'warn');
-
-              continue;
-            }
-
-            FlPth = decodeURI(PthNm.charAt(0) === '/' ? PthNm.substr(1) : PthNm);
-            FlPth = path.resolve(__dirname, Lctn, RtCs.nameOnly ? path.basename(FlPth) : FlPth);
-
-            return FileRespond(Rqst, Rspns, FlPth);
-
-          case 'process': // process response.
-          case 'service': // service response.
-            if (!Is.Function(Prcs)) {
-              Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
-
-              continue;
-            }
-
-            return (Tp === 'process') ?
-              Prcs(Rqst, Rspns, UrlInfo) :
-              ServiceRespond(Rqst, Rspns, UrlInfo, PstBdy, Prcs);
-        }
+        return ;
       }
 
-      // ====
+      // ==== handle array type fields. ====
 
-      PageRespond(Rqst, Rspns, UrlInfo);
+      const ArrKy = Ky.substr(0, Ky.length -2); // array key.
+
+      if (!Flds.hasOwnProperty(ArrKy)) { Flds[ArrKy] = [ Vl ]; }
+      else { Flds[ArrKy].push(Vl); }
     });
+
+  BsBy.on('finish', () => { Then({ Flds, Fls: null }); });
+
+  Rqst.pipe(BsBy);
+
+  function Then ({ Flds: BdFlds, Fls }) {
+    const UrlInfo = url.parse(Rqst.url),
+          { pathname: PthNm } = UrlInfo,
+          PthInfo = path.parse(PthNm);
+
+    for (let i = 0; i < RtLth; i++) {
+      const RtCs = Rt[i], // route case.
+            {
+              location: Lctn = '',
+              path: Pth = '',
+              process: Prcs = null,
+              type: Tp = '' } = RtCs;
+
+      if (!Pth || !Tp) {
+        Log('the route case misses path or type.', 'error');
+
+        continue;
+      }
+
+      if (!Pth.test(PthNm)) { continue; }
+
+      let FlPth;
+
+      switch (Tp) {
+        case 'resource': // static file response.
+          if (!Lctn) {
+            Log('the resource type route case ' + PthInfo.base + ' misses the location or mime type.', 'warn');
+
+            continue;
+          }
+
+          FlPth = decodeURI(PthNm.charAt(0) === '/' ? PthNm.substr(1) : PthNm);
+          FlPth = path.resolve(__dirname, Lctn, RtCs.nameOnly ? path.basename(FlPth) : FlPth);
+
+          return FileRespond(Rqst, Rspns, FlPth);
+
+        case 'process': // process response.
+        case 'service': // service response.
+          if (!Is.Function(Prcs)) {
+            Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
+
+            continue;
+          }
+
+          return (Tp === 'process') ?
+            Prcs(Rqst, Rspns, UrlInfo) :
+            ServiceRespond(Rqst, Rspns, UrlInfo, BdFlds, Prcs);
+      }
+    }
+
+    PageRespond(Rqst, Rspns, UrlInfo);
+  }
 }
 
 http.createServer(Route).listen(Pt, '127.0.0.1');
 Log('server has started.');
-Cch.RecycleRoll(10);
+Cch.RecycleRoll(10); // 10 minutes a round.
