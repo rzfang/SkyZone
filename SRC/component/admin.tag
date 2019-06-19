@@ -599,10 +599,8 @@
         return -1;
       }
 
-      Data.Cmd = 105;
-
       this.ServiceCall(
-        '/service.php',
+        '/service/blog/update',
         Data,
         'BLOGS',
         (Sto, Rst) => {

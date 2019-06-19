@@ -10,6 +10,7 @@ const Cch = require('./RZ-Nd-Cache'),
       Cnst = require('./constant.json'),
       Is = require('./RZ-Js-Is'),
       Kwd = require('./keyword.json'),
+      Log = require('./RZ-Js-Log'),
       SQLite = require('./RZ-Nd-SQLite');
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
@@ -381,6 +382,60 @@ const Blog = {
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    let SQL = '',
+        Kys = [], // keys.
+        Vls = []; // values.
+
+    if (Prm.Ttl) {
+      Kys.push('title = ?');
+      Vls.push(Prm.Ttl);
+    }
+
+    if (Prm.Tp && [ 'text', 'html', 'image', 'images', 'zft' ].indexOf(Prm.Tp) > -1) {
+      Kys.push('type = ?');
+      Vls.push(Prm.Tp);
+    }
+
+    if (Prm.Dt && Is.TimeStamp(Prm.Dt)) {
+      Kys.push('datetime = ?');
+      Vls.push(Prm.Dt);
+    }
+
+    if (Prm.Pswd) {
+      Kys.push('password = ?');
+      Vls.push(Prm.Pswd);
+    }
+
+    if (Prm.Smry) {
+      Kys.push('summary = ?');
+      Vls.push(Prm.Smry);
+    }
+
+    if (!Kys.length || !Vls.length) { return PckEnd(-3, Kwd.RM.StrangeValue); }
+
+    SQL = 'UPDATE Blog SET ' + Kys.join(', ') + ' WHERE id = ?;';
+
+    Vls.push(Prm.ID);
+
+    Db.Transaction('BEGIN')
+      .then(() => Db.Query(SQL, Vls))
+      // this will always delete old and insert new TagLink record, can be improved.
+      .then(() => Db.Query('DELETE FROM TagLink WHERE link_id = ?;', [ Prm.ID ]))
+      .then(() => {
+        if (!Prm.TgIDA || !Is.Array(Prm.TgIDA)) { return Promise.resolve(); }
+
+        for (let i = 0; i < Prm.TgIDA.length; i++) {
+          Db.Query('INSERT INTO TagLink (id, tag_id, link_id) VALUES (?, ?, ?);', [ MakeId(), Prm.TgIDA[i], Prm.ID ])
+            .catch(Err => { Log(Err, 'error'); });
+        }
+      })
+      .then(() => Db.Transaction('COMMIT'))
+      .then(() => PckEnd(0, Kwd.RM.Done))
+      .catch(Err => {
+        Log(Err, 'error');
+        PckEnd(-4, Kwd.RM.DbCrash)
+      });
   },
   CommentList: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }

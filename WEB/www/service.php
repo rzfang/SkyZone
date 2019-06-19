@@ -80,7 +80,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 105:
-    echo Blog::Update($_POST);
+    echo Blog::Update($_POST); // migrated.
     break;
 
   case 106:
