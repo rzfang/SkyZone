@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 (function Z_Log_API () {
   function Log (Info, Lv = 2) {
     switch (Lv) {

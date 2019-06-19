@@ -47,6 +47,14 @@
       }
 
       return true;
+    },
+    /* test if a string is a TimeStamp (YYYY-MM-DD HH:II:SS).
+      @ time string.
+      < true | false. */
+    TimeStamp: function (TmStr) {
+      if (typeof TmStr !== 'string' || TmStr.length === 0) { return false; }
+
+      return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(TmStr);
     }
   };
 

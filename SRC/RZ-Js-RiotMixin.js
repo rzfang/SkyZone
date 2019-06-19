@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 'use strict';
 
 (function Z_RiotMixin_API () {
