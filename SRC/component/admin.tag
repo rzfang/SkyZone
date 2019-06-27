@@ -212,14 +212,14 @@
     <div style='text-align: left;'>
       注意事項：
       <ul>
-        <li>檔案最大限制 <?= ini_get('upload_max_filesize'); ?></li>
+        <li>檔案最大限制 ???</li>
         <li>若檔名一樣，會直接覆蓋。</li>
         <li>上傳過程，請不要進行其它操作或是離開本頁。</li>
       </ul>
       <span class='TextTitle'>檔案</span>
-      <input type='file' id='BlogFl'/><br/>
-      <input type='button' id='BlogUpldBtn' value='上傳'/>
-      <progress value='0' max='100'></progress><br/>
+      <input ref='Fl' type='file'/><br/>
+      <input ref='Btn' type='button' value='上傳' onclick={Upload}/>
+      <progress ref='Prgrs' value='0' max='100'></progress><br/>
     </div>
   </div>
   <style scoped>
@@ -228,6 +228,52 @@
     :scope>div>div { display: inline-block; flex-grow: 1; }
     th,td { border: 1px solid; padding: 5px; text-align: left; }
   </style>
+  <script>
+    this.mixin('Z.RM');
+
+    Upload (Evt) {
+      const { Btn, Fl, Prgrs } = this.refs; // file, progress.
+
+      if (!Fl.value) {
+        alert('尚未選擇網誌檔案。');
+
+        return -1;
+      }
+
+      const FlTp = Fl.files[0].type;
+
+      if (FlTp !== 'text/plain' && FlTp !== 'application/x-tar') {
+        alert("檔案格式不符。\n請參考左側檔案格式說明表。");
+
+        return -2;
+      }
+
+      Btn.disabled = true;
+      Fl.disabled = true;
+
+      this.AJAX({
+        URL: '/service/blog/upload',
+        Mthd: 'POST',
+        Fls: { 'Fl': Fl.files[0] },
+        Pgs: (Ldd, Ttl, Evt) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
+        Err: Sts => { alert('上載發生錯誤。'); },
+        OK: (RspnsTxt, Stts, Tgt) => { // respons text, status, target object.
+          const Data = JSON.parse(RspnsTxt);
+
+          alert(Data.Message);
+
+          if (Data.Index === 0) {
+            Fl.value = '';
+            Prgrs.value = 0;
+          }
+        },
+        End: () => {
+          Btn.disabled = false;
+          Fl.disabled = false;
+        }
+      });
+    }
+  </script>
 </blog-uploader>
 
 <feed>

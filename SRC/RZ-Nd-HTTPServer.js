@@ -21,12 +21,14 @@ const MM_TP = {
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.tag': 'text/plain',
+  '.tar': 'application/x-tar',
   '.txt': 'text/plain',
   '.xml': 'application/xml' }; // mime type map.
 
 const { port: Pt = 9004,
         keyword: Kwd = {},
         cdn: { riot: RiotUrl = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js' },
+        uploadFilePath: UpldFlPth,
         page: Pg,
         route: Rt } = require('./RZ-Nd-HTTPServer.cfg.js'),
       RtLth = Rt.length || 0; // route length.
@@ -91,7 +93,7 @@ function FileRespond (Rqst, Rspns, FlPth, ExprScd = 3600) {
 /*
   @ response object.
   @ path name. */
-function PageRespond (Rqst, Rspns, UrlInfo) {
+function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
   const PthNm = UrlInfo.pathname,
         PgInfo = Pg[PthNm] || {}; // page info object.
 
@@ -267,7 +269,7 @@ function PageRespond (Rqst, Rspns, UrlInfo) {
   @ url info object.
   @ post body.
   @ service function. */
-function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Service) {
+function ServiceRespond (Rqst, Rspns, UrlInfo, BdInfo, Service) {
   if (!Service) {
     Rspns.writeHead(404, {'Content-Type': 'application/json'});
     Rspns.write('can not found the content.');
@@ -277,7 +279,8 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Service) {
   }
 
   const Prm = { // params.
-      Bd: Bd || null,
+      Bd: BdInfo.Flds || null,
+      Fls: BdInfo.Fls || [],
       Url: UrlInfo.query ? querystring.parse(UrlInfo.query) : null
     };
 
@@ -322,25 +325,77 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, Bd, Service) {
     });
 }
 
+function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
+  const { pathname: PthNm } = UrlInfo,
+        PthInfo = path.parse(PthNm);
+
+  for (let i = 0; i < RtLth; i++) {
+    const RtCs = Rt[i], // route case.
+          {
+            location: Lctn = '',
+            path: Pth = '',
+            process: Prcs = null,
+            type: Tp = '' } = RtCs;
+
+    if (!Pth || !Tp) {
+      Log('the route case misses path or type.', 'error');
+
+      continue;
+    }
+
+    if (!Pth.test(PthNm)) { continue; }
+
+    let FlPth;
+
+    switch (Tp) {
+      case 'resource': // static file response.
+        if (!Lctn) {
+          Log('the resource type route case ' + PthInfo.base + ' misses the location or mime type.', 'warn');
+
+          continue;
+        }
+
+        FlPth = decodeURI(PthNm.charAt(0) === '/' ? PthNm.substr(1) : PthNm);
+        FlPth = path.resolve(__dirname, Lctn, RtCs.nameOnly ? path.basename(FlPth) : FlPth);
+
+        return FileRespond(Rqst, Rspns, FlPth);
+
+      case 'process': // process response.
+      case 'service': // service response.
+        if (!Is.Function(Prcs)) {
+          Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
+
+          continue;
+        }
+
+        return (Tp === 'process') ?
+          Prcs(Rqst, Rspns, UrlInfo) :
+          ServiceRespond(Rqst, Rspns, UrlInfo, BdInfo, Prcs);
+    }
+  }
+
+  PageRespond(Rqst, Rspns, UrlInfo, BdInfo);
+}
+
 function Route (Rqst, Rspns) {
+  const UrlInfo = url.parse(Rqst.url);
+
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
-  if (Rqst.method !== 'POST') { return Then({ Flds: null, Fls: null }); }
+  if (Rqst.method !== 'POST') { return RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds: null, Fls: [] }); }
 
-  const BsBy = new busboy({ headers: Rqst.headers });
-  let Flds = {};
+  const BsBy = new busboy({ headers: Rqst.headers, fileSize: 1024 * 1024 * 10, files: 100 }); // file size: 10mb.
+  let Flds = {},
+      Fls = [];
 
-  // BsBy.on(
-  //   'file',
-  //   function (fieldname, file, filename, encoding, mimetype) {
-  //     console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
-  //     file.on('data', function(data) {
-  //       console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
-  //     });
-  //     file.on('end', function() {
-  //       console.log('File [' + fieldname + '] Finished');
-  //     });
-  //   });
+  BsBy.on(
+    'file',
+    (Ky, FlStrm, FlNm, Encd, Mmtp) => { // key, file stream, file name, encoding, mine type.
+      const DstFlPth = UpldFlPth + '/' + FlNm; // destination file path.
+
+      FlStrm.pipe(fs.createWriteStream(DstFlPth));
+      FlStrm.on('end', () => Fls.push(DstFlPth));
+    });
 
   BsBy.on(
     'field',
@@ -359,62 +414,9 @@ function Route (Rqst, Rspns) {
       else { Flds[ArrKy].push(Vl); }
     });
 
-  BsBy.on('finish', () => { Then({ Flds, Fls: null }); });
-
+  BsBy.on('filesLimit', () => { Log('upload file size is out of limitation.', 'warn'); });
+  BsBy.on('finish', () => { RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds, Fls }); });
   Rqst.pipe(BsBy);
-
-  function Then ({ Flds: BdFlds, Fls }) {
-    const UrlInfo = url.parse(Rqst.url),
-          { pathname: PthNm } = UrlInfo,
-          PthInfo = path.parse(PthNm);
-
-    for (let i = 0; i < RtLth; i++) {
-      const RtCs = Rt[i], // route case.
-            {
-              location: Lctn = '',
-              path: Pth = '',
-              process: Prcs = null,
-              type: Tp = '' } = RtCs;
-
-      if (!Pth || !Tp) {
-        Log('the route case misses path or type.', 'error');
-
-        continue;
-      }
-
-      if (!Pth.test(PthNm)) { continue; }
-
-      let FlPth;
-
-      switch (Tp) {
-        case 'resource': // static file response.
-          if (!Lctn) {
-            Log('the resource type route case ' + PthInfo.base + ' misses the location or mime type.', 'warn');
-
-            continue;
-          }
-
-          FlPth = decodeURI(PthNm.charAt(0) === '/' ? PthNm.substr(1) : PthNm);
-          FlPth = path.resolve(__dirname, Lctn, RtCs.nameOnly ? path.basename(FlPth) : FlPth);
-
-          return FileRespond(Rqst, Rspns, FlPth);
-
-        case 'process': // process response.
-        case 'service': // service response.
-          if (!Is.Function(Prcs)) {
-            Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
-
-            continue;
-          }
-
-          return (Tp === 'process') ?
-            Prcs(Rqst, Rspns, UrlInfo) :
-            ServiceRespond(Rqst, Rspns, UrlInfo, BdFlds, Prcs);
-      }
-    }
-
-    PageRespond(Rqst, Rspns, UrlInfo);
-  }
 }
 
 http.createServer(Route).listen(Pt, '127.0.0.1');

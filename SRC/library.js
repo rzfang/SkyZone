@@ -437,6 +437,20 @@ const Blog = {
         PckEnd(-4, Kwd.RM.DbCrash)
       });
   },
+  Upload: (Rqst, Rspns, Prm, Fls, End) => {
+    if (!Fls || Fls.length === 0) { return End(-1, Kwd.RM.StrangeValue); }
+
+    const PthInfo = path.parse(Fls[0]);
+
+    if (!PthInfo || (PthInfo.ext !== '.tar' && PthInfo.ext !== '.txt')) {
+      return End(-2, Kwd.RM.StrangeValue);
+    }
+
+    fs.rename(
+      Fls[0],
+      BLG_PTH + '/' + PthInfo.base,
+      () => { End(0, Kwd.RM.Done); });
+  },
   CommentList: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 

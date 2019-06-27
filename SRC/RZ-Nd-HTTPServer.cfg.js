@@ -7,7 +7,9 @@ const Cnst = require('./constant.json'),
 const AdminPage = require('./page/admin');
 
 const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js',
-      STTC_PTH = path.resolve(__dirname, '..', Cnst.STTC_PTH);
+      CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH),
+      STTC_PTH = path.resolve(__dirname, '..', Cnst.STTC_PTH),
+      TMP_PTH = path.resolve(__dirname, '..', Cnst.TMP_PTH);
 
 const DftPgRt = { // here should handle 404.
   title: '空域',
@@ -27,6 +29,7 @@ module.exports = {
   cdn: {
     riot: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js'
   },
+  uploadFilePath: TMP_PTH,
   page: {
     '/admin': {
       ...DftPgRt,
@@ -134,7 +137,7 @@ module.exports = {
     { // dynamic image resource.
       path: /^\/resource\/image\/.+/,
       type: 'resource',
-      location: path.resolve(__dirname, '..', Cnst.CCH_PTH),
+      location: CCH_PTH,
       nameOnly: true
     },
     { // static image resource.
@@ -164,6 +167,11 @@ module.exports = {
       path: /^\/service\/blog\/update/,
       type: 'service',
       process: Svc.BlogUpdate
+    },
+    { // blog upload service.
+      path: /^\/service\/blog\/upload/,
+      type: 'service',
+      process: Svc.BlogUpload
     },
     { // blog service.
       path: /^\/service\/blog/,

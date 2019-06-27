@@ -50,6 +50,12 @@ module.exports = {
 
     return Blog.Update(Rqst, Rspns, MxPrm, PckEnd);
   },
+  BlogUpload: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Blog.Upload(Rqst, Rspns, MxPrm, Prm.Fls, PckEnd);
+  },
   TagList: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.

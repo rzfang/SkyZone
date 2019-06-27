@@ -128,7 +128,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 117:
-    echo Blog::FileUpload($_POST, $_FILES);
+    echo Blog::FileUpload($_POST, $_FILES); // migrate.
     break;
 
   case 118:
