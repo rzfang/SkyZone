@@ -16,7 +16,7 @@
     let DftInfo = {
           URL: '',
           Data: {},
-          Files: {},
+          Fls: {}, // files.
           Err: function (Sts) {}, // Error callback function. optional. 'Sts' = HTTP Status code.
           OK: function (RpsTxt, Sts) {}}, // OK callback function. optional. 'RpsTxt' = Response Text, 'Sts' = HTTP Status code.
         FmDt, // 'FmDt' = Form Data.
@@ -38,23 +38,25 @@
     XHR = new XMLHttpRequest();
     Kys = Object.keys(Info.Data);
 
-    for (i = 0; i < Kys.length; i++) {
-      let Tp = typeof Info.Data[Kys[i]];
+    if (typeof Info.Data === 'object' && Info.Data !== null && Kys.length > 0) {
+      for (i = 0; i < Kys.length; i++) {
+        let Tp = typeof Info.Data[Kys[i]];
 
-      if (Array.isArray(Info.Data[Kys[i]])) { // array type data handle.
-        let Ky = Kys[i] + '[]',
-            Vl = Info.Data[Kys[i]],
-            Lth = Vl.length;
+        if (Array.isArray(Info.Data[Kys[i]])) { // array type data handle.
+          const Ky = Kys[i] + '[]',
+                Vl = Info.Data[Kys[i]],
+                Lth = Vl.length;
 
-        for (let j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
+          for (let j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
+        }
+        else if (Tp === 'string' || Tp === 'number') { FmDt.append(Kys[i], Info.Data[Kys[i]]); }
       }
-      else if (Tp === 'string' || Tp === 'number') { FmDt.append(Kys[i], Info.Data[Kys[i]]); }
     }
 
-    if (typeof Info.File === 'object' && Info.File !== null) {
-      Kys = Object.keys(Info.File);
+    if (typeof Info.Fls === 'object' && Info.Fls !== null) {
+      Kys = Object.keys(Info.Fls);
 
-      for (i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.File[Kys[i]]); }
+      for (i = 0; i < Kys.length; i++) { FmDt.append(Kys[i], Info.Fls[Kys[i]]); }
     }
 
     XHR.timeout = 5000;
