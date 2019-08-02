@@ -166,6 +166,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 }
 
 const Blog = {
+  Tp: [ 'text', 'html', 'image', 'images', 'zft' ],
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
@@ -392,7 +393,7 @@ const Blog = {
       Vls.push(Prm.Ttl);
     }
 
-    if (Prm.Tp && [ 'text', 'html', 'image', 'images', 'zft' ].indexOf(Prm.Tp) > -1) {
+    if (Prm.Tp && Blog.Tp.indexOf(Prm.Tp) > -1) {
       Kys.push('type = ?');
       Vls.push(Prm.Tp);
     }
@@ -425,31 +426,90 @@ const Blog = {
       .then(() => {
         if (!Prm.TgIDA || !Is.Array(Prm.TgIDA)) { return Promise.resolve(); }
 
+        Kys = [];
+        Vls = [];
+
         for (let i = 0; i < Prm.TgIDA.length; i++) {
-          Db.Query('INSERT INTO TagLink (id, tag_id, link_id) VALUES (?, ?, ?);', [ MakeId(), Prm.TgIDA[i], Prm.ID ])
-            .catch(Err => { Log(Err, 'error'); });
+          Kys.push('(?, ?, ?)');
+          Vls.push(MakeId());
+          Vls.push(Prm.TgIDA[i]);
+          Vls.push(Prm.ID);
         }
+
+        SQL = 'INSERT INTO TagLink (id, tag_id, link_id) VALUES ' + Kys.join(', ') + ';';
+
+        return Db.Query(SQL, Vls);
       })
       .then(() => Db.Transaction('COMMIT'))
       .then(() => PckEnd(0, Kwd.RM.Done))
       .catch(Err => {
         Log(Err, 'error');
-        PckEnd(-4, Kwd.RM.DbCrash)
+        PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
   Upload: (Rqst, Rspns, Prm, Fls, End) => {
-    if (!Fls || Fls.length === 0) { return End(-1, Kwd.RM.StrangeValue); }
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    if (!Fls || Fls.length === 0) { return End(-2, Kwd.RM.StrangeValue); }
 
     const PthInfo = path.parse(Fls[0]);
 
     if (!PthInfo || (PthInfo.ext !== '.tar' && PthInfo.ext !== '.txt')) {
-      return End(-2, Kwd.RM.StrangeValue);
+      return End(-3, Kwd.RM.StrangeValue);
     }
 
     fs.rename(
       Fls[0],
       BLG_PTH + '/' + PthInfo.base,
       () => { End(0, Kwd.RM.Done); });
+  },
+  /* create blog with existing file. */
+  Create: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    if (!Prm || !Prm.Fl || !Is.String(Prm.Fl) || !Prm.Ttl || !Is.String(Prm.Ttl) || !Prm.Dt || !Is.TimeStamp(Prm.Dt) ||
+        !Prm.Tp || Blog.Tp.indexOf(Prm.Tp) < 0) {
+      return End(-2, Kwd.RM.StrangeValue);
+    }
+
+    if (!Prm.Pswd || !Is.String(Prm.Pswd)) { Prm.Pswd = ''; }
+
+    if (!Prm.Smry || !Is.String(Prm.Smry)) { Prm.Smry = ''; }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
+    const BlgId = MakeId();
+
+    let SQL = 'INSERT INTO Blog (id, title, file, type, datetime, password, summary) VALUES (?, ?, ?, ?, ?, ?, ?);';
+
+    Db.Transaction('BEGIN')
+      .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Tp, Prm.Dt, Prm.Pswd, Prm.Smry ]))
+      .then(() => {
+        if (!Prm.TgIDA || !Is.Array(Prm.TgIDA)) { return Promise.resolve(); }
+
+        let Kys = [],
+            Vls = [];
+
+        for (let i = 0; i < Prm.TgIDA.length; i++) {
+          Kys.push('(?, ?, ?)');
+          Vls.push(MakeId());
+          Vls.push(Prm.TgIDA[i]);
+          Vls.push(BlgId);
+        }
+
+        SQL = 'INSERT INTO TagLink (id, tag_id, link_id) VALUES ' + Kys.join(', ') + ';';
+
+        return Db.Query(SQL, Vls);
+      })
+      .then(() => Db.Transaction('COMMIT'))
+      .then(() => PckEnd(0, Kwd.RM.Done))
+      .catch(Err => {
+        Log(Err, 'error');
+        PckEnd(-4, Kwd.RM.DbCrash);
+      });
   },
   CommentList: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }

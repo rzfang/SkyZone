@@ -173,6 +173,11 @@ module.exports = {
       type: 'service',
       process: Svc.BlogUpload
     },
+    { // blog upload service.
+      path: /^\/service\/blog\/create/,
+      type: 'service',
+      process: Svc.BlogCreate
+    },
     { // blog service.
       path: /^\/service\/blog/,
       type: 'service',

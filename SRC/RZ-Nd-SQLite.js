@@ -41,7 +41,7 @@ module.exports = class SQLite {
         SQL,
         Prms,
         (Err, Rst) => {
-          if (Err) { return Resolve([], Err); }
+          if (Err) { return Reject(Err); }
 
           Resolve(Rst || []);
         });

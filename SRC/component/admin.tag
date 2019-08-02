@@ -451,7 +451,7 @@
             <td>{Itm.ID}</td>
             <td>日期</td>
             <td>
-              <input placeholder='請輸入日期。' type='text' pattern='\d\{4\}-\d\{2\}-\d\{2\} \d\{2\}:\d\{2\}:\d\{2\}' value={Itm.Dt}>
+              <input placeholder='請輸入日期。' type='text' pattern='\d\{4\}-\d\{2\}-\d\{2\} \d\{2\}:\d\{2\}:\d\{2\}' value={Itm.Dt}/>
             </td>
           </tr>
           <tr>
@@ -709,7 +709,7 @@
       Data.Cmd = 104;
 
       this.ServiceCall(
-        '/service.php',
+        '/service/blog/create',
         Data,
         'BLOGS',
         (Sto, Rst) => {
