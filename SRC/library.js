@@ -511,6 +511,29 @@ const Blog = {
         PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
+  Delete: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    if (!Prm || !Prm.ID || !Is.String(Prm.ID)) {
+      return End(-2, Kwd.RM.StrangeValue);
+    }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    Db.Transaction('BEGIN')
+      .then(() => Db.Query('DELETE FROM Blog WHERE id = ?;', [ Prm.ID ]))
+      .then(() => Db.Query('DELETE FROM TagLink WHERE link_id = ?;', [ Prm.ID ]))
+      .then(() => Db.Transaction('COMMIT'))
+      .then(() => PckEnd(0, Kwd.RM.Done))
+      .catch(Err => {
+        Log(Err, 'error');
+        PckEnd(-4, Kwd.RM.DbCrash);
+      });
+  },
   CommentList: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 

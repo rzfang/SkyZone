@@ -706,8 +706,6 @@
         return -1;
       }
 
-      Data.Cmd = 104;
-
       this.ServiceCall(
         '/service/blog/create',
         Data,
@@ -748,8 +746,8 @@
       if (Blg.ID.length < 13) { return alert('找不到正確的 Blog ID。'); }
 
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 110, ID: Blg.ID },
+        '/service/blog/delete',
+        { ID: Blg.ID },
         'BLOGS',
         (Sto, Rst) => {
           alert(Rst.Message);
