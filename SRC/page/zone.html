@@ -1558,10 +1558,11 @@
       let This = $(this),
           TgtID = This.closest('.Frm').attr('id').replace(/^Msg_|^MsgLvFrm/, '');
 
-      let SndData = {'Cmd': 4,
-                     'Nm': This.prevAll('input:text.Nm:first').val().trim(),
-                     'Ml': This.prevAll('input:text.Ml:first').val().trim(),
-                     'Msg': This.prevAll('textarea.Msg:first').val().trim()};
+      let SndData = {
+            Nm: This.prevAll('input:text.Nm:first').val().trim(),
+            Ml: This.prevAll('input:text.Ml:first').val().trim(),
+            Msg: This.prevAll('textarea.Msg:first').val().trim()
+          };
 
       let RmbMe = This.prev('label').children('input:checkbox').prop('checked'),
           ChkStr = '';
@@ -1595,7 +1596,7 @@
         type: 'POST',
         dataType: 'json',
         timeout : 20000,
-        url: 'service.php',
+        url: '/service/message/leave',
         data: SndData,
         beforeSend: function (JQXHR, Set) { This.get(0).Lock(); },
         error : function (JQXHR, TxtSt, ErrThr) { alert('出錯了!!!'); },
@@ -1615,82 +1616,6 @@
           $('#RldMsgLstBtn').click();
           FrameHide($('#MsgLvFrm'));
         }});
-    }
-  }
-
-  /*
-    Notice: this is a base frame. */
-  function TutorialListFrame (Ttl) {
-    let ID = 'TtlLstFrm',
-        Frm = $('#' + ID);
-
-    if (Frm.length > 0) {
-      FrameShow(Frm);
-
-      return 0;
-    }
-
-    Frm = Frame('#Main', 240, 240, TutorialListSet, 'Frm', Ttl, true);
-
-    Frm.attr({'id': ID})
-       .get(0).ActionExtend('CloseButtonClick', function (FrmDOM) { FrameHide(Frm); });
-
-    FrameShow(Frm, BaseFrameXGet(Frm));
-
-    return 0;
-
-    function TutorialListSet () {
-      let Bx = $('<div/>');
-
-      ItemList(Bx, 'service.php', -1, {'Cmd': 10}, OneItem, true);
-      Bx.on('click', '> div', OneTextReadFrameSet);
-
-      return Bx;
-
-      function OneItem (Data, Idx) {
-        let Itm = $('<div/>');
-
-        Itm.addClass('OneItm OneTtrl')
-           .data('URL', 'text_read.php?Fl=' + encodeURIComponent(Data))
-           .attr('name', 'Tutorial_' + Idx.toString())
-           .text(Data);
-
-        return Itm;
-      }
-
-      function OneTextReadFrameSet (Evt) {
-        let This = $(Evt.currentTarget),
-            Ttl = This.text(),
-            URL = This.data('URL'),
-            Sz = [640, 480],
-            ID = This.attr('name'),
-            Frm = $('#' + ID);
-
-        if (Frm.length === 0) {
-          Frm = Frame('#Main', Sz[0], Sz[1], TextReadFrameSet, 'Frm', Ttl, true);
-
-          Frm.get(0).ActionExtend('SizeChange', TextReadFrameResize);
-        }
-
-        FrameShow(Frm, BaseFrameXGet(Frm));
-
-        return;
-
-        function TextReadFrameSet () {
-          let Bx = $('<iframe/>');
-
-          Bx.attr('src', URL)
-            .css({'width': Sz[0], 'height': Sz[1] - 1, 'border': '0px'});
-
-          return Bx;
-        }
-
-        function TextReadFrameResize (FrmDOM) {
-          let SzBx = Frm.children('div:eq(1)');
-
-          Frm.find('iframe:first').css({'width': SzBx.width(), 'height': SzBx.height() - 1});
-        }
-      }
     }
   }
 
@@ -1925,7 +1850,6 @@
       <button class='Btn0' title='關於' onclick='AboutFrame("關於");'>關於</button>
       <button class='Btn0' title='網誌' onclick='BlogListFrame("網誌列表");'>網誌</button>
       <button class='Btn0' title='留言板' onclick='MessageListFrame("留言列表");'>留言板</button>
-      <button class='Btn0' title='技術筆記' onclick='TutorialListFrame("技術筆記列表");'>技術筆記</button>
       <button class='Btn0' title='內嵌網頁' onclick='CustomFrame("輸入網址");'>內嵌網頁</button>
       <a href='/feed.xml'><button class='Btn0' title='訂閱'>訂閱</button></a>
       <a href='/'><button class='Btn0' title='回入口'>回入口</button></a>
