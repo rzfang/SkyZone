@@ -514,7 +514,7 @@ const Blog = {
   Delete: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm || !Prm.ID || !Is.String(Prm.ID)) {
+    if (!Prm || !Prm.ID || !Is.UUID(Prm.ID)) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
@@ -596,6 +596,26 @@ const Blog = {
       .then((a, b, c) => { PckEnd(0, Kwd.RM.Done); })
       .catch(Cd => { PckEnd(-4, Kwd.RM.DbCrash, Cd); });
   },
+  CommentDelete: (Rqst, Rspns, Prm, End) => {
+    if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
+
+    if (!Prm || !Prm.ID || !Is.UUID(Prm.ID)) {
+      return End(-2, Kwd.RM.StrangeValue);
+    }
+
+    const Db = new SQLite(DB_PTH);
+
+    if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
+
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
+
+    Db.Query('DELETE FROM BlogComment WHERE id = ?;', [ Prm.ID ])
+      .then(() => PckEnd(0, Kwd.RM.Done))
+      .catch(Err => {
+        Log(Err, 'error');
+        PckEnd(-4, Kwd.RM.DbCrash);
+      });
+  },
   FeedPublish: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
@@ -669,7 +689,7 @@ const Blog = {
     let SqlRst; // SQL result.
 
     (new Promise((Resolve, Reject) => {
-      if (!Prm.Rdm) { return Resolve(); }
+      if (!Prm.Rdm || Prm.Rdm === '0') { return Resolve(); }
 
       Db.RandomGet('Blog')
         .then(Rst => {

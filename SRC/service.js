@@ -68,6 +68,24 @@ module.exports = {
 
     return Blog.Delete(Rqst, Rspns, MxPrm, PckEnd);
   },
+  BlogCommentList: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Blog.CommentList(Rqst, MxPrm, PckEnd);
+  },
+  BlogCommentLeave: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Blog.CommentLeave(Rqst, MxPrm, PckEnd);
+  },
+  BlogCommentDelete: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Blog.CommentDelete(Rqst, Rspns, MxPrm, PckEnd);
+  },
   TagList: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.

@@ -183,6 +183,21 @@ module.exports = {
       type: 'service',
       process: Svc.BlogDelete
     },
+    { // blog list service.
+      path: /^\/service\/blog\/commentlist/,
+      type: 'service',
+      process: Svc.BlogCommentList
+    },
+    { // blog leave service.
+      path: /^\/service\/blog\/commentleave/,
+      type: 'service',
+      process: Svc.BlogCommentLeave
+    },
+    { // blog delete service.
+      path: /^\/service\/blog\/commentdelete/,
+      type: 'service',
+      process: Svc.BlogCommentDelete
+    },
     { // blog service.
       path: /^\/service\/blog/,
       type: 'service',

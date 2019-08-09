@@ -382,7 +382,9 @@ function Route (Rqst, Rspns) {
 
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
-  if (Rqst.method !== 'POST') { return RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds: null, Fls: [] }); }
+  if (Rqst.method !== 'POST' || !Rqst.headers['content-type']) {
+    return RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds: null, Fls: [] });
+  }
 
   const BsBy = new busboy({ headers: Rqst.headers, fileSize: 1024 * 1024 * 10, files: 100 }); // file size: 10mb.
   let Flds = {},

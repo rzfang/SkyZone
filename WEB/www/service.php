@@ -96,7 +96,7 @@ switch($_POST['Cmd']) // 0~100: for SkyZone normal; 101~200: for Admin; 201~300:
     break;
 
   case 109:
-    echo Blog::CommentDelete($_POST);
+    echo Blog::CommentDelete($_POST); // migrated.
     break;
 
   case 110:

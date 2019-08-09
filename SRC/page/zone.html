@@ -1222,7 +1222,7 @@
                  .find('input:checkbox.RmbMe').prop('checked', true);
       }
 
-      ItemList(Bx.first(), 'service.php', -1, {'Cmd': 8, 'ID': ID}, OneBlogComment, []);
+      ItemList(Bx.first(), '/service/blog/commentlist', -1, { ID: ID }, OneBlogComment, []);
 
       return Bx;
     }
@@ -1254,8 +1254,11 @@
           MlJO = InfoBx.find('input:text.Ml'),
           CmtJO = InfoBx.find('textarea:first');
 
-      let SndData = {'Cmd': 9, 'TgtID': ID, 'Nm': InfoBx.find('input:text.Nm').val().trim(),
-                     'Ml': MlJO.val().trim(), 'Cmt': CmtJO.val().trim()};
+      let SndData = {
+            TgtID: ID,
+            Nm: InfoBx.find('input:text.Nm').val().trim(),
+            Ml: MlJO.val().trim(),
+            Cmt: CmtJO.val().trim() };
 
       let RmbMe = InfoBx.find('input:checkbox.RmbMe').prop('checked'),
           ChkStr = '';
@@ -1299,7 +1302,7 @@
         type: 'POST',
         dataType: 'json',
         timeout : 20000,
-        url: 'service.php',
+        url: '/service/blog/commentleave',
         data: SndData,
         beforeSend: function (JQXHR, Set) { This.get(0).Lock(); },
         error : function (JQXHR, TxtSt, ErrThr) { alert('出錯了!!!'); },

@@ -801,8 +801,8 @@
 
     CommentRemove (BlgId, CmtId) {
       this.ServiceCall(
-        '/service.php',
-        { Cmd: 109, ID: CmtId },
+        '/service/blog/commentdelete',
+        { ID: CmtId },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
           alert(Rst.Message);
