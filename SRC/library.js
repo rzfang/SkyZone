@@ -871,9 +871,10 @@ const Blog = {
       'finish',
       () => {
         for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
-          let Itm = SqlRst.Info.Lst[i];
+          let Itm = SqlRst.Info.Lst[i],
+              FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
 
-          Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || '';
+          Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || SqlRst.Info.Imgs[FlbckFl] || '';
         }
 
         SqlRst.Info = SqlRst.Info.Lst;

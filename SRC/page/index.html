@@ -39,7 +39,7 @@
     let Dcm = $(document),
         Fctn = Evt => {};
 
-    if (Pg.length === 0 || Pg === 'index.php') { Fctn = ToAdminCheck; }
+    if (Pg.length === 0) { Fctn = ToAdminCheck; }
 
     Dcm.data('KyBfr', '').keyup(Fctn);
 
@@ -301,7 +301,7 @@
       <a href='https://webtool.zii.tw'>線上工具</a>
       <a href='/blogs'>空域</a>
       <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
-      <!-- <a href='zakool.zii.php'>雜酷-舊物交流網</a> -->
+      <!-- <a href='https://zakool.zii.tw'>雜酷-舊物交流網</a> -->
     </nav>
   </header>
   <div id='Main'> <!-- Main -->

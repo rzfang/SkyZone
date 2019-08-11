@@ -63,7 +63,7 @@ module.exports = {
       js: [
         '/resource/api2.min.js',
         '/resource/icon.tag',
-        '/resource/late-img.tag',
+        '/late-img.tag',
         '/resource/sharebox.tag',
         '/resource/tags.tag' ],
       body: [ 'header.tag', 'images-page.tag', 'footer.tag' ]
