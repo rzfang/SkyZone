@@ -30,7 +30,7 @@
       'before-mount',
       () => {
         this.ServiceCall(
-        '/service/tag/list',
+        { Mthd: 'GET', Url: '/service/tag' },
         {},
         'TAGS',
         (Sto, Rst) => {
@@ -109,7 +109,7 @@
       if (IsAll) { return; }
 
       this.ServiceCall(
-        '/service/blog/list',
+        { Mthd: 'GET', Url: '/service/blog/list' },
         { Lmt, Ofst, TgIDA: this.opts.tgids },
         'BLOGS',
         (Sto, Rst) => {

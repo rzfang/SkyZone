@@ -178,7 +178,9 @@ const Blog = {
 
     let TgIds = []; // tag ids.
 
-    if (Prm.TgIDA && Is.Array(Prm.TgIDA)) {
+    if (Prm.TgIDA) {
+      if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
+
       for (let i = 0; i < Prm.TgIDA.length; i++) {
         if (Is.UUID(Prm.TgIDA[i])) { TgIds.push(Prm.TgIDA[i]); }
       }
@@ -424,7 +426,9 @@ const Blog = {
       // this will always delete old and insert new TagLink record, can be improved.
       .then(() => Db.Query('DELETE FROM TagLink WHERE link_id = ?;', [ Prm.ID ]))
       .then(() => {
-        if (!Prm.TgIDA || !Is.Array(Prm.TgIDA)) { return Promise.resolve(); }
+        if (!Prm.TgIDA) { return Promise.resolve(); }
+
+        if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
         Kys = [];
         Vls = [];
@@ -488,7 +492,9 @@ const Blog = {
     Db.Transaction('BEGIN')
       .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Tp, Prm.Dt, Prm.Pswd, Prm.Smry ]))
       .then(() => {
-        if (!Prm.TgIDA || !Is.Array(Prm.TgIDA)) { return Promise.resolve(); }
+        if (!Prm.TgIDA) { return Promise.resolve(); }
+
+        if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
         let Kys = [],
             Vls = [];
@@ -548,7 +554,7 @@ const Blog = {
     if (parseInt(Prm.Cnt, 10)) {
       return Db.TableRows('BlogComment', { Fld: 'blog_id', Prms: [ Prm.ID ]})
         .then(Cnt => {
-          if (Cnt < 1) { return PckEnd(-2, Kwd.RM.NoSuchData); }
+          if (Cnt < 1) { return PckEnd(1, Kwd.RM.NoSuchData); }
 
           PckEnd(1, Kwd.RM.Done, Cnt);
         })
@@ -562,7 +568,7 @@ const Blog = {
 
     Db.Query(SQL, [ Prm.ID, Lmt, Ofst ])
       .then(Rst => {
-        if (!Rst) { return PckEnd(-4, Kwd.RM.NoSuchData); }
+        if (!Rst) { return PckEnd(2, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, Rst);
       })
@@ -1247,21 +1253,23 @@ const Wds = { // good words.
     }
 
     const SHA1 = crypto.createHmac('sha1', Wds).digest('hex');
+    let Id = '';
 
     Db.IsARowExist('GoodWords', 'sha1', SHA1)
       .then(IsExt => {
         if (IsExt) { return PckEnd(-4, Kwd.RM.DuplicateData); }
 
-        const SQL = 'INSERT INTO GoodWords (id, words, sha1, datetime) VALUES (?, ?, ?, ?);',
-              ID = MakeId();
+        const SQL = 'INSERT INTO GoodWords (id, words, sha1, datetime) VALUES (?, ?, ?, ?);';
 
-        return Db.Query(SQL, [ ID, Wds, SHA1, GetDatetime() ]);
+        Id = MakeId();
+
+        return Db.Query(SQL, [ Id, Wds, SHA1, GetDatetime() ]);
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
         if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
-        PckEnd(0, Kwd.RM.Done, DbRst);
+        PckEnd(0, Kwd.RM.Done, Id);
       });
   },
   Update: (Rqst, Rspns, Prm, End) => {
@@ -1542,7 +1550,6 @@ const Ssn = { // session.
     Hmac.update(Y + M + D);
 
     const Ssn = Hmac.digest('hex').toString(), // session value.
-          Cks = cookie.parse(Rqst.headers.cookie || ''), // cookies.
           Ck = cookie.serialize(ADMIN_SESSION_KEY, Ssn, { maxAge: ADMIN_SESSION_EXPIRE, path: '/' }); // cookie.
 
     Rspns.setHeader('Set-Cookie', Ck);
@@ -1550,8 +1557,12 @@ const Ssn = { // session.
 
     End(0, Kwd.RM.Done);
   },
-  LogOut (Rqst, Prm, End) {
+  LogOut (Rqst, Rspns, Prm, End) {
+    const Ck = cookie.serialize(ADMIN_SESSION_KEY, '', { maxAge: -1, path: '/' }); // cookie.
 
+    Rspns.setHeader('Set-Cookie', Ck);
+    Cch.Set(ADMIN_SESSION_KEY, '', 0); // make the cache expired.
+    End(0, Kwd.RM.Done);
   }
 };
 

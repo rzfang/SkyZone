@@ -30,6 +30,10 @@ const { port: Pt = 9004,
         cdn: { riot: RiotUrl = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js' },
         uploadFilePath: UpldFlPth,
         page: Pg,
+        service: {
+          pathPatterm: SvcPthPtrm = null,
+          case: SvcCs = {}
+        },
         route: Rt } = require('./RZ-Nd-HTTPServer.cfg.js'),
       RtLth = Rt.length || 0; // route length.
 
@@ -329,6 +333,15 @@ function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
   const { pathname: PthNm } = UrlInfo,
         PthInfo = path.parse(PthNm);
 
+  // service response.
+  if (Is.RegExp(SvcPthPtrm) && SvcPthPtrm.test(PthNm)) {
+    const Mthd = Rqst.method.toLowerCase();
+
+    if (SvcCs[PthNm] && SvcCs[PthNm][Mthd] && Is.Function(SvcCs[PthNm][Mthd])) {
+      return ServiceRespond(Rqst, Rspns, UrlInfo, BdInfo, SvcCs[PthNm][Mthd]);
+    }
+  }
+
   for (let i = 0; i < RtLth; i++) {
     const RtCs = Rt[i], // route case.
           {
@@ -361,16 +374,13 @@ function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
         return FileRespond(Rqst, Rspns, FlPth);
 
       case 'process': // process response.
-      case 'service': // service response.
         if (!Is.Function(Prcs)) {
-          Log('the process/service type route case ' + PthInfo.base + 'misses the process.', 'error');
+          Log('the process type route case ' + PthInfo.base + 'misses the process.', 'error');
 
           continue;
         }
 
-        return (Tp === 'process') ?
-          Prcs(Rqst, Rspns, UrlInfo) :
-          ServiceRespond(Rqst, Rspns, UrlInfo, BdInfo, Prcs);
+        return Prcs(Rqst, Rspns, UrlInfo);
     }
   }
 
@@ -382,7 +392,7 @@ function Route (Rqst, Rspns) {
 
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
-  if (Rqst.method !== 'POST' || !Rqst.headers['content-type']) {
+  if (!Rqst.headers['content-type']) {
     return RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds: null, Fls: [] });
   }
 

@@ -98,6 +98,76 @@ module.exports = {
       ]
     }
   },
+  service: {
+    pathPatterm: /^\/service\//,
+    case: {
+      '/service/artcorner': {
+        get: Svc.ArtCornerRandomOneGet
+      },
+      '/service/blog/list/admin': {
+        get: Svc.BlogAdminList
+      },
+      '/service/blog/list/unpublished': {
+        get: Svc.BlogUnpublishedList
+      },
+      '/service/blog/list': {
+        get: Svc.BlogList,
+      },
+      '/service/blog': {
+        delete: Svc.BlogDelete,
+        get: Svc.BlogRead,
+        patch: Svc.BlogUpdate,
+        post: Svc.BlogCreate,
+        put: Svc.BlogUpload
+      },
+      '/service/comment': {
+        delete: Svc.CommentDelete,
+        get: Svc.CommentList,
+        post: Svc.CommentLeave
+      },
+      '/service/feed': {
+        patch: Svc.FeedPublish
+      },
+      '/service/message/admin': {
+        get: Svc.MessageAdminList
+      },
+      '/service/message/chain': {
+        get: Svc.MessageChainList
+      },
+      '/service/message': {
+        delete: Svc.MessageDelete,
+        get: Svc.MessageList,
+        post: Svc.MessageLeave
+      },
+      '/service/tag': {
+        delete: Svc.TagDelete,
+        get: Svc.TagList,
+        patch: Svc.TagRename,
+        post: Svc.TagAdd
+      },
+      '/service/words/list': {
+        get: Svc.WordsList,
+      },
+      '/service/words': {
+        delete: Svc.WordsDelete,
+        get: Svc.WordsNowOneGet,
+        patch: Svc.WordsUpdate,
+        post: Svc.WordsCreate
+      },
+      '/service/session/login': {
+        post: Svc.SessionLogIn
+      },
+      '/service/session/logout': {
+        post: Svc.SessionLogOut
+      },
+      '/service/cache': {
+        delete: Svc.SystemCacheClean
+      },
+      '/service/data/size': {
+        get: Svc.SystemDataSize
+      }
+    }
+  },
   route: [
     // ==== resource ====
 
@@ -126,11 +196,6 @@ module.exports = {
       type: 'resource',
       location: '../DAT'
     },
-    { // SSL For Free.
-      path: /^\/\.well-known\/acme-challenge/,
-      type: 'resource',
-      location: STTC_PTH
-    },
 
     // ====
 
@@ -144,177 +209,6 @@ module.exports = {
       path: /^\/image\/.+/,
       type: 'resource',
       location: STTC_PTH
-    },
-
-    // ==== service ====
-
-    { // blog admin style list service.
-      path: /^\/service\/blog\/list\/admin/,
-      type: 'service',
-      process: Svc.BlogAdminList
-    },
-    { // blog unpublished list service.
-      path: /^\/service\/blog\/unpublished/,
-      type: 'service',
-      process: Svc.BlogUnpublishedList
-    },
-    { // blog list service.
-      path: /^\/service\/blog\/list/,
-      type: 'service',
-      process: Svc.BlogList
-    },
-    { // blog update service.
-      path: /^\/service\/blog\/update/,
-      type: 'service',
-      process: Svc.BlogUpdate
-    },
-    { // blog upload service.
-      path: /^\/service\/blog\/upload/,
-      type: 'service',
-      process: Svc.BlogUpload
-    },
-    { // blog create service.
-      path: /^\/service\/blog\/create/,
-      type: 'service',
-      process: Svc.BlogCreate
-    },
-    { // blog delete service.
-      path: /^\/service\/blog\/delete/,
-      type: 'service',
-      process: Svc.BlogDelete
-    },
-    { // blog list service.
-      path: /^\/service\/blog\/commentlist/,
-      type: 'service',
-      process: Svc.BlogCommentList
-    },
-    { // blog leave service.
-      path: /^\/service\/blog\/commentleave/,
-      type: 'service',
-      process: Svc.BlogCommentLeave
-    },
-    { // blog delete service.
-      path: /^\/service\/blog\/commentdelete/,
-      type: 'service',
-      process: Svc.BlogCommentDelete
-    },
-    { // blog service.
-      path: /^\/service\/blog/,
-      type: 'service',
-      process: Svc.BlogRead
-    },
-    { // comment list service.
-      path: /^\/service\/comment\/list/,
-      type: 'service',
-      process: Svc.CommentList
-    },
-    { // feed publish service.
-      path: /^\/service\/feed\/publish/,
-      type: 'service',
-      process: Svc.FeedPublish
-    },
-    { // feed publish service.
-      path: /^\/service\/feed\/publish/,
-      type: 'service',
-      process: Svc.FeedPublish
-    },
-    { // message chain list service.
-      path: /^\/service\/message\/chainlist/,
-      type: 'service',
-      process: Svc.MessageChainList
-    },
-    { // message list service.
-      path: /^\/service\/message\/list/,
-      type: 'service',
-      process: Svc.MessageList
-    },
-    {
-      path: /^\/service\/message\/leave/,
-      type: 'service',
-      process: Svc.MessageLeave
-    },
-    { // message admin list service.
-      path: /^\/service\/message\/adminlist/,
-      type: 'service',
-      process: Svc.MessageAdminList
-    },
-    { // message admin list service.
-      path: /^\/service\/message\/delete/,
-      type: 'service',
-      process: Svc.MessageDelete
-    },
-    { // session login service.
-      path: /^\/service\/session\/login/,
-      type: 'service',
-      process: Svc.SessionLogIn
-    },
-    { // session logout service.
-      path: /^\/service\/session\/logout/,
-      type: 'service',
-      process: Svc.SessionLogOut
-    },
-    { // blog tag add service.
-      path: /^\/service\/tag\/add/,
-      type: 'service',
-      process: Svc.TagAdd
-    },
-    { // blog tag list service.
-      path: /^\/service\/tag\/list/,
-      type: 'service',
-      process: Svc.TagList
-    },
-    { // blog tag rename service.
-      path: /^\/service\/tag\/rename/,
-      type: 'service',
-      process: Svc.TagRename
-    },
-    { // blog tag delete service.
-      path: /^\/service\/tag\/delete/,
-      type: 'service',
-      process: Svc.TagDelete
-    },
-    { // words now get one service.
-      path: /^\/service\/words\/nowone/,
-      type: 'service',
-      process: Svc.WordsNowOneGet
-    },
-    { // words list service.
-      path: /^\/service\/words\/list/,
-      type: 'service',
-      process: Svc.WordsList
-    },
-    { // words create service.
-      path: /^\/service\/words\/create/,
-      type: 'service',
-      process: Svc.WordsCreate
-    },
-    { // words update service.
-      path: /^\/service\/words\/update/,
-      type: 'service',
-      process: Svc.WordsUpdate
-    },
-    { // words update service.
-      path: /^\/service\/words\/delete/,
-      type: 'service',
-      process: Svc.WordsDelete
-    },
-    {
-      path: /^\/service\/artcorner\/randomone/,
-      type: 'service',
-      process: Svc.ArtCornerRandomOneGet
-    },
-    { // cache clean service.
-      path: /^\/service\/cache\/clean/,
-      type: 'service',
-      process: Svc.SystemCacheClean
-    },
-    { // data size service.
-      path: /^\/service\/data\/size/,
-      type: 'service',
-      process: Svc.SystemDataSize
     }
-
-    // ==== page ====
-
   ]
 }

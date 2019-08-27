@@ -68,23 +68,23 @@ module.exports = {
 
     return Blog.Delete(Rqst, Rspns, MxPrm, PckEnd);
   },
-  BlogCommentList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.CommentList(Rqst, MxPrm, PckEnd);
-  },
-  BlogCommentLeave: (Rqst, Rspns, Prm, End) => {
+  CommentLeave: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.
 
     return Blog.CommentLeave(Rqst, MxPrm, PckEnd);
   },
-  BlogCommentDelete: (Rqst, Rspns, Prm, End) => {
+  CommentDelete: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
           PckEnd = PackedEnd(End); // packed end callback function.
 
     return Blog.CommentDelete(Rqst, Rspns, MxPrm, PckEnd);
+  },
+  CommentList: (Rqst, Rspns, Prm, End) => {
+    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
+          PckEnd = PackedEnd(End); // packed end callback function.
+
+    return Blog.CommentList(Rqst, MxPrm, PckEnd);
   },
   TagList: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
@@ -139,12 +139,6 @@ module.exports = {
           PckEnd = PackedEnd(End); // packed end callback function.
 
     return Wds.Delete(Rqst, Rspns, MxPrm, PckEnd);
-  },
-  CommentList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.CommentList(Rqst, MxPrm, PckEnd);
   },
   FeedPublish: (Rqst, Rspns, Prm, End) => {
     const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.

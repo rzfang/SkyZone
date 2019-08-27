@@ -61,7 +61,7 @@
 
     MessagesLoad (Evt) {
       this.ServiceCall(
-        '/service/message/list',
+        { Mthd: 'GET', Url: '/service/message' },
         { Lmt: 5, Ofst: this.Lst.length },
         'MESSAGES',
         (Sto, Rst) => {
@@ -107,7 +107,7 @@
       }
 
       this.ServiceCall(
-        '/service/message/chainlist',
+        { Mthd: 'GET', Url: '/service/message/chain' },
         { ID },
         'REPLIES',
         (Sto, Rst) => {
@@ -226,7 +226,7 @@
       setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
 
       this.ServiceCall(
-        '/service/message/leave',
+        { Mthd: 'POST', Url: '/service/message' },
         { Nm, Ml, Msg, Tgt: this.opts.msgId },
         'REPLIES',
         (Sto, Rst) => {

@@ -26,8 +26,10 @@
 
     if (typeof Info.URL !== 'string' || Info.URL === '') { return null; }
 
+    const MthdMp = [ 'DELETE', 'GET', 'PATCH', 'POST', 'PUT' ];
+
     Info.Data = (typeof Info.Data === 'object' && Info.Data !== null) ? Info.Data : DftInfo.Data;
-    Info.Mthd = Info.Mthd === 'POST' ? 'POST' : 'GET'; // Method. can only be 'GET'|'POST'. optional, default 'GET'.
+    Info.Mthd = MthdMp.indexOf(Info.Mthd) > -1 ? Info.Mthd : 'GET'; // Method. can only be 'GET'|'POST'. optional, default 'GET'.
     Info.Bfr = (typeof Info.Bfr === 'function') ? Info.Bfr : function () {}; // Before callback function. optional.
     Info.Err = (typeof Info.Err === 'function') ? Info.Err : DftInfo.Err;
     Info.OK = (typeof Info.OK === 'function') ? Info.OK : DftInfo.OK;
@@ -39,17 +41,41 @@
     Kys = Object.keys(Info.Data);
 
     if (typeof Info.Data === 'object' && Info.Data !== null && Kys.length > 0) {
-      for (i = 0; i < Kys.length; i++) {
-        let Tp = typeof Info.Data[Kys[i]];
+      if (Info.Mthd !== 'GET') {
+        for (i = 0; i < Kys.length; i++) {
+          let Ky = Kys[i];
 
-        if (Array.isArray(Info.Data[Kys[i]])) { // array type data handle.
-          const Ky = Kys[i] + '[]',
-                Vl = Info.Data[Kys[i]],
-                Lth = Vl.length;
+          const Vl = Info.Data[Ky],
+                Tp = typeof Vl;
 
-          for (let j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
+          if (Array.isArray(Vl)) { // array type data handle.
+            const Lth = Vl.length;
+
+            Ky += '[]';
+
+            for (let j = 0; j < Lth; j++) { FmDt.append(Ky, Vl[j]); }
+          }
+          else if (Tp === 'string' || Tp === 'number') { FmDt.append(Ky, Vl); }
         }
-        else if (Tp === 'string' || Tp === 'number') { FmDt.append(Kys[i], Info.Data[Kys[i]]); }
+      }
+      else {
+        for (i = 0; i < Kys.length; i++) {
+          let Ky = Kys[i];
+
+          const Vl = Info.Data[Ky],
+                Tp = typeof Vl;
+
+          if (Array.isArray(Vl)) { // array type data handle.
+            const Lth = Vl.length;
+
+            for (let j = 0; j < Lth; j++) {
+              Info.URL += ((Info.URL.indexOf('?') < 0) ? '?' : '&') + `${Ky}=${Vl[j]}`;
+            }
+          }
+          else if (Tp === 'string' || Tp === 'number') {
+            Info.URL += ((Info.URL.indexOf('?') < 0) ? '?' : '&') + `${Ky}=${Vl}`;
+          }
+        }
       }
     }
 
@@ -147,25 +173,40 @@
   }
 
   /*
-    URL = URL string, the service entry point.
-    Prms = params object to call service.
-    StoNm = name to locate the store.
-    NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
+    @ Svc string, the service entry point.
+    @ params object to call service.
+    @ name to locate the store.
+    @ NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
       Sto = original store data.
       Rst = result from API.
-    PrmsToTsk = params object passing to each task. */
-  function ServiceCall (URL, Prms, StoNm, NewStoreGet, PrmsToTsk) {
-    if (!URL || typeof URL !== 'string' ||
-        !StoNm || typeof StoNm !== 'string' ||
-        !NewStoreGet || typeof NewStoreGet !== 'function')
-    { return -1; }
+    @ params object passing to each task.
+    < code of result. 0 as fine; < 0 as error. */
+  function ServiceCall (Svc, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+    const SvcTp = typeof Svc;
+    let Mthd = 'GET',
+        URL1 = '';
+
+    if (!Svc || !StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
+
+    if (SvcTp === 'object') {
+      if (!Svc.Mthd || typeof Svc.Mthd !== 'string' || !Svc.Url || typeof Svc.Url !== 'string') { return -2; }
+
+      Mthd = Svc.Mthd;
+      URL1 = Svc.Url;
+    }
+    else if (SvcTp === 'string') {
+      URL1 = Svc;
+    }
+    else {
+      return -3;
+    }
 
     AJAX({
-      URL: URL,
-      Mthd: 'POST',
+      URL: URL1,
+      Mthd,
       Data: Prms,
       Err: function (Sts) {
-        console.log('---- AJAX query fail ----\nURL: ' + URL + '\nparams:');
+        console.log('---- AJAX query fail ----\nURL: ' + URL1 + '\nparams:');
         console.log(Prms);
         console.log('----\n');
 

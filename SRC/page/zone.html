@@ -255,10 +255,10 @@
       if (Tp === 'undefined') { Pg = NwPg; }
       else if (Tp !== 'number') { return 0; }
 
-      let PstData = ObjectCombine(Data, {'Lmt': Lmt, 'Ofst': (Pg * Lmt)}); // 'PstData' = Post Data.
+      let PstData = ObjectCombine(Data, { Lmt: Lmt, Ofst: (Pg * Lmt) }); // 'PstData' = Post Data.
 
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         timeout : 20000,
         url: URL,
@@ -292,7 +292,7 @@
       let PstData = ObjectCombine(Data, {'Cnt': 1, 'Lmt': 0, 'Ofst': 0}); // 'PstData' = Post Data.
 
       $.ajax({
-          type: 'POST',
+          type: 'GET',
           dataType: 'json',
           timeout : 20000,
           url: URL,
@@ -448,10 +448,10 @@
 
     function NowWordGet () {
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         timeout : 20000,
-        url: 'service/words/nowone',
+        url: 'service/words',
         data: null,
         success: function (Data, TxtSt, JQXHR) {
           if (Data.Index < 0) { return -1; }
@@ -589,11 +589,11 @@
 
     function RandomOne () {
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         timeout : 20000,
-        url: '/service/artcorner/randomone',
-        data: { Cmd: 6 },
+        url: '/service/artcorner',
+        data: {},
         success: function (Data, TxtSt, JQXHR) {
           if (Data.Index < 0) { return -1; }
 
@@ -653,7 +653,7 @@
           BlogBx = LstBx.parent(),
           OptnBtn = BlogBx.find('> div:first > input:button');
 
-      ItemList(LstBx, '/service/blog/list', 5, {}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+      ItemList(LstBx, '/service/blog/list', 5, {}, OneBlog, [ 'LstIdxTg', 'LstIdxTgDsb' ]); // List Recent Blogs.
 
       OptnBtn.first().on('click', TagListFrame)
                      .end()
@@ -739,10 +739,10 @@
       }
 
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         timeout : 20000,
-        url: '/service/tag/list',
+        url: '/service/tag',
         data: {},
         success: function (Rtn, TxtSt, JQXHR) {
           if (Rtn.Index < 0) {
@@ -786,7 +786,7 @@
 
         $(this).closest('div').prev('div').find('input:checkbox').prop('checked', false);
 
-        ItemList('#BlogLstBx', '/service/blog/list', 5, {'TgIDA': []}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+        ItemList('#BlogLstBx', '/service/blog/list', 5, { TgIDA: [] }, OneBlog, [ LstIdxTg, LstIdxTgDsb ]); // List Recent Blogs.
         FrameHide(Frm);
       }
 
@@ -799,7 +799,7 @@
           TgIDA.push($(this).val());
         });
 
-        ItemList('#BlogLstBx', '/service/blog/list', 5, {'TgIDA': TgIDA}, OneBlog, ['LstIdxTg', 'LstIdxTgDsb']); // List Recent Blogs.
+        ItemList('#BlogLstBx', '/service/blog/list', 5, { TgIDA: TgIDA }, OneBlog, [ LstIdxTg, LstIdxTgDsb ]); // List Recent Blogs.
         FrameHide(Frm);
       }
     }
@@ -843,7 +843,7 @@
       if (typeof Pswd !== 'string')   { Pswd = ''; }
 
       $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         timeout : 20000,
         url: '/service/blog',
@@ -1047,24 +1047,24 @@
         let ImgSz = [400, 300],
             Bx = $('<div/>').addClass('Blog Imgs');
 
-        for (let i in Data.Lst) {
-          let V = Data.Lst[i],
+        for (let i in Data.Info) {
+          let V = Data.Info[i],
               One = $('<div>' + '<img/>' + '<div><span>▲</span> <span/></div>' + '</div>');
 
           One.css({'minWidth': ImgSz[0]})
              .children('img').addClass('Unload')
-                             .attr('src', V.TbnURL)
-                             .data('TglSzURL', V.ImgURL)
+                             .attr('src', V.ImgUrl)
+                             .data('TglSzURL', V.ImgUrl)
                              .css({'maxWidth': ImgSz[0], 'maxHeight': ImgSz[1]})
                              .on('click', [ImgSz[0], ImgSz[1]], ImageSizeSwitch)
                              .on('load', function () { $(this).removeClass('Unload'); })
                              .end()
              .find('> div:first > span:eq(1)').css({'maxWidth': ImgSz[0] - 10})
-                                              .html(TextToHTML(V.Str))
+                                              .html(TextToHTML(V.Cmt))
                                               .end()
              .appendTo(Bx);
 
-          if (V.Str.length === 0) { One.find('> div > span:first').text(''); }
+          if (V.Cmt.length === 0) { One.find('> div > span:first').text(''); }
         }
 
         let Frm = Frame('#Main', 500 + 15, 400, function () { return Bx; }, 'Frm', Data.Ttl, true);
@@ -1222,7 +1222,7 @@
                  .find('input:checkbox.RmbMe').prop('checked', true);
       }
 
-      ItemList(Bx.first(), '/service/blog/commentlist', -1, { ID: ID }, OneBlogComment, []);
+      ItemList(Bx.first(), '/service/comment', -1, { ID: ID }, OneBlogComment, []);
 
       return Bx;
     }
@@ -1302,7 +1302,7 @@
         type: 'POST',
         dataType: 'json',
         timeout : 20000,
-        url: '/service/blog/commentleave',
+        url: '/service/comment',
         data: SndData,
         beforeSend: function (JQXHR, Set) { This.get(0).Lock(); },
         error : function (JQXHR, TxtSt, ErrThr) { alert('出錯了!!!'); },
@@ -1372,7 +1372,7 @@
     return 0;
 
     function MessageListFrameSet () {
-      ItemList(LstBx, '/service/message/list', 5, null, OneMessage, ['LstIdxTg', 'LstIdxTgDsb']);
+      ItemList(LstBx, '/service/message', 5, null, OneMessage, [ 'LstIdxTg', 'LstIdxTgDsb' ]);
 
       $('#NewMsgBtn').on('click', MessageLeaveFrame);
       $('#RldMsgLstBtn').on('click', MessageListReflash);
@@ -1394,8 +1394,8 @@
                                  .last(); // 'ChnBtn' = Chain Button.
 
       if (!isNaN(Data.ChnCnt) && Data.ChnCnt > 0) {
-        ChnBtn.val(Data.ChnCnt)
-              .show();
+        ChnBtn.val(Data.ChnCnt);
+        setTimeout(() => { ChnBtn.show(); }, 10); // workaround.
       }
       else {
         ChnBtn.val(ChnBtn.attr('title'));
@@ -1504,7 +1504,7 @@
                                                            .css({'padding': 5, 'borderWidth': 1, 'borderRadius': 5})
                                                            .children('input:button:last').on('click', MessageLeave);
 
-        ItemList(MsgChnBx.children('div:eq(1)'), '/service/message/chainlist', -1, {'ID': ID}, OneChain, []);
+        ItemList(MsgChnBx.children('div:eq(1)'), '/service/message/chain', -1, { ID: ID }, OneChain, []);
 
         return MsgChnBx;
       }

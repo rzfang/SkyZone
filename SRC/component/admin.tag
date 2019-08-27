@@ -60,7 +60,7 @@
       if (this.StoreGet('TAGS')) { return; }
 
       this.ServiceCall(
-        '/service/tag/list',
+        { Mthd: 'GET', Url: '/service/tag' },
         null,
         'TAGS',
         (Sto, Rst) => {
@@ -252,9 +252,9 @@
       Fl.disabled = true;
 
       this.AJAX({
-        URL: '/service/blog/upload',
-        Mthd: 'POST',
-        Fls: { 'Fl': Fl.files[0] },
+        URL: '/service/blog',
+        Mthd: 'PUT',
+        Fls: { Fl: Fl.files[0] },
         Pgs: (Ldd, Ttl, Evt) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
         Err: Sts => { alert('上載發生錯誤。'); },
         OK: (RspnsTxt, Stts, Tgt) => { // respons text, status, target object.
@@ -293,7 +293,7 @@
 
     Publish (Evt) {
       this.ServiceCall(
-        '/service/feed/publish',
+        { Mthd: 'PATCH', Url: '/service/feed' },
         null,
         'FEED_LAST_DATE',
         (Sto, Rst) => {
@@ -357,7 +357,7 @@
       }
 
       this.ServiceCall(
-        '/service/tag/add',
+        { Mthd: 'POST', Url: '/service/tag' },
         { Nm },
         'TAGS',
         (Sto, Rst) => {
@@ -380,7 +380,7 @@
       }
 
       this.ServiceCall(
-        '/service/tag/rename',
+        { Mthd: 'PATCH', Url: '/service/tag' },
         { ID, Nm },
         'TAGS',
         (Sto, Rst) => {
@@ -402,7 +402,7 @@
 
     TagDelete (Evt) {
       this.ServiceCall(
-        '/service/tag/delete',
+        { Mthd: 'DELETE', Url: '/service/tag' },
         { ID: Evt.item.ID },
         'TAGS',
         (Sto, Rst) => {
@@ -510,7 +510,7 @@
         if (this.opts.IsPblshd) {
           this.AJAX({
             URL: '/service/blog/list/admin',
-            Mthd: 'POST',
+            Mthd: 'GET',
             Data: { Cnt: 1 },
             Err: (Sts) => { alert('BG'); },
             OK: (RspnsTxt, Sts) => {
@@ -528,7 +528,7 @@
         }
 
         this.ServiceCall(
-          '/service/blog/unpublished',
+          { Mthd: 'GET', Url: '/service/blog/list/unpublished' },
           {},
           'NON_BLOGS',
           (Sto, Rst) => {
@@ -606,7 +606,7 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service/blog/list/admin',
+        { Mthd: 'GET', Url: '/service/blog/list/admin' },
         { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'BLOGS',
         (Sto, Rst) => {
@@ -646,7 +646,7 @@
       }
 
       this.ServiceCall(
-        '/service/blog/update',
+        { Mthd: 'PATCH', Url: '/service/blog' },
         Data,
         'BLOGS',
         (Sto, Rst) => {
@@ -707,7 +707,7 @@
       }
 
       this.ServiceCall(
-        '/service/blog/create',
+        { Mthd: 'POST', Url: '/service/blog' },
         Data,
         'BLOGS',
         (Sto, Rst) => {
@@ -746,7 +746,7 @@
       if (Blg.ID.length < 13) { return alert('找不到正確的 Blog ID。'); }
 
       this.ServiceCall(
-        '/service/blog/delete',
+        { Mthd: 'DELETE', Url: '/service/blog' },
         { ID: Blg.ID },
         'BLOGS',
         (Sto, Rst) => {
@@ -786,7 +786,7 @@
       }
 
       this.ServiceCall(
-        '/service/comment/list',
+        { Mthd: 'GET', Url: '/service/comment' },
         { ID: Blg.ID },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
@@ -801,7 +801,7 @@
 
     CommentRemove (BlgId, CmtId) {
       this.ServiceCall(
-        '/service/blog/commentdelete',
+        { Mthd: 'DELETE', Url: '/service/comment' },
         { ID: CmtId },
         'BLOG_COMMENTS',
         (Sto, Rst) => {
@@ -998,8 +998,8 @@
       'before-mount',
       () => {
         this.AJAX({
-          URL: '/service/message/adminlist',
-          Mthd: 'POST',
+          URL: '/service/message/admin',
+          Mthd: 'GET',
           Data: { Cnt: 1 },
           Err: (Sts) => { alert('BG'); },
           OK: (RspnsTxt, Sts) => {
@@ -1021,7 +1021,7 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service/message/adminlist',
+        { Mthd: 'GET', Url: '/service/message/admin' },
         { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'MESSAGES',
         (Sto, Rst) => {
@@ -1038,7 +1038,7 @@
       let Msg = this.Msgs[Evt.target.value];
 
       this.ServiceCall(
-        '/service/message/delete',
+        { Mthd: 'DELETE', Url: '/service/message' },
         { ID: Msg.ID },
         'MESSAGES',
         (Sto, Rst) => {
@@ -1095,7 +1095,7 @@
       () => {
         this.AJAX({
           URL: '/service/words/list',
-          Mthd: 'POST',
+          Mthd: 'GET',
           Data: { Cnt: 1 },
           Err: Sts => { alert('BG'); },
           OK: (RspnsTxt, Sts) => {
@@ -1124,7 +1124,7 @@
       }
 
       this.ServiceCall(
-        '/service/words/create',
+        { Mthd: 'POST', Url: '/service/words' },
         { Cmd: 120, Wds: Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -1143,7 +1143,7 @@
 
     PageTurn (Evt, Pg) {
       this.ServiceCall(
-        '/service/words/list',
+        { Mthd: 'GET', Url: '/service/words/list' },
         { Lmt: this.Lmt, Ofst: this.Lmt * (Pg - 1) },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -1164,7 +1164,7 @@
       }
 
       this.ServiceCall(
-        '/service/words/update',
+        { Mthd: 'PATCH', Url: '/service/words' },
         { ID: Evt.item.Itm.ID, Wds },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -1178,7 +1178,7 @@
       let GdWd = this.GdWds[Evt.item.Idx];
 
       this.ServiceCall(
-        '/service/words/delete',
+        { Mthd: 'DELETE', Url: '/service/words'},
         { ID: Evt.item.Itm.ID },
         'GOOD_WORDS',
         (Sto, Rst) => {
@@ -1223,7 +1223,7 @@
     </ul>
   </div>
   <div>
-    <input type='button' value='登出' onclick='Logout();'/>
+    <input type='button' value='登出' onclick={Logout}/>
   </div>
   <style scoped>
     :scope { display: flex; }
@@ -1271,9 +1271,9 @@
             TgtScd = parseInt(this.refs.TgtScd.value, 10) // target seconds.
 
       this.AJAX({
-        URL: '/service/cache/clean',
+        URL: '/service/cache',
         Data: { Scd: TgtNbr * TgtScd },
-        Mthd: 'POST',
+        Mthd: 'DELETE',
         OK: (RspnsTxt, Sts, XHR) => {
           const Rst = JSON.parse(RspnsTxt);
 
@@ -1283,7 +1283,7 @@
 
     SizeUsedList (Evt) {
       this.ServiceCall(
-        '/service/data/size',
+        { Mthd: 'GET', Url: '/service/data/size' },
         null,
         'DATA_SIZE',
         (Sto, Rst) => {
@@ -1295,6 +1295,21 @@
 
           return Rst.Extend;
         });
+    }
+
+    Logout (Evt) {
+      this.AJAX({
+        URL: '/service/session/logout',
+        Mthd: 'POST',
+        Data: null,
+        Err: (Sts) => { alert('BG'); },
+        OK: (RspnsTxt, Sts) => {
+          let Rst = JSON.parse(RspnsTxt);
+
+          alert(Rst.Message);
+
+          if (Rst.Index > -1) { window.location.reload(true); }
+        }});
     }
   </script>
 </system>

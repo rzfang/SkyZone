@@ -12,6 +12,7 @@
     Undefined: function (Obj) { return (typeof Obj === 'undefined'); },
     Array: function (Obj) { return Array.isArray(Obj); },
     Date: function (Obj) { return (Obj instanceof Date); },
+    RegExp: function (Obj) { return (Obj instanceof RegExp); },
     Promise: function (Obj) {
       return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch'));
     },
