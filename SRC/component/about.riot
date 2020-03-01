@@ -1,17 +1,3 @@
-<about>
-  <tabbox tbs={Tbs}/>
-  <style scoped>
-    :scope { display: block; }
-  </style>
-  <script>
-    this.Tbs = [
-      { Nm: '網站導覽', Cmpnt: 'index' },
-      { Nm: '關於空域', Cmpnt: 'about-site' },
-      { Nm: '關於我', Cmpnt: 'about-me' }
-    ];
-  </script>
-</about>
-
 <index>
   <ul>
     <li>
@@ -32,9 +18,9 @@
       回到空域的大門口。RZ 除了網誌以外，還有其它比較主題性的資訊會擺在門口。
     </li>
   </ul>
-  <style scoped>
-    :scope>ul { margin: 0; padding: 0; list-style: none; }
-    :scope>ul>li { margin: 1rem 0; line-height: 1.5; }
+  <style>
+    :host>ul { margin: 0; padding: 0; list-style: none; }
+    :host>ul>li { margin: 1rem 0; line-height: 1.5; }
   </style>
 </index>
 
@@ -57,8 +43,8 @@
 
     20120401 by RZ
   </pre>
-  <style scoped>
-    :scope>pre { margin: 20px 0;  white-space: pre-line; line-height: 1.5; }
+  <style>
+    :host>pre { margin: 20px 0;  white-space: pre-line; line-height: 1.5; }
   </style>
 </about-site>
 
@@ -79,7 +65,31 @@
 
     20120401 by RZ
   </pre>
-  <style scoped>
-    :scope>pre { margin: 20px 0;  white-space: pre-line; line-height: 1.5 }
+  <style>
+    :host>pre { margin: 20px 0;  white-space: pre-line; line-height: 1.5 }
   </style>
 </about-me>
+
+<about>
+  <tab-box Tbs={state.Tbs}>
+    <index/>
+  </tab-box>
+  <style>
+    :host { display: block; }
+  </style>
+  <script>
+    import tabBox from './tab-box.riot';
+
+    export default {
+      components: { tabBox, index, aboutSite, aboutMe },
+
+      state: {
+        Tbs: [
+          { Nm: '網站導覽', Cmpnt: index },
+          { Nm: '關於空域', Cmpnt: aboutSite },
+          { Nm: '關於我', Cmpnt: aboutMe }
+        ]
+      }
+    }
+  </script>
+</about>

@@ -2,10 +2,6 @@ User-agent: *
 Disallow: /*.css$
 Disallow: /*.js$
 Disallow: /*.zip$
-Disallow: /admin.php
-Disallow: /codeimage.php
 Disallow: /image/
-Disallow: /img.php
 Disallow: /resource/
-Disallow: /service.php
 Disallow: /service/

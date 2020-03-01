@@ -14,7 +14,12 @@
     Date: function (Obj) { return (Obj instanceof Date); },
     RegExp: function (Obj) { return (Obj instanceof RegExp); },
     Promise: function (Obj) {
-      return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch'));
+      // return (typeof Obj !== 'object' || !Obj.hasOwnProperty('then') || !Obj.hasOwnProperty('catch'));
+      return (
+        typeof Obj !== 'object' ||
+        !Object.prototype.hasOwnProperty.call(Obj, 'then') ||
+        !Object.prototype.hasOwnProperty.call(Obj, 'catch')
+      );
     },
     EMail: function (Str) {
       if (typeof Str !== 'string') { return false; }

@@ -27,11 +27,12 @@ module.exports = {
   port: 9004,
   keyword: Kwd.RM,
   cdn: {
-    riot: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js'
+    riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
+    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.8/riot.min.js'
   },
   uploadFilePath: TMP_PTH,
   page: {
-    '/admin': {
+    '/admin': { // v3
       ...DftPgRt,
       title: '空域 - 管理員',
       js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
@@ -40,25 +41,25 @@ module.exports = {
       ]},
     '/about': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
-      body: [ 'header.tag', 'about.tag', 'footer.tag' ]
+      js: [ '/resource/api2.min.js', 'hydrate.js' ],
+      body: [ './component/header.riot', './component/about.riot', './component/footer.riot' ]
     },
-    '/blogs': {
+    '/blogs': { // v3
       ...DftPgRt,
       js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'blogs.tag', 'footer.tag' ]
     },
-    '/text': {
+    '/text': { // v3
       ...DftPgRt,
       js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'text.tag', 'footer.tag' ]
     },
-    '/image': {
+    '/image': { // v3
       ...DftPgRt,
       js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'image-page.tag', 'footer.tag' ]
     },
-    '/images': {
+    '/images': { // v3
       ...DftPgRt,
       js: [
         '/resource/api2.min.js',
@@ -68,28 +69,28 @@ module.exports = {
         '/resource/tags.tag' ],
       body: [ 'header.tag', 'images-page.tag', 'footer.tag' ]
     },
-    '/zft': {
+    '/zft': { // v3
       ...DftPgRt,
       js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
       body: [ 'header.tag', 'zft-page.tag', 'footer.tag' ]
     },
-    '/messages': {
+    '/messages': { // v3
       ...DftPgRt,
       body: [ 'header.tag', 'messages.tag', 'footer.tag' ]
     },
-    '/zone': {
+    '/zone': { // v3
       ...DftPgRt,
       css: [ '/resource/base.css', '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
-    '/': {
+    '/': { // v3
       ...DftPgRt,
       css: [],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
     },
-    '/500': {
+    '/500': { // v3
       ...DftPgRt,
       body: [
         'header.tag',
@@ -169,7 +170,12 @@ module.exports = {
     }
   },
   route: [
-    // ==== resource ====
+    // node_modules
+    {
+      path: /hydrate\.js$/,
+      type: 'resource',
+      location: '../node_modules/@riotjs/hydrate'
+    },
 
     { // SEO files.
       path: /\/(favicon\.ico|robots\.txt)/,
@@ -196,8 +202,12 @@ module.exports = {
       type: 'resource',
       location: '../DAT'
     },
+    { // riot component js compiled in runtime.
+      path: /\.riot$/,
+      type: 'riot4js',
+      location: './component'
+    },
 
-    // ====
 
     { // dynamic image resource.
       path: /^\/resource\/image\/.+/,

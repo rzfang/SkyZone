@@ -234,7 +234,7 @@ function CookieParam (Ky) {
   for (let i in CSA) {
     let T;
 
-    if (!CSA.hasOwnProperty(i)) { continue; }
+    if (!Object.prototype.hasOwnProperty.call(CSA, i)) { continue; }
 
     T = CSA[i].replace(/^\s+|\s+$/g, '').split('='); // trim each data.
 
@@ -243,7 +243,7 @@ function CookieParam (Ky) {
 
   if (Ky && typeof Ky === 'string') {
     for (let i in CO) {
-      if (!CO.hasOwnProperty(i)) { continue; }
+      if (!Object.prototype.hasOwnProperty.call(CO, i)) { continue; }
 
       if (i === Ky) { return CO[i]; }
     }
