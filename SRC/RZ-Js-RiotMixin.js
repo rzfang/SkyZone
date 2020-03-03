@@ -97,7 +97,7 @@
     @ the task function will run on client (browser) side.
     < bool. */
   function OnBrowser (Tsk) {
-    if (typeof window === 'undefined') { return false; }
+    if (typeof module !== 'undefined') { return false; }
 
     if (typeof Tsk === 'function') { Tsk(); }
 
@@ -111,7 +111,7 @@
   function OnNode (Tsk, Rqst) {
     if (typeof module === 'undefined') { return false; }
 
-    if (typeof Tsk === 'function') { Tsk(); }
+    if (typeof Tsk === 'function') { Tsk(Rqst); }
 
     return true;
   }
