@@ -147,20 +147,29 @@
       @ original store data.
       @ result from API.
     @ params object passing to each task. */
-  function ServiceCall (URL, Prms, StoNm, NewStoreGet, PrmsToTsk) {
-    if (!URL || typeof URL !== 'string' ||
-        !StoNm || typeof StoNm !== 'string' ||
+  function ServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+    let Mthd = 'POST';
+
+    if (typeof Url === 'object' && Url.Mthd) {
+      Url = Url.Url;
+      Mthd = Url.Mthd;
+    }
+    else if (typeof Url !== 'string') {
+      return -1;
+    }
+
+    if (!StoNm || typeof StoNm !== 'string' ||
         !NewStoreGet || typeof NewStoreGet !== 'function')
-    { return -1; }
+    { return -2; }
 
     let Srvc = this.Srvc;
 
     AJAX({
-      URL: URL,
-      Mthd: 'POST',
+      URL: Url,
+      Mthd,
       Data: Prms,
       Err: Sts => {
-        console.log('---- AJAX query fail ----\nURL: ' + URL + '\nparams:');
+        console.log('---- AJAX query fail ----\nUrl: ' + Url + '\nparams:');
         console.log(Prms);
         console.log('----\n');
 
