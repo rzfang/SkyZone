@@ -1,0 +1,142 @@
+const async = require('async'),
+      compile = require('@riotjs/compiler').compile,
+      hydrate = require('@riotjs/hydrate'),
+      path = require('path');
+
+const Cch = require('./RZ-Nd-Cache'),
+      Log = require('./RZ-Js-Log');
+
+function SourceCodeSplit (SrcCd) {
+  if (!SrcCd) { return []; }
+
+  let Cds = [];
+
+  while (SrcCd.length > 0) {
+    let TgInfo = SrcCd.match(/<([^/<>]+)>\n/); // tag info.
+
+    if (!TgInfo || !TgInfo[1]) { break; }
+
+    let [ TgNm, ...Optns ] = TgInfo[1].split(' '); // tag name, options.
+
+    // ==== handle partial code ====
+
+    const StTg = `<${TgNm}>`, // start tag.
+          EndTg = `</${TgNm}>`, // end tag.
+          EndIdx = SrcCd.indexOf(EndTg) + EndTg.length, // end index.
+          Cd = SrcCd.substring(SrcCd.indexOf(StTg), EndIdx);
+
+    // ==== name in Js code will be from tag name with camel case. ====
+
+    let Nm = TgNm;
+
+    const NmChk = TgNm.match(/-\w/g);
+
+    if (NmChk) {
+      for (let i = 0; i < NmChk.length; i++) {
+        Nm = Nm.replace(NmChk[i], NmChk[i].substr(1).toUpperCase());
+      }
+    }
+
+    // ====
+
+    Cds.push({ Nm, Cd });
+
+    SrcCd = SrcCd.substr(EndIdx);
+  }
+
+  return Cds;
+}
+
+function Riot4ModulesCompile (FlPth, Then) {
+  Cch.FileLoad(
+    FlPth,
+    (ErrCd, SrcCd, Dt) => { // error code, source code, cached date.
+      if (ErrCd < 0) {
+        Log('cache file load failed: ' + ErrCd + ' ' + FlPth, 'error');
+
+        return Then(-1, '');
+      }
+
+      SrcCd = SrcCd
+        .replace(/<!--[\s\S]+?-->/g, '') // trim all HTML comments.
+        .replace(/\/\/ ?import .+ from .+/g, ''); // trim comment import.
+
+      // ==== get all 'import ... from ...;' and remove them from source code. ====
+
+      let Mdls = SrcCd.match(/import .+ from .+;\n/g) || [], // modules.
+          Tsks = [];
+
+      SrcCd = SrcCd.replace(/import .+ from .+;\n/g, '');
+
+      // ====
+
+      // prepare import components compiling tasks.
+      Tsks = Mdls
+        .filter((Itm, Idx) => Mdls.indexOf(Itm) === Idx) // filter duplicate modules.
+        .map(Mdl => {
+          const [ , Pth ] = Mdl.match(/import .+ from '(.+)';/);
+
+          return Done => {
+            Riot4ModulesCompile(
+              path.dirname(FlPth) + '/' + Pth, // handle module path.
+              (ErrCd, RsltMdls) => {
+                if (ErrCd < 0) {
+                  Log('can not do Riot4ModulesCompile. error code: ' + ErrCd, 'error');
+
+                  return Done({});
+                }
+
+                Done(RsltMdls);
+              });
+          };
+        });
+
+      async.parallel(
+        Tsks,
+        Mdls => {
+          let RsltMdls = Mdls || {}; // packed Js module codes, modules.
+
+          // ==== compile separated component, and combine them after parse. ====
+
+          SourceCodeSplit(SrcCd).map(({ Nm, Cd }) => {
+            if (RsltMdls[Nm]) { return ; }
+
+            // console.log('---- 001 ----');
+            // console.log(Cd);
+
+            RsltMdls[Nm] = compile(Cd).code.replace('export default', Nm + ' ='); // trim 'export default'.
+          }); // adjust compiled code to be ready for becoming a single Js module.
+
+          Then(0, RsltMdls);
+        });
+    });
+}
+
+/* compile riot 4 component file with some more feature support.
+  @ file path.
+  @ type, can be 'node' or 'esm', default 'esm'.
+  @ callback function (error code, code string). */
+function Riot4Compile (FlPth, Tp = 'esm', Then) {
+  const CchKy = `${FlPth}-${Tp}`;
+
+  if (Cch.Has(CchKy)) { return Then(1, Cch.Get(CchKy)); }
+
+  Riot4ModulesCompile(
+    FlPth,
+    (ErrCd, Mdls) => {
+      const Kys = Object.keys(Mdls);
+
+      let RsltCd =
+        'let ' + Kys.join(', ') + ';\n\n' + // declare all components in the beginning.
+        Kys.map(Ky => Mdls[Ky]).join('\n\n');
+
+      RsltCd += (Tp === 'node') ?
+        ('\n\nmodule.exports.default = ' + Kys.pop() + ';\n') :
+        ('\n\nexport default ' + Kys.pop() + ';\n');
+
+      Then(0, RsltCd);
+      Cch.Set(CchKy, RsltCd, 60 * 60 * 24);
+    });
+}
+
+module.exports = Riot4Compile;
