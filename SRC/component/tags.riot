@@ -1,0 +1,46 @@
+<tags>
+  <icon name='tags'/>
+  <template if={state.HsPckdId}>
+    <a href='/blogs'>取消</a>
+    <br/>
+  </template>
+  <ul if={state.Tgs.length}>
+    <li each={Tg in state.Tgs}>
+      <span if={Tg.IsPckd}>{Tg.Nm}</span>
+      <a if={!Tg.IsPckd} href='/blogs?t={Tg.ID}'>{Tg.Nm}</a>
+    </li>
+  </ul>
+  <style>
+    :host>icon { margin-right: 10px; }
+    :host>ul { display: inline-block; margin: 0; padding: 0; }
+    :host>ul>li { display: inline-block; }
+    :host>ul>li>a { display: inline-block; margin-right: 5px; }
+    :host>ul>li>span { display: inline-block; margin-right: 5px; padding: 0 3px; border: 1px solid; border-radius: 3px; }
+  </style>
+  <script>
+    import icon from './icon.riot';
+
+    export default {
+      components: { icon },
+
+      state: {
+        Tgs: [],
+        HsPckdId: false
+      },
+
+      onBeforeMount () {
+        const Tgs = this.StoreGet('TAGS');
+
+        this.state.Tgs = Tgs;
+
+        Tgs.find(Tg => {
+          if (Tg.IsPckd) {
+            this.state.HsPckdId = true;
+
+            return true;
+          }
+        });
+      }
+    }
+  </script>
+</tags>

@@ -1,0 +1,100 @@
+<blog-list>
+  <ul>
+    <li each={Blg in state.Blgs}>
+      <div>
+        <icon name={Blg.Tp}/>
+        <a href='{Blg.Tp}?b={Blg.ID}'>{Blg.Ttl}</a>
+      </div>
+      <pre>{Blg.Smry}</pre>
+      <div>
+        <span each={Tg in Blg.Tg}>{Tg.Nm}</span>
+      </div>
+      <div>{Blg.Dt}</div>
+    </li>
+  </ul>
+  <div>
+    <a if={!state.HsAlLdd} href='javascript:void(0);' onclick={BlogsLoad}>載入更多</a>
+    <a href='javascript:void(0);' onclick={ScrollToTop}>回到頂端</a>
+  </div>
+  <style>
+    :host>ul { list-style: none; margin: 0; padding: 0; }
+    :host>ul>li { margin: 20px 0; line-height: 1.5; }
+    :host>ul>li>div:first-child>a { display: inline-block; margin-left: 10px; font-size: 1.3rem; vertical-align: middle; }
+    :host>ul>li>pre { white-space: pre-line; }
+    :host>ul>li>pre~div { color: #808080; }
+    :host>ul>li>pre~div>span { display: inline-block; margin-right: 5px; }
+    :host>div { text-align: center; }
+    :host>div>a:last-child { display: inline-block; position: absolute; right: 0; }
+  </style>
+  <script>
+    import icon from './icon.riot';
+
+    export default {
+      components: { icon },
+
+      state: {
+        Blgs: [],
+        HsAlLdd: false, // has all loaded.
+        Ofst: 0
+      },
+
+      onBeforeMount (props, state) {
+        state.Blgs = this.StoreGet('BLOGS');
+        state.Ofst = this.state.Blgs.length;
+      },
+
+      onMounted (props, state) {
+        this.OnBrowser() && this.StoreListen(
+          'BLOGS',
+          (NwSto, PrmsToTsk) => { // new store, params to task.
+            if (!PrmsToTsk) { return; }
+
+            this.update({ Blgs: this.state.Blgs.concat(NwSto), HsAlLdd: NwSto.length < 5 });
+          });
+      },
+
+      ScrollToTop () {
+        window.scrollTo(0, 0);
+      },
+
+      BlogsLoad (Evt) {
+        const { Blgs, HsAlLdd, Ofst } = this.state;
+
+        if (HsAlLdd) { return; }
+
+        const Tgs = this.StoreGet('TAGS') || [], // tags.
+              TgIds = Tgs.filter(Tg => Tg.ID && Tg.IsPckd).map(Tg => Tg.ID);
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/blog/list' },
+          { Lmt: 5, Ofst: Blgs.length, TgIDA: TgIds },
+          'BLOGS',
+          (Sto, Rst) => {
+            if (Rst.Index < 0) {
+              alert(Rst.Message);
+
+              return null;
+            }
+
+            return Rst.Extend;
+          },
+          { TgIds: [], Ofst });
+      }
+    }
+  </script>
+</blog-list>
+
+<blogs>
+  <tags/>
+  <blog-list/>
+  <style>
+    :host { display: block; }
+  </style>
+  <script>
+    import tags from './tags.riot';
+
+    export default {
+      components: { blogList, tags }
+    }
+  </script>
+</blogs>

@@ -1,0 +1,49 @@
+<tab-box>
+  <ul class='TbBx'>
+    <li each={Tb in state.Tbs} class='{Tb.Pckd ? 'Pckd' : ''}' onclick={!Tb.Pckd && Switch}>{Tb.Nm}</li>
+  </ul>
+  <div class='Cntx'>
+    <slot />
+  </div>
+  <style>
+    :host>ul { margin: 0; padding: 0; }
+    :host>ul>li { display: inline-block; margin: 3px; border: 1px solid #d0d0ff; border-radius: 3px 3px 0 0; padding: 3px; color: #c0c0c0; cursor: pointer; }
+    :host>ul>li.Pckd { border-bottom: 1px solid #000000; color: #000000; cursor: default; }
+  </style>
+  <script>
+    export default {
+      state: {
+        Idx: 0,
+        Tbs: []
+      },
+
+      onBeforeMount (Prps, Stt) {
+        const Idx = Prps.idx || 0;
+        let { Tbs } = Stt;
+
+        for (let i = 0; i < Prps.Tbs.length; i++) {
+          const { Nm = '?', Cmpnt = null, Dt = {} } = Prps.Tbs[i];
+
+          Tbs.push({ Nm, Cmpnt, Dt, Pckd: false });
+        }
+
+        Tbs[Idx].Pckd = true;
+        this.state.Idx = Idx;
+      },
+
+      Switch (Evt) {
+        let { Idx, Tbs } = this.state;
+
+        Tbs[Idx].Pckd = false;
+        Idx = Array.from(this.root.querySelectorAll('ul.TbBx>li')).indexOf(Evt.target);
+        Tbs[Idx].Pckd = true;
+
+        this.update({ Idx, Tbs });
+
+        const Shl = hydrate(Tbs[Idx].Cmpnt);
+
+        Shl(this.root.querySelector('.Cntx'));
+      }
+    }
+  </script>
+</tab-box>
