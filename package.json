@@ -4,17 +4,17 @@
   "description": "Sky Zone",
   "main": "server.js",
   "dependencies": {
-    "@riotjs/compiler": "^4.5.5",
-    "@riotjs/hydrate": "^4.0.0",
-    "@riotjs/ssr": "^4.2.0",
+    "@riotjs/compiler": "^4.8.2",
+    "@riotjs/hydrate": "^4.0.1",
+    "@riotjs/ssr": "^4.2.1",
     "async": "^2.6.3",
     "busboy": "^0.3.1",
     "cookie": "^0.3.1",
     "get-folder-size": "^2.0.1",
     "require-from-string": "^2.0.2",
-    "riot": "^4.8.9",
+    "riot": "^4.11.1",
     "sqlite3": "^4.1.1",
-    "tar-stream": "^2.1.0"
+    "tar-stream": "^2.1.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
