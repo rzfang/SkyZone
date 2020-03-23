@@ -1,6 +1,5 @@
 const async = require('async'),
       compile = require('@riotjs/compiler').compile,
-      hydrate = require('@riotjs/hydrate'),
       path = require('path');
 
 const Cch = require('./RZ-Nd-Cache'),
@@ -54,7 +53,7 @@ function Riot4ModulesCompile (FlPth, Then) {
       if (ErrCd < 0) {
         Log('cache file load failed: ' + ErrCd + ' ' + FlPth, 'error');
 
-        return Then(-1, '');
+        return Then(-1, []);
       }
 
       SrcCd = SrcCd
@@ -83,18 +82,26 @@ function Riot4ModulesCompile (FlPth, Then) {
                 if (ErrCd < 0) {
                   Log('can not do Riot4ModulesCompile. error code: ' + ErrCd, 'error');
 
-                  return Done({});
+                  return Done(ErrCd);
                 }
 
-                Done(RsltMdls);
+                Done(null, RsltMdls);
               });
           };
         });
 
       async.parallel(
         Tsks,
-        Mdls => {
-          let RsltMdls = Mdls || {}; // packed Js module codes, modules.
+        (Err, Mdls) => {
+          if (Err) {
+            Log(Err, 'error');
+
+            return Then(-2, []);
+          }
+
+          let RsltMdls = {}; // packed Js module codes.
+
+          Mdls.map(Mdl => { Object.assign(RsltMdls, Mdl); });
 
           // ==== compile separated component, and combine them after parse. ====
 
@@ -102,6 +109,7 @@ function Riot4ModulesCompile (FlPth, Then) {
             if (RsltMdls[Nm]) { return ; }
 
             // console.log('---- 001 ----');
+            // console.log(Nm);
             // console.log(Cd);
 
             RsltMdls[Nm] = compile(Cd).code.replace('export default', Nm + ' ='); // trim 'export default'.

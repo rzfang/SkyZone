@@ -37,7 +37,7 @@
       let Tp = typeof Info.Data[Kys[i]];
 
       if (Array.isArray(Info.Data[Kys[i]])) {
-        let Ky = Kys[i] + '[]',
+        let Ky = Kys[i],
             Vl = Info.Data[Kys[i]],
             Lth = Vl.length;
 
@@ -56,8 +56,28 @@
     XHR.onreadystatechange = StateChange;
     XHR.upload.onprogress =  Evt => { Info.Pgs(Evt.loaded, Evt.total, Evt); };
 
-    // XHR.overrideMimeType('text/xml');
+    if (Info.Mthd === 'GET') {
+      let Url;
+
+      if (Info.URL.substr(0, 1) === '/') {
+        Url = new URL(window.location.origin + Info.URL);
+      }
+      else if (Info.URL.substr(0, 4) === 'http') {
+        Url = new URL(window.location.origin);
+      }
+      else {
+        Url = new URL(window.location.origin + '/' + Info.URL);
+      }
+
+      Info.URL = Url.pathname +
+        '?' +
+        (Url.search ? (new URLSearchParams(Url.search).toString() + '&') : '') +
+        new URLSearchParams(FmDt).toString();
+    }
+
     XHR.open(Info.Mthd, Info.URL);
+
+    // XHR.overrideMimeType('text/xml');
     XHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // to use AJAX way.
 
     if (typeof Info.Hdrs === 'object' && Info.Hdrs !== null) {
@@ -66,7 +86,8 @@
       for (let i = 0; i < Kys.length; i++) { XHR.setRequestHeader(Kys[i], Info.Hdrs[Kys[i]]); }
     }
 
-    XHR.send(FmDt);
+    if (Info.Mthd === 'GET') { XHR.send(); }
+    else { XHR.send(FmDt); }
 
     return XHR;
 
@@ -106,7 +127,7 @@
 
   /* do the 'Tsk' function if on the node environment.
     @ the task function will run on server (node) side.
-    @ the request object, this needs node.js code help to provide, optional.
+    @ the request object in node.js, otherwise undefined. optional.
     < bool. */
   function OnNode (Tsk, Rqst) {
     if (typeof module === 'undefined') { return false; }
@@ -118,6 +139,8 @@
 
   function Trim (Str) {
     if (typeof Str !== 'string') { return ''; }
+
+    if (typeof Str.trim === 'function') { return Str.trim(); }
 
     return Str.replace(/^\s+|\s+$/g, '');
   }
@@ -146,8 +169,10 @@
     @ NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
       @ original store data.
       @ result from API.
-    @ params object passing to each task. */
-  function ServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+    @ params object passing to each task. optional.
+    @ the service cases object in node.js, otherwise undefined. optional.
+    < result code. */
+  function BrowserServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
     let Mthd = 'POST';
 
     if (typeof Url === 'object' && Url.Mthd) {
@@ -192,6 +217,50 @@
     return 0;
   }
 
+  function NodeServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk, Extnsn) {
+    const { Rqst, Rspns, Prm, SrvcCs } = Extnsn; // request object, response object, param object, service case.
+
+    let Mthd = 'POST';
+
+    if (typeof Url === 'object' && Url.Mthd) {
+      Mthd = Url.Mthd;
+      Url = Url.Url;
+    }
+    else if (typeof Url !== 'string') {
+      return -1;
+    }
+
+    if (!StoNm || typeof StoNm !== 'string' ||
+        !NewStoreGet || typeof NewStoreGet !== 'function')
+    { return -2; }
+
+    const ServiceCall = SrvcCs && SrvcCs[Url] && SrvcCs[Url][Mthd.toLowerCase()] || null;
+
+    if (typeof ServiceCall !== 'function') { return -3; }
+
+    let Srvc = this.Srvc;
+
+    ServiceCall(
+      Rqst,
+      Rspns,
+      Prm,
+      (Cd, Rslt) => {
+        if (Cd < 0) {
+          console.log('---- Service call fail ----');
+          console.log('Url: ' + Url + '\nMethod: ' + Mthd + '\nError Code: ' + Cd);
+
+          return;
+        }
+
+        Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], Rslt);
+
+        const Rprt = Srvc.Rprt[StoNm] || [],
+              Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
+
+        for (let i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
+      });
+  }
+
   /*
     @ name to locate the store.
     @ NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
@@ -220,7 +289,7 @@
   }
 
   function StorePrint () {
-    return '<script>\nwindow.Z.RM.StoreInject(\'' + JSON.stringify(this.Srvc.Sto) + '\');\n</script>\n';
+    return '<script>\nwindow.Z.RM.StoreInject(\'' + JSON.stringify(this.Srvc.Sto).replace(/(\\r)?\\n/g, '\\\\n') + '\');\n</script>\n';
   }
 
   function StoreInject (StoStr) {
@@ -236,29 +305,39 @@
   function ServiceInstance () {
     this.Srvc = { Rprt: {}, Sto: {}}; // service, report, store.
     this.OnBrowser = OnBrowser;
-    this.OnNode = OnNode;
+    this.StoreGet = StoreGet;
+    this.StoreListen = StoreListen;
     this.StoreSet = StoreSet;
     this.Trim = Trim;
   }
 
   if (typeof module !== 'undefined') {
     module.exports = {
-      InstanceCreate: Rqst => {
-        Rqst.RM = new ServiceInstance();
-        Rqst.RM.StorePrint = StorePrint;
+      InstanceCreate: Extnsn => { // extension.
+        const { Rqst } = Extnsn; // request object, response object, param object, service case.
+
+        let RMI = new ServiceInstance(); // Riot Mixin Instance.
+
+        RMI.OnNode = Tsk => OnNode(Tsk, Rqst); // append request object to function.
+
+        RMI.ServiceCall = (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) => {
+          NodeServiceCall.bind(RMI)(Url, Prms, StoNm, NewStoreGet, PrmsToTsk, Extnsn);
+        };
+
+        RMI.StorePrint = StorePrint;
+
+        return RMI;
       }
     };
   }
-  else if (typeof window !== 'undefined') {
-    let RM = new ServiceInstance();
+  else {
+    let RMI = new ServiceInstance();
 
-    RM.AJAX = AJAX;
-    RM.ServiceCall = ServiceCall.bind(RM);
-    RM.StoreGet = StoreGet;
-    RM.StoreInject = StoreInject;
-    RM.StoreListen = StoreListen;
+    RMI.OnNode = OnNode;
+    RMI.ServiceCall = BrowserServiceCall;
+    RMI.StoreInject = StoreInject;
 
-    if (!window.Z || typeof window.Z !== 'object') { window.Z = { RM: RM }; }
-    else { window.Z.RM = RM; }
+    if (!window.Z || typeof window.Z !== 'object') { window.Z = { RM: RMI }; }
+    else { window.Z.RM = RMI; }
   }
 })();
