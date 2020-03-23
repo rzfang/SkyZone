@@ -28,7 +28,7 @@ module.exports = {
   keyword: Kwd.RM,
   cdn: {
     riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
-    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.8/riot.min.js'
+    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.11/riot.min.js'
   },
   uploadFilePath: TMP_PTH,
   page: {
@@ -44,10 +44,14 @@ module.exports = {
       js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [ './component/header.riot', './component/about.riot', './component/footer.riot' ]
     },
-    '/blogs': { // v3
+    '/blogs': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/tags.tag' ],
-      body: [ 'header.tag', 'blogs.tag', 'footer.tag' ]
+      js: [ '/resource/api2.min.js', 'hydrate.js' ],
+      body: [
+        './component/header.riot',
+        { type: 'riot', component: './component/blogs.riot', initialize: require('./page/blogs')},
+        './component/footer.riot'
+      ]
     },
     '/text': { // v3
       ...DftPgRt,

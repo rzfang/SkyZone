@@ -41,7 +41,7 @@ const { port: Pt = 9004,
         page: Pg,
         service: {
           pathPatterm: SvcPthPtrm = null,
-          case: SvcCs = {}
+          case: SrvcCs = {} // service case.
         } = {},
         route: Rt = [] } = require('./RZ-Nd-HTTPServer.cfg.js'),
       RtLth = Rt.length || 0; // route length.
@@ -160,9 +160,11 @@ function FileRespond (Rqst, Rspns, FlPth, ExprScd = 3600) {
 }
 
 /*
-  @ response object.
-  @ path name. */
-function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
+  @ HTTP request object.
+  @ HTTP response object.
+  @ url info object.
+  @ param object { Bd, Fls, Url }. */
+function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
   const PthNm = UrlInfo.pathname,
         PgInfo = Pg[PthNm] || {}; // page info object.
 
@@ -175,14 +177,11 @@ function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
     return;
   }
 
-  RM.InstanceCreate(Rqst); // create a RM instance.
+  const RMI = RM.InstanceCreate({ Rqst, Rspns, Prm, SrvcCs }); // create a RM instance.
 
-  // bind RiotMixin to each component on server side rendering.
-  riot.install(Cmpnt => {
-    Object.assign(Cmpnt, Rqst.RM);
+  Rqst.RMI = RMI; // put RiotMixin instance into request object.
 
-    Cmpnt.OnNode = (Tsk) => { Rqst.RM.OnNode(Tsk, Rqst); }; // pass Rqst object to OnNode function.
-  });
+  riot.install(Cmpnt => { Object.assign(Cmpnt, RMI); }); // bind RiotMixin to each component on server side rendering.
 
   let LdCsss = '', // loading Css.
       LdScrpts = '', // loading scripts.
@@ -260,7 +259,7 @@ function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
 
         Bd.initialize(
           Rqst,
-          UrlInfo,
+          { UrlInfo, Prm },
           (Cd, Dt) => {
             if (Cd < 0) { return Clbck(null, `<!-- can not render '${Nm}' component. -->`); }
 
@@ -397,7 +396,7 @@ function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
         Bds.join('\n') +
         '</div>\n' +
         KwdScrpt +
-        Rqst.RM.StorePrint() +
+        RMI.StorePrint() +
         MntScrpts +
         `<script>if (top != self) { document.body.innerHTML = ''; }</script>\n` + // this defend being iframe.
         '</body>\n</html>\n');
@@ -409,9 +408,9 @@ function PageRespond (Rqst, Rspns, UrlInfo, BdInfo) {
   @ request object.
   @ response object.
   @ url info object.
-  @ post body.
+  @ param object { Bd, Fls, Url }.
   @ service function. */
-function ServiceRespond (Rqst, Rspns, UrlInfo, BdInfo, Service) {
+function ServiceRespond (Rqst, Rspns, UrlInfo, Prm, Service) {
   if (!Service) {
     Rspns.writeHead(404, {'Content-Type': 'application/json'});
     Rspns.write('can not found the content.');
@@ -419,12 +418,6 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, BdInfo, Service) {
 
     return;
   }
-
-  const Prm = { // params.
-      Bd: BdInfo.Flds || null,
-      Fls: BdInfo.Fls || [],
-      Url: UrlInfo.query ? querystring.parse(UrlInfo.query) : null
-    };
 
   Service(
     Rqst,
@@ -467,7 +460,12 @@ function ServiceRespond (Rqst, Rspns, UrlInfo, BdInfo, Service) {
     });
 }
 
-function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
+/*
+  @ HTTP request object.
+  @ HTTP response object.
+  @ url info object.
+  @ param object { Bd, Fls, Url }. */
+function RouteAfterParse (Rqst, Rspns, UrlInfo, Prm) {
   const { pathname: PthNm } = UrlInfo,
         PthInfo = path.parse(PthNm);
 
@@ -475,8 +473,8 @@ function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
   if (Is.RegExp(SvcPthPtrm) && SvcPthPtrm.test(PthNm)) {
     const Mthd = Rqst.method.toLowerCase();
 
-    if (SvcCs[PthNm] && SvcCs[PthNm][Mthd] && Is.Function(SvcCs[PthNm][Mthd])) {
-      return ServiceRespond(Rqst, Rspns, UrlInfo, BdInfo, SvcCs[PthNm][Mthd]);
+    if (SrvcCs[PthNm] && SrvcCs[PthNm][Mthd] && Is.Function(SrvcCs[PthNm][Mthd])) {
+      return ServiceRespond(Rqst, Rspns, UrlInfo, Prm, SrvcCs[PthNm][Mthd]);
     }
   }
 
@@ -523,21 +521,23 @@ function RouteAfterParse (Rqst, Rspns, UrlInfo, BdInfo) {
     }
   }
 
-  PageRespond(Rqst, Rspns, UrlInfo, BdInfo);
+  PageRespond(Rqst, Rspns, UrlInfo, Prm);
 }
 
 function Route (Rqst, Rspns) {
-  const UrlInfo = url.parse(Rqst.url);
+  const UrlInfo = url.parse(Rqst.url),
+        UrlPrm = UrlInfo.query ? querystring.parse(UrlInfo.query) : null;
 
   if (!Rqst.Id) { Rqst.Id = (new Date()).getTime().toString() + (++IdCnt).toString(); } // give a id for each request.
 
   if (!Rqst.headers['content-type']) {
-    return RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds: null, Fls: [] });
+    return RouteAfterParse(Rqst, Rspns, UrlInfo, { Bd: null, Fls: [], Url: UrlPrm });
   }
 
   const BsBy = new busboy({ headers: Rqst.headers, fileSize: 1024 * 1024 * 10, files: 100 }); // file size: 10mb.
-  let Flds = {},
-      Fls = [];
+
+  let Flds = {}, // body fields.
+      Fls = []; // files.
 
   BsBy.on(
     'file',
@@ -566,7 +566,7 @@ function Route (Rqst, Rspns) {
     });
 
   BsBy.on('filesLimit', () => { Log('upload file size is out of limitation.', 'warn'); });
-  BsBy.on('finish', () => { RouteAfterParse(Rqst, Rspns, UrlInfo, { Flds, Fls }); });
+  BsBy.on('finish', () => { RouteAfterParse(Rqst, Rspns, UrlInfo, { Bd: Flds, Fls, Url: UrlPrm }); });
   Rqst.pipe(BsBy);
 }
 
