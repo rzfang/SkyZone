@@ -64,8 +64,12 @@ module.exports = {
     },
     '/image': { // v3
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', '/resource/icon.tag', '/resource/sharebox.tag', '/resource/tags.tag' ],
-      body: [ 'header.tag', 'image-page.tag', 'footer.tag' ]
+      js: [ '/resource/api2.min.js', 'hydrate.js' ],
+      body: [
+        './component/header.riot',
+        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
+        './component/footer.riot'
+      ]
     },
     '/images': { // v3
       ...DftPgRt,

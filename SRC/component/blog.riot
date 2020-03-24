@@ -6,6 +6,18 @@
   </style>
 </text>
 
+<image>
+  <img src={props.blog.Info.ImgUrl} alt={props.blog.Ttl}/>
+  <div>
+    <pre>{props.blog.Info.Str}</pre>
+  </div>
+  <style>
+    :host { text-align: center; }
+    :host>img { max-width: 100%; }
+    :host>div>pre { display: inline-block; text-align: left; }
+  </style>
+</image>
+
 <blog>
   <h1>{state.Blg.Ttl}</h1>
   <div>
@@ -26,7 +38,7 @@
     import shareBox from './share-box.riot';
 
     export default {
-      components: { icon, tags, shareBox, text },
+      components: { icon, tags, shareBox, text, image },
 
       state: {
         Blg: {}
@@ -34,6 +46,9 @@
 
       onBeforeMount (props, state) {
         state.Blg = this.StoreGet('BLOG');
+
+        // console.log('---- 001 ----');
+        // console.log(state.Blg);
       }
     }
   </script>
