@@ -1,0 +1,40 @@
+<text>
+  <pre>{props.blog.Info}</pre>
+  <style>
+    :host { display: block; }
+    :host>pre { line-height: 2rem; }
+  </style>
+</text>
+
+<blog>
+  <h1>{state.Blg.Ttl}</h1>
+  <div>
+    <tags tags={state.Blg.Tgs}/>
+    <icon title='發佈時間' name='calendar'/> {state.Blg.Dt}
+  </div>
+  <div is={state.Blg.Tp} blog={state.Blg}/>
+  <share-box url={state.Blg.Url}/>
+  <style>
+    :host { display: block; }
+    :host>div>tags { display: block; }
+    :host>div>icon { margin-right: 10px; }
+    :host>div:last-of-type { margin-top: 20px; }
+  </style>
+  <script>
+    import icon from './icon.riot';
+    import icon from './tags.riot';
+    import shareBox from './share-box.riot';
+
+    export default {
+      components: { icon, tags, shareBox, text },
+
+      state: {
+        Blg: {}
+      },
+
+      onBeforeMount (props, state) {
+        state.Blg = this.StoreGet('BLOG');
+      }
+    }
+  </script>
+</blog>

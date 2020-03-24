@@ -1,0 +1,32 @@
+<share-box>
+  <ul>
+    <li>
+      <icon title='分享' name="share" size="23"/>
+    </li>
+    <li>
+      <a href='https://www.facebook.com/share.php?u={props.url}'>
+        <icon name='facebook' size='23'/>
+      </a>
+    </li>
+    <li>
+      <a href='https://twitter.com/intent/tweet?url={props.url}'>
+        <icon name='twitter' size='23'/>
+      </a>
+    </li>
+    <li>
+      <a href='https://www.tumblr.com/share/link?url={props.url}'>
+        <icon name='tumblr' size='23'/>
+      </a>
+    </li>
+  </ul>
+  <style>
+    :host>ul { list-style-type: none; padding: 0; }
+    :host>ul>li { display: inline-block; margin-right: 10px; }
+  </style>
+  <script>
+    export default {
+      components: { icon }
+    }
+    // plurk 'https://www.plurk.com/?qualifier=shares&status=' . $ecdurl . ' (' . $Blog['Ttl'] . ')'
+  </script>
+</share-box>

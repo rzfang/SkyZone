@@ -85,7 +85,7 @@
 </blog-list>
 
 <blogs>
-  <tags/>
+  <tags tags={state.Tgs}/>
   <blog-list/>
   <style>
     :host { display: block; }
@@ -94,7 +94,15 @@
     import tags from './tags.riot';
 
     export default {
-      components: { blogList, tags }
+      components: { blogList, tags },
+
+      state: {
+        Tgs: []
+      },
+
+      onBeforeMount (props, state) {
+        state.Tgs = this.StoreGet('TAGS');
+      }
     }
   </script>
 </blogs>

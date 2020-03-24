@@ -1,11 +1,11 @@
 <tags>
-  <icon name='tags'/>
+  <icon name='tags' title='分類標籤'/>
   <template if={state.HsPckdId}>
     <a href='/blogs'>取消</a>
     <br/>
   </template>
-  <ul if={state.Tgs.length}>
-    <li each={Tg in state.Tgs}>
+  <ul if={props.tags.length}>
+    <li each={Tg in props.tags}>
       <span if={Tg.IsPckd}>{Tg.Nm}</span>
       <a if={!Tg.IsPckd} href='/blogs?t={Tg.ID}'>{Tg.Nm}</a>
     </li>
@@ -24,16 +24,11 @@
       components: { icon },
 
       state: {
-        Tgs: [],
         HsPckdId: false
       },
 
-      onBeforeMount () {
-        const Tgs = this.StoreGet('TAGS');
-
-        this.state.Tgs = Tgs;
-
-        Tgs.find(Tg => {
+      onBeforeMount (props, state) {
+        props.tags.find(Tg => {
           if (Tg.IsPckd) {
             this.state.HsPckdId = true;
 
