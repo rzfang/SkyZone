@@ -62,7 +62,7 @@ module.exports = {
         './component/footer.riot'
       ]
     },
-    '/image': { // v3
+    '/image': {
       ...DftPgRt,
       js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
@@ -71,15 +71,14 @@ module.exports = {
         './component/footer.riot'
       ]
     },
-    '/images': { // v3
+    '/images': {
       ...DftPgRt,
-      js: [
-        '/resource/api2.min.js',
-        '/resource/icon.tag',
-        '/late-img.tag',
-        '/resource/sharebox.tag',
-        '/resource/tags.tag' ],
-      body: [ 'header.tag', 'images-page.tag', 'footer.tag' ]
+      js: [ '/resource/api2.min.js', 'hydrate.js' ],
+      body: [
+        './component/header.riot',
+        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
+        './component/footer.riot'
+      ]
     },
     '/zft': { // v3
       ...DftPgRt,
@@ -195,12 +194,12 @@ module.exports = {
       location: '../WEB/www'
     },
     { // Riot component tag.
-      path: /(login|about|header|footer|late-img|messages|admin)\.tag$/,
+      path: /(header|footer|messages|admin)\.tag$/,
       type: 'resource',
       location: './component'
     },
     { // Riot page tag.
-      path: /(blogs|text|image-page|images-page|zft-page|p500|p404)\.tag$/,
+      path: /(zft-page|p500|p404)\.tag$/,
       type: 'resource',
       location: './page'
     },

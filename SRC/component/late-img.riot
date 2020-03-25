@@ -1,0 +1,43 @@
+<late-img>
+  <img class={state.Cls} src={state.Src} alt={props.alt}/>
+  <style>
+    @keyframes LateImgShow {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    :host>img { opacity: 0; }
+    :host>img.show {
+      animation-name: LateImgShow;
+      animation-fill-mode: forwards;
+      animation-duration: 1s;
+    }
+  </style>
+  <script>
+    export default {
+      state: {
+        Src: '#',
+        Cls: ''
+      },
+
+      onMounted (props, state) {
+        if (!this.OnBrowser()) { return; }
+
+        window.addEventListener('scroll', this.CheckAndLoad);
+      },
+
+      CheckAndLoad (Evt) {
+        const {
+          innerHeight: H = 0,
+          scrollY: Y = 0 } = window;
+
+        if (this.root.offsetTop < (Y + H)) {
+          window.requestAnimationFrame(() => {
+            this.update({ Cls: 'show', Src: this.props.src });
+            window.removeEventListener('scroll', this.CheckAndLoad);
+          });
+        }
+      }
+    }
+  </script>
+</late-img>
