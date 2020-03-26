@@ -61,6 +61,19 @@
   </script>
 </images>
 
+<zft>
+  <pre>{props.blog.Info}</pre>
+  <script>
+    export default {
+      onMounted (props, state) {
+        this.OnBrowser(() => {
+          this.root.querySelector('pre').innerHTML = Z.ZFT(props.blog.Info);
+        });
+      }
+    }
+  </script>
+</zft>
+
 <blog>
   <h1>{state.Blg.Ttl}</h1>
   <div>
@@ -81,7 +94,7 @@
     import shareBox from './share-box.riot';
 
     export default {
-      components: { icon, tags, shareBox, text, image, images },
+      components: { icon, tags, shareBox, text, image, images, zft },
 
       state: {
         Blg: {}

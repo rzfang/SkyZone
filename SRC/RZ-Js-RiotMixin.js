@@ -289,7 +289,9 @@
   }
 
   function StorePrint () {
-    return '<script>\nwindow.Z.RM.StoreInject(\'' + JSON.stringify(this.Srvc.Sto).replace(/(\\r)?\\n/g, '\\\\n') + '\');\n</script>\n';
+    return '<script>\nwindow.Z.RM.StoreInject(\'' +
+      JSON.stringify(this.Srvc.Sto).replace(/(\\r)?\\n/g, '\\\\n').replace(/'/g, '\\\'') +
+      '\');\n</script>\n';
   }
 
   function StoreInject (StoStr) {
