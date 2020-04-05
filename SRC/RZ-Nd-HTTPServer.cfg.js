@@ -1,7 +1,6 @@
 const path = require('path');
 
 const Cnst = require('./constant.json'),
-      Kwd = require('./keyword.json'),
       Svc = require('./service');
 
 const AdminPage = require('./page/admin');
@@ -25,7 +24,6 @@ const DftPgRt = { // here should handle 404.
 
 module.exports = {
   port: 9004,
-  keyword: Kwd.RM,
   cdn: {
     riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
     riot4: 'https://cdn.jsdelivr.net/npm/riot@4.11/riot.min.js'
@@ -89,9 +87,14 @@ module.exports = {
         './component/footer.riot'
       ]
     },
-    '/messages': { // v3
+    '/messages': {
       ...DftPgRt,
-      body: [ 'header.tag', 'messages.tag', 'footer.tag' ]
+      js: [ '/resource/api2.min.js', 'hydrate.js' ],
+      body: [
+        './component/header.riot',
+        { type: 'riot', component: './component/messages.riot', initialize: require('./page/messages')},
+        './component/footer.riot'
+      ]
     },
     '/zone': { // v3
       ...DftPgRt,

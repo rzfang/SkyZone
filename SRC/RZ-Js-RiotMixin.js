@@ -176,8 +176,8 @@
     let Mthd = 'POST';
 
     if (typeof Url === 'object' && Url.Mthd) {
-      Url = Url.Url;
       Mthd = Url.Mthd;
+      Url = Url.Url;
     }
     else if (typeof Url !== 'string') {
       return -1;
@@ -321,12 +321,11 @@
         let RMI = new ServiceInstance(); // Riot Mixin Instance.
 
         RMI.OnNode = Tsk => OnNode(Tsk, Rqst); // append request object to function.
+        RMI.StorePrint = StorePrint;
 
         RMI.ServiceCall = (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) => {
           NodeServiceCall.bind(RMI)(Url, Prms, StoNm, NewStoreGet, PrmsToTsk, Extnsn);
         };
-
-        RMI.StorePrint = StorePrint;
 
         return RMI;
       }

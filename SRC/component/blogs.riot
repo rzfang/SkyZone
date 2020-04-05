@@ -34,17 +34,16 @@
 
       state: {
         Blgs: [],
-        HsAlLdd: false, // has all loaded.
-        Ofst: 0
+        HsAlLdd: false // has all loaded.
       },
 
       onBeforeMount (props, state) {
         state.Blgs = this.StoreGet('BLOGS');
-        state.Ofst = this.state.Blgs.length;
       },
 
       onMounted (props, state) {
-        this.OnBrowser() && this.StoreListen(
+        this.OnBrowser() &&
+        this.StoreListen(
           'BLOGS',
           (NwSto, PrmsToTsk) => { // new store, params to task.
             if (!PrmsToTsk) { return; }
@@ -58,7 +57,8 @@
       },
 
       BlogsLoad (Evt) {
-        const { Blgs, HsAlLdd, Ofst } = this.state;
+        const { Blgs, HsAlLdd } = this.state;
+        const Ofst = Blgs.length;
 
         if (HsAlLdd) { return; }
 
@@ -67,7 +67,7 @@
 
         this.ServiceCall(
           { Mthd: 'GET', Url: '/service/blog/list' },
-          { Lmt: 5, Ofst: Blgs.length, TgIDA: TgIds },
+          { Lmt: 5, Ofst, TgIDA: TgIds },
           'BLOGS',
           (Sto, Rst) => {
             if (Rst.Index < 0) {
@@ -78,7 +78,7 @@
 
             return Rst.Extend;
           },
-          { TgIds: [], Ofst });
+          { TgIds, Ofst });
       }
     }
   </script>

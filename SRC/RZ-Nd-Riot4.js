@@ -73,7 +73,12 @@ function Riot4ModulesCompile (FlPth, Then) {
       Tsks = Mdls
         .filter((Itm, Idx) => Mdls.indexOf(Itm) === Idx) // filter duplicate modules.
         .map(Mdl => {
-          const [ , Pth ] = Mdl.match(/import .+ from '(.+)';/);
+          const [ , Nm, Pth ] = Mdl.match(/import (.+) from '(.+)';/);
+
+          // non riot import handling.
+          if (Pth.substr(-5) !== '.riot') {
+            return Done => Done(null, { [Nm]: { Nm, Pth }});
+          }
 
           return Done => {
             Riot4ModulesCompile(
@@ -132,15 +137,32 @@ function Riot4Compile (FlPth, Tp = 'esm', Then) {
   Riot4ModulesCompile(
     FlPth,
     (ErrCd, Mdls) => {
-      const Kys = Object.keys(Mdls);
+      let RiotMdlCd = '', // Riot module code.
+          RiotMdlKys = [], // Riot module keys.
+          JsMdlCd = ''; // Js module code.
+
+      Object.entries(Mdls).forEach(([ Ky, V ], Idx) => {
+        if (typeof V === 'object') {
+          const { Nm, Pth } = V;
+
+          JsMdlCd += (Tp === 'node') ?
+            `const ${Nm} = require('${Pth}');\n` :
+            `import ${Nm} from '${Pth}';\n`;
+        }
+        else {
+          RiotMdlCd += V + '\n\n';
+          RiotMdlKys.push(Ky);
+        }
+      });
 
       let RsltCd =
-        'let ' + Kys.join(', ') + ';\n\n' + // declare all components in the beginning.
-        Kys.map(Ky => Mdls[Ky]).join('\n\n');
+        JsMdlCd + '\n' +
+        'let ' + RiotMdlKys.join(', ') + ';\n\n' +
+        RiotMdlCd;
 
       RsltCd += (Tp === 'node') ?
-        ('\n\nmodule.exports.default = ' + Kys.pop() + ';\n') :
-        ('\n\nexport default ' + Kys.pop() + ';\n');
+        ('\nmodule.exports.default = ' + RiotMdlKys.pop() + ';\n') :
+        ('\nexport default ' + RiotMdlKys.pop() + ';\n');
 
       Then(0, RsltCd);
       Cch.Set(CchKy, RsltCd, 60 * 60 * 24);

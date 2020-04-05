@@ -21,7 +21,7 @@ module.exports = {
       FlPth,
       'utf8',
       function (Err, FlStr) { // error, file string.
-        if (Err) { return Clbck(-1); }
+        if (Err) { return Clbck(-2); }
 
         const Dt = (new Date()).getTime();
 

@@ -1,0 +1,302 @@
+<replies>
+  <ul>
+    <li each={Rpl in props.replies}>
+      <div>{Rpl.Dt} {Rpl.Nm}</div>
+      <pre>{Rpl.Msg}</pre>
+    </li>
+  </ul>
+  <a if={!state.IsFmShwd} href='javascript:void(0);' onclick={FormToggle}>回應</a>
+  <form if={state.IsFmShwd}>
+    <input type='text' maxlength='10' placeholder='匿名' value={state.NmMl[0]} disabled={state.IsSndng}/><br/>
+    <input type='email' required='true' placeholder='E-Mail (不會公開)' value={state.NmMl[1]} disabled={state.IsSndng}/><br/>
+    <textarea rows="1" maxlength='255' required='true' disabled={state.IsSndng}></textarea><br/>
+    <div>
+      <label>記住我<input type='checkbox' checked={state.NmMl[0]} /></label>
+      <div>
+        <a href='javascript:void(0);' onclick={ReplyLeave}>送出</a>
+        <a href='javascript:void(0);' onclick={FormToggle}>取消</a>
+      </div>
+    </div>
+  </form>
+  <style>
+    :host { padding-left: 20px; }
+    :host>ul { padding: 0; list-style: none; }
+    :host>ul>li { margin-bottom: 20px; }
+    :host>ul>li>div { color: #808080; }
+    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
+    :host>form>input,
+    :host>form>textarea { width: 100%; box-sizing: border-box; }
+    :host>form>div { display: flex; }
+    :host>form>div>label { flex-grow: 1; }
+    :host>form>div>label>input { vertical-align: middle; }
+    :host>form>div>div>a { display: inline-block; margin-left: 5px; }
+  </style>
+  <script>
+    export default {
+      state: {
+        IsFmShwd: false, // is form showed.
+        IsSndng: false, // is sending message.
+        NmMl: [ '', '' ]
+      },
+
+      onBeforeMount (props, state) {
+        const NmMl = CookieParam('NmMl'); // name & mail.
+
+        if (NmMl) { state.NmMl = NmMl.split(';'); }
+
+        if (Z.Is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
+      },
+
+      onMounted (props, state) {
+        this.InputFocus();
+      },
+
+      onUpdated (props, state) {
+        this.InputFocus();
+      },
+
+      InputFocus () {
+        const { IsFmShwd, NmMl } = this.state;
+
+        if (!IsFmShwd) { return; }
+
+        const Slctr = NmMl[0] ? 'textarea' : 'input[type=text]'; // selector.
+
+        this.root.querySelector(Slctr).focus();
+      },
+
+      FormToggle (Evt) {
+        this.update({ IsFmShwd: !this.state.IsFmShwd });
+      },
+
+      IsFormGood (Nm, Ml, Msg) {
+        let Hnt = ''; // hint.
+
+        if (!Nm || !Z.Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+        else {
+          Nm = Nm.trim();
+
+          if (Nm === '') { Hnt += '暱稱不可為空白字。\n'; }
+        }
+
+        if (!Ml || !Z.Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
+        else {
+          Ml = Ml.trim();
+
+          if (!Z.Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
+        }
+
+        if (!Msg || !Z.Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
+        else {
+          Msg = Msg.trim();
+
+          if (Msg === '') { Hnt += '留言不可為空白字。\n'; }
+          else if (Msg.length > 255) { Hnt += '留言請勿超個 255 個字。\n'; }
+        }
+
+        if (Hnt.length > 0) {
+          alert('請留意以下說明：\n' + Hnt);
+
+          return false;
+        }
+
+        return true;
+      },
+
+      ReplyLeave (Evt) {
+        if (this.state.IsSndng) { return alert(Z.Wording.Working); }
+
+        const FmDOMs = this.root.querySelectorAll('form input, form textarea'), // form DOMs.
+              Nm = FmDOMs[0].value,
+              Ml = FmDOMs[1].value,
+              Msg = FmDOMs[2].value,
+              IsRmbd = FmDOMs[3].checked; // is remebered.
+
+        if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
+
+        if (this.root.querySelector('input[type=checkbox]').checked) {
+          CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
+        }
+        else { CookieSet('NmMl', '', -1); }
+
+        this.update({ IsSndng: true });
+        setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/message' },
+          { Nm, Ml, Msg, Tgt: this.props.messageId },
+          'REPLIES',
+          (Sto, Rst) => {
+            if (!Rst) {
+              alert(Z.Wording.LoadDataFail);
+
+              return null;
+            }
+
+            if (Rst.Index < 0 && Rst.Message) {
+              alert(Rst.Message);
+
+              return null;
+            }
+
+            if (!Rst.Extend) {
+              alert('SystemError');
+
+              return null;
+            }
+
+            Sto[this.props.messageId].push({ Nm, Msg, ID: Rst.Extend, Dt: DatetimeFormat(new Date()) });
+
+            this.root.querySelector('textarea').value = '';
+
+            return Sto;
+          },
+          { MsgId: this.props.messageId, MsgIdx: this.props.messageIndex });
+      }
+
+    }
+  </script>
+</replies>
+
+<messages>
+  <ul>
+    <li each={(Msg, Idx) in state.Msgs}>
+      <div>{Msg.Dt} {Msg.Nm}:</div>
+      <pre>{Msg.Msg}</pre>
+      <a href='javascript:void(0);' data-index={Idx} onclick={RepliesToggle}>
+        <span>{Msg.IsRplsLstd ? '隱藏回應' : '回應'}</span>
+        <span if={Msg.ChnCnt}>({Msg.ChnCnt})</span>
+      </a>
+      <div is='replies' if={Msg.IsRplsLstd} message-id={Msg.ID} message-index={Idx} replies={Msg.Rpls}/>
+    </li>
+  </ul>
+  <div>
+    <a href='javascript:void(0);' onclick={MessagesLoad}>載入更多</a>
+  </div>
+  <style>
+    :host>ul { padding: 0; list-style: none; }
+    :host>ul>li { margin-bottom: 30px; }
+    :host>ul>li>div:first-of-type { color: #808080; }
+    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
+    :host>div { text-align: center; }
+  </style>
+  <script>
+    export default {
+      components: { replies },
+
+      state: {
+        HsAlLdd: false, // has all loaded.
+        Msgs: []
+      },
+
+      onBeforeMount (props, state) {
+        state.Msgs = this.StoreGet('MESSAGES');
+      },
+
+      onMounted (props, state) {
+        if (!this.OnBrowser()) { return; }
+
+        this.StoreListen(
+          'MESSAGES',
+          (NwSto, PrmsToTsk) => { // new store, params to task.
+            if (!PrmsToTsk) { return; }
+
+            this.update({ Msgs: this.state.Msgs.concat(NwSto), HsAlLdd: NwSto.length < 5 });
+          });
+
+        this.StoreListen(
+          'REPLIES',
+          (NwSto, PrmsToTsk) => {
+            if (!PrmsToTsk) { return; }
+            const { MsgId, MsgIdx } = PrmsToTsk,
+                  Msg = this.state.Msgs[MsgIdx],
+                  Rpls = NwSto[MsgId];
+
+            Msg.ChnCnt = Rpls.length;
+            Msg.IsRplsLstd = true;
+            Msg.Rpls = Rpls;
+
+            this.update({ Msgs: this.state.Msgs });
+          });
+      },
+
+      MessagesLoad (Evt) {
+        const { Msgs, HsAlLdd } = this.state,
+              Ofst = Msgs.length;
+
+        if (HsAlLdd) { return; }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/message' },
+          { Lmt: 5, Ofst: Ofst },
+          'MESSAGES',
+          (Sto, Rst) => {
+            if (Rst.Index < 0) {
+              alert(Rst.Message);
+
+              return null;
+            }
+
+            return Rst.Extend;
+          },
+          { Ofst });
+      },
+
+      RepliesToggle (Evt) {
+        const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10),
+              Msg = this.state.Msgs[MsgIdx],
+              { ID: MsgId, IsRplsLstd = false } = Msg, // is replies listed.
+              StoReplies = this.StoreGet('REPLIES') || null,
+              Rpls = StoReplies && StoReplies[MsgId] || null;
+
+        if (IsRplsLstd) {
+          Msg.IsRplsLstd = false;
+
+          this.update({ Msgs: this.state.Msgs });
+
+          return;
+        }
+
+        if (Rpls) {
+          Msg.Rpls = Rpls;
+          Msg.IsRplsLstd = true;
+
+          this.update({ Msgs: this.state.Msgs });
+
+          return;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/message/chain' },
+          { ID: MsgId },
+          'REPLIES',
+          (Sto, Rst) => {
+            if (!Rst) {
+              alert(this.Keyword('LoadDataFail'));
+
+              return null;
+            }
+
+            if (Rst.Index < 0 && Rst.Message) {
+              alert(Rst.Message);
+
+              return null;
+            }
+
+            if (!Rst.Extend) {
+              alert('SystemError');
+
+              return null;
+            }
+
+            if (!Sto) { Sto = {}; }
+
+            Sto[MsgId] = Rst.Extend;
+
+            return Sto;
+          },
+          { MsgId, MsgIdx });
+      }
+    }
+  </script>
+</messages>

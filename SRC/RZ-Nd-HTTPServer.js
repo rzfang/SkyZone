@@ -32,7 +32,6 @@ const MM_TP = {
         '.xml':  'application/xml' }; // mime type map.
 
 const { port: Pt = 9004,
-        keyword: Kwd = {},
         cdn: {
           riot3: Riot3Url = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
           riot4: Riot4Url = 'https://unpkg.com/riot@4/riot+compiler.min.js'
@@ -151,9 +150,11 @@ function FileRespond (Rqst, Rspns, FlPth, ExprScd = 3600) {
 
       Rspns.writeHead(
         200,
-        { 'Content-Type': MmTp,
+        {
           'Cache-Control': 'public, max-age=' + Expr,
-          'Last-Modified': (new Date(Mms + 1000)).toUTCString() });
+          'Content-Type': MmTp + '; charset=utf-8',
+          'Last-Modified': (new Date(Mms + 1000)).toUTCString()
+        });
 
       RdStrm.pipe(Rspns);
     });
@@ -242,7 +243,7 @@ function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
           return Clbck(null, '');
         }
 
-        const Cmpnts = requireFromString(Cd, Bd.component),
+        const Cmpnts = requireFromString(Cd, __dirname + '/' + Bd.component),
               Cmpnt = Cmpnts.default;
 
         RiotUsed.V4 = true;
@@ -366,14 +367,6 @@ function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
         }
       }
 
-      // make browser supports keyword data.
-      const KwdScrpt =
-        '<script>\n' +
-        'if (!window.Z) { window.Z = {}; }\n' +
-        'if (!window.Z.Kwd) { window.Z.Kwd = {}; }\n' +
-        'window.Z.Kwd = ' + JSON.stringify(Kwd) + ';\n' +
-        '</script>\n';
-
       if (MntScrpts) {
         if (RiotUsed.V3) {
           LdScrpts = `<script src='${Riot3Url}'></script>\n` + LdScrpts + '\n';
@@ -395,7 +388,6 @@ function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
         "</head>\n<body>\n<div id='Base'>\n" +
         Bds.join('\n') +
         '</div>\n' +
-        KwdScrpt +
         RMI.StorePrint() +
         MntScrpts +
         `<script>if (top != self) { document.body.innerHTML = ''; }</script>\n` + // this defend being iframe.
