@@ -340,23 +340,6 @@ function RandomRange (Min, Max, Dcm) {
   return Nbr;
 }
 
-function URLParameters () {
-  let PrmStr = window.location.search, // 'PrmStr' = Parameters String.
-      URLPrms = {};
-
-  if (PrmStr.length > 0) {
-    let TmpA0 = PrmStr.substr(1).split('&');
-
-    for (let i = 0; i < TmpA0.length; i++ ) {
-      let TmpA1 = TmpA0[i].split('=');
-
-      URLPrms[TmpA1[0]] = (TmpA1.length < 2) ? true : TmpA1[1];
-    }
-  }
-
-  return URLPrms;
-}
-
 //==== Independent Module, may need jQuery API. ========================================================================
 
 /* set a Tab Box.

@@ -96,16 +96,16 @@ module.exports = {
         './component/footer.riot'
       ]
     },
-    '/zone': { // v3
+    '/zone': {
       ...DftPgRt,
       css: [ '/resource/base.css', '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
-    '/': { // v3
+    '/': {
       ...DftPgRt,
       css: [],
-      js: [ JQUERY_CDN, 'resource/api1.min.js' ],
+      js: [ 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
     },
     '/500': { // v3

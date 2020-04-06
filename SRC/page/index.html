@@ -1,52 +1,50 @@
+<script type='text/javascript'>
+  EmbedDeny();
+</script>
 <style type='text/css'>
   body { margin: 0px; padding: 0px; font-size: 16px; font-family: monospace; color: #202020;  }
   a, input, option, button { font-size: 16px; }
   a, a:visited { text-decoration: none; color: #0000ff; }
   a:hover { text-decoration: underline; color: #ff0000; }
   #Base { width: 1000px; min-height: 625px; margin: 10px auto; text-align: center; }
-  #Head nav a { display: inline-block; min-width: 100px; font-size: 20px; }
+  header nav a { display: inline-block; min-width: 100px; font-size: 20px; }
   #Main { padding: 10px; }
+  #Entry { box-shadow: 0px 0px 5px; }
 </style>
+<header>
+  <nav>
+    <a href='https://webtool.zii.tw'>線上工具</a>
+    <a href='/blogs'>空域</a>
+    <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
+    <!-- <a href='https://zakool.zii.tw'>雜酷-舊物交流網</a> -->
+  </nav>
+</header>
+<div id='Main'>
+  <a href='/blogs'>
+    <canvas id='Entry' width='640' height='480'>您的瀏覽器不支援動畫。</canvas>
+  </a>
+  <div>
+    首頁動畫：
+    <a href='?Anm=0'>飄雲</a>
+    <a href='?Anm=1'>城市</a>
+    <a href='?'>隨機</a>
+  </div>
+</div>
+<footer>
+  ©2011-2019 RZ Fang
+</footer>
 <script type='text/javascript'>
-  let Clk = null;
-
-  EmbedDeny();
-
-  $(function () {
-    let URLPrms = URLParameters(),
-        AnmNbr = 2;
-
-    let AnmIdx = (URLPrms.length === 0 || typeof URLPrms.Anm !== 'string') ?
-                 Math.round(Math.random()) :
-                 parseInt(URLPrms.Anm, 10) % AnmNbr;
-
-    KeyboardCommand(PageNameGet());
-
-    switch (AnmIdx) {
-      case 1:
-        CityView();
-        break;
-
-      case 0:
-      default:
-        CloudWalk();
-    }
-  });
-
   function KeyboardCommand (Pg) {
-    if (typeof Pg !== 'string') { return 0; }
+    let keyBuffer = '';
 
-    let Dcm = $(document),
-        Fctn = Evt => {};
+    if (typeof Pg !== 'string') { return; }
 
-    if (Pg.length === 0) { Fctn = ToAdminCheck; }
+    if (Pg.length === 0) { document.onkeyup = ToAdminCheck; }
 
-    Dcm.data('KyBfr', '').keyup(Fctn);
-
-    return 0;
+    return;
 
     function ToAdminCheck (Evt) {
-      let KyBfr = Dcm.data('KyBfr') + Evt.keyCode.toString(16),
+      let KyBfr = keyBuffer + Evt.keyCode.toString(16),
           MpA = ['41444d494e', '5631', '5a4f4e45'], // [ 'admin', 'v1', 'zone' ].
           MpL = 0;
 
@@ -55,21 +53,23 @@
       if (KyBfr.length > MpL) { KyBfr = KyBfr.substr(2); }
 
       if (KyBfr.indexOf(MpA[0]) >= 0) {
-        Dcm.data('KyBfr', '');
+        keyBuffer = '';
         PageTurn('/admin');
       }
       else if (KyBfr.indexOf(MpA[1]) >= 0 || KyBfr.indexOf(MpA[2]) >= 0) {
-        Dcm.data('KyBfr', '');
+        keyBuffer = '';
         PageTurn('/zone');
       }
-      else { Dcm.data('KyBfr', KyBfr); }
+      else {
+        keyBuffer = KyBfr;
+      }
     }
   }
 
   function CityView () {
     let VctA = [[1, 0], [0, 1], [1, 0], [0, -1]], // 'VctA' = Vector Array.
         Logo = new Image(),
-        Anm = new Animation($('#Entry').get(0), []);
+        Anm = new Animation(document.getElementById('Entry'), []);
 
     let Blds0 = BuildingsInitialize(
           Anm,
@@ -104,7 +104,6 @@
       BuildingsMove(Ctx, Blds1);
       BuildingsMove(Ctx, Blds2);
       BuildingsMove(Ctx, Blds3);
-      BuildingFly(Ctx);
       Ctx.drawImage(Logo, (ScnSz.W - Logo.width) / 2, (ScnSz.H - Logo.height) / 2);
     });
 
@@ -191,13 +190,10 @@
       Ctx.lineTo(Blds.Rng.X, Blds.Rng.Y + Blds.Rng.H);
       Ctx.fill();
     }
-
-    function BuildingFly () {
-    }
   }
 
   function CloudWalk () {
-    let Anm = new Animation($('#Entry').get(0), [], BaseSceneryDraw),
+    let Anm = new Animation(document.getElementById('Entry'), [], BaseSceneryDraw),
         ImgA = [new Image(), new Image(), new Image()], // 'ImgA' = Image Array.
         Logo = new Image(),
         Clds = new Array(30), // 'Clds' = Cloud.
@@ -293,29 +289,20 @@
     }
   }
 </script>
-<div id='Template'> <!-- Template -->
-</div>
-<div id='Base'>
-  <header id='Head'> <!-- Head -->
-    <nav>
-      <a href='https://webtool.zii.tw'>線上工具</a>
-      <a href='/blogs'>空域</a>
-      <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
-      <!-- <a href='https://zakool.zii.tw'>雜酷-舊物交流網</a> -->
-    </nav>
-  </header>
-  <div id='Main'> <!-- Main -->
-    <a href='/blogs'>
-      <canvas id='Entry' width='640' height='480' style='box-shadow: 0px 0px 5px;'>您的瀏覽器不支援動畫。</canvas>
-    </a>
-    <div>
-      首頁動畫：
-      <a href='?Anm=0'>飄雲</a>
-      <a href='?Anm=1'>城市</a>
-      <a href='?'>隨機</a>
-    </div>
-  </div>
-  <footer id='Tail'> <!-- Tail -->
-    ©2011-2019 RZ Fang
-  </footer>
-</div>
+<script type='text/javascript'>
+    let Anm = (new URL(window.location)).searchParams.get('Anm'),
+        AnmNbr = 2,
+        AnmIdx = typeof Anm !== 'string' ? Math.round(Math.random()) : parseInt(Anm, 10) % AnmNbr;
+
+    KeyboardCommand(PageNameGet());
+
+    switch (AnmIdx) {
+      case 1:
+        CityView();
+        break;
+
+      case 0:
+      default:
+        CloudWalk();
+    }
+</script>
