@@ -599,7 +599,7 @@ const Blog = {
 
         return Db.Query(SQL, [ MakeId(13), Nm, Prm.Ml, GetIp(Rqst), GetDatetime(), Cmt, Prm.TgtID ]);
       })
-      .then((a, b, c) => { PckEnd(0, Kwd.RM.Done); })
+      .then(Rst => { PckEnd(0, Kwd.RM.Done); })
       .catch(Cd => { PckEnd(-4, Kwd.RM.DbCrash, Cd); });
   },
   CommentDelete: (Rqst, Rspns, Prm, End) => {

@@ -18,8 +18,8 @@ const DftPgRt = { // here should handle 404.
   favicon: 'favicon.ico',
   feed: '/feed.xml',
   css: [ '/resource/base.css', '/resource/style2.css' ],
-  js: [ '/resource/api2.min.js' ],
-  body: [ 'header.tag', 'p404.tag', 'footer.tag' ]
+  js: [ '/resource/api2.min.js', 'hydrate.js' ],
+  body: [ './component/header.riot', './component/error404.riot', './component/footer.riot' ]
 };
 
 module.exports = {
@@ -39,12 +39,10 @@ module.exports = {
       ]},
     '/about': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [ './component/header.riot', './component/about.riot', './component/footer.riot' ]
     },
     '/blogs': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/blogs.riot', initialize: require('./page/blogs')},
@@ -53,7 +51,6 @@ module.exports = {
     },
     '/text': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
@@ -62,7 +59,6 @@ module.exports = {
     },
     '/image': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
@@ -71,7 +67,6 @@ module.exports = {
     },
     '/images': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
@@ -80,7 +75,6 @@ module.exports = {
     },
     '/zft': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
@@ -89,7 +83,6 @@ module.exports = {
     },
     '/messages': {
       ...DftPgRt,
-      js: [ '/resource/api2.min.js', 'hydrate.js' ],
       body: [
         './component/header.riot',
         { type: 'riot', component: './component/messages.riot', initialize: require('./page/messages')},
@@ -110,12 +103,9 @@ module.exports = {
     },
     '/500': { // v3
       ...DftPgRt,
-      body: [
-        'header.tag',
-        'p500.tag',
-        'footer.tag'
-      ]
-    }
+      body: [ './component/header.riot', './component/error500.riot', './component/footer.riot' ]
+    },
+    '/404': DftPgRt
   },
   service: {
     pathPatterm: /^\/service\//,
