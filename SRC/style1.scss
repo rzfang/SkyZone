@@ -1,3 +1,51 @@
+@import 'SRC/base';
+
+//==== structure =======================================================================================================
+
+#Template {
+  display: none;
+}
+
+#Base {
+  #Head > nav {
+    line-height: 2rem;
+
+    > div {
+      display: inline-block;
+      padding: 5px;
+    }
+  }
+
+  #Main { min-height: 500px; }
+
+  #Tail { line-height: 2rem; }
+}
+
+//==== normal class ====================================================================================================
+
+.Block {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.ClickItem {
+  cursor: pointer;
+
+  &:hover { color: #ff0000; }
+}
+
+.TextTitle {
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+img.Unload {
+  border: 1px solid;
+  background-color: #90c0ff;
+}
+
 //==== SkyZone case ====================================================================================================
 
 //==== icon declare. ====
@@ -23,19 +71,19 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.icon-compass:before      { content: "\e949"; }
-.icon-enlarge:before      { content: "\e989"; }
-.icon-enlarge2:before     { content: "\e98b"; }
-.icon-cross:before        { content: "\ea0f"; }
-.icon-lock:before         { content: "\e98f"; }
-.icon-text:before         { content: "\e926"; }
-.icon-image:before        { content: "\e90d"; }
-.icon-images:before       { content: "\e90e"; }
-.icon-share:before        { content: "\ea82"; }
-.icon-google-plus:before  { content: "\ea89"; }
-.icon-facebook:before     { content: "\ea8d"; }
-.icon-twitter:before      { content: "\ea92"; }
-.icon-tumblr:before       { content: "\eabc"; }
+.icon-compass:before     { content: "\e949"; }
+.icon-enlarge:before     { content: "\e989"; }
+.icon-enlarge2:before    { content: "\e98b"; }
+.icon-cross:before       { content: "\ea0f"; }
+.icon-lock:before        { content: "\e98f"; }
+.icon-text:before        { content: "\e926"; }
+.icon-image:before       { content: "\e90d"; }
+.icon-images:before      { content: "\e90e"; }
+.icon-share:before       { content: "\ea82"; }
+.icon-google-plus:before { content: "\ea89"; }
+.icon-facebook:before    { content: "\ea8d"; }
+.icon-twitter:before     { content: "\ea92"; }
+.icon-tumblr:before      { content: "\eabc"; }
 
 //==== color declare. ====
 
@@ -47,8 +95,7 @@ $Clr_Grey:  #404040;
 
 //==== normal element ====
 
-body
-{
+body {
   margin: 0px;
   padding: 0px;
   font-size: 1em;
@@ -59,16 +106,13 @@ body
 a, input, option, button
 { font-size: 1em;  }
 
-a
-{
+a {
  text-decoration: none;
 
-  &:hover
-  { text-decoration: underline; }
+  &:hover { text-decoration: underline; }
 }
 
-div, span, pre , th, td
-{
+div, span, pre , th, td {
   border-width: 0px;
   border-style: solid;
   border-color: rgba(160, 160, 160, 0.9);
@@ -79,13 +123,11 @@ ul, ol
 
 //==== structure extend. ====
 
-#Base
-{ max-width: none; }
+#Base { max-width: none; }
 
 //==== blog type icon ====
 
-.IcoBlogTp
-{
+.IcoBlogTp {
   @extend .icon;
 
   display: inline-block;
@@ -96,15 +138,14 @@ ul, ol
   font-size: 1rem;
 }
 
-.IcoBlogLck   { @extend .icon-lock; }
-.IcoBlogImg   { @extend .icon-image; }
-.IcoBlogImgs  { @extend .icon-images; }
-.IcoBlogTxt   { @extend .icon-text; }
+.IcoBlogLck  { @extend .icon-lock; }
+.IcoBlogImg  { @extend .icon-image; }
+.IcoBlogImgs { @extend .icon-images; }
+.IcoBlogTxt  { @extend .icon-text; }
 
 //==== sharing icon ====
 
-a.IcoShr
-{
+a.IcoShr {
   @extend .icon;
 
   display: inline-block;
@@ -114,16 +155,14 @@ a.IcoShr
   vertical-align: middle;
   font-size: 1.2rem;
 
-  &:hover
-  { text-decoration: none; }
+  &:hover { text-decoration: none; }
 }
 
-a.IcoLnk  { @extend .icon-share; color: #404040; }
-a.IcoFb   { @extend .icon-facebook; color: #4367a4; }
-a.IcoGp   { @extend .icon-google-plus; color: #d23e2b; }
-a.IcoTtr  { @extend .icon-twitter; color: #3abfe8; }
-a.IcoPlk
-{
+a.IcoLnk { @extend .icon-share; color: #404040; }
+a.IcoFb  { @extend .icon-facebook; color: #4367a4; }
+a.IcoGp  { @extend .icon-google-plus; color: #d23e2b; }
+a.IcoTtr { @extend .icon-twitter; color: #3abfe8; }
+a.IcoPlk {
   background-size: 100px 20px;
   background-image: url(../image/shares.png);
   background-position: -80px 0px;
@@ -131,23 +170,20 @@ a.IcoPlk
 
 //==== component 'TabBox' ====
 
-.TbBx > ul > li
-  {
+.TbBx > ul > li {
     margin-right: 10px;
     border-width: 0px;
 
-    &.PckTb
-    {
+    &.PckTb {
       border-width: 1px;
       font-size: 1.2rem;
-      background-color: rgba(255, 255, 255, 0.9); 
+      background-color: rgba(255, 255, 255, 0.9);
     }
   }
 
 //==== component 'ItemList' ====
 
-.LstIdxTg
-{
+.LstIdxTg {
   display: inline-block;
   min-width: 20px;
   margin: 0px 2px;
@@ -155,12 +191,10 @@ a.IcoPlk
   text-align: center;
   cursor: pointer;
 
-  &:hover
-  { color: $Clr_Red; }
+  &:hover { color: $Clr_Red; }
 }
 
-.LstIdxTgDsb
-{
+.LstIdxTgDsb {
   display: inline-block;
   min-width: 20px;
   margin: 0px 2px;
@@ -170,36 +204,30 @@ a.IcoPlk
   background-color: #c0c0c0;
 }
 
-.OneItm
-{
+.OneItm {
   margin: 5px 0px;
   padding: 5px;
   border-width: 1px;
   border-radius: 5px;
 
-  &:hover
-  { background-color: rgba(232, 240, 255, 0.9); }
+  &:hover { background-color: rgba(232, 240, 255, 0.9); }
 }
 
-.OneMsg
-{
+.OneMsg {
   position: relative;
 
-  > pre
-  {
+  > pre {
     margin: 5px 0px;
     white-space: pre-wrap;
   }
 
-  > div:last-of-type
-  {
+  > div:last-of-type {
     text-align: right;
     font-size: 10px;
     color: #808080;
   }
 
-  > input.Btn0
-  {
+  > input.Btn0 {
     display: none;
     position: absolute;
     right: 5px;
@@ -207,58 +235,48 @@ a.IcoPlk
   }
 }
 
-.OneBlog > div
-{
-  &:first-child
-  { white-space: pre-wrap; }
+.OneBlog > div {
+  &:first-child { white-space: pre-wrap; }
 
-  &:nth-child(2)
-  {
+  &:nth-child(2) {
     font-size: 12px;
     color: #808080;
   }
 
-  &:nth-child(2) > span
-  {
+  &:nth-child(2) > span {
     margin-right: 10px;
     padding: 0px 2px;
     border-radius: 3px;
   }
 
-  &:nth-child(3)
-  {
+  &:nth-child(3) {
     white-space: normal;
     font-size: 12px;
     color: #202020;
   }
 
-  &:last-child
-  {
+  &:last-child {
     text-align: right;
     font-size: 10px;
     color: #808080;
   }
 }
 
-.OneMsgCmt
-{
+.OneMsgCmt {
   position: relative;
 
-  > pre
-  {
+  > pre {
     margin: 5px 0px;
     white-space: pre-wrap;
   }
 
-  > div:last-of-type
-  {
+  > div:last-of-type {
     text-align: right;
     font-size: 10px;
     color: #808080;
   }
 
-  > span:last-child
-  {
+  > span:last-child {
     position: absolute;
     right: 5px;
     top: 5px;
@@ -267,21 +285,16 @@ a.IcoPlk
   }
 }
 
-.OneTtrl
-{ cursor: pointer; }
+.OneTtrl { cursor: pointer; }
 
 //==== component: 'Frame' ====
 
 //==== 'Frame' blog ====
 
-.Frm
-{
-  .Hdr
-  {
-    > span:last-child
-    {
-      .FIB
-      {
+.Frm {
+  .Hdr {
+    > span:last-child {
+      .FIB {
         @extend .icon;
 
         display: inline-block;
@@ -295,16 +308,14 @@ a.IcoPlk
         cursor: pointer;
         color: $Clr_Grey;
 
-        &::before
-        {
+        &::before {
           position: absolute;
           right: 5px;
           bottom: 6px;
           font-size: 0.8rem;
         }
 
-        &:hover
-        {
+        &:hover {
           border-color: $Clr_Red;
           color: $Clr_Red;
         }
@@ -319,30 +330,25 @@ a.IcoPlk
     }
   }
 
-  .Ctn .Blog
-  {
+  .Ctn .Blog {
     padding: 20px;
     line-height: 2em;
     text-align: center;
 
-    &.Text > pre
-    {
+    &.Text > pre {
       display: inline-block;
       margin-bottom: 40px;
       white-space: pre-wrap;
       text-align: left;
     }
 
-    &.Img
-    {
-      > img
-      {
+    &.Img {
+      > img {
         vertical-align: top;
         cursor: pointer;
       }
 
-      > pre
-      {
+      > pre {
         display: inline-block;
         margin: 0;
         padding: 5px;
@@ -352,25 +358,21 @@ a.IcoPlk
       }
     }
 
-    &.Imgs
-    {
+    &.Imgs {
       padding-bottom: 30px;
 
-      > div
-      {
+      > div {
         min-height: 100px;
         margin: 10px 10px 20px 10px;
 
-        > img
-        {
+        > img {
           display: inline-block;
           min-width: 50px;
           min-height: 50px;
           cursor: pointer;
         }
 
-        > div > span
-        {
+        > div > span {
           display: inline-block;
           text-align: left;
           vertical-align: top;
@@ -381,8 +383,7 @@ a.IcoPlk
   }
 }
 
-.Frm .Ftr
-{
+.Frm .Ftr {
   display: inline-block;
   position: absolute;
   left: 1px;
@@ -394,11 +395,9 @@ a.IcoPlk
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.9);
 
-  > input[type=checkbox]
-  { vertical-align: bottom; }
+  > input[type=checkbox] { vertical-align: bottom; }
 
-  > span
-  {
+  > span {
     display: inline-block;
     max-width: 300px;
     margin-left: 5px;
@@ -406,22 +405,18 @@ a.IcoPlk
     word-break: break-all;
     word-wrap: break-word;
 
-    > div
-    {
-      > span
-      {
+    > div {
+      > span {
         display: inline-block;
         vertical-align: top;
 
-        &:first-child
-        {
+        &:first-child {
           min-width: 80px;
           text-align: left;
         }
       }
 
-      &:nth-child(2) > span:nth-child(2) > span
-      {
+      &:nth-child(2) > span:nth-child(2) > span {
         display: inline-block;
         margin-right: 10px;
         vertical-align: top;
@@ -437,8 +432,7 @@ a.IcoPlk
 
 //==== 'Button0' component. ====
 
-.Btn0
-{
+.Btn0 {
   display: inline-block;
   min-width: 20px;
   padding: 1px 3px;
@@ -450,22 +444,19 @@ a.IcoPlk
   background-image: -webkit-linear-gradient(#90c0f0, #e0f0f0);
   background-image: linear-gradient(0deg, #90c0f0, #e0f0f0);
 
-  &:hover
-  {
+  &:hover {
     background-image: -webkit-linear-gradient(#b0d0f0, #f0f0ff);
     background-image: linear-gradient(0deg, #b0d0f0, #f0f0ff);
   }
 
-  &:active
-  {
+  &:active {
     color: #808080;
     padding: 2px 3px 0px 3px;
     background-image: -webkit-linear-gradient(#f0f0ff, #b0d0f0);
     background-image: linear-gradient(0deg, #f0f0ff, #b0d0f0);
   }
 
-  &.Lock
-  {
+  &.Lock {
     color: #f0f0f0;
     padding: 1px 3px;
     cursor: default;

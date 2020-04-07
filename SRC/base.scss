@@ -1,78 +1,18 @@
 //==== structure =======================================================================================================
 
-#Template
-{
-  display: none;
-}
+@media screen and ( min-device-width: 640px ) {
+  #Base {
+    max-width: 1000px;
 
-@media screen and ( min-device-width: 640px )
-{
-  #Base
-  { 
-    max-width: 1000px; 
-    
-    #Tail
-    {
+    #Tail {
       text-align: center;
     }
   }
 }
 
-#Base
-{
+#Base {
   position: relative;
   margin: 0px auto;
-  
-  #Head > nav
-  {
-    line-height: 2rem;
-
-    > div
-    {
-      display: inline-block;
-      padding: 5px;
-    }
-  }
-
-  #Main
-  {
-    min-height: 500px;
-  }
-
-  #Tail
-  { line-height: 2rem; }
-}
-
-//==== normal class ====================================================================================================
-
-.Block
-{
-  display: inline-block;
-  vertical-align: top;
-}
-
-.ClickItem
-{
-  cursor: pointer;
-
-  &:hover
-  {
-    color: #ff0000;
-  }
-}
-
-.TextTitle
-{
-  display: inline-block;
-  min-width: 70px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-img.Unload
-{
-  border: 1px solid;
-  background-color: #90c0ff;
 }
 
 //======================================================================================================================

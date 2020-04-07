@@ -17,7 +17,7 @@ const DftPgRt = { // here should handle 404.
   author: 'RZ Fang',
   favicon: 'favicon.ico',
   feed: '/feed.xml',
-  css: [ '/resource/base.css', '/resource/style2.css' ],
+  css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js', 'hydrate.js' ],
   body: [ './component/header.riot', './component/error404.riot', './component/footer.riot' ]
 };
@@ -91,7 +91,7 @@ module.exports = {
     },
     '/zone': {
       ...DftPgRt,
-      css: [ '/resource/base.css', '/resource/style1.css' ],
+      css: [ '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: [ 'page/zone.html' ]
     },
