@@ -34,60 +34,34 @@ module.exports = {
       ...DftPgRt,
       title: '空域 - 管理員',
       js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
-      body: [
-        { type: 'riot', component: './component/admin.tag', initialize: AdminPage }
-      ]},
+      body: [{ type: 'riot', component: './component/admin.tag', initialize: AdminPage }]},
     '/about': {
       ...DftPgRt,
-      body: [ './component/header.riot', './component/about.riot', './component/footer.riot' ]
+      body: [ './component/about.riot' ]
     },
     '/blogs': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/blogs.riot', initialize: require('./page/blogs')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/blogs.riot', initialize: require('./page/blogs')}]
     },
     '/text': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
     },
     '/image': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
     },
     '/images': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
     },
     '/zft': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
     },
     '/messages': {
       ...DftPgRt,
-      body: [
-        './component/header.riot',
-        { type: 'riot', component: './component/messages.riot', initialize: require('./page/messages')},
-        './component/footer.riot'
-      ]
+      body: [{ type: 'riot', component: './component/messages.riot', initialize: require('./page/messages')}]
     },
     '/zone': {
       ...DftPgRt,

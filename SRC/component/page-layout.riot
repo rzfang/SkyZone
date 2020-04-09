@@ -1,0 +1,68 @@
+<page-header>
+  <nav>
+    <a each={Tb in state.Tbs} class={Tb.IsCrnt && 'Crnt'} href={Tb.Lnk}>{Tb.Txt}</a>
+  </nav>
+  <style>
+    :host { display: block; padding: 10px; line-height: 2rem; background-color: #f0f0f0; }
+    :host a { margin-right: 10px; }
+    :host a.Crnt { font-size: 1.2rem; color: #202020; };
+    :host a.Crnt:hover { text-decoration: none; cursor: default; }
+  </style>
+  <script>
+    export default {
+      state: {
+        Tbs: [
+          { Lnk: '/about', Txt: '關於', IsCrnt: false },
+          { Lnk: '/blogs', Txt: '網誌', IsCrnt: false },
+          { Lnk: '/messages', Txt: '留言', IsCrnt: false },
+          { Lnk: '/feed.xml', Txt: '訂閱', IsCrnt: false },
+          { Lnk: '/', Txt: '回入口', IsCrnt: false },
+        ]
+      },
+
+      onBeforeMount (Prps, { Tbs }) {
+        let Pthnm = '';
+
+        this.OnNode(Rqst => { Pthnm = Rqst.url; });
+        this.OnBrowser(() => { Pthnm = window.location.pathname; });
+
+        Tbs.find((Tb, Idx) => {
+          if (Tb.Lnk !== Pthnm) { return false; }
+
+          this.state.Tbs[Idx].IsCrnt = true;
+
+          return true;
+        });
+      }
+    }
+  </script>
+</page-header>
+
+<page-footer>
+  ©2011-2019 RZ Fang
+  <a rel='license' href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>
+    <img
+      alt='創用 CC 授權條款'
+      src='/image/license.png'
+      title='本著作係採用創用 CC 姓名標示-非商業性-相同方式分享 4.0 國際 授權條款授權.'
+      data-original-src='https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png'/>
+  </a>
+  <style>
+    :host { display: block; padding: 10px; text-align: center; background-color: #f0f0f0; }
+    :host img { border-width: 0; width: 88px; height: 31px; vertical-align: middle; }
+  </style>
+</page-footer>
+
+<page-layout>
+  <page-header/>
+  <slot/>
+  <page-footer/>
+  <style>
+    :host>* { padding: 10px; }
+  </style>
+  <script>
+    export default {
+      components: { pageHeader, pageFooter }
+    }
+  </script>
+</page-layout>

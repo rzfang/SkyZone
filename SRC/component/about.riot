@@ -71,17 +71,17 @@
 </about-me>
 
 <about>
-  <tab-box Tbs={state.Tbs}>
-    <index/>
-  </tab-box>
-  <style>
-    :host { display: block; }
-  </style>
+  <page-layout>
+    <div is='tab-box' tabs={state.Tbs}>
+      <index/>
+    </div>
+  </page-layout>
   <script>
+    import pageLayout from './page-layout.riot';
     import tabBox from './tab-box.riot';
 
     export default {
-      components: { tabBox, index, aboutSite, aboutMe },
+      components: { pageLayout, tabBox, index, aboutSite, aboutMe },
 
       state: {
         Tbs: [
