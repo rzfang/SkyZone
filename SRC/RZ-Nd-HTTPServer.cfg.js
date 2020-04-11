@@ -19,7 +19,7 @@ const DftPgRt = { // here should handle 404.
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js', 'hydrate.js' ],
-  body: [ './component/header.riot', './component/error404.riot', './component/footer.riot' ]
+  body: [ './component/error404.riot' ]
 };
 
 module.exports = {
@@ -75,9 +75,9 @@ module.exports = {
       js: [ 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
     },
-    '/500': { // v3
+    '/500': {
       ...DftPgRt,
-      body: [ './component/header.riot', './component/error500.riot', './component/footer.riot' ]
+      body: [ './component/error500.riot' ]
     },
     '/404': DftPgRt
   },

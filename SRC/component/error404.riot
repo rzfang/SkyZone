@@ -1,13 +1,21 @@
 <error404>
-  <pre>
-    404
-    網頁不存在！
-    請由上方網站導引繼續瀏覽本網站。
+  <page-layout>
+    <pre>
+      404
+      網頁不存在！
+      請由上方網站導引繼續瀏覽本網站。
 
-    謝謝
-  </pre>
+      謝謝
+    </pre>
+  </page-layout>
   <style>
-    :host { text-align: center; }
-    :host>pre { display: inline-block; margin: 20px 0;font-size: 2rem; text-align: left;white-space: pre-line; }
+    :host pre { display: inline-block; margin: 20px 0;font-size: 2rem; text-align: left;white-space: pre-line; }
   </style>
+  <script>
+    import pageLayout from './page-layout.riot';
+
+    export default {
+      components: { pageLayout }
+    }
+  </script>
 </error404>

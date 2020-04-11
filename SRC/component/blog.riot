@@ -85,8 +85,9 @@
     <div is='share-box' url={state.Blg.Url}/>
   </page-layout>
   <style>
-    :host h1 { margin: 0; }
-    :host icon { margin-right: 10px; }
+    :host h1,
+    :host h1+div { margin: 0 0 10px 0; }
+    :host div>icon { margin-right: 10px; }
   </style>
   <script>
     import icon from './icon.riot';

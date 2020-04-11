@@ -54,9 +54,11 @@
 </page-footer>
 
 <page-layout>
-  <page-header/>
-  <slot/>
-  <page-footer/>
+  <div is='page-header'/>
+  <div>
+    <slot/>
+  </div>
+  <div is='page-footer'/>
   <style>
     :host>* { padding: 10px; }
   </style>
