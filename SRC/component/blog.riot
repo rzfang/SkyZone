@@ -75,19 +75,17 @@
 </zft>
 
 <blog>
-  <page-layout>
-    <h1>{state.Blg.Ttl}</h1>
-    <div>
-      <div is='tags' tags={state.Blg.Tgs}/>
-      <icon title='發佈時間' name='calendar'/> {state.Blg.Dt}
-    </div>
-    <div is={state.Blg.Tp} blog={state.Blg}/>
-    <div is='share-box' url={state.Blg.Url}/>
-  </page-layout>
+  <h1>{state.Blg.Ttl}</h1>
+  <div>
+    <div is='tags' tags={state.Blg.Tgs}/>
+    <icon title='發佈時間' name='calendar'/> {state.Blg.Dt}
+  </div>
+  <div is={state.Blg.Tp} blog={state.Blg}/>
+  <div is='share-box' url={state.Blg.Url}/>
   <style>
-    :host h1,
-    :host h1+div { margin: 0 0 10px 0; }
-    :host div>icon { margin-right: 10px; }
+    :host>h1,
+    :host>h1+div { margin: 0 0 10px 0; }
+    :host>div>icon { margin-right: 10px; }
   </style>
   <script>
     import icon from './icon.riot';

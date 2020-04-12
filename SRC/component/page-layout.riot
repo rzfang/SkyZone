@@ -3,7 +3,7 @@
     <a each={Tb in state.Tbs} class={Tb.IsCrnt && 'Crnt'} href={Tb.Lnk}>{Tb.Txt}</a>
   </nav>
   <style>
-    :host { display: block; padding: 10px; line-height: 2rem; background-color: #f0f0f0; }
+    :host { line-height: 2rem; background-color: #f0f0f0; }
     :host a { margin-right: 10px; }
     :host a.Crnt { font-size: 1.2rem; color: #202020; };
     :host a.Crnt:hover { text-decoration: none; cursor: default; }
@@ -48,19 +48,17 @@
       data-original-src='https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png'/>
   </a>
   <style>
-    :host { display: block; padding: 10px; text-align: center; background-color: #f0f0f0; }
+    :host { text-align: center; background-color: #f0f0f0; }
     :host img { border-width: 0; width: 88px; height: 31px; vertical-align: middle; }
   </style>
 </page-footer>
 
 <page-layout>
-  <div is='page-header'/>
-  <div>
-    <slot/>
-  </div>
-  <div is='page-footer'/>
+  <page-header/>
+  <slot/>
+  <page-footer/>
   <style>
-    :host>* { padding: 10px; }
+    :host>* { display: block; padding: 10px; }
   </style>
   <script>
     export default {

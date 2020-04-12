@@ -159,34 +159,30 @@
 </replies>
 
 <messages>
-  <page-layout>
-    <ul>
-      <li each={(Msg, Idx) in state.Msgs}>
-        <div>{Msg.Dt} {Msg.Nm}:</div>
-        <pre>{Msg.Msg}</pre>
-        <a href='javascript:void(0);' data-index={Idx} onclick={RepliesToggle}>
-          <span>{Msg.IsRplsLstd ? '隱藏回應' : '回應'}</span>
-          <span if={Msg.ChnCnt}>({Msg.ChnCnt})</span>
-        </a>
-        <div is='replies' if={Msg.IsRplsLstd} message-id={Msg.ID} message-index={Idx} replies={Msg.Rpls}/>
-      </li>
-    </ul>
-    <div class='load-more'>
-      <a href='javascript:void(0);' onclick={MessagesLoad}>載入更多</a>
-    </div>
-  </page-layout>
+  <ul>
+    <li each={(Msg, Idx) in state.Msgs}>
+      <div>{Msg.Dt} {Msg.Nm}:</div>
+      <pre>{Msg.Msg}</pre>
+      <a href='javascript:void(0);' data-index={Idx} onclick={RepliesToggle}>
+        <span>{Msg.IsRplsLstd ? '隱藏回應' : '回應'}</span>
+        <span if={Msg.ChnCnt}>({Msg.ChnCnt})</span>
+      </a>
+      <div is='replies' if={Msg.IsRplsLstd} message-id={Msg.ID} message-index={Idx} replies={Msg.Rpls}/>
+    </li>
+  </ul>
+  <div>
+    <a href='javascript:void(0);' onclick={MessagesLoad}>載入更多</a>
+  </div>
   <style>
-    :host ul { padding: 0; list-style: none; }
-    :host ul>li { margin-bottom: 30px; }
-    :host ul>li>div:first-of-type { color: #808080; }
-    :host ul>li>pre { margin: 5px 0; line-height: 1.5; }
-    :host .load-more { text-align: center; }
+    :host>ul { padding: 0; list-style: none; }
+    :host>ul>li { margin-bottom: 30px; }
+    :host>ul>li>div:first-of-type { color: #808080; }
+    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
+    :host>div { text-align: center; }
   </style>
   <script>
-    import pageLayout from './page-layout.riot';
-
     export default {
-      components: { pageLayout, replies },
+      components: { replies },
 
       state: {
         HsAlLdd: false, // has all loaded.

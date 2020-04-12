@@ -85,16 +85,13 @@
 </blog-list>
 
 <blogs>
-  <page-layout>
-    <tags tags={state.Tgs}/>
-    <div is='blog-list'/>
-  </page-layout>
+  <tags tags={state.Tgs}/>
+  <div is='blog-list'/>
   <script>
-    import pageLayout from './page-layout.riot';
     import tags from './tags.riot';
 
     export default {
-      components: { pageLayout, tags, blogList },
+      components: { tags, blogList },
 
       state: {
         Tgs: []

@@ -244,14 +244,15 @@ function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
         }
 
         const Cmpnts = requireFromString(Cd, __dirname + '/' + Bd.component),
-              Cmpnt = Cmpnts.default;
+              Cmpnt = Cmpnts.default,
+              MdlNm = Nm.replace(/-\w/g, Str => Str.substr(1).toUpperCase()); // module name.
 
         RiotUsed.V4 = true;
 
         if (!Bd.initialize || !Is.Function(Bd.initialize)) {
           const { html: HTML, css: CSS } = ssr.fragments(Nm, Cmpnt, {});
 
-          MntScrpts += `<script type='module'>\nimport ${Nm} from '/${Bs}';\nconst ${Nm}Shell = hydrate(${Nm});\n${Nm}Shell(document.querySelector('${Nm}'));\n</script>\n`;
+          MntScrpts += `<script type='module'>\nimport ${MdlNm} from '/${Bs}';\nconst ${MdlNm}Shell = hydrate(${MdlNm});\n${MdlNm}Shell(document.querySelector('${Nm}'));\n</script>\n`;
 
           if (CSS) { LdCsss += `<style>${CSS}</style>\n`; }
 
@@ -267,7 +268,7 @@ function PageRespond (Rqst, Rspns, UrlInfo, Prm) {
             const Jsn = JSON.stringify(Dt),
                   { html: HTML, css: CSS } = ssr.fragments(Nm, Cmpnt, Dt);
 
-            MntScrpts += `<script type='module'>import ${Nm} from '/${Bs}';\nconst ${Nm}Shell = hydrate(${Nm});\n${Nm}Shell(document.querySelector('${Nm}'));\n</script>\n`;
+            MntScrpts += `<script type='module'>import ${MdlNm} from '/${Bs}';\nconst ${MdlNm}Shell = hydrate(${MdlNm});\n${MdlNm}Shell(document.querySelector('${Nm}'));\n</script>\n`;
 
             if (CSS) { LdCsss += `<style>${CSS}</style>\n`; }
 

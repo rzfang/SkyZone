@@ -24,19 +24,8 @@ function SourceCodeSplit (SrcCd) {
           EndIdx = SrcCd.indexOf(EndTg) + EndTg.length, // end index.
           Cd = SrcCd.substring(SrcCd.indexOf(StTg), EndIdx);
 
-    // ==== name in Js code will be from tag name with camel case. ====
-
-    let Nm = TgNm;
-
-    const NmChk = TgNm.match(/-\w/g);
-
-    if (NmChk) {
-      for (let i = 0; i < NmChk.length; i++) {
-        Nm = Nm.replace(NmChk[i], NmChk[i].substr(1).toUpperCase());
-      }
-    }
-
-    // ====
+    // name in Js code will be from tag name with camel case.
+    let Nm = TgNm.replace(/-\w/g, Str => Str.substr(1).toUpperCase());
 
     Cds.push({ Nm, Cd });
 

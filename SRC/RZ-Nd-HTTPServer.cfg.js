@@ -19,7 +19,7 @@ const DftPgRt = { // here should handle 404.
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js', 'hydrate.js' ],
-  body: [ './component/error404.riot' ]
+  body: [ './page/page-error404.riot' ]
 };
 
 module.exports = {
@@ -37,31 +37,31 @@ module.exports = {
       body: [{ type: 'riot', component: './component/admin.tag', initialize: AdminPage }]},
     '/about': {
       ...DftPgRt,
-      body: [ './component/about.riot' ]
+      body: [ './page/page-about.riot' ]
     },
     '/blogs': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/blogs.riot', initialize: require('./page/blogs')}]
+      body: [{ type: 'riot', component: './page/page-blogs.riot', initialize: require('./page/blogs')}]
     },
     '/text': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
+      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
     },
     '/image': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
+      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
     },
     '/images': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
+      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
     },
     '/zft': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/blog.riot', initialize: require('./page/blog')}]
+      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
     },
     '/messages': {
       ...DftPgRt,
-      body: [{ type: 'riot', component: './component/messages.riot', initialize: require('./page/messages')}]
+      body: [{ type: 'riot', component: './page/page-messages.riot', initialize: require('./page/messages')}]
     },
     '/zone': {
       ...DftPgRt,
@@ -77,7 +77,7 @@ module.exports = {
     },
     '/500': {
       ...DftPgRt,
-      body: [ './component/error500.riot' ]
+      body: [ './page/page-error500.riot' ]
     },
     '/404': DftPgRt
   },
@@ -187,7 +187,7 @@ module.exports = {
     { // riot component js compiled in runtime.
       path: /\.riot$/,
       type: 'riot4js',
-      location: './component'
+      location: './page'
     },
 
 
