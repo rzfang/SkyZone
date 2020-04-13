@@ -75,13 +75,13 @@
 </zft>
 
 <blog>
-  <h1>{state.Blg.Ttl}</h1>
+  <h1>{props.info.Ttl}</h1>
   <div>
-    <div is='tags' tags={state.Blg.Tgs}/>
-    <icon title='發佈時間' name='calendar'/> {state.Blg.Dt}
+    <div is='tags' tags={props.info.Tgs}/>
+    <icon title='發佈時間' name='calendar'/> {props.info.Dt}
   </div>
-  <div is={state.Blg.Tp} blog={state.Blg}/>
-  <div is='share-box' url={state.Blg.Url}/>
+  <div is={props.info.Tp} blog={props.info}/>
+  <div is='share-box' url={props.info.Url}/>
   <style>
     :host>h1,
     :host>h1+div { margin: 0 0 10px 0; }
@@ -89,20 +89,11 @@
   </style>
   <script>
     import icon from './icon.riot';
-    import pageLayout from './page-layout.riot';
     import shareBox from './share-box.riot';
     import tags from './tags.riot';
 
     export default {
-      components: { icon, shareBox, pageLayout, tags, text, image, images, zft },
-
-      state: {
-        Blg: {}
-      },
-
-      onBeforeMount (props, state) {
-        state.Blg = this.StoreGet('BLOG');
-      }
+      components: { icon, shareBox, tags, text, image, images, zft }
     }
   </script>
 </blog>

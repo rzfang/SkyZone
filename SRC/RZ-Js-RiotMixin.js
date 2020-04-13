@@ -148,8 +148,9 @@
   /*
     @ name to locate the store.
     @ Then(Sto, Rst) = then, a function when the task done.
-      @ the store object. */
-  function StoreListen (StoNm, Then) {
+      @ the store object.
+    @ run once in the beginning. */
+  function StoreListen (StoNm, Then, RnOnc = true) {
     let Clbcks = this.Srvc.Rprt[StoNm] || null;
 
     if (!Clbcks || !Array.isArray(Clbcks)) {
@@ -159,7 +160,7 @@
 
     this.Srvc.Rprt[StoNm].push(Then);
 
-    if (this.Srvc.Sto[StoNm]) { Then(this.Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
+    if (RnOnc && this.Srvc.Sto[StoNm]) { Then(this.Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
   }
 
   /*

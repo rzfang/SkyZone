@@ -10,14 +10,14 @@ module.exports = (Rqst, { UrlInfo, Prm }, Then) => {
 
   async.parallel(
     {
-      TagList: Then => {
+      TagList: Then1 => {
         Tag.List(
           Rqst,
           {},
           (Idx, Msg, Tgs) => {
             if (Idx < 0) {
               Log(`${Idx} - ${Msg}`, 'error');
-              Then(-1);
+              Then1(-1);
 
               return;
             }
@@ -29,17 +29,16 @@ module.exports = (Rqst, { UrlInfo, Prm }, Then) => {
             }
 
             Rqst.RMI.StoreSet('TAGS', () => Tgs);
-            Then(0);
+            Then1(0);
           });
-      }
-      ,
-      BlogList: Then => {
+      },
+      BlogList: Then2 => {
         Blog.List(
           Rqst,
           { Lmt: 5, TgIDA: PckdIds },
           (Idx, Msg, Blgs) => {
             Rqst.RMI.StoreSet('BLOGS', () => Blgs);
-            Then(0);
+            Then2(0);
           });
       }
     },

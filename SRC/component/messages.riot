@@ -160,7 +160,7 @@
 
 <messages>
   <ul>
-    <li each={(Msg, Idx) in state.Msgs}>
+    <li each={(Msg, Idx) in props.list}>
       <div>{Msg.Dt} {Msg.Nm}:</div>
       <pre>{Msg.Msg}</pre>
       <a href='javascript:void(0);' data-index={Idx} onclick={RepliesToggle}>
@@ -187,37 +187,6 @@
       state: {
         HsAlLdd: false, // has all loaded.
         Msgs: []
-      },
-
-      onBeforeMount (props, state) {
-        state.Msgs = this.StoreGet('MESSAGES');
-      },
-
-      onMounted (props, state) {
-        if (!this.OnBrowser()) { return; }
-
-        this.StoreListen(
-          'MESSAGES',
-          (NwSto, PrmsToTsk) => { // new store, params to task.
-            if (!PrmsToTsk) { return; }
-
-            this.update({ Msgs: this.state.Msgs.concat(NwSto), HsAlLdd: NwSto.length < 5 });
-          });
-
-        this.StoreListen(
-          'REPLIES',
-          (NwSto, PrmsToTsk) => {
-            if (!PrmsToTsk) { return; }
-            const { MsgId, MsgIdx } = PrmsToTsk,
-                  Msg = this.state.Msgs[MsgIdx],
-                  Rpls = NwSto[MsgId];
-
-            Msg.ChnCnt = Rpls.length;
-            Msg.IsRplsLstd = true;
-            Msg.Rpls = Rpls;
-
-            this.update({ Msgs: this.state.Msgs });
-          });
       },
 
       MessagesLoad (Evt) {

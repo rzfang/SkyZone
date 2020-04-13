@@ -23,7 +23,7 @@
       onBeforeMount (Prps, { Tbs }) {
         let Pthnm = '';
 
-        this.OnNode(Rqst => { Pthnm = Rqst.url; });
+        this.OnNode(Rqst => { Pthnm = Rqst.url.replace(/\?.+$/, ''); });
         this.OnBrowser(() => { Pthnm = window.location.pathname; });
 
         Tbs.find((Tb, Idx) => {

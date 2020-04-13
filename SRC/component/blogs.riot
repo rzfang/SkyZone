@@ -1,6 +1,6 @@
-<blog-list>
+<blogs>
   <ul>
-    <li each={Blg in state.Blgs}>
+    <li each={Blg in props.list}>
       <div>
         <icon name={Blg.Tp}/>
         <a href='{Blg.Tp}?b={Blg.ID}'>{Blg.Ttl}</a>
@@ -13,12 +13,12 @@
     </li>
   </ul>
   <div>
-    <a if={!state.HsAlLdd} href='javascript:void(0);' onclick={BlogsLoad}>載入更多</a>
+    <a if={!props.allLoaded} href='javascript:void(0);' onclick={BlogsLoad}>載入更多</a>
     <a href='javascript:void(0);' onclick={ScrollToTop}>回到頂端</a>
   </div>
   <style>
     :host>ul { list-style: none; margin: 0; padding: 0; }
-    :host>ul>li { margin: 20px 0; line-height: 1.5; }
+    :host>ul>li { margin-bottom: 20px; line-height: 1.5; }
     :host>ul>li>div:first-child>a { display: inline-block; margin-left: 10px; font-size: 1.3rem; vertical-align: middle; }
     :host>ul>li>pre { white-space: pre-line; }
     :host>ul>li>pre~div { color: #808080; }
@@ -32,38 +32,17 @@
     export default {
       components: { icon },
 
-      state: {
-        Blgs: [],
-        HsAlLdd: false // has all loaded.
-      },
-
-      onBeforeMount (props, state) {
-        state.Blgs = this.StoreGet('BLOGS');
-      },
-
-      onMounted (props, state) {
-        this.OnBrowser() &&
-        this.StoreListen(
-          'BLOGS',
-          (NwSto, PrmsToTsk) => { // new store, params to task.
-            if (!PrmsToTsk) { return; }
-
-            this.update({ Blgs: this.state.Blgs.concat(NwSto), HsAlLdd: NwSto.length < 5 });
-          });
-      },
-
       ScrollToTop () {
         window.scrollTo(0, 0);
       },
 
       BlogsLoad (Evt) {
-        const { Blgs, HsAlLdd } = this.state;
+        const { blogs: Blgs, allLoaded: HsAlLdd } = this.props;
         const Ofst = Blgs.length;
 
         if (HsAlLdd) { return; }
 
-        const Tgs = this.StoreGet('TAGS') || [], // tags.
-              TgIds = Tgs.filter(Tg => Tg.ID && Tg.IsPckd).map(Tg => Tg.ID);
+        const TgIds = this.props.tags.filter(Tg => Tg.ID && Tg.IsPckd).map(Tg => Tg.ID);
 
         this.ServiceCall(
           { Mthd: 'GET', Url: '/service/blog/list' },
@@ -79,26 +58,6 @@
             return Rst.Extend;
           },
           { TgIds, Ofst });
-      }
-    }
-  </script>
-</blog-list>
-
-<blogs>
-  <tags tags={state.Tgs}/>
-  <div is='blog-list'/>
-  <script>
-    import tags from './tags.riot';
-
-    export default {
-      components: { tags, blogList },
-
-      state: {
-        Tgs: []
-      },
-
-      onBeforeMount (props, state) {
-        state.Tgs = this.StoreGet('TAGS');
       }
     }
   </script>

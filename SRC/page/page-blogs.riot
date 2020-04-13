@@ -1,13 +1,35 @@
 <page-blogs>
   <page-layout>
-    <blogs/>
+    <tags tags={state.Tgs}/>
+    <blogs list={state.Blgs} tags={state.Tgs} all-loaded={state.HsAlBlgsLdd}/>
   </page-layout>
   <script>
     import pageLayout from '../component/page-layout.riot';
     import blogs from '../component/blogs.riot';
+    import tags from '../component/tags.riot';
 
     export default {
-      components: { pageLayout, blogs }
+      components: { pageLayout, blogs, tags },
+
+      state: {
+        Blgs: [],
+        HsAlBlgsLdd: false, // has all blogs loaded.
+        Tgs: []
+      },
+
+      onBeforeMount (props, state) {
+        state.Blgs = this.StoreGet('BLOGS');
+        state.Tgs = this.StoreGet('TAGS');
+
+        this.StoreListen(
+          'BLOGS',
+          (NwSto, PrmsToTsk) => {
+            this.update({
+              Blgs: this.state.Blgs.concat(NwSto),
+              HsAlBlgsLdd: NwSto.length < 5 });
+          },
+          false);
+      }
     }
   </script>
 </page-blogs>
