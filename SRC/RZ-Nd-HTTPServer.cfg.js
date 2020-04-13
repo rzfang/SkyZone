@@ -10,7 +10,7 @@ const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js',
       STTC_PTH = path.resolve(__dirname, '..', Cnst.STTC_PTH),
       TMP_PTH = path.resolve(__dirname, '..', Cnst.TMP_PTH);
 
-const DftPgRt = { // here should handle 404.
+const DftPgRt = { // default page route. here should handle 404.
   title: '空域',
   description: '我的天空，我在其中，在我這裡，自由放空。RZ 的個人網站。',
   keywords: '天空, 空域, RZ, 個人網站',
@@ -20,6 +20,12 @@ const DftPgRt = { // here should handle 404.
   css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js', 'hydrate.js' ],
   body: [ './page/page-error404.riot' ]
+};
+
+const BlgPgRt = { // blog page route.
+  ...DftPgRt,
+  title: '空域 - 網誌',
+  body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
 };
 
 module.exports = {
@@ -37,30 +43,21 @@ module.exports = {
       body: [{ type: 'riot', component: './component/admin.tag', initialize: AdminPage }]},
     '/about': {
       ...DftPgRt,
+      title: '空域 - 關於',
       body: [ './page/page-about.riot' ]
     },
     '/blogs': {
       ...DftPgRt,
+      title: '空域 - 網誌',
       body: [{ type: 'riot', component: './page/page-blogs.riot', initialize: require('./page/blogs')}]
     },
-    '/text': {
-      ...DftPgRt,
-      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
-    },
-    '/image': {
-      ...DftPgRt,
-      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
-    },
-    '/images': {
-      ...DftPgRt,
-      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
-    },
-    '/zft': {
-      ...DftPgRt,
-      body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
-    },
+    '/text': BlgPgRt,
+    '/image': BlgPgRt,
+    '/images': BlgPgRt,
+    '/zft': BlgPgRt,
     '/messages': {
       ...DftPgRt,
+      title: '空域 - 留言',
       body: [{ type: 'riot', component: './page/page-messages.riot', initialize: require('./page/messages')}]
     },
     '/zone': {
@@ -77,8 +74,10 @@ module.exports = {
     },
     '/500': {
       ...DftPgRt,
+      title: '空域 - 500',
       body: [ './page/page-error500.riot' ]
     },
+      title: '空域 - 404',
     '/404': DftPgRt
   },
   service: {
@@ -152,6 +151,12 @@ module.exports = {
     }
   },
   route: [
+    { // google search console validate.
+      path: /\/google301903d8518925d5.html$/,
+      type: 'resource',
+      location: '../WEB/www'
+    },
+
     // node_modules
     {
       path: /hydrate\.js$/,
