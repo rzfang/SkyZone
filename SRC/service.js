@@ -15,209 +15,107 @@ function PackedEnd (End) {
   }
 }
 
+// mixed params.
+function ParamsMix (Prm) {
+  return Object.assign({}, Prm.Bd || {}, Prm.Url || {});
+}
+
 /*
   @ request object.
   @ post, get params.
   @ end callback function. */
 module.exports = {
   BlogList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.List(Rqst, MxPrm, PckEnd);
+    return Blog.List(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   BlogAdminList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.AdminList(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.AdminList(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   BlogUnpublishedList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.UnpublishedList(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.UnpublishedList(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   BlogRead: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.Read(Rqst, MxPrm, PckEnd);
+    return Blog.Read(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   BlogUpdate: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.Update(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.Update(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   BlogUpload: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.Upload(Rqst, Rspns, MxPrm, Prm.Fls, PckEnd);
+    return Blog.Upload(Rqst, Rspns, ParamsMix(Prm), Prm.Fls, PackedEnd(End));
   },
   BlogCreate: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.Create(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.Create(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   BlogDelete: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.Delete(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.Delete(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   CommentLeave: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.CommentLeave(Rqst, MxPrm, PckEnd);
+    return Blog.CommentLeave(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   CommentDelete: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.CommentDelete(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.CommentDelete(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   CommentList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.CommentList(Rqst, MxPrm, PckEnd);
+    return Blog.CommentList(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   TagList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Tag.List(Rqst, MxPrm, PckEnd);
+    return Tag.List(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   TagAdd: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Tag.Add(Rqst, Rspns, MxPrm, PckEnd);
+    return Tag.Add(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   TagRename: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Tag.Rename(Rqst, Rspns, MxPrm, PckEnd);
+    return Tag.Rename(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   TagDelete: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Tag.Delete(Rqst, Rspns, MxPrm, PckEnd);
+    return Tag.Delete(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   WordsNowOneGet: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Wds.NowOneGet(Rqst, MxPrm, PckEnd);
+    return Wds.NowOneGet(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   WordsList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Wds.List(Rqst, Rspns, MxPrm, PckEnd);
+    return Wds.List(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   WordsCreate: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Wds.Create(Rqst, Rspns, MxPrm, PckEnd);
+    return Wds.Create(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   WordsUpdate: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Wds.Update(Rqst, Rspns, MxPrm, PckEnd);
+    return Wds.Update(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   WordsDelete: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Wds.Delete(Rqst, Rspns, MxPrm, PckEnd);
+    return Wds.Delete(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   FeedPublish: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Blog.FeedPublish(Rqst, Rspns, MxPrm, PckEnd);
+    return Blog.FeedPublish(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   MessageList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Msg.List(Rqst, MxPrm, PckEnd);
+    return Msg.List(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   MessageChainList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Msg.ChainList(Rqst, MxPrm, PckEnd);
+    return Msg.ChainList(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   MessageLeave: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Msg.Leave(Rqst, Rspns, MxPrm, PckEnd);
+    return Msg.Leave(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   MessageAdminList: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Msg.AdminList(Rqst, Rspns, MxPrm, PckEnd);
+    return Msg.AdminList(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   MessageDelete: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Msg.Delete(Rqst, Rspns, MxPrm, PckEnd);
+    return Msg.Delete(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   ArtCornerRandomOneGet: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return ArtCnr.RandomOneGet(Rqst, MxPrm, PckEnd);
+    return ArtCnr.RandomOneGet(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
   SystemCacheClean: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Systm.CacheClear(Rqst, Rspns, MxPrm, PckEnd);
+    return Systm.CacheClear(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   SystemDataSize: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Systm.DataSize(Rqst, Rspns, MxPrm, PckEnd);
+    return Systm.DataSize(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   SessionLogIn: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Ssn.LogIn(Rqst, Rspns, MxPrm, PckEnd);
+    return Ssn.LogIn(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   },
   SessionLogOut: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    return Ssn.LogOut(Rqst, Rspns, MxPrm, PckEnd);
-  },
-  DefaultCall: (Rqst, Rspns, Prm, End) => {
-    const MxPrm = Object.assign(Prm.Bd || {}, Prm.Url || {}), // mixed params.
-          Cmd = MxPrm.Cmd && parseInt(MxPrm.Cmd, 10) || -1, // command.
-          PckEnd = PackedEnd(End); // packed end callback function.
-
-    if (Cmd < 0) { return End(-1, null); }
-
-    switch (Cmd) {
-      case 9:
-        return Blog.CommentLeave(Rqst, MxPrm, PckEnd);
-    }
-
-    End(0, 'GJ');
+    return Ssn.LogOut(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   }
 }
