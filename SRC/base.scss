@@ -6,7 +6,7 @@
   }
 }
 
-body>*:not(script,style) {
+body>*:not(script):not(style) {
   display: block;
   position: relative;
   margin: 0px auto;
