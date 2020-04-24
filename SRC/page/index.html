@@ -6,33 +6,35 @@
   a, input, option, button { font-size: 16px; }
   a, a:visited { text-decoration: none; color: #0000ff; }
   a:hover { text-decoration: underline; color: #ff0000; }
-  #Base { width: 1000px; min-height: 625px; margin: 10px auto; text-align: center; }
   header nav a { display: inline-block; min-width: 100px; font-size: 20px; }
-  #Main { padding: 10px; }
-  #Entry { box-shadow: 0px 0px 5px; }
+  #base { width: 1000px; min-height: 625px; margin: 10px auto; text-align: center; }
+  #main { padding: 10px; }
+  #entry { box-shadow: 0px 0px 5px; }
 </style>
-<header>
-  <nav>
-    <a href='https://webtool.zii.tw'>線上工具</a>
-    <a href='/blogs'>空域</a>
-    <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
-    <!-- <a href='https://zakool.zii.tw'>雜酷-舊物交流網</a> -->
-  </nav>
-</header>
-<div id='Main'>
-  <a href='/blogs'>
-    <canvas id='Entry' width='640' height='480'>您的瀏覽器不支援動畫。</canvas>
-  </a>
-  <div>
-    首頁動畫：
-    <a href='?Anm=0'>飄雲</a>
-    <a href='?Anm=1'>城市</a>
-    <a href='?'>隨機</a>
+<div id='base'>
+  <header>
+    <nav>
+      <a href='https://webtool.zii.tw'>線上工具</a>
+      <a href='/blogs'>空域</a>
+      <!-- <a href='https://mrname.zii.tw'>單機程式工具</a> -->
+      <!-- <a href='https://zakool.zii.tw'>雜酷-舊物交流網</a> -->
+    </nav>
+  </header>
+  <div id='main'>
+    <a href='/blogs'>
+      <canvas id='entry' width='640' height='480'>您的瀏覽器不支援動畫。</canvas>
+    </a>
+    <div>
+      首頁動畫：
+      <a href='?Anm=0'>飄雲</a>
+      <a href='?Anm=1'>城市</a>
+      <a href='?'>隨機</a>
+    </div>
   </div>
+  <footer>
+    ©2011-2019 RZ Fang
+  </footer>
 </div>
-<footer>
-  ©2011-2019 RZ Fang
-</footer>
 <script type='text/javascript'>
   function KeyboardCommand (Pg) {
     let keyBuffer = '';
@@ -69,7 +71,7 @@
   function CityView () {
     let VctA = [[1, 0], [0, 1], [1, 0], [0, -1]], // 'VctA' = Vector Array.
         Logo = new Image(),
-        Anm = new Animation(document.getElementById('Entry'), []);
+        Anm = new Animation(document.getElementById('entry'), []);
 
     let Blds0 = BuildingsInitialize(
           Anm,
@@ -193,7 +195,7 @@
   }
 
   function CloudWalk () {
-    let Anm = new Animation(document.getElementById('Entry'), [], BaseSceneryDraw),
+    let Anm = new Animation(document.getElementById('entry'), [], BaseSceneryDraw),
         ImgA = [new Image(), new Image(), new Image()], // 'ImgA' = Image Array.
         Logo = new Image(),
         Clds = new Array(30), // 'Clds' = Cloud.

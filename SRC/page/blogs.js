@@ -3,10 +3,9 @@ const async = require('async');
 const Log = require('../RZ-Js-Log'),
       { Blog, Tag } = require('../library');
 
-module.exports = (Rqst, { UrlInfo, Prm }, Then) => {
-  let PckdIds = [];
-
-  if (Prm.Url && Prm.Url.t) { PckdIds = Array.isArray(Prm.Url.t) ? Prm.Url.t : Prm.Url.t.split(','); }
+module.exports = (Rqst, {}, Then) => {
+  const { t: TgId } = Rqst.query || {},
+        PckdIds = [ TgId ]; // picked ids.
 
   async.parallel(
     {

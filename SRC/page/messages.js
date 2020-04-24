@@ -1,7 +1,7 @@
 const Log = require('../RZ-Js-Log'),
       { Msg } = require('../library');
 
-module.exports = (Rqst, { UrlInfo, Prm }, Then) => {
+module.exports = (Rqst, {}, Then) => {
   Msg.List(
     Rqst,
     { Lmt: 5 },

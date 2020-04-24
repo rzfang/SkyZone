@@ -32,7 +32,7 @@ module.exports = {
   port: 9004,
   cdn: {
     riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
-    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.11/riot.min.js'
+    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.12/riot.min.js'
   },
   uploadFilePath: TMP_PTH,
   page: {
@@ -77,11 +77,13 @@ module.exports = {
       title: '空域 - 500',
       body: [ './page/page-error500.riot' ]
     },
-      title: '空域 - 404',
-    '/404': DftPgRt
+    '/404': {
+      ...DftPgRt,
+      title: '空域 - 404'
+    }
   },
   service: {
-    pathPatterm: /^\/service\//,
+    pathPatterm: '^/service/', // weird, express.js app.use can not take pure RegExp.
     case: {
       '/service/artcorner': {
         get: Svc.ArtCornerRandomOneGet

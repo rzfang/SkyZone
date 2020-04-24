@@ -1,16 +1,13 @@
 //==== structure ====
 
 @media screen and ( min-device-width: 640px ) {
-  #Base {
+  body>* {
     max-width: 1000px;
-
-    #Tail {
-      text-align: center;
-    }
   }
 }
 
-#Base {
+body>*:not(script,style) {
+  display: block;
   position: relative;
   margin: 0px auto;
 }

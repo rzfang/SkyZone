@@ -1,8 +1,8 @@
 const Log = require('../RZ-Js-Log'),
       { Blog } = require('../library');
 
-module.exports = (Rqst, { UrlInfo, Prm }, Then) => {
-  const { Url: { b: Id = '' }} = Prm;
+module.exports = (Rqst, {}, Then) => {
+  const { b: Id = '' } = Rqst.query || {};
 
   if (!Id) {
     Log('no blog id.', 'error');
