@@ -185,15 +185,15 @@
       components: { replies },
 
       state: {
-        HsAlLdd: false, // has all loaded.
-        Msgs: []
+        HsAlLdd: false // has all loaded.
       },
 
       MessagesLoad (Evt) {
-        const { Msgs, HsAlLdd } = this.state,
-              Ofst = Msgs.length;
+        const { HsAlLdd } = this.state;
 
         if (HsAlLdd) { return; }
+
+        const Ofst = this.props.list.length;
 
         this.ServiceCall(
           { Mthd: 'GET', Url: '/service/message' },
@@ -213,7 +213,7 @@
 
       RepliesToggle (Evt) {
         const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10),
-              Msg = this.state.Msgs[MsgIdx],
+              Msg = this.props.list[MsgIdx],
               { ID: MsgId, IsRplsLstd = false } = Msg, // is replies listed.
               StoReplies = this.StoreGet('REPLIES') || null,
               Rpls = StoReplies && StoReplies[MsgId] || null;
@@ -221,7 +221,7 @@
         if (IsRplsLstd) {
           Msg.IsRplsLstd = false;
 
-          this.update({ Msgs: this.state.Msgs });
+          this.update();
 
           return;
         }
@@ -230,7 +230,7 @@
           Msg.Rpls = Rpls;
           Msg.IsRplsLstd = true;
 
-          this.update({ Msgs: this.state.Msgs });
+          this.update();
 
           return;
         }
