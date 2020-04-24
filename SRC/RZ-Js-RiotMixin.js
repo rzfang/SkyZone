@@ -173,7 +173,7 @@
     @ params object passing to each task. optional.
     @ the service cases object in node.js, otherwise undefined. optional.
     < result code. */
-  function BrowserServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+  function ServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
     let Mthd = 'POST';
 
     if (typeof Url === 'object' && Url.Mthd) {
@@ -218,50 +218,6 @@
     return 0;
   }
 
-  function NodeServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk, Extnsn) {
-    const { Rqst, Rspns, Prm, SrvcCs } = Extnsn; // request object, response object, param object, service case.
-
-    let Mthd = 'POST';
-
-    if (typeof Url === 'object' && Url.Mthd) {
-      Mthd = Url.Mthd;
-      Url = Url.Url;
-    }
-    else if (typeof Url !== 'string') {
-      return -1;
-    }
-
-    if (!StoNm || typeof StoNm !== 'string' ||
-        !NewStoreGet || typeof NewStoreGet !== 'function')
-    { return -2; }
-
-    const ServiceCall = SrvcCs && SrvcCs[Url] && SrvcCs[Url][Mthd.toLowerCase()] || null;
-
-    if (typeof ServiceCall !== 'function') { return -3; }
-
-    let Srvc = this.Srvc;
-
-    ServiceCall(
-      Rqst,
-      Rspns,
-      Prm,
-      (Cd, Rslt) => {
-        if (Cd < 0) {
-          console.log('---- Service call fail ----');
-          console.log('Url: ' + Url + '\nMethod: ' + Mthd + '\nError Code: ' + Cd);
-
-          return;
-        }
-
-        Srvc.Sto[StoNm] = NewStoreGet(Srvc.Sto[StoNm], Rslt);
-
-        const Rprt = Srvc.Rprt[StoNm] || [],
-              Lnth = Rprt && Array.isArray(Rprt) && Rprt.length || 0;
-
-        for (let i = 0; i < Lnth; i++) { Rprt[i](Srvc.Sto[StoNm], PrmsToTsk); }
-      });
-  }
-
   /*
     @ name to locate the store.
     @ NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
@@ -290,9 +246,8 @@
   }
 
   function StorePrint () {
-    return '<script>\nwindow.Z.RM.StoreInject(\'' +
-      JSON.stringify(this.Srvc.Sto).replace(/(\\r)?\\n/g, '\\\\n').replace(/'/g, '\\\'') +
-      '\');\n</script>\n';
+    return '<script id=\'riot-store\' type=\'application/json\'>' + JSON.stringify(this.Srvc.Sto) + '</script>\n' +
+      '<script>window.Z.RM.StoreInject(document.getElementById(\'riot-store\').innerText);</script>\n';
   }
 
   function StoreInject (StoStr) {
@@ -324,10 +279,6 @@
         RMI.OnNode = Tsk => OnNode(Tsk, Rqst); // append request object to function.
         RMI.StorePrint = StorePrint;
 
-        RMI.ServiceCall = (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) => {
-          NodeServiceCall.bind(RMI)(Url, Prms, StoNm, NewStoreGet, PrmsToTsk, Extnsn);
-        };
-
         return RMI;
       }
     };
@@ -336,7 +287,7 @@
     let RMI = new ServiceInstance();
 
     RMI.OnNode = OnNode;
-    RMI.ServiceCall = BrowserServiceCall;
+    RMI.ServiceCall = ServiceCall;
     RMI.StoreInject = StoreInject;
 
     if (!window.Z || typeof window.Z !== 'object') { window.Z = { RM: RMI }; }
