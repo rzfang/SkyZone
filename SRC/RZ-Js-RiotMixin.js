@@ -222,7 +222,8 @@
     @ name to locate the store.
     @ NewStoreGet (Sto, Rst) = the function to get new store, this must return something to replace original store.
       @ original store data.
-    @ params object passing to each task. */
+    @ params object passing to each task.
+    < result code. 0 as fine, < 0 as error. */
   function StoreSet (StoNm, NewStoreGet, PrmsToTsk) {
     if (!StoNm || typeof StoNm !== 'string' || !NewStoreGet || typeof NewStoreGet !== 'function') { return -1; }
 
@@ -246,6 +247,8 @@
   }
 
   function StorePrint () {
+    this.Srvc.Sto.PAGE = 'only on server side.'; // clean server only store - PAGE.
+
     return '<script id=\'riot-store\' type=\'application/json\'>' + JSON.stringify(this.Srvc.Sto) + '</script>\n' +
       '<script>window.Z.RM.StoreInject(document.getElementById(\'riot-store\').innerText);</script>\n';
   }

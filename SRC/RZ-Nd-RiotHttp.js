@@ -162,6 +162,37 @@ function Riot4Render (Rqst, Bd, Then) {
 }
 
 /*
+  @ Riot mixin instance.
+  @ page config.
+  < HTML header inner HTML string. */
+function HeaderGet (RMI, PgCnfg) {
+  const RMIPgSto = RMI.StoreGet('PAGE') || {},
+        {
+          title: Ttl,
+          description: Dscrptn,
+          keywords: Kywrds,
+          author: Athr,
+          favicon: Fvcn,
+          feed: Fd } = { ...PgCnfg, ...RMIPgSto };
+
+  let HdStr = '';
+
+  if (Ttl) { HdStr += `<title>${Ttl}</title>\n`; }
+
+  if (Dscrptn) { HdStr += `<meta name='description' content='${Dscrptn}'/>\n`; }
+
+  if (Kywrds) { HdStr += `<meta name='keywords' content='${Kywrds}'/>\n`; }
+
+  if (Athr) { HdStr += `<meta name='author' content='${Athr}'/>\n`; }
+
+  if (Fvcn) { HdStr += `<link rel='icon' href='favicon.ico' type='${Fvcn}'/>\n`; }
+
+  if (Fd) { HdStr += `<link rel='alternate' type='application/atom+xml' title='atom' href='${Fd}'/>\n`; }
+
+  return HdStr;
+}
+
+/*
   @ HTTP request object.
   @ HTTP response object.
   @ path.
@@ -221,7 +252,7 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
     },
     (Err, Rslts) => {
       const { css: Css, js: Js } = PgCnfg;
-      let HdStrs = '',
+      let HdStrs = HeaderGet(Rqst.RMI, PgCnfg),
           BdStrs = '',
           ScrptStrs = Rqst.RMI.StorePrint();
 
