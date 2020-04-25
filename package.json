@@ -1,6 +1,6 @@
 {
   "name": "sky_zone",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Sky Zone",
   "main": "skyzone.js",
   "dependencies": {

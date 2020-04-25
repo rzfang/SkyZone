@@ -9,15 +9,17 @@ this project needs the key file to get everything fine.
 ## this project uses
 * HTML, Js, CSS
 * [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)
-* [Riot 3](https://riot.js.org/)
+* [Express](https://expressjs.com/)
+* [Riot 4](https://riot.js.org/) with v3 compatible.
 * [Sass](https://sass-lang.com/)
 
 ## to be a HTTP server, this project also uses
 * [nginx](https://nginx.org/)
 * [PM2](https://pm2.keymetrics.io/)
 
-P.S. for security reason, these files don't join the git.
-* nginx config file.
+##### P.S. for security reason, these files don't join the git.
+* nginx config.
+* constant key.
 
 ## set up dev enviroment
 ```
@@ -25,11 +27,15 @@ P.S. for security reason, these files don't join the git.
 ```
 
 ## run dev server
-open the first terminal and run:
+for development.
 ```
-./UTL/dev_run.sh php
+npm run dev;
 ```
-then, open the second terminal and run:
+for production.
 ```
-./UTL/dev_run.sh node
+node skyzone.js;
+```
+or use PM2.
+```
+pm2 start skyzone.js;
 ```
