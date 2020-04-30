@@ -207,7 +207,7 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
     Rspns.write('can not found the content.');
     Rspns.end();
 
-    return;
+    return -1;
   }
 
   const RMI = RM.InstanceCreate({ Rqst, Rspns }); // create a RM instance.
@@ -259,24 +259,28 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
 
       if (!Is.Array(Css)) { Log(Pth + '\npage config css is not an array.', 'warn'); }
       else {
-        Css.forEach(CssPth => {
+        for (let i = 0; i < Css.length; i++) {
+          const CssPth = Css[i];
+
           if (!Is.String(CssPth)) {
             Log('CSS path in page config is not a string.', 'warn');
 
-            return;
+            continue;
           }
 
           HdStrs += `<link rel='stylesheet' type='text/css' href='${CssPth}'/>\n`;
-        });
+        }
       }
 
       if (!Is.Array(Js)) { Log(Pth + '\npage config js is not an array.', 'warn'); }
       else {
-        Js.forEach(JsPth => {
+        for (let i = 0; i < Js.length; i++) {
+          const JsPth = Js[i];
+
           if (!Is.String(JsPth)) {
             Log('Js path in page config is not a string.', 'warn');
 
-            return;
+            continue;
           }
 
           const { ext: Ext } = path.parse(JsPth);
@@ -284,16 +288,18 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
           if (Ext === '.tag') { HdStrs += `<script type='riot/tag' src='${JsPth}'></script>\n`; }
           else if (Ext === '.riot') { HdStrs += `<script type='riot' src='${JsPth}'></script>\n`; }
           else { HdStrs += `<script src='${JsPth}'></script>\n`; }
-        });
+        }
       }
 
       let FnlRiotVrsn = 3;
 
-      Rslts.forEach(Rslt => {
+      for (let i = 0; i < Rslts.length; i++) {
+        const Rslt = Rslts[i];
+
         if (Is.String(Rslt)) {
           BdStrs += Rslt;
 
-          return;
+          continue;
         }
 
         const { RiotVrsn, HdStr, BdStr, ScrptStr } = Rslt;
@@ -302,7 +308,7 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
         HdStrs += HdStr;
         BdStrs += BdStr;
         ScrptStrs += ScrptStr;
-      });
+      }
 
       if (FnlRiotVrsn === 3) {
         HdStrs = `<script src='${Riot3Url}'></script>\n${HdStrs}`;
@@ -335,7 +341,7 @@ function ServiceRespond (Rqst, Rspns, Service) {
       Rspns.write(Is.String(RsltObj) ? RsltObj : 'error');
       Rspns.end();
 
-      return;
+      return -1;
     }
 
     if (!RsltObj) {
@@ -343,13 +349,13 @@ function ServiceRespond (Rqst, Rspns, Service) {
       Rspns.write('');
       Rspns.end();
 
-      return;
+      return 1;
     }
 
     if (Is.Function(RsltObj)) { // take over whole process to end.
       RsltObj(Rspns, () => { Rspns.end(); });
 
-      return;
+      return 2;
     }
 
     if (!Is.Object(RsltObj)) {
@@ -357,12 +363,14 @@ function ServiceRespond (Rqst, Rspns, Service) {
       Rspns.write(RsltObj);
       Rspns.end();
 
-      return;
+      return 3;
     }
 
     Rspns.writeHead(200, { 'Content-Type': 'application/json' });
     Rspns.write(JSON.stringify(RsltObj));
     Rspns.end();
+
+    return 0;
   });
 }
 
@@ -526,19 +534,19 @@ function BodyParse (Rqst, Rspns, Next) {
 function Initialize () {
   App.use(helmet()); // header handle for security.
 
-  // resource route.
-  Rt.forEach(Rsc => {
+  // ==== resource route. ====
+  for (let i = 0; i < Rt.length; i++) {
     const {
       location: Lctn = '',
       nameOnly: NmOnly = false,
       path: Pth,
       process: Prcs = null,
-      type: Tp } = Rsc;
+      type: Tp } = Rt[i];
 
     if (!Pth || !Tp) {
       Log('the route case misses path or type.', 'error');
 
-      return;
+      continue;
     }
 
     App.get(Pth, (Rqst, Rspns, Next) => {
@@ -562,24 +570,36 @@ function Initialize () {
           return Tp === 'riot4js' ? Riot4ComponentJsRespond(Rqst, Rspns, FlPth) : FileRespond(Rqst, Rspns, FlPth);
       }
     });
-  });
+  }
 
-  // parse body for all services.
-  App.use(SvcPthPtrm, BodyParse);
+  // ====
 
-  // service route.
-  Object.entries(SvcCs).forEach(([ Pth, Mthds ]) => {
-    Object.entries(Mthds).forEach(([ Mthd, Service ]) => {
-      App[Mthd] && App[Mthd](Pth, (Rqst, Rspns, Next) => {
-        ServiceRespond(Rqst, Rspns, Service);
-      });
-    });
-  });
+  App.use(SvcPthPtrm, BodyParse); // parse body for all services.
 
-  // page route.
-  Object.entries(Pg).forEach(([ Pth, PgCnfg ]) => {
-    App.get(Pth, (Rqst, Rspns, Next) => { PageRespond(Rqst, Rspns, Pth, PgCnfg); });
-  });
+  // ==== service route. ====
+
+  const SvcCsEntrs = Object.entries(SvcCs); // service case entries.
+
+  for (let i = 0; i < SvcCsEntrs.length; i++) {
+    const [ Pth, Mthds ] = SvcCsEntrs[i],
+          MthdsEntrs = Object.entries(Mthds);
+
+    for (let j = 0; j < MthdsEntrs.length; j++) {
+      const [ Mthd, Service ] = MthdsEntrs[j];
+
+      App[Mthd] && App[Mthd](Pth, (Rqst, Rspns, Next) => ServiceRespond(Rqst, Rspns, Service));
+    }
+  }
+
+  // ==== page route. ====
+
+  const Pgs = Object.entries(Pg);
+
+  for (let i = 0; i < Pgs.length; i++) {
+    const [ Pth, PgCnfg ] = Pgs[i];
+
+    App.get(Pth, (Rqst, Rspns, Next) => PageRespond(Rqst, Rspns, Pth, PgCnfg));
+  }
 
   return this;
 }

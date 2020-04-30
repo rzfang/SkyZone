@@ -126,11 +126,15 @@ function Riot4Compile (FlPth, Tp = 'esm', Then) {
   Riot4ModulesCompile(
     FlPth,
     (ErrCd, Mdls) => {
+      const KyVPrs = Object.entries(Mdls);
+
       let RiotMdlCd = '', // Riot module code.
           RiotMdlKys = [], // Riot module keys.
           JsMdlCd = ''; // Js module code.
 
-      Object.entries(Mdls).forEach(([ Ky, V ], Idx) => {
+      for (let i = 0; i < KyVPrs.length; i++) {
+        const [ Ky, V ] = KyVPrs[i];
+
         if (typeof V === 'object') {
           const { Nm, Pth } = V;
 
@@ -142,7 +146,7 @@ function Riot4Compile (FlPth, Tp = 'esm', Then) {
           RiotMdlCd += V + '\n\n';
           RiotMdlKys.push(Ky);
         }
-      });
+      }
 
       let RsltCd =
         JsMdlCd + '\n' +
