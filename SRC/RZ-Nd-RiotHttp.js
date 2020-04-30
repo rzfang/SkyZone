@@ -2,6 +2,7 @@ const async = require('async'),
       busboy = require('busboy'),
       express = require('express'),
       fs = require('fs'),
+      helmet = require('helmet'),
       path = require('path'),
       requireFromString = require('require-from-string'),
       riot = require('riot'),
@@ -523,6 +524,8 @@ function BodyParse (Rqst, Rspns, Next) {
 }
 
 function Initialize () {
+  App.use(helmet()); // header handle for security.
+
   // resource route.
   Rt.forEach(Rsc => {
     const {
