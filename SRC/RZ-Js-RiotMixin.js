@@ -247,7 +247,11 @@
   }
 
   function StorePrint () {
-    this.Srvc.Sto.PAGE = 'only on server side.'; // clean server only store - PAGE.
+    const Stos = Object.entries(this.Srvc.Sto);
+
+    this.Srvc.Sto.PAGE = ''; // clean server only store - PAGE.
+
+    if (Stos.length === 0 || (Stos === 1 && Stos[0][1] === 'PAGE')) { return ''; } // no stores, or only PAGE store.
 
     return '<script id=\'riot-store\' type=\'application/json\'>' + JSON.stringify(this.Srvc.Sto) + '</script>\n' +
       '<script>window.Z.RM.StoreInject(document.getElementById(\'riot-store\').innerText);</script>\n';

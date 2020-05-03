@@ -16,7 +16,6 @@ JsCompress(
   [ SrcPth + 'include.js',
     SrcPth + 'wording.js',
     SrcPth + 'RZ-Js-Is.js',
-    SrcPth + 'RZ-Js-RiotMixin.js',
     SrcPth + 'RZ-Js-ZFT.js' ],
   RscPth + 'api1.min.js');
 JsCompress(
