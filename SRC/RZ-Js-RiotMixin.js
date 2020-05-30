@@ -22,7 +22,7 @@
     if (typeof Info.URL !== 'string' || Info.URL === '') { return null; }
 
     Info.Data = (typeof Info.Data === 'object' && Info.Data !== null) ? Info.Data : DftInfo.Data;
-    Info.Mthd = Info.Mthd === 'POST' ? 'POST' : 'GET'; // Method. can only be 'GET'|'POST'. optional, default 'GET'.
+    Info.Mthd = Info.Mthd || 'GET';
     Info.Bfr = (typeof Info.Bfr === 'function') ? Info.Bfr : () => {}; // Before callback function. optional.
     Info.Err = (typeof Info.Err === 'function') ? Info.Err : DftInfo.Err;
     Info.OK = (typeof Info.OK === 'function') ? Info.OK : DftInfo.OK;
@@ -37,7 +37,7 @@
       let Tp = typeof Info.Data[Kys[i]];
 
       if (Array.isArray(Info.Data[Kys[i]])) {
-        let Ky = Kys[i],
+        let Ky = Kys[i] + '[]',
             Vl = Info.Data[Kys[i]],
             Lth = Vl.length;
 
@@ -147,8 +147,9 @@
 
   /*
     @ name to locate the store.
-    @ Then(Sto, Rst) = then, a function when the task done.
+    @ Then(Sto, PrmsToTsk) = then, a function when the task done.
       @ the store object.
+      @ params to task. to locate where the event comes from.
     @ run once in the beginning. */
   function StoreListen (StoNm, Then, RnOnc = true) {
     let Clbcks = this.Srvc.Rprt[StoNm] || null;
@@ -161,6 +162,19 @@
     this.Srvc.Rprt[StoNm].push(Then);
 
     if (RnOnc && this.Srvc.Sto[StoNm]) { Then(this.Srvc.Sto[StoNm], null); } // if the task store is ready, call once first.
+  }
+
+  /*
+    @ store name.
+    @ target report. */
+  function StoreUnleash (StoNm, TgtRprt) {
+    const Rprt = this.Srvc.Rprt[StoNm];
+
+    if (!Rprt) { return; }
+
+    for (let i = 0; i < Rprt.length; i++) {
+      if (Rprt[i] === TgtRprt) { this.Srvc.Rprt[StoNm].splice(i, 1); }
+    }
   }
 
   /*
@@ -249,7 +263,9 @@
   function StorePrint () {
     const Stos = Object.entries(this.Srvc.Sto);
 
-    this.Srvc.Sto.PAGE = ''; // clean server only store - PAGE.
+    if (this.Srvc.Sto.PAGE) {
+      this.Srvc.Sto.PAGE = ''; // clean server only store - PAGE.
+    }
 
     if (Stos.length === 0 || (Stos === 1 && Stos[0][1] === 'PAGE')) { return ''; } // no stores, or only PAGE store.
 
@@ -272,6 +288,7 @@
     this.OnBrowser = OnBrowser;
     this.StoreGet = StoreGet;
     this.StoreListen = StoreListen;
+    this.StoreUnleash = StoreUnleash;
     this.StoreSet = StoreSet;
     this.Trim = Trim;
   }

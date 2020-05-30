@@ -1,0 +1,27 @@
+<store>
+  <script>
+    export default {
+      onBeforeMount (props, state) {
+        const {
+          url: Url,
+          params: Prms = {},
+          store: StoNm,
+          listener: Lstnr,
+          parser: StoreParse
+        } = props;
+
+        // if (this.StoreGet(StoNm)) { return; }
+
+        if (Lstnr) {
+          this.StoreListen(StoNm, Lstnr, false);
+        }
+      },
+
+      onBeforeUnmount (props, state) {
+        const { store: StoNm, listener: Lstnr } = props; // store name, listener.
+
+        this.StoreUnleash(StoNm, Lstnr);
+      }
+    }
+  </script>
+</store>

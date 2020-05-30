@@ -89,6 +89,7 @@ function Riot3Render (Rqst, Bd, Then) {
 
   Initialize(
     Rqst,
+    {},
     (Cd, Dt) => {
       if (Cd < 0) {
         Rslt.HdStr = '';
@@ -535,6 +536,7 @@ function Initialize () {
   App.use(helmet()); // header handle for security.
 
   // ==== resource route. ====
+
   for (let i = 0; i < Rt.length; i++) {
     const {
       location: Lctn = '',
