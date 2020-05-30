@@ -71,22 +71,16 @@
 </about-me>
 
 <about>
-  <div is='tab-box' tabs={state.Tbs}>
-    <index/>
-  </div>
+  <tab-box tabs={[ '網站導覽', '關於空域', '關於我' ]}>
+    <index slot='tab0'/>
+    <about-site slot='tab1'/>
+    <about-me slot='tab2'/>
+  </tab-box>
   <script>
     import tabBox from './tab-box.riot';
 
     export default {
-      components: { tabBox, index, aboutSite, aboutMe },
-
-      state: {
-        Tbs: [
-          { Nm: '網站導覽', Cmpnt: index },
-          { Nm: '關於空域', Cmpnt: aboutSite },
-          { Nm: '關於我', Cmpnt: aboutMe }
-        ]
-      }
+      components: { tabBox, index, aboutSite, aboutMe }
     }
   </script>
 </about>
