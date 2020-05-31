@@ -336,7 +336,7 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
   @ HTTP response object.
   @ service function. */
 function ServiceRespond (Rqst, Rspns, Service) {
-  Service(Rqst, Rspns, { Bd: Rqst.body, Url: Rqst.query }, (Cd, RsltObj) => { // code, result object.
+  Service(Rqst, Rspns, { Bd: Rqst.body, Url: Rqst.query, Fls: Rqst.file }, (Cd, RsltObj) => { // code, result object.
     if (Cd < 0) {
       Rspns.writeHead(400, { 'Content-Type': 'text/html' });
       Rspns.write(Is.String(RsltObj) ? RsltObj : 'error');

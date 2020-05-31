@@ -187,7 +187,7 @@
     @ params object passing to each task. optional.
     @ the service cases object in node.js, otherwise undefined. optional.
     < result code. */
-  function ServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk) {
+  function ServiceCall (Url, Prms, StoNm, NewStoreGet, PrmsToTsk, AjxOptns) {
     let Mthd = 'POST';
 
     if (typeof Url === 'object' && Url.Mthd) {
@@ -205,6 +205,7 @@
     let Srvc = this.Srvc;
 
     AJAX({
+      ...AjxOptns,
       URL: Url,
       Mthd,
       Data: Prms,
