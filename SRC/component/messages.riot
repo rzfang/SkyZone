@@ -62,7 +62,7 @@
 
         const Slctr = NmMl[0] ? 'textarea' : 'input[type=text]'; // selector.
 
-        this.root.querySelector(Slctr).focus();
+        this.$(Slctr).focus();
       },
 
       FormToggle (Evt) {
@@ -106,7 +106,7 @@
       ReplyLeave (Evt) {
         if (this.state.IsSndng) { return alert(Z.Wording.Working); }
 
-        const FmDOMs = this.root.querySelectorAll('form input, form textarea'), // form DOMs.
+        const FmDOMs = this.$$('form input, form textarea'), // form DOMs.
               Nm = FmDOMs[0].value,
               Ml = FmDOMs[1].value,
               Msg = FmDOMs[2].value,
@@ -114,7 +114,7 @@
 
         if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
 
-        if (this.root.querySelector('input[type=checkbox]').checked) {
+        if (this.$('input[type=checkbox]').checked) {
           CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
         }
         else { CookieSet('NmMl', '', -1); }
@@ -147,7 +147,7 @@
 
             Sto[this.props.messageId].push({ Nm, Msg, ID: Rst.Extend, Dt: DatetimeFormat(new Date()) });
 
-            this.root.querySelector('textarea').value = '';
+            this.$('textarea').value = '';
 
             return Sto;
           },

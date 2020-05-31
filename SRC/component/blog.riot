@@ -67,7 +67,7 @@
     export default {
       onMounted (props, state) {
         this.OnBrowser(() => {
-          this.root.querySelector('pre').innerHTML = Z.ZFT(props.blog.Info);
+          this.$('pre').innerHTML = Z.ZFT(props.blog.Info);
         });
       }
     }
