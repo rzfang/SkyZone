@@ -1,7 +1,7 @@
 const Log = require('../RZ-Js-Log'),
       { Blog } = require('../library');
 
-module.exports = (Rqst, {}, Then) => {
+module.exports = (Rqst, Optn, Then) => {
   const { b: Id = '' } = Rqst.query || {};
 
   if (!Id) {

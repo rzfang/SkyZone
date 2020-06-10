@@ -5,16 +5,16 @@ const Cch = require('../RZ-Nd-Cache');
 const Log = require('../RZ-Js-Log');
 const { Ssn: { IsLogged } } = require('../library');
 
-function FeedLastDateGet (Clbck) {
+function FeedLastDateGet (Then) {
   const CchKy = 'FdLstDt';
   const FdLstDt = Cch.Get(CchKy);
 
-  if (FdLstDt) { return Clbck(0, FdLstDt); }
+  if (FdLstDt) { return Then(0, FdLstDt); }
 
   fs.stat(
     __dirname + '/../../DAT/feed.xml',
     (Err, St) => {
-      if (Err) { return Clbck(-1, Err); }
+      if (Err) { return Then(-1, Err); }
 
       let Dt = new Date(St.mtime);
       const Y = Dt.getFullYear().toString();
@@ -27,18 +27,18 @@ function FeedLastDateGet (Clbck) {
       Dt = `${Y}-${M}-${D} ${H}:${m}:${S}`;
 
       Cch.Set(CchKy, Dt, 60 * 60);
-      Clbck(0, Dt);
+      Then(0, Dt);
      });
 }
 
-module.exports = (Rqst, UrlInfo, Clbck) => {
+module.exports = (Rqst, Optn, Then) => {
   async.parallel(
     {
-      FdLstDt: (Clbck) => {
+      FdLstDt: (Then) => {
         FeedLastDateGet((Cd, Rst) => {
-          if (Cd < 0) { return Clbck(Rst); }
+          if (Cd < 0) { return Then(Rst); }
 
-          Clbck(null, Rst);
+          Then(null, Rst);
         });
       }
     },
@@ -46,16 +46,20 @@ module.exports = (Rqst, UrlInfo, Clbck) => {
       if (Err) {
         Log(Err);
 
-        return Clbck(-1, Err);
+        return Then(-1, Err);
       }
 
       const { FdLstDt } = Rst;
 
-      Clbck(
-        0,
-        {
-          IsLgd: IsLogged(Rqst),
-          FdLstDt
+      Rqst.RMI.StoreSet(
+        'ADMIN',
+        () => {
+          return {
+            FdLstDt,
+            IsLgd: IsLogged(Rqst)
+          };
         });
+
+      Then(0, {});
     });
 };

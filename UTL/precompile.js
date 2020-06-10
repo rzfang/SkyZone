@@ -30,7 +30,12 @@ return 0;
 
 function SCSS_CSS (FrmPth, ToPth) {
   const Src = fs.readFileSync(FrmPth, 'utf8'), // 'Src' = Source.
-        CSS = sass.renderSync({ data: Src }).css.toString().replace(/\n +/g, ' ').replace(/\n\n/g, "\n");
+        CSS = sass.renderSync({ data: Src }).css.toString()
+        .replace(/\n +/g, ' ')
+        .replace(/\n\n/g, '\n')
+        .replace(/\}/g, '}\n')
+        .replace(/\n /g, '\n')
+        .replace(/ > /g, '>');
 
   fs.writeFileSync(ToPth, CSS);
 }

@@ -2,6 +2,7 @@ User-agent: *
 Disallow: /*.css$
 Disallow: /*.js$
 Disallow: /*.zip$
+Disallow: /admin
 Disallow: /image/
 Disallow: /resource/
 Disallow: /service/
