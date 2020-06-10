@@ -1,9 +1,26 @@
 const async = require('async'),
-      compile = require('@riotjs/compiler').compile,
-      path = require('path');
+      sass = require('node-sass'),
+      path = require('path'),
+      { compile, registerPreprocessor } = require('@riotjs/compiler');
 
 const Cch = require('./RZ-Nd-Cache'),
       Log = require('./RZ-Js-Log');
+
+registerPreprocessor(
+  'css',
+  'scss',
+  (Cd, { Optns }) => {
+    // const { file } = options;
+
+    const Css = sass.renderSync({ data: Cd }).css.toString()
+      .replace(/\n +/g, ' ')
+      .replace(/\n\n/g, '\n')
+      .replace(/\}/g, '}\n')
+      .replace(/\n /g, '\n')
+      .replace(/ > /g, '>');
+
+    return { code: Css, map: null };
+  });
 
 function SourceCodeSplit (SrcCd) {
   if (!SrcCd) { return []; }
