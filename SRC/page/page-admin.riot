@@ -1,0 +1,1337 @@
+<login>
+  <div>
+    管理員工具<br/>
+    密碼： <input type='password' id='Pswd' maxlength='16' placeholder='請輸入密碼。' onkeypress={Login}/>
+    <input type='button' id='LgnBtn' value='登入' onclick={Login}/>
+  </div>
+  <style>
+    :host>div { text-align: center; }
+  </style>
+  <script>
+    export default {
+      Login (Evt) {
+        if (!Z.Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+
+        const Pswd = this.$('input[type=password]').value;
+
+        if (!Pswd) { return alert(Z.Wording.PasswordNeed); }
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/session/login'},
+          { Pswd },
+          'ADMIN',
+          (Sto, Rslt) => {
+            const { Index: Idx, Message: Msg } = Rslt || {};
+
+            if (Idx < 0) { return alert(Msg || Z.Wording.LoadDataFail); }
+
+            window.location.reload(true);
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</login>
+
+<blog-uploader>
+  <div>
+    <div>
+      檔案格式說明
+      <table>
+        <tbody>
+          <tr><th>類型</th><th>檔案格式</th><th>說明</th></tr>
+          <tr>
+            <td>Text<br/>ZFT</td>
+            <td>文字檔</td>
+            <td>任意檔名的純文字檔, *.txt</td>
+          </tr>
+          <tr>
+            <td>Image</td>
+            <td>Tar 打包檔<br/>├ 圖片檔<br/>└ comment.txt</td>
+            <td>
+              打包檔名稱不限。<br/>
+              圖片檔名稱不限。<br/>
+              comment.txt 內容為對圖片檔的說明。
+            </td>
+          </tr>
+          <tr>
+            <td>Images</td>
+            <td>
+              Tar 打包檔<br/>
+              ├ 001.*<br/>
+              ...<br/>
+              ├ 999.*<br/>
+              └ comment.txt<br/>
+              ---- or ----<br/>
+              Tar 打包檔<br/>
+              ├ [圖檔名].*<br/>
+              ...<br/>
+              ├ [圖檔名].*<br/>
+              └ comment.json<br/>
+            </td>
+            <td>
+              打包檔名稱不限。<br/>
+              001.* ~ 999.* 為圖片檔，呈現時將依檔名排序。<br/>comment.txt 內容為對圖片檔的說明。<br/>其中以 \n====\n 做為每張圖片說明的分隔。<br/>
+              或是<br/>
+              透過「相簿型網誌內容編輯器」產生說明文，<br/>存入名為 comment.json 的文字檔。<br/>然後將圖檔與文字檔一同打包。
+            </td>
+          </tr>
+          <tr>
+            <td>HTML</td>
+            <td>(還在規畫)</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      注意事項：
+      <ul>
+        <li>檔案最大限制 ???</li>
+        <li>若檔名一樣，會直接覆蓋。</li>
+        <li>上傳過程，請不要進行其它操作或是離開本頁。</li>
+      </ul>
+      <span class='TextTitle'>檔案</span>
+      <input type='file'/><br/>
+      <input type='button' value='上傳' onclick={Upload}/>
+      <progress value='0' max='100'></progress><br/>
+    </div>
+  </div>
+  <style type='scss'>
+    :host { text-align: center;
+      >div { display: flex;
+        >div { display: inline-block;; flex-grow: 1;
+          &:first-child { border-width: 1px; }
+          &:last-child { text-align: left; }
+        }
+      }
+      th,td { border: 1px solid; padding: 5px; text-align: left; }
+    }
+  </style>
+  <script>
+    export default {
+      Upload (Evt) {
+        const Btn = this.$('input[type=button]'),
+              Fl = this.$('input[type=file]'),
+              Prgrs = this.$('progress'); // file, progress.
+
+        if (!Fl.value) {
+          alert('尚未選擇網誌檔案。');
+
+          return -1;
+        }
+
+        const FlTp = Fl.files[0].type;
+
+        if (FlTp !== 'text/plain' && FlTp !== 'application/x-tar') {
+          alert("檔案格式不符。\n請參考左側檔案格式說明表。");
+
+          return -2;
+        }
+
+        Btn.disabled = true;
+        Fl.disabled = true;
+
+        this.ServiceCall(
+          { Mthd: 'PUT', Url: '/service/blog' },
+          {},
+          'BLOG_FILE',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            Btn.disabled = false;
+            Fl.disabled = false;
+            Prgrs.value = 0;
+
+            return Sto;
+          },
+          null,
+          {
+            File: { Fl: Fl.files[0] },
+            Pgs: (Ldd, Ttl, Evt) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
+          });
+      }
+    }
+  </script>
+</blog-uploader>
+
+<feed>
+  最後一次發佈消是在： <span>{props.feedLastDate}</span><br/>
+  <button onclick={Publish}>更新網誌消息</button>
+  <style>
+    :host { display: block; text-align: center; }
+  </style>
+  <script>
+    export default {
+      Publish (Evt) {
+        this.ServiceCall(
+          { Mthd: 'PATCH', Url: '/service/feed' },
+          null,
+          'ADMIN',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            Sto.FdLstDt = Rslt.Extend.replace('T', ' ').replace('Z', '');
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</feed>
+
+<list-index>
+  <div>
+    <button each={Pg in state.Pgs} onclick={PageTurn} value={Pg.Pg} disabled={Pg.Pg === props.page}>{Pg.Shw}</button>
+  </div>
+  <style type='scss'>
+    :host>div { text-align: center;
+      >button { min-width: 50px; margin: 0; padding: 0; }
+    }
+  </style>
+  <script>
+    export default {
+      state: {
+        Pgs: []
+      },
+
+      onBeforeUpdate (props, state) {
+        this.PageItemsPrepare(props, state);
+      },
+
+      onBeforeMount (props, state) {
+        this.PageItemsPrepare(props, state);
+      },
+
+      PageItemsPrepare (props, state) {
+        if (props.count === 0) { return; }
+
+        const LstPg = Math.ceil(props.count / props.limit), // last page.
+              Rng = 3; // range.
+
+        let Pgs = [], // pages.
+            i,
+            j;
+
+        if ((Rng * 2) + 1 > LstPg) {
+          for (i = 1; i <= LstPg; i++) { Pgs.push({ Pg: i, Shw: i.toString() }); }
+
+          this.state.Pgs = Pgs;
+
+          return;
+        }
+
+        i = props.page - Rng;
+        j = props.page + Rng;
+
+        if (i < 1) {
+          j += (1 - i);
+          i = 1;
+        }
+
+        if (j > LstPg) {
+          i -= j - LstPg;
+          j = LstPg;
+        }
+
+        while (i <= j) {
+          Pgs.push({ Pg: i, Shw: i.toString() });
+
+          i++;
+        }
+
+        this.state.Pgs = Pgs;
+      },
+
+      PageTurn (Evt) {
+        const TgtPg = parseInt(Evt.target.value, 10); // target page.
+
+        this.props.pageTurn(Evt, TgtPg);
+      }
+    }
+  </script>
+</list-index>
+
+<blog-comments>
+  <ul>
+    <li each={Cmt in props.comments} id={Cmt.ID}>
+      <div>
+        {Cmt.Nm}<br/>
+        {Cmt.Dt}
+      </div>
+      <pre>{Cmt.Cmt}</pre>
+      <div>
+        <button onclick={Remove}>刪除</button>
+      </div>
+    </li>
+  </ul>
+  <style scoped>
+    :scope>ul { padding-left: 20px; }
+    :scope>ul>li { display: flex; margin: 5px; border-top: 1px solid #c0c0c0; padding: 5px; }
+    :scope>ul>li>div:first-child { flex: 0 0 200px; }
+    :scope>ul>li>pre { flex: 1 0 0; margin: 0; }
+  </style>
+  <script>
+    export default {
+      Remove (Evt) {
+        Evt.item.ID && this.props.remove && this.props.remove(this.opts.blgId, Evt.item.ID);
+      }
+    }
+  </script>
+</blog-comments>
+
+<blogs>
+  <ul>
+    <li each={(Blg, BlgIdx) in state.Blgs}>
+      <div>
+        <div>
+          <dl>
+            <dt>ID</dt>
+            <dd>{Blg.ID}</dd>
+          </dl>
+          <dl>
+            <dt>標題</dt>
+            <dd><input placeholder='尚未輸入標題。' type='text' value={Blg.Ttl}></dd>
+          </dl>
+          <dl>
+            <dt>日期</dt>
+            <dd>
+              <input placeholder='請輸入日期。' type='date' value={Blg.Dt.substr(0, 10)}/>
+              <input placeholder='請輸入時間。' type='text' pattern='\d\{2}:\d\{2}:\d\{2}' value={Blg.Dt.substr(11)}/>
+            </dd>
+          </dl>
+          <dl>
+            <dt>密碼</dt>
+            <dd><input placeholder='未設定瀏覽密碼。' type='text' value={Blg.Pswd}></dd>
+          </dl>
+        </div>
+        <div>
+          <dl>
+            <dt>檔名</dt>
+            <dd>{Blg.Fl}</dd>
+          </dl>
+          <dl>
+            <dt>類型</dt>
+            <dd>
+              <select value={Blg.Tp}>
+                <option value='text'>text</option>
+                <option value='image'>image</option>
+                <option value='images'>images</option>
+                <option value='html'>html</option>
+                <option value='zft'>zft</option>
+              </select>
+            </dd>
+          </dl>
+          <dl>
+            <dt>簡述</dt>
+            <dd><textarea rows='3' placeholder='未輸入副標文字。'>{Blg.Smry}</textarea></dd>
+          </dl>
+        </div>
+        <div>
+          <button if={!Blg.ID} value={BlgIdx} onclick={Create}>建立</button>
+          <button if={Blg.ID} value={BlgIdx} onclick={Update}>更新</button>
+          <button if={Blg.ID} value={BlgIdx} onclick={Delete}>刪除</button>
+          <button if={Blg.ID && Blg.CmtCnt} value={BlgIdx} onclick={CommentsToggle}>留言 ({Blg.CmtCnt})</button>
+        </div>
+      </div>
+      <div>
+        標籤
+        <label each={(Tg, TgIdx) in state.Tgs}>
+          <input type="checkbox" value={Tg.ID} checked={TagCheck(Tg.ID, Blg.Tg)}/>
+          {Tg.Nm}
+        </label>
+      </div>
+      <blog-comments if={Blg.ShwCmt} blog-id={Blg.ID} comments={Blg.Cmts} remove={CommentRemove}/>
+    </li>
+  </ul>
+  <list-index if={props.published} count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
+  <store if={props.published} store='BLOGS' listener={StoreBlogsListen}/>
+  <store if={!props.published} store='BLOGS' listener={StoreNonBlogsListen}/>
+  <store store='TAGS' listener={StoreTagsListen}/>
+  <style type='scss'>
+    :host {
+      >ul { margin: 0; padding: 0;
+        >li { list-style-type: none; margin: 0; padding: 10px 0; border-bottom: 1px solid #c0c0c0;
+          &:last-child { border-width: 0; }
+          >div:first-child { display: flex;
+             >div { flex: 1;
+              &:nth-child(3) { flex: 130px 0 0; }
+            }
+          }
+        }
+      }
+      dl { display: table; margin: 5px 0;
+        >* { display: table-cell; }
+        >dt { min-width: 35px; padding-right: 5px; vertical-align: middle; }
+      }
+      input[type=date]+input[type=text] { margin-left: 5px; width: 100px; }
+    }
+  </style>
+  <script>
+    import store from '../component/store.riot';
+
+    export default {
+      components: { blogComments, listIndex, store },
+
+      state: {
+        Blgs: [],
+        Tgs: [],
+        Cnt: 0,
+        Lmt: 5,
+        Pg: 1
+      },
+
+      onBeforeMount (props, state) {
+        this.StoreListen(
+          'BLOG_COMMENTS',
+          (Sto, TskPrms) => {
+            let Blg;
+
+            if (!TskPrms || !TskPrms.BlgId) { return -1; }
+
+            for (let i = 0; i < this.state.Blgs.length; i++) {
+              if (TskPrms.BlgId && this.state.Blgs[i].ID === TskPrms.BlgId) {
+                Blg = this.state.Blgs[i];
+
+                break;
+              }
+            }
+
+            if (!Blg) { return -2; }
+
+            if (Sto[Blg.ID]) {
+              Blg.ShwCmt = true;
+              Blg.Cmts = Sto[Blg.ID];
+              Blg.CmtCnt = Blg.Cmts.length;
+            }
+
+            this.update();
+          },
+          false);
+      },
+
+      onMounted (props, state) {
+        props.published ? this.BlogsLoad() : this.NonBlogsLoad();
+
+        this.TagsLoad();
+      },
+
+      BlogsLoad () {
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/blog/list/admin' },
+          { Cnt: 1 },
+          'BLOGS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            return { Cnt: Rslt.Extend };
+          },
+          { IsCnt: true });
+      },
+
+      NonBlogsLoad () {
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/blog/list/unpublished' },
+          null,
+          'BLOGS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            const { Extend: Extnd } = Rslt,
+                  Cnt = Extnd.length;
+
+            let Blgs = []; // parsed blogs.
+
+            for (let i = 0; i < Cnt; i++) {
+              Blgs.push({
+                Fl: Extnd[i],
+                Dt: '',
+                Tg: []
+              });
+            }
+
+            return { Cnt, Blgs };
+          });
+      },
+
+      TagsLoad () {
+        const Tgs = this.StoreGet('TAGS');
+
+        if (Array.isArray(Tgs) && Tgs.length > 0) { return this.update({ Tgs }); }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/tag' },
+          null,
+          'TAGS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            return Rslt.Extend;
+          });
+      },
+
+      StoreBlogsListen (Sto, PrmsToTsk) {
+        const { IsCnt = false, Pg = 1 } = PrmsToTsk || {},
+              { Blgs = [], Cnt = 0 } = Sto || {};
+
+        if (!IsCnt) { return this.update({ Blgs, Pg, Cnt }); }
+
+        this.state.Cnt = Sto.Cnt;
+
+        this.PageTurn(null, Pg);
+      },
+
+      StoreNonBlogsListen (Sto, PrmsToTsk) {
+        const { IsCnt = false, Pg = 1 } = PrmsToTsk || {},
+              { Blgs = [], Cnt = 0 } = Sto || {};
+
+        this.update({ Blgs, Pg, Cnt, Lmt: Cnt });
+      },
+
+      StoreTagsListen (Sto, PrmsToTsk) {
+         this.update({ Tgs: Sto });
+      },
+
+      PageTurn (Evt, Pg) {
+        const { Lmt } = this.state;
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/blog/list/admin' },
+          { Lmt, Ofst: Lmt * (Pg - 1) },
+          'BLOGS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else { Sto.Blgs = Rslt.Extend; }
+
+            return Sto;
+          },
+          { Pg });
+      },
+
+      TagCheck (TgId, BlgTgs) {
+        for (let i = 0; i < BlgTgs.length; i++) {
+          if (BlgTgs[i].ID === TgId) { return true; }
+        }
+
+        return false;
+      },
+
+      CommentsToggle (Evt) {
+        let Blg = this.state.Blgs[Evt.target.value];
+
+        if (Blg.ShwCmt) {
+          Blg.ShwCmt = false;
+
+          return this.update();
+        }
+
+        if (Blg.Cmts) {
+          Blg.ShwCmt = true;
+
+          return this.update();
+        }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/comment' },
+          { ID: Blg.ID },
+          'BLOG_COMMENTS',
+          (Sto, Rslt) => {
+            if (!Sto) { Sto = {}; }
+
+            if (Rslt.Index > -1) { Sto[Blg.ID] = Rslt.Extend; }
+
+            return Sto;
+          },
+          { BlgId: Blg.ID });
+      },
+
+      /*
+        @ blog node,
+        @ type.
+        < date object. */
+      FieldDateGet (BlgNd, Tp) {
+        const ChkbxNds = BlgNd.querySelectorAll('input[type=checkbox]:checked'),
+              InptNds = BlgNd.querySelectorAll('input:not([type=checkbox]),textarea');
+
+        switch (Tp) {
+          case 'delete':
+            return {
+              ID: BlgNd.querySelector('dd').innerHTML,
+            };
+
+          case 'update':
+            return {
+              ID: BlgNd.querySelector('dd').innerHTML,
+              Ttl: InptNds[0].value, // title.
+              Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
+              Pswd: InptNds[3].value, // password.
+              Tp: BlgNd.querySelector('select').value, // type.
+              Smry: InptNds[4].value, // summary.
+              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value) // tag id array.
+            };
+
+          case 'create':
+            return {
+              Fl: BlgNd.querySelector('div>div:nth-child(2) dd').innerHTML, // file.
+              Ttl: InptNds[0].value, // title.
+              Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
+              Pswd: InptNds[3].value, // password.
+              Tp: BlgNd.querySelector('select').value, // type.
+              Smry: InptNds[4].value, // summary.
+              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value) // tag id array.
+            };
+        }
+      },
+
+      Update (Evt) {
+        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
+              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
+              Dt = this.FieldDateGet(BlgNd, 'update'); // data.
+
+        let ChkStr = '';
+
+        if (Dt.Ttl.length === 0) { ChkStr += "標題不能為空。\n"; }
+
+        if (!Dt.Dt.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)) { ChkStr += "日期時間格式錯誤。\n"; }
+
+        if (ChkStr.length > 0) {
+          alert("請留意以下說明：\n" + ChkStr);
+
+          return -1;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'PATCH', Url: '/service/blog' },
+          Dt,
+          'BLOGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) {
+              for (let i = 0; i < Sto.length; i++) {
+                if (Sto[i].ID === Dt.ID) {
+                  Sto[i].Tp = Dt.Tp;
+                  Sto[i].Ttl = Dt.Ttl;
+                  Sto[i].Dt = Dt.Dt;
+                  Sto[i].Pswd = Dt.Pswd;
+                  Sto[i].Smry = Dt.Smry;
+
+                  Sto[i].Tg = this.state.Tgs.filter(Tg => {
+                    for (let j = 0; j < Dt.TgIDA.length; j++) {
+                      if (Tg.ID === Dt.TgIDA[j]) { return true; }
+                    }
+
+                    return false;
+                  });
+                }
+              }
+            }
+
+            return Sto;
+          });
+      },
+
+      Delete (Evt) {
+        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
+              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
+              Dt = this.FieldDateGet(BlgNd, 'delete'); // data.
+
+        if (!Dt.ID) { return alert('找不到正確的 Blog ID。'); }
+
+        this.ServiceCall(
+          { Mthd: 'DELETE', Url: '/service/blog' },
+          Dt,
+          'BLOGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) {
+              for (let i = 0; i < Sto.length; i++) {
+                if (Sto[i].ID === Dt.ID) {
+                  Sto[i].ID = '';
+                  Sto[i].Ttl = '';
+                  Sto[i].Tp = '';
+                  Sto[i].Dt = '';
+                  Sto[i].Pswd = '';
+                  Sto[i].Smry = '';
+                  Sto[i].Tg = [];
+
+                  break;
+                }
+              }
+            }
+
+            return Sto;
+          });
+      },
+
+      Create (Evt) {
+        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
+              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
+              Dt = this.FieldDateGet(BlgNd, 'create'); // data.
+
+        let ChkStr = '';
+
+        if (!Dt.Ttl) { ChkStr += "標題不能為空。\n"; }
+
+        if (!Dt.Dt) { ChkStr += "日期不能為空。\n"; }
+
+        if (!Dt.Tp) { ChkStr += "未選擇類型。\n"; }
+
+        if (ChkStr.length > 0) {
+          alert("請留意以下說明：\n" + ChkStr);
+
+          return -1;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/blog' },
+          Dt,
+          'NON_BLOGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</blogs>
+
+<tags>
+  <div>
+    <input type='text' placeholder='在此輸入新的標籤名稱。' maxlength='16'>
+    <button onclick={TagAdd}>增加新的標籤</button>
+  </div>
+  <ul>
+    <li>
+      <span>ID</span>
+      <span>名稱</span>
+    </li>
+    <li each={Tg in state.Tgs}>
+      <span>{Tg.ID}</span>
+      <input placeholder='請輸入標籤名稱。' type='text' value={Tg.Nm}/>
+      <button onclick={TagRename}>更名</button>
+      <button onclick={TagDelete}>刪除</button>
+    </li>
+  </ul>
+  <store store='TAGS' listener={TagsStoreListen}/>
+  <style type='scss'>
+    :host>ul { list-style-type: none; padding: 0; line-height: 1.5;
+      >li {
+        &:hover { background-color: #c0e0ff; }
+        >span {  display: inline-block; min-width: 330px; padding: 3px; }
+      }
+    }
+  </style>
+  <store-tags/>
+  <script>
+    import store from '../component/store.riot';
+
+    export default {
+      components: { store },
+
+      state: {
+        Tgs: []
+      },
+
+      onMounted (props, state) {
+        this.TagsLoad();
+      },
+
+      TagsLoad () {
+        const Tgs = this.StoreGet('TAGS');
+
+        if (Array.isArray(Tgs) && Tgs.length > 0) { return this.update({ Tgs }); }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/tag' },
+          null,
+          'TAGS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            return Rslt.Extend;
+          });
+      },
+
+      TagsStoreListen (Sto, PrmsToTsk) {
+        this.update({ Tgs: Sto });
+      },
+
+      TagAdd (Evt) {
+        let Nm = this.$('input[type=text]').value.trim();
+
+        if (!Nm) {
+          alert('尚未填寫標籤名字。');
+
+          return -1;
+        }
+
+        for (let i = 0; i < this.state.Tgs.length; i++) {
+          if (this.state.Tgs[i].Nm === Nm) {
+            alert('這個標籤名稱已經在使用了。');
+
+            return -2;
+          }
+        }
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/tag' },
+          { Nm },
+          'TAGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) { Sto.push({ ID: Rslt.Extend, Nm }); }
+
+            return Sto;
+          });
+      },
+
+      TagRename (Evt) {
+        const NmDom = Evt.target.previousSibling,
+              Nm = NmDom.value,
+              Id = NmDom.previousSibling.innerText;
+
+
+        if (!Nm) {
+          alert('名稱不能為空白。');
+
+          return -1;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'PATCH', Url: '/service/tag' },
+          { ID: Id, Nm },
+          'TAGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index < 0) { return Sto; }
+
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === Id) {
+                Sto[i].Nm = Nm;
+
+                break;
+              }
+            }
+
+            return Sto;
+          });
+      },
+
+      TagDelete (Evt) {
+        const Id = Evt.target.previousSibling.previousSibling.previousSibling.innerText;
+
+        this.ServiceCall(
+          { Mthd: 'DELETE', Url: '/service/tag' },
+          { ID: Id },
+          'TAGS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index < 0) { return Sto; }
+
+            for (let i = 0; i < Sto.length; i++) {
+              if (Sto[i].ID === Id) {
+                Sto.splice(i, 1);
+
+                break;
+              }
+            }
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</tags>
+
+<blogs-manager>
+  <tab-box tabs={[ '網誌上傳', '訂閱消息', '網誌列表', '未建立網誌', '標籤管理' ]} index={0}>
+    <blog-uploader slot='tab0'/>
+    <feed slot='tab1' feed-last-date={props.feedLastDate}/>
+    <blogs slot='tab2' published={true}/>
+    <blogs slot='tab3' published={false}/>
+    <tags slot='tab4'/>
+    <!-- 相簿型網誌內容編輯器 -->
+  </tab-box>
+  <script>
+    import tabBox from '../component/tab-box.riot';
+
+    export default {
+      components: { tabBox, blogUploader, feed, blogs, tags }
+    }
+  </script>
+</blogs-manager>
+
+<messages>
+  <ul>
+    <li each={(Msg, Idx) in state.Msgs}>
+      <div>
+        ID<br/>
+        建立時間<br/>
+        源訊息 ID
+      </div>
+      <div>
+        {Msg.ID}<br/>
+        {Msg.Dt}<br/>
+        {Msg.Tgt}
+      </div>
+      <div>
+        <textarea cols="30" rows="3">{Msg.Msg}</textarea>
+      </div>
+      <div>
+        <button value={Idx} onclick={Delete}>刪除</button><br/>
+        <span if={!Msg.Tgt}>(刪除整個留言串)</span>
+      </div>
+    </li>
+  </ul>
+  <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
+  <style type='scss'>
+    :host>ul>li { display: flex; margin-bottom: 10px;
+      >div:first-child { flex: 0 0 80px; }
+      >div:nth-child(2) { flex: 0 0 330px; }
+      >div:nth-child(3) { flex: 0 0 370px; }
+      >div:last-child { flex: 1; }
+    }
+  </style>
+  <store store='MESSAGES' listener={MessagesStoreListen}/>
+  <script>
+    import store from '../component/store.riot';
+
+    export default {
+      components: { store, listIndex },
+
+      state: {
+        Cnt: 0,
+        Msgs: [],
+        Lmt: 10,
+        Pg: 1
+      },
+
+      onBeforeMount (props, state) {
+        const Sto = this.StoreGet('MESSAGES');
+
+        if (Sto) {
+          state.Cnt = Sto.Cnt;
+          state.Msgs = Sto.Msgs;
+          state.Pg = Sto.Pg;
+
+          return;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/message/admin' },
+          { Cnt: 1 },
+          'MESSAGES',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            return { Cnt: Rslt.Extend };
+          },
+          { IsCnt: true });
+      },
+
+      MessagesStoreListen (Sto, PrmsToTsk) {
+        const { Lmt, Pg: SttPg } = this.state, // limit, page, state page.
+              { Cnt, Msgs } = Sto,
+              { IsCnt = false, Pg: PrmPg } = PrmsToTsk || {}; // is count, page, param page.
+
+        if (!IsCnt) { return this.update({ Msgs, Pg: PrmPg || SttPg }); }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/message/admin' },
+          { Lmt, Ofst: Lmt * (SttPg - 1) },
+          'MESSAGES',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else { Sto = { ...Sto, Pg: SttPg, Msgs: Rslt.Extend }; }
+
+            return Sto;
+          });
+
+        this.update({ Cnt });
+      },
+
+      PageTurn (Evt, Pg) {
+        const { Lmt } = this.state;
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/message/admin' },
+          { Lmt, Ofst: Lmt * (Pg - 1) },
+          'MESSAGES',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else { Sto = { ...Sto, Msgs: Rslt.Extend, Pg }; }
+
+            return Sto;
+          },
+          { Pg });
+      }
+    }
+  </script>
+</messages>
+
+<good-words>
+  <ul>
+    <li>
+        <textarea rows='3'></textarea>
+        <div>
+          <button value={Idx} onclick={Create}>新增</button>
+        </div>
+    </li>
+    <li each={(Itm, Idx) in state.GdWds}>
+        <textarea rows='3' autocomplete='off' value={Itm.Wds}>{Itm.Wds}</textarea>
+        <div>
+          <div>{Itm.ID}</div>
+          <button value={Idx} onclick={Update}>更新</button><br/>
+          <button value={Idx} onclick={Delete}>刪除</button>
+        </div>
+    </li>
+  </ul>
+  <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
+  <store store='GOOD_WORDS' listener={GoodWordsStoreListen}/>
+  <style type='scss'>
+    :host>ul { margin: 0; padding: 0;
+      >li { display: flex; margin-bottom: 10px;
+        &:first-child { border-bottom: solid 1px; color: #c0c0c0; padding-bottom: 10px; }
+        >textarea { flex-shrink: 1; margin-right: 10px; }
+        >div { flex-grow: 1; }
+      }
+    }
+  </style>
+  <script>
+    export default {
+
+      components: { listIndex, store },
+
+      state: {
+        GdWds: [],
+        Cnt: 0,
+        Lmt: 7,
+        Pg: 1
+      },
+
+      onBeforeMount (props, state) {
+        const { Pg = 1, Cnt = 0, GdWds = [] } = this.StoreGet('GOOD_WORDS') || {};
+
+        if (Cnt) {
+          state.Pg = Pg;
+          state.Cnt = Cnt;
+          state.GdWds = GdWds;
+
+          return;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/words/list' },
+          { Cnt: 1 },
+          'GOOD_WORDS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else { Sto = { Cnt: Rslt.Extend }; }
+
+            return Sto;
+          },
+          { IsCnt: true }
+        );
+      },
+
+      GoodWordsStoreListen (Sto, PrmsToTsk = {}) {
+        const { Cnt, Pg, GdWds } = Sto,
+              { IsCnt } = PrmsToTsk;
+
+        if (!IsCnt) { return this.update({ Cnt, Pg, GdWds }); }
+
+        this.state.Cnt = Sto.Cnt;
+
+        this.PageTurn(null, 1);
+      },
+
+      PageTurn (Evt, Pg) {
+        const { Lmt } = this.state;
+
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/words/list' },
+          { Lmt, Ofst: Lmt * (Pg - 1) },
+          'GOOD_WORDS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else {
+              Sto.GdWds = Rslt.Extend;
+              Sto.Pg = Pg;
+            }
+
+            return Sto;
+          });
+      },
+
+      Create (Evt) {
+        const WdsNd = this.$('li:first-child>textarea'),
+              Wds = WdsNd.value.trim();
+
+        if (!Wds) {
+          alert('尚未填寫佳言。');
+
+          return -1;
+        }
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/words' },
+          { Wds },
+          'GOOD_WORDS',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) { alert(Rslt.Message); }
+            else {
+              Sto.GdWds = [ { ID: Rslt.Extend, Wds }, ...(Sto.GdWds.slice(0, Sto.GdWds.length - 1)) ]
+              Sto.Cnt +=1;
+              WdsNd.value = '';
+            }
+
+            return Sto;
+          })
+      },
+
+      Update (Evt) {
+        const Idx = parseInt(Evt.target.value, 10),
+              Wds = this.$('li:nth-child(' + (Idx + 2) + ')>textarea').value.trim(), // 1 is for creating, start from 2.
+              { ID } = this.state.GdWds[Idx];
+
+        if (Wds.length === 0) { return alert('不能為空。'); }
+
+        this.ServiceCall(
+          { Mthd: 'PATCH', Url: '/service/words' },
+          { ID, Wds },
+          'GOOD_WORDS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) { Sto.GdWds[Idx].Wds = Wds; }
+
+            return Sto;
+          });
+      },
+
+      Delete (Evt) {
+        const Idx = parseInt(Evt.target.value, 10),
+              { ID } = this.state.GdWds[Idx];
+
+        this.ServiceCall(
+          { Mthd: 'DELETE', Url: '/service/words'},
+          { ID },
+          'GOOD_WORDS',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) {
+              Sto.GdWds.splice(Idx, 1);
+              Sto.Cnt--;
+            }
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</good-words>
+
+<art-corner>
+  To Do...
+</art-corner>
+
+<system>
+  <div>
+    清理圖片 cache 舊資料
+    <hr/>
+    <input type='number' value='1' min='1' style='width: 80px;' placeholder='數字' onchange={DatetimeHint} />
+    <select onchange={DatetimeHint}>
+      <option value='60'>分</option>
+      <option value='3600'>時</option>
+      <option value='86400'>日</option>
+      <option value='604800'>週</option>
+      <option value='2592000' selected='true'>月(30日)</option>
+    </select><br/>
+    {state.TgtDt} 以前<br/>
+    <button onclick={Clean}>清理</button>
+  </div>
+  <div>
+    系統資料夾結構使用量
+    <hr/>
+    <input type='button' value='檢視' onclick={SizeUsedList} /><br/>
+    <ul>
+      <li each={DtSz in state.DtSzs}>
+        <div>{DtSz.Fl}</div>
+        <div>{DtSz.Sz}</div>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <input type='button' value='登出' onclick={Logout}/>
+  </div>
+  <store store='DATA_SIZE' listener={DateSizesStoreListen}/>
+  <style type='scss'>
+    :host { display: flex;
+      >div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px;
+        >ul { list-style-type: none; margin: 0; padding: 0;
+          >li { display: flex;
+            >div {
+              &:first-child { flex-grow: 1; flex-basis: 150px; }
+              &:last-child { flex-grow: 1; text-align: right; }
+            }
+          }
+        }
+      }
+    }
+  </style>
+  <script>
+    export default {
+      components: { store },
+
+      state: {
+        DtSzs: [],
+        TgtDt: ''
+      },
+
+      onMounted (props, state) {
+        this.DatetimeHint();
+      },
+
+      DateSizesStoreListen (Sto, PrmsToTsk = {}) {
+        for (let i = 0; i < Sto.length; i++) {
+          const { Sz = 0 } = Sto[i];
+
+          if (Sz > 1048576) { // 1MB.
+            Sto[i].Sz = parseInt(Sz / 1048576, 10).toString() + 'MB';
+          }
+          else if (Sz > 1024) { // 1KB.
+            Sto[i].Sz = parseInt(Sz / 1024, 10).toString() + 'KB';
+          }
+        }
+
+        this.update({ DtSzs: Sto });
+      },
+
+      DatetimeHint (Evt) {
+        const TgtNbr = parseInt(this.$('input[type=number]').value, 10), // target number.
+              TgtScd = parseInt(this.$('select').value, 10), // target seconds.
+              TgtDt = new Date((new Date()).getTime() - (TgtNbr * TgtScd * 1000)); // target date.
+
+        this.update({ TgtDt: DatetimeFormat(TgtDt) });
+      },
+
+      Clean (Evt) {
+        const TgtNbr = parseInt(this.$('input[type=number]').value, 10),
+              TgtScd = parseInt(this.$('select').value, 10) // target seconds.
+
+        this.ServiceCall(
+          { Mthd: 'DELETE', Url: '/service/cache' },
+          { Scd: TgtNbr * TgtScd },
+          'CACHE',
+          (Sto, Rslt) => {
+            alert(Rslt.Message + "\n共 " + Rslt.Extend + ' 個檔案被刪除。');
+
+            return Sto;
+          });
+      },
+
+      SizeUsedList (Evt) {
+        this.ServiceCall(
+          { Mthd: 'GET', Url: '/service/data/size' },
+          null,
+          'DATA_SIZE',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) { Sto = Rslt.Extend; }
+
+            return Sto;
+          });
+      },
+
+      Logout (Evt) {
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/session/logout' },
+          null,
+          'ADMIN',
+          (Sto, Rslt) => {
+            alert(Rslt.Message);
+
+            if (Rslt.Index > -1) { window.location.reload(true); }
+
+            return Sto;
+          });
+      }
+    }
+  </script>
+</system>
+
+<page-admin>
+  <login if={!state.IsLgd}/>
+  <tab-box if={state.IsLgd} tabs={[ '網誌管理', '留言管理', '佳言錄', '角落藝廊管理', '系統管理' ]}>
+    <blogs-manager slot='tab0' feed-last-date={state.FdLstDt}/>
+    <messages slot='tab1'/>
+    <good-words slot='tab2'/>
+    <art-corner slot='tab3'/>
+    <system slot='tab4'/>
+  </tab-box>
+  <script>
+    import tabBox from '../component/tab-box.riot';
+
+    export default {
+      components: { login, tabBox, blogsManager, messages, goodWords, artCorner, system },
+
+      state: {
+        FdLstDt: '',
+        IsLgd: false
+      },
+
+      onBeforeMount (props, state) {
+        const { FdLstDt, IsLgd } = this.StoreGet('ADMIN'); // feed last date, is logged.
+
+        this.state.IsLgd = IsLgd;
+        this.state.FdLstDt = FdLstDt;
+      },
+
+      onMounted (props, state) {
+        this.StoreListen(
+          'ADMIN',
+          (Sto, PrmsToTsk) => {
+            const { FdLstDt } = Sto;
+
+            if (!FdLstDt) { return; }
+
+            this.update({ FdLstDt });
+          },
+          false);
+      }
+    }
+  </script>
+</page-admin>

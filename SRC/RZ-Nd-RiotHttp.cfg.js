@@ -36,11 +36,11 @@ module.exports = {
   },
   uploadFilePath: TMP_PTH,
   page: {
-    '/admin': { // v3
+    '/admin': {
       ...DftPgRt,
       title: '空域 - 管理員',
-      js: [ '/resource/api2.min.js', '/resource/tabbox.tag' ],
-      body: [{ type: 'riot', component: './component/admin.tag', initialize: AdminPage }]},
+      body: [{ type: 'riot', component: './page/page-admin.riot', initialize: AdminPage }]},
+
     '/about': {
       ...DftPgRt,
       title: '空域 - 關於',
