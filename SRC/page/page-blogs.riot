@@ -3,13 +3,15 @@
     <tags tags={state.Tgs}/>
     <blogs list={state.Blgs} tags={state.Tgs} all-loaded={state.HsAlBlgsLdd}/>
   </page-layout>
+  <store store='BLOGS' listener={BlogsStoreListen}/>
   <script>
-    import pageLayout from '../component/page-layout.riot';
     import blogs from '../component/blogs.riot';
+    import pageLayout from '../component/page-layout.riot';
+    import store from '../component/store.riot';
     import tags from '../component/tags.riot';
 
     export default {
-      components: { pageLayout, blogs, tags },
+      components: { pageLayout, blogs, tags, store },
 
       state: {
         Blgs: [],
@@ -20,15 +22,12 @@
       onBeforeMount (props, state) {
         state.Blgs = this.StoreGet('BLOGS');
         state.Tgs = this.StoreGet('TAGS');
+      },
 
-        this.StoreListen(
-          'BLOGS',
-          (NwSto, PrmsToTsk) => {
-            this.update({
-              Blgs: this.state.Blgs.concat(NwSto),
-              HsAlBlgsLdd: NwSto.length < 5 });
-          },
-          false);
+      BlogsStoreListen (Sto, PrmsToTsk) {
+        this.update({
+          Blgs: this.state.Blgs.concat(Sto),
+          HsAlBlgsLdd: Sto.length < 5 });
       }
     }
   </script>

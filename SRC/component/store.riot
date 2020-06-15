@@ -3,17 +3,15 @@
     export default {
       onBeforeMount (props, state) {
         const {
-          url: Url,
-          params: Prms = {},
           store: StoNm,
           listener: Lstnr,
-          parser: StoreParse
+          initialized: IsInit = false
         } = props;
 
         // if (this.StoreGet(StoNm)) { return; }
 
         if (Lstnr) {
-          this.StoreListen(StoNm, Lstnr, false);
+          this.StoreListen(StoNm, Lstnr, IsInit);
         }
       },
 

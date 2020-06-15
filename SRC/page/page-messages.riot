@@ -2,46 +2,37 @@
   <page-layout>
     <messages list={state.Msgs} all-loaded={state.HsAlMsgsLdd}/>
   </page-layout>
+  <store store='MESSAGES' listener={MessagesStoreListen} initialized={true}/>
+  <store store='REPLIES' listener={RepliesStoreListen} initialized={true}/>
   <script>
-    import pageLayout from '../component/page-layout.riot';
     import messages from '../component/messages.riot';
+    import pageLayout from '../component/page-layout.riot';
+    import store from '../component/store.riot';
 
     export default {
-      components: { pageLayout, messages },
+      components: { pageLayout, messages, store },
 
       state: {
         HsAlMsgsLdd: false, // has all messages loaded.
         Msgs: []
       },
 
-      onBeforeMount (props, state) {
-        state.Msgs = this.StoreGet('MESSAGES');
+      MessagesStoreListen (Sto, PrmsToTsk) {
+        this.update({ Msgs: this.state.Msgs.concat(Sto), HsAlMsgsLdd: Sto.length < 5 });
+      },
 
-        this.StoreListen(
-          'MESSAGES',
-          (NwSto, PrmsToTsk) => { // new store, params to task.
-            if (!PrmsToTsk) { return; }
+      RepliesStoreListen (Sto, PrmsToTsk) {
+        if (!PrmsToTsk) { return; }
 
-            this.update({ Msgs: this.state.Msgs.concat(NwSto), HsAlMsgsLdd: NwSto.length < 5 });
-          },
-          false);
+        const { MsgId, MsgIdx } = PrmsToTsk,
+              Msg = this.state.Msgs[MsgIdx],
+              Rpls = Sto[MsgId];
 
-        this.StoreListen(
-          'REPLIES',
-          (NwSto, PrmsToTsk) => {
-            if (!PrmsToTsk) { return; }
+        Msg.ChnCnt = Rpls.length;
+        Msg.IsRplsLstd = true;
+        Msg.Rpls = Rpls;
 
-            const { MsgId, MsgIdx } = PrmsToTsk,
-                  Msg = this.state.Msgs[MsgIdx],
-                  Rpls = NwSto[MsgId];
-
-            Msg.ChnCnt = Rpls.length;
-            Msg.IsRplsLstd = true;
-            Msg.Rpls = Rpls;
-
-            this.update({ Msgs: this.state.Msgs });
-          },
-          false);
+        this.update({ Msgs: this.state.Msgs });
       }
     }
   </script>
