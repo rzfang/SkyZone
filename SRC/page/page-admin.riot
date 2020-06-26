@@ -9,6 +9,14 @@
   </style>
   <script>
     export default {
+      onMounted (props, state) {
+        this.OnBrowser(() => {
+          const This = this;
+
+          setTimeout(() => { This.$('input[type=password]').focus(); }, 0);
+        });
+      },
+
       Login (Evt) {
         if (!Z.Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
@@ -965,7 +973,7 @@
               { Cnt, Msgs } = Sto,
               { IsCnt = false, Pg: PrmPg } = PrmsToTsk || {}; // is count, page, param page.
 
-        if (!IsCnt) { return this.update({ Msgs, Pg: PrmPg || SttPg }); }
+        if (!IsCnt) { return this.update({ Cnt, Msgs, Pg: PrmPg || SttPg }); }
 
         this.ServiceCall(
           { Mthd: 'GET', Url: '/service/message/admin' },
@@ -995,6 +1003,27 @@
             return Sto;
           },
           { Pg });
+      },
+
+      Delete (Evt) {
+        let Msg = this.state.Msgs[Evt.target.value];
+
+        this.ServiceCall(
+          { Mthd: 'DELETE', Url: '/service/message' },
+          { ID: Msg.ID },
+          'MESSAGES',
+          (Sto, Rslt) => {
+            if (Rslt.Index < 0) {
+              alert(Rslt.Message);
+
+              return Sto;
+            }
+
+            Sto.Msgs.splice(Evt.target.value, 1);
+            Sto.Cnt = Sto.Cnt - 1;
+
+            return Sto;
+          });
       }
     }
   </script>
@@ -1302,11 +1331,13 @@
     <art-corner slot='tab3'/>
     <system slot='tab4'/>
   </tab-box>
+  <store store='ADMIN' listener={AdminStoreListen}/>
   <script>
+    import store from '../component/store.riot';
     import tabBox from '../component/tab-box.riot';
 
     export default {
-      components: { login, tabBox, blogsManager, messages, goodWords, artCorner, system },
+      components: { login, tabBox, blogsManager, messages, goodWords, artCorner, system, store },
 
       state: {
         FdLstDt: '',
@@ -1320,17 +1351,25 @@
         this.state.FdLstDt = FdLstDt;
       },
 
-      onMounted (props, state) {
-        this.StoreListen(
-          'ADMIN',
-          (Sto, PrmsToTsk) => {
-            const { FdLstDt } = Sto;
+      // onMounted (props, state) {
+      //   this.StoreListen(
+      //     'ADMIN',
+      //     (Sto, PrmsToTsk) => {
+      //       const { FdLstDt } = Sto;
 
-            if (!FdLstDt) { return; }
+      //       if (!FdLstDt) { return; }
 
-            this.update({ FdLstDt });
-          },
-          false);
+      //       this.update({ FdLstDt });
+      //     },
+      //     false);
+      // },
+
+      AdminStoreListen (Sto, PrmsToTsk) {
+        const { FdLstDt } = Sto;
+
+        if (!FdLstDt) { return; }
+
+        this.update({ FdLstDt });
       }
     }
   </script>
