@@ -19,7 +19,7 @@ const DftPgRt = { // default page route. here should handle 404.
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js', 'hydrate.js' ],
-  body: [ './page/page-error404.riot' ]
+  body: []
 };
 
 const BlgPgRt = { // blog page route.
@@ -71,15 +71,18 @@ module.exports = {
       css: [],
       js: [ 'resource/api1.min.js' ],
       body: [ 'page/index.html' ]
+    }
+  },
+  errorPage: {
+    '404': {
+      ...DftPgRt,
+      title: '空域 - 404',
+      body: [ './page/page-error404.riot' ]
     },
-    '/500': {
+    '500': {
       ...DftPgRt,
       title: '空域 - 500',
       body: [ './page/page-error500.riot' ]
-    },
-    '/404': {
-      ...DftPgRt,
-      title: '空域 - 404'
     }
   },
   service: {

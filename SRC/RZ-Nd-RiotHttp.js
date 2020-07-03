@@ -37,6 +37,7 @@ const { port: Pt = 9004,
         },
         uploadFilePath: UpldFlPth,
         page: Pg,
+        errorPage: ErrPg,
         service: {
           pathPatterm: SvcPthPtrm = null,
           case: SvcCs = {}
@@ -204,9 +205,12 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
 
   if (!Bd || !Is.Array(Bd)) {
     Log(Pth + '\ncan not handle the body for this path.', 'warn');
-    Rspns.writeHead(404, {'Content-Type': 'text/html'});
-    Rspns.write('can not found the content.');
-    Rspns.end();
+    Rspns.status(500);
+
+    const Pg500 = ErrPg['500'] || null;
+
+    if (Pg500) { PageRespond(Rqst, Rspns, Pth, Pg500); }
+    else { Rspns.send('Error 500.'); }
 
     return -1;
   }
@@ -319,7 +323,7 @@ function PageRespond (Rqst, Rspns, Pth, PgCnfg) {
         ScrptStrs = '<script>riot.install(Cmpnt => { Object.assign(Cmpnt, Z.RM); });</script>\n' + ScrptStrs;
       }
 
-      Rspns.writeHead(200, { 'Content-Type': 'text/html' });
+      Rspns.writeHead(Rspns.statusCode, { 'Content-Type': 'text/html' });
       Rspns.write(
         "<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset='utf-8'/>\n" +
         HdStrs +
@@ -602,6 +606,17 @@ function Initialize () {
 
     App.get(Pth, (Rqst, Rspns, Next) => PageRespond(Rqst, Rspns, Pth, PgCnfg));
   }
+
+  // ==== 404 route. ====
+
+  App.use((Rqst, Rspns, Next) => {
+    const Pg404 = ErrPg['404'] || null;
+
+    Rspns.status(404);
+
+    if (Pg404) { PageRespond(Rqst, Rspns, Rqst.url, Pg404); }
+    else { Rspns.send('Error 404.'); }
+  });
 
   return this;
 }
