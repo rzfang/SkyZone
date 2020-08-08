@@ -3,22 +3,28 @@
     export default {
       onBeforeMount (props, state) {
         const {
-          store: StoNm,
+          name = '', //
+          store: Sto,
           listener: Lstnr,
           initialized: IsInit = false
         } = props;
 
-        // if (this.StoreGet(StoNm)) { return; }
+        let Nm = name || Sto;
+
+
+        if (Sto) { console.warn(`in store ${Sto} the prop store is deprecated, please use prop name.`); }
+
+        // if (this.StoreGet(Sto)) { return; }
 
         if (Lstnr) {
-          this.StoreListen(StoNm, Lstnr, IsInit);
+          this.StoreListen(Sto, Lstnr, IsInit);
         }
       },
 
       onBeforeUnmount (props, state) {
-        const { store: StoNm, listener: Lstnr } = props; // store name, listener.
+        const { name: Nm, store: Sto, listener: Lstnr } = props; // name, store name, listener.
 
-        this.StoreUnleash(StoNm, Lstnr);
+        this.StoreUnleash(Sto, Lstnr);
       }
     }
   </script>
