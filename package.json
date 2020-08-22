@@ -13,6 +13,7 @@
     "express": "^4.17.1",
     "get-folder-size": "^2.0.1",
     "helmet": "^3.23.3",
+    "markdown-it": "^11.0.0",
     "require-from-string": "^2.0.2",
     "riot": "^4.13.4",
     "sqlite3": "^5.0.0",

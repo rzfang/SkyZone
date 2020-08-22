@@ -29,21 +29,22 @@ const MM_TP = {
   '.txt':  'text/plain',
   '.xml':  'application/xml' }; // mime type map.
 
-const { port: Pt = 9004,
-        keyword: Kwd = {},
-        cdn: {
-          riot3: Riot3Url = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
-          riot4: Riot4Url = 'https://unpkg.com/riot@4/riot+compiler.min.js'
-        },
-        uploadFilePath: UpldFlPth,
-        page: Pg,
-        errorPage: ErrPg,
-        service: {
-          pathPatterm: SvcPthPtrm = null,
-          case: SvcCs = {}
-        } = {},
-        route: Rt = [] } = require('./RZ-Nd-RiotHttp.cfg.js'),
-      RtLth = Rt.length || 0; // route length.
+const {
+  port: Pt = 9004,
+  // keyword: Kwd = {},
+  cdn: {
+    riot3: Riot3Url = 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
+    riot4: Riot4Url = 'https://unpkg.com/riot@4/riot+compiler.min.js'
+  },
+  uploadFilePath: UpldFlPth,
+  page: Pg,
+  errorPage: ErrPg,
+  service: {
+    pathPatterm: SvcPthPtrm = null,
+    case: SvcCs = {}
+  } = {},
+  route: Rt = [] } = require('./RZ-Nd-RiotHttp.cfg.js');
+  // RtLth = Rt.length || 0; // route length.
 
 const App = express();
 
@@ -151,8 +152,7 @@ function Riot4Render (Rqst, Bd, Then) {
         (Cd, Dt) => {
           if (Cd < 0) { return Then(null, `<!-- can not render '${Nm}' component. -->`); }
 
-          const Jsn = JSON.stringify(Dt),
-                { html: HTML, css: CSS } = ssr.fragments(Nm, Cmpnt, Dt);
+          const { html: HTML, css: CSS } = ssr.fragments(Nm, Cmpnt, Dt);
 
           Rslt.BdStr = HTML + '\n';
           Rslt.ScrptStr = `<script type='module'>\nimport ${MdlNm} from '/${Bs}';\nconst ${MdlNm}Shell = hydrate(${MdlNm});\n${MdlNm}Shell(document.querySelector('${Nm}'));\n</script>\n`;
@@ -557,7 +557,6 @@ function Initialize () {
 
     App.get(Pth, (Rqst, Rspns, Next) => {
       const { url: Url } = Rqst;
-
       let FlPth;
 
       switch (Tp) {
@@ -574,6 +573,9 @@ function Initialize () {
           FlPth = path.resolve(__dirname, Lctn, NmOnly ? path.basename(FlPth) : FlPth);
 
           return Tp === 'riot4js' ? Riot4ComponentJsRespond(Rqst, Rspns, FlPth) : FileRespond(Rqst, Rspns, FlPth);
+
+        default:
+          Next();
       }
     });
   }
@@ -593,7 +595,7 @@ function Initialize () {
     for (let j = 0; j < MthdsEntrs.length; j++) {
       const [ Mthd, Service ] = MthdsEntrs[j];
 
-      App[Mthd] && App[Mthd](Pth, (Rqst, Rspns, Next) => ServiceRespond(Rqst, Rspns, Service));
+      App[Mthd] && App[Mthd](Pth, (Rqst, Rspns) => ServiceRespond(Rqst, Rspns, Service));
     }
   }
 
@@ -604,12 +606,12 @@ function Initialize () {
   for (let i = 0; i < Pgs.length; i++) {
     const [ Pth, PgCnfg ] = Pgs[i];
 
-    App.get(Pth, (Rqst, Rspns, Next) => PageRespond(Rqst, Rspns, Pth, PgCnfg));
+    App.get(Pth, (Rqst, Rspns) => PageRespond(Rqst, Rspns, Pth, PgCnfg));
   }
 
   // ==== 404 route. ====
 
-  App.use((Rqst, Rspns, Next) => {
+  App.use((Rqst, Rspns) => {
     const Pg404 = ErrPg['404'] || null;
 
     Rspns.status(404);

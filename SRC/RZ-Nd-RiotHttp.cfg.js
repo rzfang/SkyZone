@@ -32,13 +32,14 @@ module.exports = {
   port: 9004,
   cdn: {
     riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
-    riot4: 'https://cdn.jsdelivr.net/npm/riot@4.12/riot.min.js'
+    riot4: '/riot.min.js'
   },
   uploadFilePath: TMP_PTH,
   page: {
     '/admin': {
       ...DftPgRt,
       title: '空域 - 管理員',
+      js: [ '/resource/api2.min.js', '/hydrate.js', '/markdown-it.min.js' ],
       body: [{ type: 'riot', component: './page/page-admin.riot', initialize: AdminPage }]},
 
     '/about': {
@@ -163,6 +164,16 @@ module.exports = {
     },
 
     // node_modules
+    {
+      path: /riot\.min\.js$/,
+      type: 'resource',
+      location: '../node_modules/riot'
+    },
+    {
+      path: /markdown-it\.min\.js$/,
+      type: 'resource',
+      location: '../node_modules/markdown-it/dist'
+    },
     {
       path: /hydrate\.js$/,
       type: 'resource',
