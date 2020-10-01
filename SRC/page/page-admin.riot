@@ -55,16 +55,7 @@
             <td>任意檔名的純文字檔, *.txt</td>
           </tr>
           <tr>
-            <td>Image</td>
-            <td>Tar 打包檔<br/>├ 圖片檔<br/>└ comment.txt</td>
-            <td>
-              打包檔名稱不限。<br/>
-              圖片檔名稱不限。<br/>
-              comment.txt 內容為對圖片檔的說明。
-            </td>
-          </tr>
-          <tr>
-            <td>Images</td>
+            <td>Markdown</td>
             <td>
               Tar 打包檔<br/>
               ├ 001.*<br/>
@@ -76,13 +67,11 @@
               ├ [圖檔名].*<br/>
               ...<br/>
               ├ [圖檔名].*<br/>
-              └ comment.json<br/>
+              └ [任意檔名].md<br/>
             </td>
             <td>
               打包檔名稱不限。<br/>
-              001.* ~ 999.* 為圖片檔，呈現時將依檔名排序。<br/>comment.txt 內容為對圖片檔的說明。<br/>其中以 \n====\n 做為每張圖片說明的分隔。<br/>
-              或是<br/>
-              透過「相簿型網誌內容編輯器」產生說明文，<br/>存入名為 comment.json 的文字檔。<br/>然後將圖檔與文字檔一同打包。
+              透過「網誌撰寫」產生 Markdown 文本，<br/>儲存為 .md 檔案。<br/>然後將圖檔與 .md 檔一同打包。
             </td>
           </tr>
           <tr>
@@ -328,6 +317,7 @@
             <dd>
               <select value={Blg.Tp}>
                 <option value='text'>text</option>
+                <option value='markdown'>markdown</option>
                 <option value='image'>image</option>
                 <option value='images'>images</option>
                 <option value='html'>html</option>

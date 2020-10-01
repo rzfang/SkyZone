@@ -3,6 +3,7 @@ const async = require('async'),
       crypto = require('crypto'),
       fs = require('fs'),
       getFolderSize = require('get-folder-size'), // To do - implmenet to retire this.
+      markdownIt = require('markdown-it')(),
       path = require('path'),
       tarStream = require('tar-stream');
 
@@ -166,7 +167,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 }
 
 const Blog = {
-  Tp: [ 'text', 'html', 'image', 'images', 'zft' ],
+  Tp: [ 'text', 'markdown', 'zft' ],
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
@@ -724,14 +725,16 @@ const Blog = {
 
         return Db.Query(SQL, [ SqlRst.Id ]);
       })
-      .then(Rst => {
-        if (Rst || Is.Array(Rst) || Rst.length) { SqlRst.Tgs = Rst; }
+      .then(Rslt => {
+        if (Rslt || Is.Array(Rslt) || Rslt.length) { SqlRst.Tgs = Rslt; }
+
+        SqlRst.Url = '/blog/' + SqlRst.Id;
+
+        if (SqlRst.Tp === 'image' || SqlRst.Tp === 'images') { SqlRst.Tp = 'markdown'; }
 
         switch (SqlRst.Tp) {
           case 'text':
           case 'zft' :
-            SqlRst.Url = 'https://skyzone.zii.tw/text?b=' + SqlRst.Id;
-
             Cch.FileLoad(
               `${BLG_PTH}/${SqlRst.Fl}`,
               (Cd, Str) => {
@@ -744,17 +747,8 @@ const Blog = {
 
             return;
 
-          case 'image':
-            SqlRst.Url = 'https://skyzone.zii.tw/image?b=' + SqlRst.Id;
-
-            Blog.ImageRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
-
-            return;
-
-          case 'images':
-            SqlRst.Url = 'https://skyzone.zii.tw/images?b=' + SqlRst.Id;
-
-            Blog.ImagesRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
+          case 'markdown':
+            Blog.TarMarkdownRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
 
             return;
 
@@ -766,52 +760,7 @@ const Blog = {
         PckEnd(Cd, Msg || Kwd.RM.DbCrash);
       });
   },
-  /*
-    @ SQL result.
-    @ callback(Cd) function.
-      @ result code. */
-  ImageRead: (SqlRst, Then) => {
-    if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
-
-    const FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
-
-    let Extr = tarStream.extract();
-
-    SqlRst.Info = { Str: '', ImgUrl: '' };
-
-    Extr.on(
-      'entry',
-      (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
-        if (Hdr.name === 'comment.txt') {
-          let Chks = []; // chunks.
-
-          Strm.on('data', Chk => { Chks.push(Chk); });
-
-          Strm.on(
-            'end',
-            () => {
-              SqlRst.Info.Str = Chks.join('').toString('utf8');
-
-              Next();
-            });
-        }
-        else {
-          const TarNm = SqlRst.Fl.replace('.tar', ''),
-                Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`, // image file path.
-                Url = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
-
-          SqlRst.Info.ImgUrl = Url;
-
-          TarStreamFileWrite(Hdr, Strm, Pth, Next);
-        }
-
-        Strm.resume();
-      });
-
-    Extr.on('finish', () => { Then(0); });
-    FlStrm.pipe(Extr);
-  },
-  ImagesRead: (SqlRst, Then) => {
+  TarMarkdownRead: (SqlRst, Then) => {
     if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
     const TarNm = SqlRst.Fl.replace('.tar', ''),
@@ -819,45 +768,21 @@ const Blog = {
 
     let Extr = tarStream.extract();
 
-    SqlRst.Info = { Lst: [], Imgs: {} };
+    SqlRst.Info = { Lst: [], Imgs: {}, Str: '' };
 
     Extr.on(
       'entry',
       (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
-        if (Hdr.name === 'comment.json') { // v2 images.
+        if (Hdr.name.indexOf('.md') > -1) { // markdown.
           let Chks = []; // chunks.
 
-          Strm.on('data', Chk => { Chks.push(Chk); });
+          Strm.on('data', Chk=> { Chks.push(Chk); });
 
           Strm.on(
             'end',
             () => {
-              try {
-                SqlRst.Info.Lst = JSON.parse(Chks.join('').toString('utf8'));
-              }
-              catch (Err) {
-                SqlRst.Info.Lst = [];
-              }
-
-              Next();
-            });
-        }
-        else if (Hdr.name === 'comment.txt') { // v1 images.
-          let Chks = []; // chunks.
-
-          Strm.on('data', Chk => { Chks.push(Chk); });
-
-          Strm.on(
-            'end',
-            () => {
-              const Cmts = Chks.join('').toString('utf8').split('\n====\n');
-
-              for (let i = 0; i < Cmts.length; i++) {
-                SqlRst.Info.Lst.push({
-                  Fl: (i + 1).toString().padStart(3, '0') + '.jpg',
-                  Cmt: Cmts[i]
-                });
-              }
+              SqlRst.Info.IsMrkdwn = true;
+              SqlRst.Info.Str = Chks.join('').toString('utf8');
 
               Next();
             });
@@ -876,14 +801,28 @@ const Blog = {
     Extr.on(
       'finish',
       () => {
-        for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
-          let Itm = SqlRst.Info.Lst[i],
-              FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
+        if (SqlRst.Info.IsMrkdwn) {
+          const Kys = Object.keys(SqlRst.Info.Imgs),
+                KysLngth = Kys.length;
 
-          Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || SqlRst.Info.Imgs[FlbckFl] || '';
+          for (let i = 0; i < KysLngth; i++) {
+            const Ky = Kys[i];
+
+            SqlRst.Info.Str = SqlRst.Info.Str.replace(`tmd{${Ky}}`, SqlRst.Info.Imgs[Ky]);
+          }
+
+          SqlRst.Info = markdownIt.render(SqlRst.Info.Str).replace(/<img /g, '<img loading="lazy" ');
         }
+        else {
+          for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
+            let Itm = SqlRst.Info.Lst[i],
+                FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
 
-        SqlRst.Info = SqlRst.Info.Lst;
+            Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || SqlRst.Info.Imgs[FlbckFl] || '';
+          }
+
+          SqlRst.Info = SqlRst.Info.Lst;
+        }
 
         Then(0);
       });

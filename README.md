@@ -12,6 +12,7 @@ this project needs the key file to get everything fine.
 * [Express](https://expressjs.com/)
 * [Riot 4](https://riot.js.org/) with v3 compatible.
 * [Sass](https://sass-lang.com/)
+* [markdown-it](https://markdown-it.github.io/) for blog content handling.
 
 ## to be a HTTP server, this project also uses
 * [nginx](https://nginx.org/)

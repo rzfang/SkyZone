@@ -2,7 +2,11 @@ const Log = require('../RZ-Js-Log'),
       { Blog } = require('../library');
 
 module.exports = (Rqst, Optn, Then) => {
-  const { b: Id = '' } = Rqst.query || {};
+  const {
+      query: { b: QryId = '' },
+      params: { id: PrmId = '' }
+    } = Rqst || {},
+    Id = QryId || PrmId; // support both /[type]?b=[id] and /blog/[id].
 
   if (!Id) {
     Log('no blog id.', 'error');

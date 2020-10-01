@@ -11,13 +11,12 @@
 
         let Nm = name || Sto;
 
-
-        if (Sto) { console.warn(`in store ${Sto} the prop store is deprecated, please use prop name.`); }
+        if (Sto) { console.warn(`in store ${Sto} the prop "store" is deprecated, please use prop "name".`); }
 
         // if (this.StoreGet(Sto)) { return; }
 
         if (Lstnr) {
-          this.StoreListen(Sto, Lstnr, IsInit);
+          this.StoreListen(Nm, Lstnr, IsInit);
         }
       },
 

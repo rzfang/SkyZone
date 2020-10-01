@@ -3,7 +3,7 @@
     <tags tags={state.Tgs}/>
     <blogs list={state.Blgs} tags={state.Tgs} all-loaded={state.HsAlBlgsLdd}/>
   </page-layout>
-  <store store='BLOGS' listener={BlogsStoreListen}/>
+  <store name='BLOGS' listener={BlogsStoreListen}/>
   <script>
     import blogs from '../component/blogs.riot';
     import pageLayout from '../component/page-layout.riot';

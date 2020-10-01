@@ -6,61 +6,6 @@
   </style>
 </text>
 
-<image>
-  <img src={props.blog.Info.ImgUrl} alt={props.blog.Ttl}/>
-  <div>
-    <pre>{props.blog.Info.Str}</pre>
-  </div>
-  <style>
-    :host { text-align: center; }
-    :host>img { max-width: 100%; }
-    :host>div>pre { display: inline-block; text-align: left; }
-  </style>
-</image>
-
-<images>
-  <ul>
-    <li each={Img in state.Info.Fst}>
-      <img src={Img.ImgUrl} alt={Img.Fl}/>
-      <div if={Img.Cmt}>
-        <pre>{Img.Cmt}</pre>
-      </div>
-    </li>
-    <li each={Img in state.Info.Mr}>
-      <late-img src={Img.ImgUrl} alt={Img.Fl}/>
-      <div if={Img.Cmt}>
-        <pre>{Img.Cmt}</pre>
-      </div>
-    </li>
-  </ul>
-  <style>
-    :host>ul { list-style: none; margin: 0; padding: 0; }
-    :host>ul>li { margin-bottom: 20px; text-align: center; }
-    :host>ul>li>img { max-width: 100%; }
-    :host>ul>li>div { text-align: center; }
-    :host>ul>li>div>pre { display: inline-block; text-align: left; }
-  </style>
-  <script>
-    import lateImg from './late-img.riot';
-
-    export default {
-      components: { lateImg },
-
-      state: {
-        Info: {
-          Fst: [], // first.
-          Mr: [] // more.
-        }
-      },
-
-      onBeforeMount (props, state) {
-        state.Info.Fst = props.blog.Info.slice(0, 2);
-        state.Info.Mr = props.blog.Info.slice(2);
-      }
-    }
-  </script>
-</images>
-
 <zft>
   <pre>{props.blog.Info}</pre>
   <script>
@@ -74,10 +19,29 @@
   </script>
 </zft>
 
+<markdown>
+  <pre>{props.blog.Info1}</pre>
+  <style type='scss'>
+    :host>pre { text-align: center;
+      p { text-align: left; }
+      img {
+        max-width: 640px; width: 100%;
+      }
+    }
+  </style>
+  <script>
+    export default {
+      onMounted (props, state) {
+        this.$('pre').innerHTML = props.blog.Info;
+      }
+    }
+  </script>
+</markdown>
+
 <blog>
   <h1>{props.info.Ttl}</h1>
   <div>
-    <div is='tags' tags={props.info.Tgs}/>
+    <div if={props.info.Tgs.length} is='tags' tags={props.info.Tgs}/>
     <icon title='發佈時間' name='calendar'/> {props.info.Dt}
   </div>
   <div is={props.info.Tp} blog={props.info}/>
@@ -93,7 +57,7 @@
     import tags from './tags.riot';
 
     export default {
-      components: { icon, shareBox, tags, text, image, images, zft }
+      components: { icon, shareBox, tags, text, zft, markdown }
     }
   </script>
 </blog>

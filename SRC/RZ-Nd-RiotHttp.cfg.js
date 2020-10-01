@@ -18,14 +18,15 @@ const DftPgRt = { // default page route. here should handle 404.
   favicon: 'favicon.ico',
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
-  js: [ '/resource/api2.min.js', 'hydrate.js' ],
+  js: [ '/resource/api2.min.js', '/hydrate.js' ],
   body: []
 };
 
 const BlgPgRt = { // blog page route.
   ...DftPgRt,
   title: '空域 - 網誌',
-  body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}]
+  body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}],
+  js: [ '/resource/api2.min.js', '/hydrate.js', '/markdown-it.min.js' ]
 };
 
 module.exports = {
@@ -50,16 +51,17 @@ module.exports = {
     '/blogs': {
       ...DftPgRt,
       title: '空域 - 網誌',
-      body: [{ type: 'riot', component: './page/page-blogs.riot', initialize: require('./page/blogs')}]
+      body: [{ type: 'riot', component: './page/page-blogs.riot', initialize: require('./page/blogs') }]
     },
     '/text': BlgPgRt,
     '/image': BlgPgRt,
     '/images': BlgPgRt,
     '/zft': BlgPgRt,
+    '/blog/:id': BlgPgRt,
     '/messages': {
       ...DftPgRt,
       title: '空域 - 留言',
-      body: [{ type: 'riot', component: './page/page-messages.riot', initialize: require('./page/messages')}]
+      body: [{ type: 'riot', component: './page/page-messages.riot', initialize: require('./page/messages') }]
     },
     '/zone': {
       ...DftPgRt,

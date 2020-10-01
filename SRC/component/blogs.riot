@@ -2,8 +2,7 @@
   <ul>
     <li each={Blg in props.list}>
       <div>
-        <icon name={Blg.Tp}/>
-        <a href='{Blg.Tp}?b={Blg.ID}'>{Blg.Ttl}</a>
+        <a href='/blog/{Blg.ID}'>{Blg.Ttl}</a>
       </div>
       <pre>{Blg.Smry}</pre>
       <div>
@@ -19,7 +18,7 @@
   <style>
     :host>ul { list-style: none; margin: 0; padding: 0; }
     :host>ul>li { margin-bottom: 20px; line-height: 1.5; }
-    :host>ul>li>div:first-child>a { display: inline-block; margin-left: 10px; font-size: 1.3rem; vertical-align: middle; }
+    :host>ul>li>div:first-child>a { font-size: 1.3rem; }
     :host>ul>li>pre { white-space: pre-line; }
     :host>ul>li>pre~div { color: #808080; }
     :host>ul>li>pre~div>span { display: inline-block; margin-right: 5px; }
