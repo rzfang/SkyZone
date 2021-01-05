@@ -2,8 +2,8 @@
   <page-layout>
     <messages list={state.Msgs} all-loaded={state.HsAlMsgsLdd}/>
   </page-layout>
-  <store store='MESSAGES' listener={MessagesStoreListen} initialized={true}/>
-  <store store='REPLIES' listener={RepliesStoreListen} initialized={true}/>
+  <store name='MESSAGES' listener={MessagesStoreListen} initialized={true}/>
+  <store name='REPLIES' listener={RepliesStoreListen} initialized={true}/>
   <script>
     import messages from '../component/messages.riot';
     import pageLayout from '../component/page-layout.riot';
@@ -18,7 +18,7 @@
       },
 
       MessagesStoreListen (Sto, PrmsToTsk) {
-        this.update({ Msgs: this.state.Msgs.concat(Sto), HsAlMsgsLdd: Sto.length < 5 });
+        this.update({ Msgs: Sto, HsAlMsgsLdd: Sto.length < 5 });
       },
 
       RepliesStoreListen (Sto, PrmsToTsk) {

@@ -1,0 +1,93 @@
+<comment-form>
+  <form>
+    <input type='text' maxlength='10' placeholder='匿名' value={state.NmMl[0]} disabled={state.IsSndng}/><br/>
+    <input type='email' required='true' placeholder='E-Mail (不會公開)' value={state.NmMl[1]} disabled={state.IsSndng}/><br/>
+    <textarea rows="1" maxlength='255' required='true' disabled={state.IsSndng}></textarea><br/>
+    <div>
+      <label>記住我<input type='checkbox' checked={state.NmMl[0]} /></label>
+      <div>
+        <a href='javascript:void(0);' onclick={Submit}>送出</a>
+        <a href='javascript:void(0);' onclick={props.oncancel}>取消</a>
+      </div>
+    </div>
+  </form>
+  <style type='scss'>
+    :host>form {
+      >input,
+      >textarea { width: 100%; box-sizing: border-box; }
+      >div { display: flex;
+        >label { flex-grow: 1;
+          >input { vertical-align: middle; }
+        }
+        >div>a { display: inline-block; margin-left: 5px; }
+      }
+    }
+  </style>
+  <script>
+    export default {
+      state: {
+        IsSndng: false, // is sending message.
+        NmMl: [ '', '' ] // [ name, mail ].
+      },
+
+      onBeforeMount (props, state) {
+        const NmMl = CookieParam('NmMl'); // name & mail.
+
+        if (NmMl) { state.NmMl = NmMl.split(';'); }
+      },
+
+      IsFormGood (Nm, Ml, Msg) {
+        let Hnt = ''; // hint.
+
+        if (!Nm || !Z.Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+        else {
+          Nm = Nm.trim();
+
+          if (Nm === '') { Hnt += '暱稱不可為空白字。\n'; }
+        }
+
+        if (!Ml || !Z.Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
+        else {
+          Ml = Ml.trim();
+
+          if (!Z.Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
+        }
+
+        if (!Msg || !Z.Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
+        else {
+          Msg = Msg.trim();
+
+          if (Msg === '') { Hnt += '留言不可為空白字。\n'; }
+          else if (Msg.length > 255) { Hnt += '留言請勿超個 255 個字。\n'; }
+        }
+
+        if (Hnt.length > 0) {
+          alert('請留意以下說明：\n' + Hnt);
+
+          return false;
+        }
+
+        return true;
+      },
+
+      Submit (Evt) {
+        const [
+          { value: Nm },
+          { value: Ml },
+          { value: Msg },
+          { checked: IsRmbd }] = this.$$('form input, form textarea'); // form DOMs, is remebered.
+
+        if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
+
+        // remember or clean name, mail.
+        if (IsRmbd) { CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7); }
+        else { CookieSet('NmMl', '', -1); }
+
+        this.update({ IsSndng: true });
+        setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
+
+        this.props.submit && this.props.submit(Nm, Ml, Msg);
+      }
+    }
+  </script>
+</comment-form>

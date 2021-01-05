@@ -160,6 +160,10 @@
 
 <messages>
   <ul>
+    <li>
+      <comment-form if={state.IsFmShwd} submit={MessageLeave} oncancel={FormToggle}/>
+      <a if={!state.IsFmShwd} href='javascript:void(0);' onclick={FormToggle}>新留言</a>
+    </li>
     <li each={(Msg, Idx) in props.list}>
       <div>{Msg.Dt} {Msg.Nm}:</div>
       <pre>{Msg.Msg}</pre>
@@ -181,11 +185,46 @@
     :host>div { text-align: center; }
   </style>
   <script>
+    import commentForm from './comment-form.riot';
+
     export default {
-      components: { replies },
+      components: { replies, commentForm },
 
       state: {
-        HsAlLdd: false // has all loaded.
+        HsAlLdd: false ,// has all loaded.
+        IsFmShwd: false // is form showed.
+      },
+
+      MessageLeave (Nm = '', Ml = '', Msg = '') {
+        if (!Nm || !Ml || !Msg) {
+          return alert('無法送出。');
+        }
+
+        this.ServiceCall(
+          { Mthd: 'POST', Url: '/service/message' },
+          { Nm, Ml, Msg },
+          'MESSAGES',
+          (Sto, Rslt) => {
+            const Id = Rslt.Extend;
+
+            if (!Id) {
+              alert('無法留言。');
+
+              return Sto;
+            }
+
+            const FmtDt = DatetimeFormat(new Date()); // formatted date time string.
+
+            setTimeout(this.FormToggle, 2000);
+
+            return [
+              { ChnCnt: 0, ChnDt: FmtDt, Dt: FmtDt, ID: Id, IP: '123', Ml, Msg, Nm },
+              ...Sto ];
+          });
+      },
+
+      FormToggle (Evt) {
+        this.update({ IsFmShwd: !this.state.IsFmShwd });
       },
 
       MessagesLoad (Evt) {
@@ -203,10 +242,10 @@
             if (Rst.Index < 0) {
               alert(Rst.Message);
 
-              return null;
+              return Sto;
             }
 
-            return Rst.Extend;
+            return [ ...Sto, ...Rst.Extend ];
           },
           { Ofst });
       },
