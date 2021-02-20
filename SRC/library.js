@@ -10,12 +10,12 @@ const async = require('async'),
 const {
   Cache: Cch,
   Is,
-  Log
+  Log,
+  SQLite
 } = require('rzjs');
 
 const Cnst = require('./constant.json'),
-      Kwd = require('./keyword.json'),
-      SQLite = require('./RZ-Nd-SQLite');
+      Kwd = require('./keyword.json');
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
