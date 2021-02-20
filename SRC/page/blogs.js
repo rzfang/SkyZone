@@ -1,7 +1,7 @@
 const async = require('async');
+const { Log } = require('rzjs');
 
-const Log = require('../RZ-Js-Log'),
-      { Blog, Tag } = require('../library');
+const { Blog, Tag } = require('../library');
 
 module.exports = (Rqst, {}, Then) => {
   const { t: TgId } = Rqst.query || {},

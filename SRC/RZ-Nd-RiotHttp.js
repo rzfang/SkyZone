@@ -8,11 +8,13 @@ const async = require('async'),
       riot = require('riot'),
       ssr = require('@riotjs/ssr');
 
-const Cch = require('./RZ-Nd-Cache'),
-      Log = require('./RZ-Js-Log'),
-      Is = require('./RZ-Js-Is'),
-      Riot4Compile = require('./RZ-Nd-Riot4'),
-      RM = require('./RZ-Js-RiotMixin');
+const {
+  Cache: Cch,
+  Log,
+  Is,
+  Riot4Compile,
+  RiotMixin: RM
+} = require('rzjs');
 
 const MM_TP = {
   '.bmp':  'image/x-windows-bmp',

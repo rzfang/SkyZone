@@ -4,7 +4,6 @@
   "description": "Sky Zone",
   "main": "skyzone.js",
   "dependencies": {
-    "@riotjs/compiler": "^5.0.0",
     "@riotjs/hydrate": "^5.0.0",
     "@riotjs/ssr": "^6.0.0",
     "async": "^2.6.3",
@@ -16,7 +15,8 @@
     "markdown-it": "^11.0.1",
     "require-from-string": "^2.0.2",
     "riot": "^5.0.0",
-    "sqlite3": "^5.0.0",
+    "rzjs": "git+ssh://git@github.com:rzfang/Js.git",
+    "sqlite3": "5.0.0",
     "tar-stream": "^2.2.0"
   },
   "devDependencies": {

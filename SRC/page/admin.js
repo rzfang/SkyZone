@@ -1,8 +1,7 @@
 const async = require('async');
 const fs = require('fs');
+const { Cache: Cch, Log } = require('rzjs');
 
-const Cch = require('../RZ-Nd-Cache');
-const Log = require('../RZ-Js-Log');
 const { Ssn: { IsLogged } } = require('../library');
 
 function FeedLastDateGet (Then) {

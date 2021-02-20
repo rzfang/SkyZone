@@ -1,5 +1,6 @@
-const Log = require('../RZ-Js-Log'),
-      { Msg } = require('../library');
+const { Log } = require('rzjs');
+
+const { Msg } = require('../library');
 
 module.exports = (Rqst, {}, Then) => {
   Msg.List(

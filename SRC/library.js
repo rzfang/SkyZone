@@ -7,11 +7,14 @@ const async = require('async'),
       path = require('path'),
       tarStream = require('tar-stream');
 
-const Cch = require('./RZ-Nd-Cache'),
-      Cnst = require('./constant.json'),
-      Is = require('./RZ-Js-Is'),
+const {
+  Cache: Cch,
+  Is,
+  Log
+} = require('rzjs');
+
+const Cnst = require('./constant.json'),
       Kwd = require('./keyword.json'),
-      Log = require('./RZ-Js-Log'),
       SQLite = require('./RZ-Nd-SQLite');
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.

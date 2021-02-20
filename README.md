@@ -40,3 +40,6 @@ or use PM2.
 ```
 pm2 start skyzone.js;
 ```
+
+## package dependency
+- sqlite3@5.0.0 - lock version as a short term workaround.

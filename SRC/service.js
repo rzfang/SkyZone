@@ -1,4 +1,4 @@
-const Is = require('./RZ-Js-Is');
+const Is = require('rzjs/Is');
 // const Log = require('./RZ-Js-Log');
 const { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } = require('./library');
 
