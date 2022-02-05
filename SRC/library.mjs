@@ -15,8 +15,6 @@ import Kwd from './keyword.json';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-markdownIt();
-
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
       NOW_ART_CORNER_KEY = 'NAC', // now art corner key.
@@ -28,6 +26,8 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 
 let Cnt = 0; // a count for any situation to create an unique thing.
+
+markdownIt();
 
 /* extend original callback function to be packed.
   @ original callback function.
