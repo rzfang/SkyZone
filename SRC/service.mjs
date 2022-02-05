@@ -1,6 +1,5 @@
-const Is = require('rzjs/Is');
-// const Log = require('./RZ-Js-Log');
-const { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } = require('./library');
+import { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } from './library.mjs';
+import { Is } from 'rzjs';
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -24,7 +23,7 @@ function ParamsMix (Prm) {
   @ request object.
   @ post, get params.
   @ end callback function. */
-module.exports = {
+const Svc = {
   BlogList: (Rqst, Rspns, Prm, End) => {
     return Blog.List(Rqst, ParamsMix(Prm), PackedEnd(End));
   },
@@ -119,3 +118,5 @@ module.exports = {
     return Ssn.LogOut(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
   }
 }
+
+export default Svc;

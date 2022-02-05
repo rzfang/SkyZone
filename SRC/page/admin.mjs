@@ -1,8 +1,9 @@
-const async = require('async');
-const fs = require('fs');
-const { Cache: Cch, Log } = require('rzjs');
+import async from 'async';
+import fs from 'fs';
+import { Cache as Cch, Log } from 'rzjs';
+import { Ssn } from '../library.mjs';
 
-const { Ssn: { IsLogged } } = require('../library');
+const { IsLogged } = Ssn;
 
 function FeedLastDateGet (Then) {
   const CchKy = 'FdLstDt';
@@ -30,7 +31,7 @@ function FeedLastDateGet (Then) {
      });
 }
 
-module.exports = (Rqst, Optn, Then) => {
+const AdminPage = (Rqst, Optn, Then) => {
   async.parallel(
     {
       FdLstDt: (Then) => {
@@ -62,3 +63,5 @@ module.exports = (Rqst, Optn, Then) => {
       Then(0, {});
     });
 };
+
+export default AdminPage;

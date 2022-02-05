@@ -1,8 +1,8 @@
-const { Log } = require('rzjs');
+import { Log } from 'rzjs';
 
-const { Msg } = require('../library');
+import { Msg } from '../library.mjs';
 
-module.exports = (Rqst, {}, Then) => {
+export const MsgsPage = (Rqst, {}, Then) => {
   Msg.List(
     Rqst,
     { Lmt: 5 },
@@ -18,3 +18,5 @@ module.exports = (Rqst, {}, Then) => {
       Then(0);
     });
 };
+
+export default MsgsPage;

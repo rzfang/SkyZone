@@ -1,21 +1,21 @@
-const async = require('async'),
-      cookie = require('cookie'),
-      crypto = require('crypto'),
-      fs = require('fs'),
-      getFolderSize = import('get-folder-size'), // To do - implmenet to retire this.
-      markdownIt = require('markdown-it')(),
-      path = require('path'),
-      tarStream = require('tar-stream');
+import async from 'async';
+import cookie from 'cookie';
+import crypto from 'crypto';
+import fs from 'fs';
+import getFolderSize from 'get-folder-size'; // To do - implmenet to retire this.
+import markdownIt from 'markdown-it';
+import path from 'path';
+import tarStream from 'tar-stream';
+import { Cache as Cch, Is, Log, SQLite } from 'rzjs';
+import { fileURLToPath } from 'url';
 
-const {
-  Cache: Cch,
-  Is,
-  Log,
-  SQLite
-} = require('rzjs');
+import Cnst from './constant.json';
+import Kwd from './keyword.json';
 
-const Cnst = require('./constant.json'),
-      Kwd = require('./keyword.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+markdownIt();
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       ADMIN_SESSION_KEY = 'SSN', // admin session key.
@@ -169,7 +169,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
   Then();
 }
 
-const Blog = {
+export const Blog = {
   Tp: [ 'text', 'markdown', 'zft' ],
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
@@ -262,7 +262,10 @@ const Blog = {
 
         PckEnd(0, Kwd.RM.Done, FnlRst);
       })
-      .catch(Cd => { PckEnd(Cd, Kwd.RM.DbCrash); });
+      .catch(Cd => {
+        Log(Cd);
+        PckEnd(Cd, Kwd.RM.DbCrash);
+      });
   },
   AdminList: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
@@ -834,7 +837,7 @@ const Blog = {
   }
 };
 
-const Tag = {
+export const Tag = {
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
@@ -937,7 +940,7 @@ const Tag = {
   }
 };
 
-const Msg = { // message.
+export const Msg = { // message.
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
@@ -1112,7 +1115,7 @@ const Msg = { // message.
   }
 };
 
-const Wds = { // good words.
+export const Wds = { // good words.
   /*
     @ request object.
     @ params.
@@ -1284,7 +1287,7 @@ const Wds = { // good words.
   }
 };
 
-const ArtCnr = { // Art Corner.
+export const ArtCnr = { // Art Corner.
   RandomOneGet: (Rqst, Prm, End) => {
     let Info = Cch.Get(NOW_ART_CORNER_KEY);
 
@@ -1347,7 +1350,7 @@ const ArtCnr = { // Art Corner.
   }
 };
 
-const Systm = {
+export const Systm = {
   CacheClear: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
@@ -1440,7 +1443,7 @@ const Systm = {
   }
 };
 
-const Ssn = { // session.
+export const Ssn = { // session.
   /* check if is logged, and extend session expiration if need.
     @ request object.
     @ response object.
@@ -1508,7 +1511,7 @@ const Ssn = { // session.
   }
 };
 
-module.exports = {
+const Lbry = {
   ArtCnr,
   Blog,
   Msg,
@@ -1517,3 +1520,5 @@ module.exports = {
   Tag,
   Wds
 };
+
+export default Lbry;

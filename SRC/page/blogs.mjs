@@ -1,9 +1,9 @@
-const async = require('async');
-const { Log } = require('rzjs');
+import async from 'async';
+import { Log } from 'rzjs';
 
-const { Blog, Tag } = require('../library');
+import { Blog, Tag } from '../library.mjs';
 
-module.exports = (Rqst, {}, Then) => {
+export const BlogsPage = (Rqst, {}, Then) => {
   const { t: TgId } = Rqst.query || {},
         PckdIds = [ TgId ]; // picked ids.
 
@@ -43,3 +43,5 @@ module.exports = (Rqst, {}, Then) => {
     },
     (Err, Rslt) => { Then(0); });
 };
+
+export default BlogsPage;

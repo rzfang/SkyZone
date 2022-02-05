@@ -1,8 +1,8 @@
-const { Log } = require('rzjs');
+import { Log } from 'rzjs';
 
-const { Blog } = require('../library');
+import { Blog } from '../library.mjs';
 
-module.exports = (Rqst, Optn, Then) => {
+export const BlogPage = (Rqst, Optn, Then) => {
   const {
       query: { b: QryId = '' },
       params: { id: PrmId = '' }
@@ -37,3 +37,5 @@ module.exports = (Rqst, Optn, Then) => {
       Then(0);
     });
 };
+
+export default BlogPage;
