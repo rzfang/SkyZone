@@ -2,18 +2,13 @@
   "name": "sky_zone",
   "version": "1.0.0",
   "description": "Sky Zone",
-  "main": "skyzone.js",
+  "main": "skyzone.mjs",
   "dependencies": {
-    "@riotjs/hydrate": "^6.0.0",
-    "@riotjs/ssr": "^7.0.0",
     "async": "^3.0.0",
-    "busboy": "^0.3.1",
     "cookie": "^0.4.0",
-    "express": "^4.17.1",
     "get-folder-size": "^3.0.0",
-    "helmet": "^4.0.0",
     "markdown-it": "^12.0.0",
-    "require-from-string": "^2.0.2",
+    "pre-commit": "^1.2.2",
     "riot": "^6.0.0",
     "rzjs": "github:rzfang/Js",
     "sqlite3": "5.0.0",
@@ -22,12 +17,11 @@
   "devDependencies": {
     "eslint": "^8.0.0",
     "eslint-plugin-json": "^3.0.0",
-    "husky": "^7.0.0",
     "node-sass": "^6.0.0",
     "nodemon": "^2.0.0"
   },
   "scripts": {
-    "dev": "nodemon --experimental-json-modules -d 3 -e js,scss,html,tag,riot -w SRC/ ./skyzone.js",
+    "dev": "nodemon --experimental-json-modules -d 3 -e js,cjs,mjs,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
     "lint": "eslint --ext .js,.json SRC/*.js",
     "test": "test"
   },
@@ -45,11 +39,9 @@
     "url": "https://github.com/rzfang/SkyZone/issues"
   },
   "homepage": "https://github.com/rzfang/SkyZone#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
+  "pre-commit": [
+    "lint"
+  ],
   "eslintConfig": {
     "env": {
       "browser": true,
