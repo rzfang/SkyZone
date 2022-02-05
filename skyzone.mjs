@@ -1,14 +1,22 @@
-const path = require('path');
+import App from 'rzjs/node/RiotHttp.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const Cnst = require('./constant.json'),
-      Svc = require('./service');
+import Cnst from './SRC/constant.json';
+import Svc from './SRC/service.mjs';
 
-const AdminPage = require('./page/admin');
+import AdminPage from './SRC/page/admin.mjs';
+import BlogPage from './SRC/page/blog.mjs';
+import BlogsPage from './SRC/page/blogs.mjs';
+import MessagesPage from './SRC/page/messages.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js',
-      CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH),
-      STTC_PTH = path.resolve(__dirname, '..', Cnst.STTC_PTH),
-      TMP_PTH = path.resolve(__dirname, '..', Cnst.TMP_PTH);
+      CCH_PTH = path.resolve(__dirname, Cnst.CCH_PTH),
+      STTC_PTH = path.resolve(__dirname, Cnst.STTC_PTH),
+      TMP_PTH = path.resolve(__dirname, Cnst.TMP_PTH);
 
 const DftPgRt = { // default page route. here should handle 404.
   title: '空域',
@@ -18,18 +26,20 @@ const DftPgRt = { // default page route. here should handle 404.
   favicon: 'favicon.ico',
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
-  js: [ '/resource/api2.min.js', '/hydrate.js' ],
+  // js: [ '/resource/api2.min.js', '/hydrate.js' ],
+  js: [],
   body: []
 };
 
 const BlgPgRt = { // blog page route.
   ...DftPgRt,
   title: '空域 - 網誌',
-  body: [{ type: 'riot', component: './page/page-blog.riot', initialize: require('./page/blog')}],
-  js: [ '/resource/api2.min.js', '/hydrate.js', '/markdown-it.min.js' ]
+  body: [{ type: 'riot', component: './SRC/page/page-blog.riot', initialize: BlogPage }],
+  // js: [ '/resource/api2.min.js', '/hydrate.js', '/markdown-it.min.js' ]
+  js: []
 };
 
-module.exports = {
+const RHC = { // Riot HTTP config.
   port: 9004,
   cdn: {
     riot3: 'https://cdn.jsdelivr.net/npm/riot@3.13/riot+compiler.min.js',
@@ -41,17 +51,17 @@ module.exports = {
       ...DftPgRt,
       title: '空域 - 管理員',
       js: [ '/resource/api2.min.js', '/hydrate.js', '/markdown-it.min.js' ],
-      body: [{ type: 'riot', component: './page/page-admin.riot', initialize: AdminPage }]},
+      body: [{ type: 'riot', component: './SRC/page/page-admin.riot', initialize: AdminPage }]},
 
     '/about': {
       ...DftPgRt,
       title: '空域 - 關於',
-      body: [ './page/page-about.riot' ]
+      body: [ './SRC/page/page-about.riot' ]
     },
     '/blogs': {
       ...DftPgRt,
       title: '空域 - 網誌',
-      body: [{ type: 'riot', component: './page/page-blogs.riot', initialize: require('./page/blogs') }]
+      body: [{ type: 'riot', component: './SRC/page/page-blogs.riot', initialize: BlogsPage }]
     },
     '/text': BlgPgRt,
     '/image': BlgPgRt,
@@ -61,31 +71,31 @@ module.exports = {
     '/messages': {
       ...DftPgRt,
       title: '空域 - 留言',
-      body: [{ type: 'riot', component: './page/page-messages.riot', initialize: require('./page/messages') }]
+      body: [{ type: 'riot', component: './SRC/page/page-messages.riot', initialize: MessagesPage }]
     },
     '/zone': {
       ...DftPgRt,
       css: [ '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
-      body: [ 'page/zone.html' ]
+      body: [ path.resolve(__dirname, './SRC/page/zone.html') ]
     },
     '/': {
       ...DftPgRt,
       css: [],
       js: [ 'resource/api1.min.js' ],
-      body: [ 'page/index.html' ]
+      body: [ path.resolve(__dirname, './SRC/page/index.html') ]
     }
   },
   errorPage: {
     '404': {
       ...DftPgRt,
       title: '空域 - 404',
-      body: [ './page/page-error404.riot' ]
+      body: [ './SRC/page/page-error404.riot' ]
     },
     '500': {
       ...DftPgRt,
       title: '空域 - 500',
-      body: [ './page/page-error500.riot' ]
+      body: [ './SRC/page/page-error500.riot' ]
     }
   },
   service: {
@@ -162,40 +172,35 @@ module.exports = {
     { // google search console validate.
       path: /\/google301903d8518925d5.html$/,
       type: 'resource',
-      location: '../WEB/www'
+      location: './WEB/www'
     },
 
     // node_modules
     {
-      path: /riot\.min\.js$/,
-      type: 'resource',
-      location: '../node_modules/riot'
-    },
-    {
       path: /markdown-it\.min\.js$/,
       type: 'resource',
-      location: '../node_modules/markdown-it/dist'
+      location: './node_modules/markdown-it/dist'
     },
     {
-      path: /hydrate\.js$/,
+      path: /(Is|RiotMixin)\.js$/,
       type: 'resource',
-      location: '../node_modules/@riotjs/hydrate'
+      location: './node_modules/rzjs'
     },
 
     { // SEO files.
       path: /\/(favicon\.ico|robots\.txt)/,
       type: 'resource',
-      location: '../WEB/www'
+      location: './WEB/www'
     },
     { // Riot component tag.
       path: /(header|footer|messages|admin)\.tag$/,
       type: 'resource',
-      location: './component'
+      location: './SRC/component'
     },
     { // Riot page tag.
       path: /(zft-page|p500|p404)\.tag$/,
       type: 'resource',
-      location: './page'
+      location: './SRC/page'
     },
     { // resource: Js, CSS, old Riot tag.
       path: /\.(css|js|tag)$/,
@@ -205,12 +210,12 @@ module.exports = {
     {
       path: /^\/feed.xml$/,
       type: 'resource',
-      location: '../DAT'
+      location: './DAT'
     },
     { // riot component js compiled in runtime.
       path: /\.riot$/,
       type: 'riot4js',
-      location: './page'
+      location: './SRC/page'
     },
 
 
@@ -227,3 +232,5 @@ module.exports = {
     }
   ]
 }
+
+App.Initialize(RHC).Run();
