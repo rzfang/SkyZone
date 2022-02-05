@@ -5,10 +5,9 @@
 const fs = require('fs'),
       sass = require('node-sass');
 
-const
-      RtPth = __dirname + '/../', // 'RtPth' = Root Path.
-      LbryPth = 'node_modules/rzjs/', // 'LbryPth' = Library Path.
-      RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
+const RtPth = __dirname + '/../'; // 'RtPth' = Root Path.
+
+const RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
       SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
 
 SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
@@ -17,14 +16,11 @@ SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
 JsCompress(
   [ SrcPth + 'include.js',
     SrcPth + 'wording.js',
-    LbryPth + 'Is.js',
     SrcPth + 'RZ-Js-ZFT.js' ],
   RscPth + 'api1.min.js');
 JsCompress(
   [ SrcPth + 'include.js',
     SrcPth + 'wording.js',
-    LbryPth + 'Is.js',
-    LbryPth + 'RiotMixin.js',
     SrcPth + 'RZ-Js-ZFT.js' ],
   RscPth + 'api2.min.js');
 

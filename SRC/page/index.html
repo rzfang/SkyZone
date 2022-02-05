@@ -36,6 +36,96 @@
   </footer>
 </div>
 <script type='text/javascript'>
+  /* class Animation.
+    'DO' = DOM Object.
+    'ItmDrwFA' = Item Draw Function Array. each function gets values: (Ctx, Sz).
+      'Ctx' = canvas Context object.
+      'Sz' = Size object includes {'W', 'H'};
+    'BgDrwF' = Background Draw Function. optional. */
+  function Animation (DO, ItmDrwFA, BgDrwF) {
+    if (typeof DO !== 'object' || DO === null || typeof ItmDrwFA !== 'object' || typeof ItmDrwFA.length !== 'number') {
+      console.log('Animation is not going to run.');
+
+      return;
+    }
+
+    let This = this;
+
+    // properties set.
+    this.DOM = null;
+    this.Ctx = DO.getContext('2d'); // 'Ctx' = Context object.
+    this.ScnSz = {'W': DO.width, 'H': DO.height}; // 'ScnSz' = Scenary Size.
+    this.RunB = false;
+    this.BgDrwF = Ctx => {}; // 'BgDrwF' = Background Draw Function.
+    this.ItmDrwFA = []; // array of Item Draw Function.
+
+    // methods set.
+    this.Start = Start;
+    this.Stop = Stop;
+    this.FrameDraw = FrameDraw;
+    this.ItemDrawAdd = ItemDrawAdd;
+    this.ItemDrawDel = ItemDrawDel;
+
+    for (let i = 0; i < ItmDrwFA.length; i++) {
+      if (typeof ItmDrwFA[i] === 'function') { this.ItmDrwFA.push(ItmDrwFA[i]); }
+    }
+
+    if (typeof BgDrwF === 'function') { this.BgDrwF = BgDrwF; }
+    else {
+      this.BgDrwF = () => {
+        this.Ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+
+        this.Ctx.fillRect(0, 0, this.ScnSz.W, this.ScnSz.H);
+      };
+    }
+
+    return;
+
+    function Start () {
+      if (this.RunB) { return; }
+
+      this.RunB = true;
+
+      this.FrameDraw();
+    }
+
+    function Stop () {
+      this.RunB = false;
+    }
+
+    function FrameDraw () {
+      if (!this.RunB) { return; }
+
+      this.BgDrwF(this.Ctx, this.ScnSz);
+
+      for (let i = 0 ; i < this.ItmDrwFA.length; i++) { this.ItmDrwFA[i](this.Ctx, this.ScnSz); }
+
+      requestAnimationFrame(() => { This.FrameDraw(); });
+    }
+
+    function ItemDrawAdd (ItmDrwF) {
+      if (typeof ItmDrwF !== 'function') { return -1; }
+
+      this.ItmDrwFA.push(ItmDrwF);
+
+      return 0;
+    }
+
+    function ItemDrawDel (Idx) {
+      if (typeof Idx !== 'number' || Idx >= this.ItmDrwFA.length) { return -1; }
+
+      this.ItmDrwFA.splice(Idx, 1);
+    }
+  }
+
+  /* Get now Page Name without parent directories.
+    Return: page name, maybe empty string as /, etc. */
+  function PageNameGet () {
+    let PthA = window.location.pathname.split('/');
+
+    return PthA[PthA.length - 1];
+  }
+
   function KeyboardCommand (Pg) {
     let keyBuffer = '';
 
