@@ -2164,7 +2164,7 @@
         type: 'POST',
         dataType: 'json',
         timeout : 20000,
-        url: '/service/message/leave',
+        url: '/service/message',
         data: SndData,
         beforeSend: function (JQXHR, Set) { This.get(0).Lock(); },
         error : function (JQXHR, TxtSt, ErrThr) { alert('出錯了!!!'); },
