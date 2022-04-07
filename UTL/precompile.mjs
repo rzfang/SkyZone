@@ -1,30 +1,16 @@
 #!/usr/bin/node
 
-'use strict';
+import fs from 'fs';
+import path from 'path';
+import sass from 'node-sass';
+import { fileURLToPath } from 'url';
 
-const fs = require('fs'),
-      sass = require('node-sass');
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const RtPth = __dirname + '/../'; // 'RtPth' = Root Path.
 
 const RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
       SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
-
-SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
-SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
-SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
-JsCompress(
-  [ SrcPth + 'include.js',
-    SrcPth + 'wording.js',
-    SrcPth + 'RZ-Js-ZFT.js' ],
-  RscPth + 'api1.min.js');
-JsCompress(
-  [ SrcPth + 'include.js',
-    SrcPth + 'wording.js',
-    SrcPth + 'RZ-Js-ZFT.js' ],
-  RscPth + 'api2.min.js');
-
-return 0;
 
 function SCSS_CSS (FrmPth, ToPth) {
   const Src = fs.readFileSync(FrmPth, 'utf8'), // 'Src' = Source.
@@ -53,3 +39,17 @@ function JsCompress (FrmPthA, ToPth) {
 
   fs.writeFileSync(ToPth, Js);
 }
+
+SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
+SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
+SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
+JsCompress(
+  [ SrcPth + 'include.js',
+    SrcPth + 'wording.js',
+    SrcPth + 'RZ-Js-ZFT.js' ],
+  RscPth + 'api1.min.js');
+JsCompress(
+  [ SrcPth + 'include.js',
+    SrcPth + 'wording.js',
+    SrcPth + 'RZ-Js-ZFT.js' ],
+  RscPth + 'api2.min.js');

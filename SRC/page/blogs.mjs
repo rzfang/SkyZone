@@ -3,7 +3,7 @@ import { Log } from 'rzjs';
 
 import { Blog, Tag } from '../library.mjs';
 
-export const BlogsPage = (Rqst, {}, Then) => {
+export const BlogsPage = (Rqst, Optn, Then) => {
   const { t: TgId } = Rqst.query || {},
         PckdIds = [ TgId ]; // picked ids.
 
@@ -41,7 +41,7 @@ export const BlogsPage = (Rqst, {}, Then) => {
           });
       }
     },
-    (Err, Rslt) => { Then(0); });
+    () => { Then(0); });
 };
 
 export default BlogsPage;

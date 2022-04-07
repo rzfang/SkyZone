@@ -2,7 +2,7 @@ import { Log } from 'rzjs';
 
 import { Msg } from '../library.mjs';
 
-export const MsgsPage = (Rqst, {}, Then) => {
+export const MsgsPage = (Rqst, Optn, Then) => {
   Msg.List(
     Rqst,
     { Lmt: 5 },

@@ -328,7 +328,7 @@ export const Blog = {
           i++;
         }
 
-        return new Promise((Resolve, Reject) => { Resolve({ Blgs: DbRst, BlgIds: Ids }); }); // blogs, blog ids.
+        return new Promise(Resolve => { Resolve({ Blgs: DbRst, BlgIds: Ids }); }); // blogs, blog ids.
       })
       .then(({ Blgs, BlgIds }) => { // step result.
         SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm, TagLink.link_id AS BlogID ' +
@@ -606,7 +606,7 @@ export const Blog = {
 
         return Db.Query(SQL, [ MakeId(13), Nm, Prm.Ml, GetIp(Rqst), GetDatetime(), Cmt, Prm.TgtID ]);
       })
-      .then(Rst => { PckEnd(0, Kwd.RM.Done); })
+      .then(() => { PckEnd(0, Kwd.RM.Done); })
       .catch(Cd => { PckEnd(-4, Kwd.RM.DbCrash, Cd); });
   },
   CommentDelete: (Rqst, Rspns, Prm, End) => {
@@ -1383,7 +1383,7 @@ export const Systm = {
 
         async.parallel(
           Tsks,
-          (Err, Rsts) => { // error, results.
+          () => { // error, results.
             End(0, Kwd.RM.Done, Cnt);
           });
       });
