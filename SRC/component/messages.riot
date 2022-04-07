@@ -32,6 +32,8 @@
     :host>form>div>div>a { display: inline-block; margin-left: 5px; }
   </style>
   <script>
+    import { Is } from '../../node_modules/rzjs/Is.js';
+
     export default {
       state: {
         IsFmShwd: false, // is form showed.
@@ -44,7 +46,7 @@
 
         if (NmMl) { state.NmMl = NmMl.split(';'); }
 
-        if (Z.Is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
+        if (Is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
       },
 
       onMounted (props, state) {
@@ -72,21 +74,21 @@
       IsFormGood (Nm, Ml, Msg) {
         let Hnt = ''; // hint.
 
-        if (!Nm || !Z.Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+        if (!Nm || !Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
         else {
           Nm = Nm.trim();
 
           if (Nm === '') { Hnt += '暱稱不可為空白字。\n'; }
         }
 
-        if (!Ml || !Z.Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
+        if (!Ml || !Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
         else {
           Ml = Ml.trim();
 
-          if (!Z.Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
+          if (!Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
         }
 
-        if (!Msg || !Z.Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
+        if (!Msg || !Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
         else {
           Msg = Msg.trim();
 
