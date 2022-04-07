@@ -1,6 +1,6 @@
 {
   "name": "sky_zone",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sky Zone",
   "main": "skyzone.mjs",
   "dependencies": {
@@ -8,21 +8,21 @@
     "cookie": "^0.4.0",
     "get-folder-size": "^3.0.0",
     "markdown-it": "^12.0.0",
-    "pre-commit": "^1.2.2",
     "riot": "^6.0.0",
     "rzjs": "github:rzfang/Js",
     "sqlite3": "5.0.0",
     "tar-stream": "^2.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
+    "eslint": "^8.12.0",
     "eslint-plugin-json": "^3.0.0",
-    "node-sass": "^6.0.0",
-    "nodemon": "^2.0.0"
+    "node-sass": "^7.0.0",
+    "nodemon": "^2.0.0",
+    "pre-commit": "^1.2.2"
   },
   "scripts": {
-    "dev": "nodemon --experimental-json-modules -d 3 -e js,cjs,mjs,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
-    "lint": "eslint --ext .js,.json SRC/*.js",
+    "dev": "nodemon --experimental-json-modules -d 3 -e js,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
+    "lint": "eslint --ext .js,.json,.mjs --ignore-pattern *.riot.*.mjs *.*js SRC",
     "test": "test"
   },
   "repository": {
@@ -51,7 +51,7 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-      "ecmaVersion": 9,
+      "ecmaVersion": 2020,
       "sourceType": "module"
     },
     "plugins": [
