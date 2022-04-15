@@ -1430,9 +1430,7 @@ export const Systm = {
       (Err, Fls) => {
         const Tsks = Fls.map(Fl => {
           return Then => {
-            getFolderSize(
-              DAT_PTH + '/' + Fl,
-              (Err, Sz) => Then(Err, { Fl, Sz }));
+            getFolderSize(DAT_PTH + '/' + Fl).then(({ size: Sz, errors: Errs }) => { Then(Errs, { Fl, Sz }); });
           };
         });
 

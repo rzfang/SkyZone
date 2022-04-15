@@ -2,12 +2,14 @@
   <div>
     管理員工具<br/>
     密碼： <input type='password' id='Pswd' maxlength='16' placeholder='請輸入密碼。' onkeypress={Login}/>
-    <input type='button' id='LgnBtn' value='登入' onclick={Login}/>
+    <button onclick={Login}>登入</button>
   </div>
   <style>
     :host>div { text-align: center; }
   </style>
   <script>
+    import { Is } from '../../node_modules/rzjs/Is.js';
+
     export default {
       onMounted (props, state) {
         this.OnBrowser(() => {
@@ -18,7 +20,7 @@
       },
 
       Login (Evt) {
-        if (!Z.Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+        if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
         const Pswd = this.$('input[type=password]').value;
 
@@ -91,7 +93,7 @@
       </ul>
       <span class='TextTitle'>檔案</span>
       <input type='file'/><br/>
-      <input type='button' value='上傳' onclick={Upload}/>
+      <button onclick={Upload}>上傳</button>
       <progress value='0' max='100'></progress><br/>
     </div>
   </div>
@@ -109,7 +111,7 @@
   <script>
     export default {
       Upload (Evt) {
-        const Btn = this.$('input[type=button]'),
+        const Btn = this.$('button]'),
               Fl = this.$('input[type=file]'),
               Prgrs = this.$('progress'); // file, progress.
 
@@ -1322,7 +1324,7 @@
   <div>
     系統資料夾結構使用量
     <hr/>
-    <input type='button' value='檢視' onclick={SizeUsedList} /><br/>
+    <button onclick={SizeUsedList}>檢視</button>
     <ul>
       <li each={DtSz in state.DtSzs}>
         <div>{DtSz.Fl}</div>
@@ -1331,7 +1333,7 @@
     </ul>
   </div>
   <div>
-    <input type='button' value='登出' onclick={Logout}/>
+    <button onclick={Logout}>登出</button>
   </div>
   <store store='DATA_SIZE' listener={DateSizesStoreListen}/>
   <style type='scss'>
