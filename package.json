@@ -23,6 +23,8 @@
   "scripts": {
     "dev": "nodemon --experimental-json-modules -d 3 -e js,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
     "lint": "eslint --ext .js,.json,.mjs --ignore-pattern *.riot.*.mjs *.*js SRC",
+    "start": "node --experimental-json-modules skyzone.mjs",
+    "start:pm2": "pm2 start --name skyzone npm -- run start",
     "test": "test"
   },
   "repository": {
