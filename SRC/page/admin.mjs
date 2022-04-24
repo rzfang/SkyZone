@@ -1,4 +1,3 @@
-import async from 'async';
 import fs from 'fs';
 import path from 'path';
 import { Cache as Cch, Log } from 'rzjs';
@@ -18,9 +17,15 @@ function FeedLastDateGet (Then) {
   fs.stat(
     __dirname + '/../../DAT/feed.xml',
     (Err, St) => {
-      if (Err) { return Then(-1, Err); }
+      if (Err) {
+        Log(Err);
+        Then(-1, Err);
+
+        return;
+      }
 
       let Dt = new Date(St.mtime);
+
       const Y = Dt.getFullYear().toString();
       const M = (Dt.getMonth() + 1).toString().padStart(2, '0');
       const D = Dt.getDate().toString().padStart(2, '0');
@@ -36,36 +41,15 @@ function FeedLastDateGet (Then) {
 }
 
 const AdminPage = (Rqst, Optn, Then) => {
-  async.parallel(
-    {
-      FdLstDt: (Then) => {
-        FeedLastDateGet((Cd, Rst) => {
-          if (Cd < 0) { return Then(Rst); }
+  FeedLastDateGet((Cd, FdLstDt) => {
+    if (Cd < 0) { return Then(-1, ''); }
 
-          Then(null, Rst);
-        });
-      }
-    },
-    (Err, Rst) => {
-      if (Err) {
-        Log(Err);
+    Rqst.RMI.StoreSet(
+      'ADMIN',
+      () => { return { FdLstDt, IsLgd: IsLogged(Rqst) }; });
 
-        return Then(-1, Err);
-      }
-
-      const { FdLstDt } = Rst;
-
-      Rqst.RMI.StoreSet(
-        'ADMIN',
-        () => {
-          return {
-            FdLstDt,
-            IsLgd: IsLogged(Rqst)
-          };
-        });
-
-      Then(0, {});
-    });
+    Then(0, {});
+  })
 };
 
 export default AdminPage;

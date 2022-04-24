@@ -1,4 +1,3 @@
-import async from 'async';
 import cookie from 'cookie';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -1364,28 +1363,26 @@ export const Systm = {
 
         let Cnt = 0;
 
-        const Tsks = Fls.map(Fl => { // tasks.
-          return Then => {
+        const Tsks = Fls.map(Fl => {
+          return new Promise(Resolve => {
             const Pth = CCH_PTH + '/' + Fl;
 
             fs.stat(
               Pth,
               (Err, St) => {
-                if (Err || !St.mtime || St.mtime > ExprTm) { return Then(); }
+                if (Err || !St.mtime || St.mtime > ExprTm) { return Resolve(); }
 
                 Cnt++;
 
                 fs.unlink(Pth, () => {});
-                Then();
+                Resolve();
               });
-          };
+          });
         });
 
-        async.parallel(
-          Tsks,
-          () => { // error, results.
-            End(0, Kwd.RM.Done, Cnt);
-          });
+        Promise
+          .all(Tsks)
+          .then(() => End(0, Kwd.RM.Done, Cnt));
       });
   },
   // To do.
@@ -1429,14 +1426,16 @@ export const Systm = {
       DAT_PTH,
       (Err, Fls) => {
         const Tsks = Fls.map(Fl => {
-          return Then => {
-            getFolderSize(DAT_PTH + '/' + Fl).then(({ size: Sz, errors: Errs }) => { Then(Errs, { Fl, Sz }); });
-          };
+          return new Promise(Resolve => {
+            getFolderSize(DAT_PTH + '/' + Fl).then(({ size: Sz, errors: Errs }) => {
+              if (Errs) { Log(Errs); }
+
+              Resolve({ Fl, Sz });
+            });
+          });
         });
 
-        async.parallel(
-          Tsks,
-          (Err, Rsts) => { End(0, Kwd.RM.Done, Rsts); });
+        Promise.all(Tsks).then(Rslts => End(0, Kwd.RM.Done, Rslts));
       });
   }
 };

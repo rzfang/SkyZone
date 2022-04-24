@@ -1,4 +1,3 @@
-import async from 'async';
 import { Log } from 'rzjs';
 
 import { Blog, Tag } from '../library.mjs';
@@ -7,41 +6,40 @@ export const BlogsPage = (Rqst, Optn, Then) => {
   const { t: TgId } = Rqst.query || {},
         PckdIds = [ TgId ]; // picked ids.
 
-  async.parallel(
-    {
-      TagList: Then1 => {
-        Tag.List(
-          Rqst,
-          {},
-          (Idx, Msg, Tgs) => {
-            if (Idx < 0) {
-              Log(`${Idx} - ${Msg}`, 'error');
-              Then1(-1);
+  const TagList = new Promise((Resolve, Reject) => {
+    Tag.List(
+      Rqst,
+      {},
+      (Idx, Msg, Tgs) => {
+        if (Idx < 0) {
+          Log(`${Idx} - ${Msg}`, 'error');
+          Reject(-1);
 
-              return;
-            }
+          return;
+        }
 
-            if (PckdIds.length > 0) {
-              Tgs.map(Tg => {
-                if (PckdIds.indexOf(Tg.ID) > -1) { Tg.IsPckd = true; }
-              });
-            }
-
-            Rqst.RMI.StoreSet('TAGS', () => Tgs);
-            Then1(0);
+        if (PckdIds.length > 0) {
+          Tgs.map(Tg => {
+            if (PckdIds.indexOf(Tg.ID) > -1) { Tg.IsPckd = true; }
           });
-      },
-      BlogList: Then2 => {
-        Blog.List(
-          Rqst,
-          { Lmt: 5, TgIDA: PckdIds },
-          (Idx, Msg, Blgs) => {
-            Rqst.RMI.StoreSet('BLOGS', () => Blgs);
-            Then2(0);
-          });
-      }
-    },
-    () => { Then(0); });
+        }
+
+        Rqst.RMI.StoreSet('TAGS', () => Tgs);
+        Resolve(0);
+      });
+  });
+
+  const BlogList = new Promise(Resolve => {
+    Blog.List(
+      Rqst,
+      { Lmt: 5, TgIDA: PckdIds },
+      (Idx, Msg, Blgs) => {
+        Rqst.RMI.StoreSet('BLOGS', () => Blgs);
+        Resolve(0);
+      });
+  });
+
+  Promise.all([ TagList, BlogList ]).then(() => Then(0));
 };
 
 export default BlogsPage;
