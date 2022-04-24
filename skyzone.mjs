@@ -193,8 +193,8 @@ const RHC = { // Riot HTTP config.
       location: './WEB/www',
       nameOnly: true
     },
-    { // resource: Js, CSS, old Riot tag.
-      path: /\.(css|js|tag)$/,
+    { // resource: Js, CSS.
+      path: /\.(css|js)$/,
       type: 'resource',
       location: STTC_PTH
     },
