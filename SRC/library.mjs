@@ -23,10 +23,9 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
       DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
       DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
       FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
+const MI = markdownIt();
 
 let Cnt = 0; // a count for any situation to create an unique thing.
-
-markdownIt();
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -816,7 +815,7 @@ export const Blog = {
             SqlRst.Info.Str = SqlRst.Info.Str.replace(`tmd{${Ky}}`, SqlRst.Info.Imgs[Ky]);
           }
 
-          SqlRst.Info = markdownIt.render(SqlRst.Info.Str).replace(/<img /g, '<img loading="lazy" ');
+          SqlRst.Info = MI.render(SqlRst.Info.Str).replace(/<img /g, '<img loading="lazy" ');
         }
         else {
           for (let i = 0; i < SqlRst.Info.Lst.length; i++) {

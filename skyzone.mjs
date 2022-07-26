@@ -94,7 +94,6 @@ const RHC = { // Riot HTTP config.
     }
   },
   service: {
-    pathPatterm: '^/service/', // weird, express.js app.use can not take pure RegExp.
     case: {
       '/service/artcorner': {
         get: Svc.ArtCornerRandomOneGet
