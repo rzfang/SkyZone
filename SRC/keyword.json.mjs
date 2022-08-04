@@ -1,5 +1,5 @@
-{
-  "RM": {
+export default {
+  "RM": { // response message.
     "NotLogin":        "尚未登入。",
     "HasLoggedIn":     "已經登入。",
     "Woking":          "處理中，請稍候。",
@@ -15,9 +15,5 @@
     "WrongPassword":   "密碼錯誤。",
     "StepTest":        "Step Test.",
     "Done":            "完成。"
-  },
-  "Hnt": {
-    "Copyright": "©2011-2019 RZ Fang",
-    "TailHint":  ""
   }
 }

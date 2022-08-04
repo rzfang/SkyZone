@@ -2,7 +2,7 @@ import App from 'rzjs/node/RiotHttp.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import Cnst from './SRC/constant.json';
+import Cnst from './SRC/constant.json.mjs';
 import Svc from './SRC/service.mjs';
 
 import AdminPage from './SRC/page/admin.mjs';

@@ -8,8 +8,8 @@ import tarStream from 'tar-stream';
 import { Cache as Cch, Is, Log, SQLite } from 'rzjs';
 import { fileURLToPath } from 'url';
 
-import Cnst from './constant.json';
-import Kwd from './keyword.json';
+import Cnst from './constant.json.mjs';
+import Kwd from './keyword.json.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
