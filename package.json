@@ -1,6 +1,6 @@
 {
   "name": "sky_zone",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Sky Zone",
   "main": "skyzone.mjs",
   "dependencies": {
@@ -8,14 +8,15 @@
     "cookie": "^0.4.0",
     "get-folder-size": "^3.0.0",
     "markdown-it": "^12.0.0",
-    "riot": "^6.0.0",
+    "riot": "^7.0.0",
+    "riot-4-fun": "^0.0.2",
     "rzjs": "github:rzfang/Js",
     "tar-stream": "^2.2.0"
   },
   "devDependencies": {
     "eslint": "^8.14.0",
     "eslint-plugin-json": "^3.0.0",
-    "node-sass": "^7.0.0",
+    "node-sass": "^8.0.0",
     "nodemon": "^2.0.0",
     "pre-commit": "^1.2.2"
   },

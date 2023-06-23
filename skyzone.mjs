@@ -1,4 +1,4 @@
-import App from 'rzjs/node/RiotHttp.js';
+import Http from 'riot-4-fun/SRC/Http.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -219,4 +219,4 @@ const RHC = { // Riot HTTP config.
   ]
 }
 
-App.Build(RHC, 'mjs').Initialize(RHC).Run();
+Http.Build(RHC, 'mjs').Initialize(RHC).Run();

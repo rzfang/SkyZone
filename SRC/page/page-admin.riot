@@ -373,7 +373,7 @@
     }
   </style>
   <script>
-    import store from '../component/store.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
       components: { blogComments, listIndex, store },
@@ -743,7 +743,7 @@
   </style>
   <store-tags/>
   <script>
-    import store from '../component/store.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
       components: { store },
@@ -1039,7 +1039,7 @@
   </style>
   <store store='MESSAGES' listener={MessagesStoreListen}/>
   <script>
-    import store from '../component/store.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
       components: { store, listIndex },
@@ -1443,7 +1443,7 @@
   </tab-box>
   <store name='ADMIN' listener={AdminStoreListen}/>
   <script>
-    import store from '../component/store.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
     import tabBox from '../component/tab-box.riot';
 
     export default {
