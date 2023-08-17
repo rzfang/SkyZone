@@ -24,7 +24,7 @@ export const BlogsPage = (Rqst, Optn, Then) => {
           });
         }
 
-        Rqst.RMI.StoreSet('TAGS', () => Tgs);
+        Rqst.R4FMI.StoreSet('TAGS', () => Tgs);
         Resolve(0);
       });
   });
@@ -34,7 +34,7 @@ export const BlogsPage = (Rqst, Optn, Then) => {
       Rqst,
       { Lmt: 5, TgIDA: PckdIds },
       (Idx, Msg, Blgs) => {
-        Rqst.RMI.StoreSet('BLOGS', () => Blgs);
+        Rqst.R4FMI.StoreSet('BLOGS', () => Blgs);
         Resolve(0);
       });
   });

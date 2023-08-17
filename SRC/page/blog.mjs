@@ -26,10 +26,10 @@ export const BlogPage = (Rqst, Optn, Then) => {
         return Then(-1);
       }
 
-      Rqst.RMI.StoreSet('BLOG', () => Blg);
+      Rqst.R4FMI.StoreSet('BLOG', () => Blg);
 
       if (Blg.Ttl) {
-        Rqst.RMI.StoreSet(
+        Rqst.R4FMI.StoreSet(
           'PAGE',
           () => { return { title: '空域 - 網誌 - ' + Blg.Ttl }; });
       }

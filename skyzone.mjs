@@ -94,72 +94,70 @@ const RHC = { // Riot HTTP config.
     }
   },
   service: {
-    case: {
-      '/service/artcorner': {
-        get: Svc.ArtCornerRandomOneGet
-      },
-      '/service/blog/list/admin': {
-        get: Svc.BlogAdminList
-      },
-      '/service/blog/list/unpublished': {
-        get: Svc.BlogUnpublishedList
-      },
-      '/service/blog/list': {
-        get: Svc.BlogList,
-      },
-      '/service/blog': {
-        delete: Svc.BlogDelete,
-        get: Svc.BlogRead,
-        patch: Svc.BlogUpdate,
-        post: Svc.BlogCreate,
-        put: Svc.BlogUpload
-      },
-      '/service/comment': {
-        delete: Svc.CommentDelete,
-        get: Svc.CommentList,
-        post: Svc.CommentLeave
-      },
-      '/service/feed': {
-        patch: Svc.FeedPublish
-      },
-      '/service/message/admin': {
-        get: Svc.MessageAdminList
-      },
-      '/service/message/chain': {
-        get: Svc.MessageChainList
-      },
-      '/service/message': {
-        delete: Svc.MessageDelete,
-        get: Svc.MessageList,
-        post: Svc.MessageLeave
-      },
-      '/service/tag': {
-        delete: Svc.TagDelete,
-        get: Svc.TagList,
-        patch: Svc.TagRename,
-        post: Svc.TagAdd
-      },
-      '/service/words/list': {
-        get: Svc.WordsList,
-      },
-      '/service/words': {
-        delete: Svc.WordsDelete,
-        get: Svc.WordsNowOneGet,
-        patch: Svc.WordsUpdate,
-        post: Svc.WordsCreate
-      },
-      '/service/session/login': {
-        post: Svc.SessionLogIn
-      },
-      '/service/session/logout': {
-        post: Svc.SessionLogOut
-      },
-      '/service/cache': {
-        delete: Svc.SystemCacheClean
-      },
-      '/service/data/size': {
-        get: Svc.SystemDataSize
-      }
+    '/service/artcorner': {
+      get: Svc.ArtCornerRandomOneGet
+    },
+    '/service/blog/list/admin': {
+      get: Svc.BlogAdminList
+    },
+    '/service/blog/list/unpublished': {
+      get: Svc.BlogUnpublishedList
+    },
+    '/service/blog/list': {
+      get: Svc.BlogList,
+    },
+    '/service/blog': {
+      delete: Svc.BlogDelete,
+      get: Svc.BlogRead,
+      patch: Svc.BlogUpdate,
+      post: Svc.BlogCreate,
+      put: Svc.BlogUpload
+    },
+    '/service/comment': {
+      delete: Svc.CommentDelete,
+      get: Svc.CommentList,
+      post: Svc.CommentLeave
+    },
+    '/service/feed': {
+      patch: Svc.FeedPublish
+    },
+    '/service/message/admin': {
+      get: Svc.MessageAdminList
+    },
+    '/service/message/chain': {
+      get: Svc.MessageChainList
+    },
+    '/service/message': {
+      delete: Svc.MessageDelete,
+      get: Svc.MessageList,
+      post: Svc.MessageLeave
+    },
+    '/service/tag': {
+      delete: Svc.TagDelete,
+      get: Svc.TagList,
+      patch: Svc.TagRename,
+      post: Svc.TagAdd
+    },
+    '/service/words/list': {
+      get: Svc.WordsList,
+    },
+    '/service/words': {
+      delete: Svc.WordsDelete,
+      get: Svc.WordsNowOneGet,
+      patch: Svc.WordsUpdate,
+      post: Svc.WordsCreate
+    },
+    '/service/session/login': {
+      post: Svc.SessionLogIn
+    },
+    '/service/session/logout': {
+      post: Svc.SessionLogOut
+    },
+    '/service/cache': {
+      delete: Svc.SystemCacheClean
+    },
+    '/service/data/size': {
+      get: Svc.SystemDataSize
     }
   },
   route: [
