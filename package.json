@@ -9,7 +9,7 @@
     "get-folder-size": "^3.0.0",
     "markdown-it": "^12.0.0",
     "riot": "^7.0.0",
-    "riot-4-fun": "^0.1.2",
+    "riot-4-fun": "^0.2.0",
     "rzjs": "github:rzfang/Js",
     "tar-stream": "^2.2.0"
   },
