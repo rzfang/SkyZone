@@ -1,8 +1,8 @@
 #!/usr/bin/node
 
+import * as sass from 'sass';
 import fs from 'fs';
 import path from 'path';
-import sass from 'node-sass';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,16 +12,10 @@ const RtPth = __dirname + '/../'; // 'RtPth' = Root Path.
 const RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
       SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
 
-function SCSS_CSS (FrmPth, ToPth) {
-  const Src = fs.readFileSync(FrmPth, 'utf8'), // 'Src' = Source.
-        CSS = sass.renderSync({ data: Src }).css.toString()
-        .replace(/\n +/g, ' ')
-        .replace(/\n\n/g, '\n')
-        .replace(/\}/g, '}\n')
-        .replace(/\n /g, '\n')
-        .replace(/ > /g, '>');
+async function SCSS_CSS (FrmPth, ToPth) {
+  const { css } = await sass.compileAsync(FrmPth);
 
-  fs.writeFileSync(ToPth, CSS);
+  fs.writeFileSync(ToPth, css);
 }
 
 function JsCompress (FrmPthA, ToPth) {
@@ -40,7 +34,6 @@ function JsCompress (FrmPthA, ToPth) {
   fs.writeFileSync(ToPth, Js);
 }
 
-SCSS_CSS(SrcPth + 'base.scss', RscPth + 'base.css');
 SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
 SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
 JsCompress(

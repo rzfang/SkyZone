@@ -4,21 +4,21 @@
   "description": "Sky Zone",
   "main": "skyzone.mjs",
   "dependencies": {
-    "@riotjs/hydrate": "^6.0.0",
+    "@riotjs/hydrate": "^9.0.0",
     "cookie": "^1.0.0",
     "get-folder-size": "^3.0.0",
     "markdown-it": "^12.0.0",
-    "riot": "^7.0.0",
-    "riot-4-fun": "^0.2.1",
+    "riot": "^9.0.0",
+    "riot-4-fun": "^0.2.5",
     "rzjs": "github:rzfang/Js",
     "tar-stream": "^2.2.0"
   },
   "devDependencies": {
     "eslint": "^8.14.0",
     "eslint-plugin-json": "^3.0.0",
-    "node-sass": "^8.0.0",
-    "nodemon": "^2.0.0",
-    "pre-commit": "^1.2.2"
+    "nodemon": "^3.0.0",
+    "pre-commit": "^1.2.2",
+    "sass": "^1.89.2"
   },
   "scripts": {
     "dev": "nodemon --experimental-json-modules -d 3 -e js,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
