@@ -1,6 +1,6 @@
 <page-header>
   <nav>
-    <a each={Tb in state.Tbs} class={Tb.IsCrnt && 'Crnt'} href={Tb.Lnk}>{Tb.Txt}</a>
+    <a each={Tb in state.Tbs} class={Tb.IsCrnt ? 'Crnt' : ''} href={Tb.Lnk}>{Tb.Txt}</a>
   </nav>
   <style>
     :host { line-height: 2rem; background-color: #f0f0f0; }

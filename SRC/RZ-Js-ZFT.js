@@ -13,19 +13,19 @@
 
   var ParagraphParse = function (Str) {
     var Ptn = /==== .+ ====\n/g,
-        Prgrphs = Str.split(Ptn), // paragraphs.
-        Ttls = Str.match(Ptn), // titles.
-        Ldr = Prgrphs.splice(0, 1)[0], // leader context.
-        HTML = '',
-        Anchrs = [];
+      Prgrphs = Str.split(Ptn), // paragraphs.
+      Ttls = Str.match(Ptn), // titles.
+      Ldr = Prgrphs.splice(0, 1)[0], // leader context.
+      HTML = '',
+      Anchrs = [];
 
     if (Ldr && (Ldr = Ldr.trim())) { HTML += '<p>' + Tag(Encode(Ldr)).trim() + '</p>\n'; }
 
     for (var i = 0; i < Prgrphs.length; i++) {
       var Anchr = {
-            Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
-            Nm: '',
-            Lv: 1 };
+        Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
+        Nm: '',
+        Lv: 1 };
 
       Anchr.Nm = Encode(Anchr.Ttl.replace(/\s/g, '_'));
       HTML +=
@@ -40,12 +40,12 @@
 
   var ChapterParse = function (Str) {
     var Ptn = /==== .+ =====+\n/g,
-        Chptrs = Str.split(Ptn), // chapters.
-        Ttls = Str.match(Ptn), // titles.
-        Ldr = Chptrs.splice(0, 1)[0], // leader context.
-        HTML = '',
-        Anchrs = [],
-        Rst; // result of ParagraphParse.
+      Chptrs = Str.split(Ptn), // chapters.
+      Ttls = Str.match(Ptn), // titles.
+      Ldr = Chptrs.splice(0, 1)[0], // leader context.
+      HTML = '',
+      Anchrs = [],
+      Rst; // result of ParagraphParse.
 
     if (Ldr) {
       Rst = ParagraphParse(Ldr);
@@ -55,9 +55,9 @@
 
     for (var i = 0; i < Chptrs.length; i++) {
       var Anchr = {
-            Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
-            Nm: '',
-            Lv: 0 };
+        Ttl: Ttls[i].replace(/^=+|=+\s$/g, '').trim(),
+        Nm: '',
+        Lv: 0 };
 
       Rst = ParagraphParse(Chptrs[i]);
       Anchr.Nm = Encode(Anchr.Ttl.replace(/\s/g, '_'));
@@ -75,7 +75,7 @@
 
   var ZFT = function (Str) { // RZ format text.
     var Rst = ChapterParse(Str),
-        HTML = '';
+      HTML = '';
 
     HTML =
       '<style class="zft">\n' +

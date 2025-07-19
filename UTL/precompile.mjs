@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const RtPth = __dirname + '/../'; // 'RtPth' = Root Path.
 
 const RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
-      SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
+  SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
 
 async function SCSS_CSS (FrmPth, ToPth) {
   const { css } = await sass.compileAsync(FrmPth);
@@ -22,7 +22,7 @@ function JsCompress (FrmPthA, ToPth) {
   let Js = '';
 
   for (let i = 0; i < FrmPthA.length; i++) {
-    let PtJs = fs.readFileSync(FrmPthA[i], { encoding: 'utf8' })
+    const PtJs = fs.readFileSync(FrmPthA[i], { encoding: 'utf8' })
       .replace(/\n +/g, '\n')
       .replace(/\n\/\/.+/g, '')
       .replace(/\n+/g, '\n')

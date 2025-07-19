@@ -5,7 +5,7 @@ import { Blog } from '../library.mjs';
 export const BlogPage = (Rqst, Optn, Then) => {
   const {
       query: { b: QryId = '' },
-      params: { id: PrmId = '' }
+      params: { id: PrmId = '' },
     } = Rqst || {},
     Id = QryId || PrmId; // support both /[type]?b=[id] and /blog/[id].
 

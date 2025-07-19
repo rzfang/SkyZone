@@ -14,9 +14,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const JQUERY_CDN = 'https://code.jquery.com/jquery-3.4.1.min.js',
-      CCH_PTH = path.resolve(__dirname, Cnst.CCH_PTH),
-      STTC_PTH = path.resolve(__dirname, Cnst.STTC_PTH),
-      TMP_PTH = path.resolve(__dirname, Cnst.TMP_PTH);
+  CCH_PTH = path.resolve(__dirname, Cnst.CCH_PTH),
+  STTC_PTH = path.resolve(__dirname, Cnst.STTC_PTH),
+  TMP_PTH = path.resolve(__dirname, Cnst.TMP_PTH);
 
 const DftPgRt = { // default page route. here should handle 404.
   title: '空域',
@@ -27,7 +27,7 @@ const DftPgRt = { // default page route. here should handle 404.
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
   js: [ '/resource/api2.min.js' ],
-  body: {}
+  body: {},
 };
 
 const BlgPgRt = { // blog page route.
@@ -35,7 +35,7 @@ const BlgPgRt = { // blog page route.
   title: '空域 - 網誌',
   body: { type: 'riot', component: './SRC/page/page-blog.riot', initialize: BlogPage },
   // js: [ '/resource/api2.min.js', '/markdown-it.min.js' ]
-  js: []
+  js: [],
 };
 
 const RHC = { // Riot HTTP config.
@@ -51,12 +51,12 @@ const RHC = { // Riot HTTP config.
     '/about': {
       ...DftPgRt,
       title: '空域 - 關於',
-      body: { type: 'riot', component: './SRC/page/page-about.riot' }
+      body: { type: 'riot', component: './SRC/page/page-about.riot' },
     },
     '/blogs': {
       ...DftPgRt,
       title: '空域 - 網誌',
-      body: { type: 'riot', component: './SRC/page/page-blogs.riot', initialize: BlogsPage }
+      body: { type: 'riot', component: './SRC/page/page-blogs.riot', initialize: BlogsPage },
     },
     '/text': BlgPgRt,
     '/image': BlgPgRt,
@@ -66,42 +66,42 @@ const RHC = { // Riot HTTP config.
     '/messages': {
       ...DftPgRt,
       title: '空域 - 留言',
-      body: { type: 'riot', component: './SRC/page/page-messages.riot', initialize: MessagesPage }
+      body: { type: 'riot', component: './SRC/page/page-messages.riot', initialize: MessagesPage },
     },
     '/zone': {
       ...DftPgRt,
       css: [ '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
-      body: { type: 'html', component: path.resolve(__dirname, './SRC/page/zone.html') }
+      body: { type: 'html', component: path.resolve(__dirname, './SRC/page/zone.html') },
     },
     '/': {
       ...DftPgRt,
       css: [],
       js: [ 'resource/api1.min.js' ],
-      body: { type: 'html', component: path.resolve(__dirname, './SRC/page/index.html') }
-    }
+      body: { type: 'html', component: path.resolve(__dirname, './SRC/page/index.html') },
+    },
   },
   errorPage: {
-    '404': {
+    404: {
       ...DftPgRt,
       title: '空域 - 404',
-      body: { type: 'riot', component: './SRC/page/page-error404.riot' }
+      body: { type: 'riot', component: './SRC/page/page-error404.riot' },
     },
-    '500': {
+    500: {
       ...DftPgRt,
       title: '空域 - 500',
-      body: { type: 'riot', component: './SRC/page/page-error500.riot' }
-    }
+      body: { type: 'riot', component: './SRC/page/page-error500.riot' },
+    },
   },
   service: {
     '/service/artcorner': {
-      get: Svc.ArtCornerRandomOneGet
+      get: Svc.ArtCornerRandomOneGet,
     },
     '/service/blog/list/admin': {
-      get: Svc.BlogAdminList
+      get: Svc.BlogAdminList,
     },
     '/service/blog/list/unpublished': {
-      get: Svc.BlogUnpublishedList
+      get: Svc.BlogUnpublishedList,
     },
     '/service/blog/list': {
       get: Svc.BlogList,
@@ -111,32 +111,32 @@ const RHC = { // Riot HTTP config.
       get: Svc.BlogRead,
       patch: Svc.BlogUpdate,
       post: Svc.BlogCreate,
-      put: Svc.BlogUpload
+      put: Svc.BlogUpload,
     },
     '/service/comment': {
       delete: Svc.CommentDelete,
       get: Svc.CommentList,
-      post: Svc.CommentLeave
+      post: Svc.CommentLeave,
     },
     '/service/feed': {
-      patch: Svc.FeedPublish
+      patch: Svc.FeedPublish,
     },
     '/service/message/admin': {
-      get: Svc.MessageAdminList
+      get: Svc.MessageAdminList,
     },
     '/service/message/chain': {
-      get: Svc.MessageChainList
+      get: Svc.MessageChainList,
     },
     '/service/message': {
       delete: Svc.MessageDelete,
       get: Svc.MessageList,
-      post: Svc.MessageLeave
+      post: Svc.MessageLeave,
     },
     '/service/tag': {
       delete: Svc.TagDelete,
       get: Svc.TagList,
       patch: Svc.TagRename,
-      post: Svc.TagAdd
+      post: Svc.TagAdd,
     },
     '/service/words/list': {
       get: Svc.WordsList,
@@ -145,26 +145,26 @@ const RHC = { // Riot HTTP config.
       delete: Svc.WordsDelete,
       get: Svc.WordsNowOneGet,
       patch: Svc.WordsUpdate,
-      post: Svc.WordsCreate
+      post: Svc.WordsCreate,
     },
     '/service/session/login': {
-      post: Svc.SessionLogIn
+      post: Svc.SessionLogIn,
     },
     '/service/session/logout': {
-      post: Svc.SessionLogOut
+      post: Svc.SessionLogOut,
     },
     '/service/cache': {
-      delete: Svc.SystemCacheClean
+      delete: Svc.SystemCacheClean,
     },
     '/service/data/size': {
-      get: Svc.SystemDataSize
-    }
+      get: Svc.SystemDataSize,
+    },
   },
   route: [
     { // google search console validate.
       path: /\/google301903d8518925d5.html$/,
       type: 'resource',
-      location: './WEB/www'
+      location: './WEB/www',
     },
 
     // === node_modules ===
@@ -173,13 +173,13 @@ const RHC = { // Riot HTTP config.
       path: /markdown-it\.min\.js$/,
       type: 'resource',
       location: './node_modules/markdown-it/dist',
-      nameOnly: true
+      nameOnly: true,
     },
     {
       path: /Is\.js$/,
       type: 'resource',
       location: './node_modules/rzjs',
-      nameOnly: true
+      nameOnly: true,
     },
 
     // ===
@@ -188,17 +188,17 @@ const RHC = { // Riot HTTP config.
       path: /\/(favicon\.ico|robots\.txt)/,
       type: 'resource',
       location: './WEB/www',
-      nameOnly: true
+      nameOnly: true,
     },
     { // resource: Js, CSS.
       path: /\.(css|js)$/,
       type: 'resource',
-      location: STTC_PTH
+      location: STTC_PTH,
     },
     {
       path: /^\/feed.xml$/,
       type: 'resource',
-      location: './DAT'
+      location: './DAT',
     },
 
     // ===
@@ -207,14 +207,14 @@ const RHC = { // Riot HTTP config.
       path: /^\/resource\/image\/.+/,
       type: 'resource',
       location: CCH_PTH,
-      nameOnly: true
+      nameOnly: true,
     },
     { // static image resource.
       path: /^\/image\/.+/,
       type: 'resource',
-      location: STTC_PTH
-    }
-  ]
+      location: STTC_PTH,
+    },
+  ],
 }
 
 Http.Build(RHC, 'mjs').Initialize(RHC).Run();

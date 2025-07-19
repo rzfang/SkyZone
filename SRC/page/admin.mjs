@@ -38,7 +38,7 @@ function FeedLastDateGet (Then) {
 
       Cch.Set(CchKy, Dt, 60 * 60);
       Then(0, Dt);
-     });
+    });
 }
 
 const AdminPage = (Rqst, Optn, Then) => {

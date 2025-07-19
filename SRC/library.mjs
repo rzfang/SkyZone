@@ -15,14 +15,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
-      ADMIN_SESSION_KEY = 'SSN', // admin session key.
-      NOW_ART_CORNER_KEY = 'NAC', // now art corner key.
-      ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH), // blog files path.
-      BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
-      CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
-      DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
-      DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
-      FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
+  ADMIN_SESSION_KEY = 'SSN', // admin session key.
+  NOW_ART_CORNER_KEY = 'NAC', // now art corner key.
+  ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH), // blog files path.
+  BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
+  CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
+  DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
+  DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
+  FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 const MI = markdownIt();
 
 let Cnt = 0; // a count for any situation to create an unique thing.
@@ -64,7 +64,7 @@ function MakeId (Tp = 13) {
     case 36:
       Id = Id.substr(0, 8) + '-' + Id.substr(8, 4) + '-' + Id.substr(12, 4) + '-' + Id.substr(16, 4) + '-' +
            Id.substr(20, 12);
-       break;
+      break;
 
     case 13:
       Id = Id.substr(0, 13);
@@ -77,7 +77,7 @@ function MakeId (Tp = 13) {
 }
 
 function GetIp (Rqst) {
-  let HdrIps = Rqst.headers['x-forwarded-for'] && Rqst.headers['x-forwarded-for'].split(',');
+  const HdrIps = Rqst.headers['x-forwarded-for'] && Rqst.headers['x-forwarded-for'].split(',');
 
   return (HdrIps && HdrIps.length && HdrIps.pop()) ||
          Rqst.connection.remoteAddress ||
@@ -105,19 +105,18 @@ function GetDatetime (Scd) {
   @ flag to reserse escape. true|decode. optional, default false.
   < parsed string, or '' as error. */
 function XmlEscape (Str, Flg = false) {
-  let RE; // RegExp.
   let ChrMp = {
     "'": '&apos;',
     '"': '&quot;',
     '&': '&amp;',
     '<': '&lt;',
-    '>': '&gt;'
+    '>': '&gt;',
   }; // char map.
 
   if (Flg) {
     const Kys = Object.keys(ChrMp),
-          Lth = Kys.length;
-    let RvChrMp = {};
+      Lth = Kys.length;
+    const RvChrMp = {};
 
     for (let i = 0; i < Lth; i++) {
       const Ky = Kys[i];
@@ -128,7 +127,7 @@ function XmlEscape (Str, Flg = false) {
     ChrMp = RvChrMp;
   }
 
-  RE = new RegExp(Object.keys(ChrMp).join('|'), 'g');
+  const RE = new RegExp(Object.keys(ChrMp).join('|'), 'g'); // RegExp.
 
   return Str.replace(RE, Ch => ChrMp[Ch] );
 }
@@ -148,7 +147,7 @@ function MakeCircularString (Arr, FlStr = '?', SpStr = ', ') {
   @ callback function. */
 function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
   function FileWrite () {
-    let ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
+    const ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
 
     Strm.on('end', Then);
     Strm.pipe(ImgFlStrm);
@@ -178,7 +177,7 @@ export const Blog = {
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
 
-    let TgIds = []; // tag ids.
+    const TgIds = []; // tag ids.
 
     if (Prm.TgIDA) {
       if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
@@ -188,13 +187,17 @@ export const Blog = {
       }
     }
 
-    let Prt = TgIds.length ? MakeCircularString(TgIds, '?', ', ') : '', // part.
-        SQL;
+    const Prt = TgIds.length ? MakeCircularString(TgIds, '?', ', ') : ''; // part.
+    let SQL;
 
     if (parseInt(Prm.Cnt, 10)) {
       SQL = TgIds.length ?
-            'SELECT COUNT(Blog.id) AS Cnt FROM Blog, TagLink WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (' + Prt + ');' :
-            'SELECT COUNT(Blog.id) AS Cnt FROM Blog;';
+        `
+          SELECT COUNT(Blog.id) AS Cnt
+          FROM Blog, TagLink
+          WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (${Prt});
+        ` :
+        'SELECT COUNT(Blog.id) AS Cnt FROM Blog;';
 
       return Db.Query(SQL, TgIds)
         .then((Rst) => {
@@ -206,17 +209,30 @@ export const Blog = {
     }
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10,
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
-          QryPrm = TgIds.concat([ Lmt, Ofst ]);
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+      QryPrm = TgIds.concat([ Lmt, Ofst ]);
 
     if (TgIds.length) {
-      SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.summary as Smry, Blog.type AS Tp, Blog.datetime AS Dt, Blog.password AS Pswd ' +
-            'FROM Blog, TagLink WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (' +
-            Prt + ') ORDER BY Blog.datetime DESC LIMIT ? OFFSET ?;';
+      SQL = `
+        SELECT
+          Blog.id AS ID,
+          Blog.title AS Ttl,
+          Blog.summary as Smry,
+          Blog.type AS Tp,
+          Blog.datetime AS Dt,
+          Blog.password AS Pswd
+        FROM Blog, TagLink
+        WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (${Prt})
+        ORDER BY Blog.datetime DESC LIMIT ? OFFSET ?;
+      `;
     }
     else {
-      SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt, password AS Pswd ' +
-            'FROM Blog ORDER BY datetime DESC LIMIT ? OFFSET ?;';
+      SQL = `
+        SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt, password AS Pswd
+        FROM Blog
+        ORDER BY datetime DESC
+        LIMIT ? OFFSET ?;
+      `;
     }
 
     let FnlRst; // final result.
@@ -225,7 +241,7 @@ export const Blog = {
       .then(Rst => {
         if (!Rst || !Is.Array(Rst)) { return PckEnd(-2, Kwd.RM.NoSuchData); }
 
-        let Ids = [];
+        const Ids = [];
 
         for(let i = 0; i < Rst.length; i++) {
           if (Rst[i].Pswd) { Rst[i].Pswd = '???'; } // hide passowrd.
@@ -248,7 +264,7 @@ export const Blog = {
           const Rltn = Rst[i]; // tag, blog relation. Rltn
 
           for (let j = 0; j < FnlRst.length; j++) {
-            let Blg = FnlRst[j];
+            const Blg = FnlRst[j];
 
             if (Rltn.TgtID === Blg.ID) {
               if (!Blg.Tg) { Blg.Tg = []; }
@@ -291,9 +307,10 @@ export const Blog = {
     // ==== one page. ====
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10, // limit.
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0; // offset.
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0; // offset.
 
-    let SQL = 'SELECT BlogComment.blog_id, COUNT(BlogComment.id) AS CmtCnt FROM BlogComment GROUP BY BlogComment.blog_id';
+    let SQL =
+      'SELECT BlogComment.blog_id, COUNT(BlogComment.id) AS CmtCnt FROM BlogComment GROUP BY BlogComment.blog_id';
 
     SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.type AS Tp, Blog.datetime AS Dt, ' +
           'Blog.password AS Pswd, Blog.summary AS Smry, BlogCmt.CmtCnt ' +
@@ -304,11 +321,11 @@ export const Blog = {
       .then((DbRst) => {
         if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
-        let Ids = [],
-            i = 0;
+        const Ids = [];
+        let i = 0;
 
         while (DbRst[i]) {
-          let One = DbRst[i];
+          const One = DbRst[i];
 
           // ==== error handle. ====
 
@@ -340,8 +357,8 @@ export const Blog = {
 
             for (let i = 0; i < DbRst.length; i++) {
               for (let j = 0; j < Blgs.length; j++) {
-                let Rcd = DbRst[i], // record of tag - blog.
-                    Blg = Blgs[j]; // blog.
+                const Rcd = DbRst[i], // record of tag - blog.
+                  Blg = Blgs[j]; // blog.
 
                 if (Rcd.BlogID === Blg.ID) { Blg.Tg.push({ ID: Rcd.ID, Nm: Rcd.Nm }); }
               }
@@ -392,8 +409,8 @@ export const Blog = {
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
 
     let SQL = '',
-        Kys = [], // keys.
-        Vls = []; // values.
+      Kys = [], // keys.
+      Vls = []; // values.
 
     if (Prm.Ttl) {
       Kys.push('title = ?');
@@ -501,8 +518,8 @@ export const Blog = {
 
         if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
-        let Kys = [],
-            Vls = [];
+        const Kys = [],
+          Vls = [];
 
         for (let i = 0; i < Prm.TgIDA.length; i++) {
           Kys.push('(?, ?, ?)');
@@ -567,8 +584,8 @@ export const Blog = {
     }
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || -1,
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
-          SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, comment AS Cmt FROM BlogComment ' +
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+      SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, comment AS Cmt FROM BlogComment ' +
                 'WHERE blog_id = ? ORDER BY Dt LIMIT ? OFFSET ?';
 
     Db.Query(SQL, [ Prm.ID, Lmt, Ofst ])
@@ -583,7 +600,7 @@ export const Blog = {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
     const Nm = Prm.Nm && Is.String(Prm.Nm) && Prm.Nm.trim() || '',
-          Cmt = Prm.Cmt && Is.String(Prm.Cmt) && Prm.Cmt.trim() || '';
+      Cmt = Prm.Cmt && Is.String(Prm.Cmt) && Prm.Cmt.trim() || '';
 
     if (!Nm || !Prm.Ml || !Is.EMail(Prm.Ml) || !Cmt || !Prm.TgtID || !Is.UUID(Prm.TgtID)) {
       return End(-1, Kwd.RM.StrangeValue);
@@ -712,10 +729,11 @@ export const Blog = {
         });
     }))
       .then(() => {
-        const SQL = 'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
-                  'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
-                  'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
-                  'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;';
+        const SQL =
+          'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
+          'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
+          'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
+          'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;';
 
         return Db.Query(SQL, [ Prm.Id ]);
       })
@@ -768,9 +786,9 @@ export const Blog = {
     if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
     const TarNm = SqlRst.Fl.replace('.tar', ''),
-          FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
+      FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
 
-    let Extr = tarStream.extract();
+    const Extr = tarStream.extract();
 
     SqlRst.Info = { Lst: [], Imgs: {}, Str: '' };
 
@@ -778,7 +796,7 @@ export const Blog = {
       'entry',
       (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
         if (Hdr.name.indexOf('.md') > -1) { // markdown.
-          let Chks = []; // chunks.
+          const Chks = []; // chunks.
 
           Strm.on('data', Chk=> { Chks.push(Chk); });
 
@@ -807,7 +825,7 @@ export const Blog = {
       () => {
         if (SqlRst.Info.IsMrkdwn) {
           const Kys = Object.keys(SqlRst.Info.Imgs),
-                KysLngth = Kys.length;
+            KysLngth = Kys.length;
 
           for (let i = 0; i < KysLngth; i++) {
             const Ky = Kys[i];
@@ -819,8 +837,8 @@ export const Blog = {
         }
         else {
           for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
-            let Itm = SqlRst.Info.Lst[i],
-                FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
+            const Itm = SqlRst.Info.Lst[i],
+              FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
 
             Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || SqlRst.Info.Imgs[FlbckFl] || '';
           }
@@ -832,7 +850,7 @@ export const Blog = {
       });
 
     FlStrm.pipe(Extr);
-  }
+  },
 };
 
 export const Tag = {
@@ -856,8 +874,8 @@ export const Tag = {
     }
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || -1,
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
-          SQL = 'SELECT id AS ID, name AS Nm FROM Tag ORDER BY Nm LIMIT ? OFFSET ?;';
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+      SQL = 'SELECT id AS ID, name AS Nm FROM Tag ORDER BY Nm LIMIT ? OFFSET ?;';
 
     Db.Query(SQL, [ Lmt, Ofst ])
       .then(Rst => {
@@ -881,7 +899,7 @@ export const Tag = {
     if (!Prm.Nm || !Is.String(Prm.Nm)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
 
     const Id = MakeId(),
-          SQL = 'INSERT INTO Tag (id, name) VALUES (?, ?);';
+      SQL = 'INSERT INTO Tag (id, name) VALUES (?, ?);';
 
     Db.Query(SQL, [ Id, Prm.Nm ])
       .then(Rst => {
@@ -935,7 +953,7 @@ export const Tag = {
         Db.Transaction('COMMIT');
         PckEnd(0, Kwd.RM.Done);
       });
-  }
+  },
 };
 
 export const Msg = { // message.
@@ -959,13 +977,13 @@ export const Msg = { // message.
     }
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 5, // default 5.
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
-          PsV0 = 'CASE WHEN ChnDt IS NULL THEN datetime ELSE ChnDt END AS ChnDt', // parsed value 0.
-          PsV1 = 'CASE WHEN ChnCnt IS NULL THEN 0 ELSE  ChnCnt END AS ChnCnt',
-          SbSQL = 'SELECT COUNT(id) AS ChnCnt, MAX(datetime) AS ChnDt, target AS ChnTgt FROM Message GROUP BY ChnTgt', // sub SQL.
-          SQL = `SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, ${PsV0}, ${PsV1}, message AS Msg ` +
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+      PsV0 = 'CASE WHEN ChnDt IS NULL THEN datetime ELSE ChnDt END AS ChnDt', // parsed value 0.
+      PsV1 = 'CASE WHEN ChnCnt IS NULL THEN 0 ELSE  ChnCnt END AS ChnCnt',
+      SbSQL = 'SELECT COUNT(id) AS ChnCnt, MAX(datetime) AS ChnDt, target AS ChnTgt FROM Message GROUP BY ChnTgt', // sub SQL.
+      SQL = `SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, ${PsV0}, ${PsV1}, message AS Msg ` +
                 `FROM Message LEFT JOIN (${SbSQL}) AS Chn ON Chn.ChnTgt = ID WHERE target IS NULL ` +
-                `ORDER BY ChnDt DESC LIMIT ? OFFSET ?;`;
+                'ORDER BY ChnDt DESC LIMIT ? OFFSET ?;';
 
     Db.Query(SQL, [ Lmt, Ofst ])
       .then(Rst => {
@@ -993,8 +1011,8 @@ export const Msg = { // message.
     }
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || -1, // default -1.
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
-          SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, message AS Msg FROM ' +
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0,
+      SQL = 'SELECT id AS ID, name AS Nm, datetime AS Dt, message AS Msg FROM ' +
                 'Message WHERE target = ? ORDER BY Dt LIMIT ? OFFSET ?;';
 
     Db.Query(SQL, [ Prm.ID, Lmt, Ofst ])
@@ -1021,11 +1039,11 @@ export const Msg = { // message.
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
-          Id = MakeId(),
-          IP = GetIp(Rqst),
-          Dt = GetDatetime();
+      Id = MakeId(),
+      IP = GetIp(Rqst),
+      Dt = GetDatetime();
     let SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message) VALUES (?, ?, ?, ?, ?, ?);',
-        Prm = [ Id, Nm, Ml, IP, Dt, Msg ];
+      Prm = [ Id, Nm, Ml, IP, Dt, Msg ];
 
     if (Tgt && Is.UUID(Tgt)) {
       SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message, target) VALUES (?, ?, ?, ?, ?, ?, ?);';
@@ -1066,8 +1084,8 @@ export const Msg = { // message.
     // ==== one page. ====
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10, // limit.
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0, // offset.
-          SQL = 'SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, message AS Msg, target AS Tgt ' +
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0, // offset.
+      SQL = 'SELECT id AS ID, name AS Nm, mail AS Ml, ip AS IP, datetime AS Dt, message AS Msg, target AS Tgt ' +
                 'FROM Message ORDER BY Dt DESC LIMIT ?, ?;';
 
     Db.Query(SQL, [ Ofst, Lmt ])
@@ -1088,7 +1106,7 @@ export const Msg = { // message.
     }
 
     const Db = new SQLite(DB_PTH),
-          PckEnd = PackedEnd(End, () => { Db.Close(); });
+      PckEnd = PackedEnd(End, () => { Db.Close(); });
 
     if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
 
@@ -1110,7 +1128,7 @@ export const Msg = { // message.
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
-  }
+  },
 };
 
 export const Wds = { // good words.
@@ -1132,7 +1150,7 @@ export const Wds = { // good words.
         if (Cnt < 1) { return PckEnd(-2, Kwd.RM.NoSuchData); }
 
         const Idx = parseInt((new Date()).getTime() / 3600000, 10) % Cnt,
-              SQL = 'SELECT id AS ID, words AS Wds FROM GoodWords LIMIT ' + Idx + ', 1;';
+          SQL = 'SELECT id AS ID, words AS Wds FROM GoodWords LIMIT ' + Idx + ', 1;';
 
         return Db.Query(SQL, []);
       })
@@ -1159,8 +1177,8 @@ export const Wds = { // good words.
         .catch(Cd => { PckEnd(-3, Kwd.RM.DbCrash, Cd); })
         .then(DbRst => {
           (!DbRst || !DbRst[0] || !DbRst[0].Cnt) ?
-          PckEnd(-4, Kwd.RM.NoSuchData) :
-          PckEnd(1, Kwd.RM.Done, DbRst[0].Cnt);
+            PckEnd(-4, Kwd.RM.NoSuchData) :
+            PckEnd(1, Kwd.RM.Done, DbRst[0].Cnt);
         });
 
       return;
@@ -1169,9 +1187,9 @@ export const Wds = { // good words.
     // ==== one page. ====
 
     const Lmt = Prm.Lmt && parseInt(Prm.Lmt, 10) || 10, // limit.
-          Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0; // offset.
+      Ofst = Prm.Ofst && parseInt(Prm.Ofst, 10) || 0; // offset.
 
-    let SQL = 'SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC LIMIT ?, ?;';
+    const SQL = 'SELECT id AS ID, words AS Wds, datetime AS Dt FROM GoodWords ORDER BY Dt DESC LIMIT ?, ?;';
 
     Db.Query(SQL, [ Ofst, Lmt ])
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
@@ -1189,7 +1207,7 @@ export const Wds = { // good words.
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
-          { Wds = '' } = Prm;
+      { Wds = '' } = Prm;
 
     if (!Wds || !Is.String(Wds)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
@@ -1223,7 +1241,7 @@ export const Wds = { // good words.
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
-          { ID = '', Wds = '' } = Prm;
+      { ID = '', Wds = '' } = Prm;
 
     if (!ID || !Is.UUID(ID) || !Wds || !Is.String(Wds)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
@@ -1258,7 +1276,7 @@ export const Wds = { // good words.
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
-          { ID = '' } = Prm;
+      { ID = '' } = Prm;
 
     if (!ID || !Is.UUID(ID)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
@@ -1282,7 +1300,7 @@ export const Wds = { // good words.
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
-  }
+  },
 };
 
 export const ArtCnr = { // Art Corner.
@@ -1298,9 +1316,9 @@ export const ArtCnr = { // Art Corner.
 
         // const Idx = parseInt(Math.random() * Fls.length, 10),
         const Idx = 1,
-              TarFl = Fls[Idx],
-              FlStrm = fs.createReadStream(`${ARTCNR_PTH}/${TarFl}`),
-              Extr = tarStream.extract();
+          TarFl = Fls[Idx],
+          FlStrm = fs.createReadStream(`${ARTCNR_PTH}/${TarFl}`),
+          Extr = tarStream.extract();
 
         Info = {};
 
@@ -1308,7 +1326,7 @@ export const ArtCnr = { // Art Corner.
           'entry',
           (Hdr, Strm, Next) => {
             if (Hdr.name === 'info.xml') {
-              let Chks = []; // chunks.
+              const Chks = []; // chunks.
 
               Strm.on('data', Chk => { Chks.push(Chk); });
 
@@ -1345,7 +1363,7 @@ export const ArtCnr = { // Art Corner.
 
         FlStrm.pipe(Extr);
       });
-  }
+  },
 };
 
 export const Systm = {
@@ -1358,7 +1376,7 @@ export const Systm = {
         if (Err) { return End(-2, Kwd.RM.LoadDataFail, 0); }
 
         const { Scd = 0 } = Prm,
-              ExprTm = new Date((new Date()).getTime() - (Scd * 1000));
+          ExprTm = new Date((new Date()).getTime() - (Scd * 1000));
 
         let Cnt = 0;
 
@@ -1436,7 +1454,7 @@ export const Systm = {
 
         Promise.all(Tsks).then(Rslts => End(0, Kwd.RM.Done, Rslts));
       });
-  }
+  },
 };
 
 export const Ssn = { // session.
@@ -1475,9 +1493,9 @@ export const Ssn = { // session.
     if (!Prm || !Is.Object(Prm) || !Is.String(Prm.Pswd)) { return End(-1, Kwd.RM.PasswordNeed); }
 
     const Dt = new Date(),
-          Y = Dt.getFullYear().toString(); // year.
+      Y = Dt.getFullYear().toString(); // year.
     let M = (Dt.getMonth() + 1).toString(), // month.
-        D = Dt.getDate().toString(); // day.
+      D = Dt.getDate().toString(); // day.
 
     if (M.length < 2) { M = '0' + M; }
     if (D.length < 2) { D = '0' + D; }
@@ -1491,7 +1509,7 @@ export const Ssn = { // session.
     Hmac.update(Y + M + D);
 
     const Ssn = Hmac.digest('hex').toString(), // session value.
-          Ck = cookie.serialize(ADMIN_SESSION_KEY, Ssn, { maxAge: ADMIN_SESSION_EXPIRE, path: '/' }); // cookie.
+      Ck = cookie.serialize(ADMIN_SESSION_KEY, Ssn, { maxAge: ADMIN_SESSION_EXPIRE, path: '/' }); // cookie.
 
     Rspns.setHeader('Set-Cookie', Ck);
     Cch.Set(ADMIN_SESSION_KEY, Ssn, ADMIN_SESSION_EXPIRE);
@@ -1504,7 +1522,7 @@ export const Ssn = { // session.
     Rspns.setHeader('Set-Cookie', Ck);
     Cch.Set(ADMIN_SESSION_KEY, '', 0); // make the cache expired.
     End(0, Kwd.RM.Done);
-  }
+  },
 };
 
 const Lbry = {
@@ -1514,7 +1532,7 @@ const Lbry = {
   Ssn,
   Systm,
   Tag,
-  Wds
+  Wds,
 };
 
 export default Lbry;

@@ -4,7 +4,7 @@ import { Blog, Tag } from '../library.mjs';
 
 export const BlogsPage = (Rqst, Optn, Then) => {
   const { t: TgId } = Rqst.query || {},
-        PckdIds = [ TgId ]; // picked ids.
+    PckdIds = [ TgId ]; // picked ids.
 
   const TagList = new Promise((Resolve, Reject) => {
     Tag.List(

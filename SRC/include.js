@@ -24,8 +24,8 @@ function CharPad (Str, Lth, Chr, Sd) {
     if (Sd !== 'l' && Sd !== 'r') { return Str; }
   }
 
-  let PN = Lth - Str.length, // 'PN' = Padding Number.
-      PS = ''; // 'PS' = Padding String.
+  const PN = Lth - Str.length; // 'PN' = Padding Number.
+  let PS = ''; // 'PS' = Padding String.
 
   for (PS = ''; PS.length < PN; PS += Chr);
 
@@ -58,7 +58,7 @@ function RECheck (Ptm, Str) {
       typeof Ptm != 'object' && typeof Ptm != 'string') || typeof Str != 'string')
   { return false; }
 
-  let RE = new RegExp(Ptm);
+  const RE = new RegExp(Ptm);
 
   // alert(RE.source);
 
@@ -76,7 +76,7 @@ function CookieSet (Nm, V, Exp, Pth, Dmn) {
   if (typeof Nm !== 'string' || typeof V === 'undefined' || V === null || typeof Exp !== 'number' || Exp === null)
   { return -1; }
 
-  let Dt = new Date();
+  const Dt = new Date();
 
   Dt.setTime(Dt.getTime() + (Exp * 1000));
 
@@ -95,21 +95,19 @@ function CookieSet (Nm, V, Exp, Pth, Dmn) {
   'Ky' = Key name of cookie. optional, give to return it only.
   Return: object. */
 function CookieParam (Ky) {
-  let CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
-      CO = {};
+  const CSA = document.cookie.split(';'), // 'CSA' = Cookie String Array.
+    CO = {};
 
-  for (let i in CSA) {
-    let T;
-
+  for (const i in CSA) {
     if (!Object.prototype.hasOwnProperty.call(CSA, i)) { continue; }
 
-    T = CSA[i].replace(/^\s+|\s+$/g, '').split('='); // trim each data.
+    const T = CSA[i].replace(/^\s+|\s+$/g, '').split('='); // trim each data.
 
     CO[T[0]] = decodeURIComponent(T[1]);
   }
 
   if (Ky && typeof Ky === 'string') {
-    for (let i in CO) {
+    for (const i in CO) {
       if (!Object.prototype.hasOwnProperty.call(CO, i)) { continue; }
 
       if (i === Ky) { return CO[i]; }
@@ -146,18 +144,19 @@ function RandomRange (Min, Max, Dcm) {
   if (typeof Dcm !== 'number') { Dcm = 0; }
 
   if (Min > Max || Max < Min) {
-    let T = Min;
+    const T = Min;
 
     Min = Max;
     Max = T;
   }
 
-  let Dst =  Max - Min, // 'Dst' = Distance.
-      Nbr = Math.random() * Dst + Min;
+  const Dst =  Max - Min; // 'Dst' = Distance.
+
+  let Nbr = Math.random() * Dst + Min;
 
   if (Dcm === 0) { Nbr = Math.floor(Nbr); }
   else if (Dcm > 0) {
-    let Pow = Math.pow(10, Dcm);
+    const Pow = Math.pow(10, Dcm);
 
     Nbr = Math.floor(Nbr * Pow) / Pow;
   }

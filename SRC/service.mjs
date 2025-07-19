@@ -7,7 +7,7 @@ import { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } from './library.mjs';
   < new callback function. */
 function PackedEnd (End) {
   return function (Cd, Msg, Ext) {
-    let Rst = { Index: Is.Number(Cd) ? Cd : 0, Message: Is.String(Msg) ? Msg : '' };
+    const Rst = { Index: Is.Number(Cd) ? Cd : 0, Message: Is.String(Msg) ? Msg : '' };
 
     if (Ext !== undefined) { Rst.Extend = Ext; }
 
@@ -117,7 +117,7 @@ const Svc = {
   },
   SessionLogOut: (Rqst, Rspns, Prm, End) => {
     return Ssn.LogOut(Rqst, Rspns, ParamsMix(Prm), PackedEnd(End));
-  }
+  },
 }
 
 export default Svc;

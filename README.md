@@ -18,26 +18,26 @@ this project needs the key file to get everything fine.
 * [nginx](https://nginx.org/)
 * [PM2](https://pm2.keymetrics.io/)
 
-##### P.S. for security reason, these files don't join the git.
+### P.S. for security reason, these files don't join the git.
 * nginx config.
 * constant key.
 
 ## set up dev enviroment
-```
+```sh
 ./UTL/precompile.js
 ```
 
 ## run dev server
 for development.
-```
+```sh
 npm run dev;
 ```
 for production.
-```
+```sh
 node skyzone.js;
 ```
 or use PM2.
-```
+```sh
 pm2 start skyzone.js;
 ```
 
