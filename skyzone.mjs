@@ -77,8 +77,7 @@ const RHC = { // Riot HTTP config.
     '/': {
       ...DftPgRt,
       css: [],
-      js: [ 'resource/api1.min.js' ],
-      body: { type: 'html', component: path.resolve(__dirname, './SRC/page/index.html') },
+      body: { type: 'riot', component: './SRC/page/page-index.riot' },
     },
   },
   errorPage: {

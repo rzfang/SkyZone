@@ -9,10 +9,10 @@ this project needs the key file to get everything fine.
 ## this project uses
 * HTML, Js, CSS
 * [node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/)
-* [Express](https://expressjs.com/)
-* [Riot 4](https://riot.js.org/) with v3 compatible.
+* [Riot 4](https://riot.js.org/)
 * [Sass](https://sass-lang.com/)
 * [markdown-it](https://markdown-it.github.io/) for blog content handling.
+* [riot-4-fun](https://github.com/rzfang/riot-4-fun), packs Riot and [Express](https://expressjs.com/) as an HTTP server.
 
 ## to be a HTTP server, this project also uses
 * [nginx](https://nginx.org/)
