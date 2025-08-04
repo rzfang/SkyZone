@@ -26,7 +26,7 @@
     "sass": "^1.89.2"
   },
   "scripts": {
-    "dev": "nodemon --experimental-json-modules -d 3 -e js,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
+    "dev": "nodemon --experimental-json-modules -d 3 -e js,css,scss,html,tag,riot -w SRC/ ./skyzone.mjs",
     "lint": "eslint",
     "start": "node --experimental-json-modules skyzone.mjs",
     "start:pm2": "pm2 start --name skyzone npm -- run start",
