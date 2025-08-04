@@ -74,6 +74,12 @@ const RHC = { // Riot HTTP config.
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: { type: 'html', component: path.resolve(__dirname, './SRC/page/zone.html') },
     },
+    '/zone2': {
+      ...DftPgRt,
+      css: [ '/resource/base.css' ],
+      js: [],
+      body: { type: 'riot', component: './SRC/page/page-zone.riot' },
+    },
     '/': {
       ...DftPgRt,
       css: [],
@@ -187,6 +193,12 @@ const RHC = { // Riot HTTP config.
       path: /\/(favicon\.ico|robots\.txt)/,
       type: 'resource',
       location: './WEB/www',
+      nameOnly: true,
+    },
+    {
+      path: /base\.css$/,
+      type: 'resource',
+      location: './SRC',
       nameOnly: true,
     },
     { // resource: Js, CSS.

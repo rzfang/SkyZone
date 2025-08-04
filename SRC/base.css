@@ -1,0 +1,47 @@
+:root {
+  --color-gray-2: #202020;
+  --color-gray-4: #404040;
+  --color-gray-6: #606060;
+  --color-gray-8: #808080;
+  --color-gray-a: #a0a0a0;
+  --color-gray-c: #c0c0c0;
+  --color-gray-e: #e0e0e0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 3px;
+  border: 1px solid var(--color-gray-c);
+  border-radius: 3px;
+  vertical-align: top;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--color-gray-4);
+  background-image: linear-gradient(0deg, #90c0f0, #e0f0f0);
+
+  &:hover {
+    background-image: linear-gradient(0deg, #b0d0f0, #f0f0ff);
+  }
+
+  &:active {
+    color: var(--color-gray-8);
+    padding: 2px 3px 0px 3px;
+    background-image: linear-gradient(0deg, #f0f0ff, #b0d0f0);
+  }
+
+  &:disabled {
+    color: var(--color-gray-e);
+    padding: 1px 3px;
+    cursor: not-allowed;
+    background-image: linear-gradient(0deg, #808080, #f0f0f0);
+  }
+}

@@ -1,0 +1,121 @@
+<art-corner style='background-image: url({state.ImgUrl});'>
+  <div>
+    <div>角落藝廊</div>
+    <div>{state.Ttl}</div>
+  </div>
+  <style>
+    :host {
+      display: inline-flex;
+      position: fixed;
+      z-index: -1;
+      padding: 10px;
+      right: 0;
+      bottom: 0;
+      max-width: 50vw;
+      max-height: 75vh;
+      width: 800px;
+      height: 600px;
+      align-items: end;
+      justify-content: end;
+      text-align: right;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: right bottom;
+
+      >div {
+        border-radius: 5px;
+        padding: 5px 0 0 5px;
+        background-color: #ffffff80;
+      }
+    }
+  </style>
+  <script>
+    export default {
+      state: {
+        ImgUrl: '',
+        Ttl: '',
+      },
+
+      async onBeforeMount (props, state) {
+        if (!this.OnBrowser()) {
+          return;
+        }
+
+        const {
+          Extend,
+          Index = 0,
+          Message = '',
+        } = await fetch('/service/artcorner').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
+
+        if (Index < 0) {
+          return console.warn(Message);
+        }
+
+        const { ImgUrl, Ttl } = Extend;
+
+        this.update({ ImgUrl, Ttl });
+      },
+    }
+  </script>
+</art-corner>
+
+<good-words>
+  <canvas />
+  <script>
+    export default {
+
+    }
+  </script>
+</good-words>
+
+<page-zone>
+  <header id='Head'>
+    <div>
+      <button class='Btn0' title='關於' onclick='AboutFrame("關於");'>關於</button>
+      <button class='Btn0' title='網誌' onclick='BlogListFrame("網誌列表");'>網誌</button>
+      <button class='Btn0' title='留言板' onclick='MessageListFrame("留言列表");'>留言板</button>
+      <button class='Btn0' title='內嵌網頁' onclick='CustomFrame("輸入網址");'>內嵌網頁</button>
+      <a href='/feed.xml'><button title='訂閱'>訂閱</button></a>
+      <a href='/'><button title='回入口'>回入口</button></a>
+    </div>
+  </header>
+  <main id='Main'>
+    <art-corner />
+    <good-words />
+  </main>
+  <footer id='Tail'>
+    ©2011-2022 RZ Fang
+  </footer>
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+
+      >header {
+        flex: 0 0 auto;
+        text-align: center;
+
+        >div {
+          display: inline-flex;
+          gap: 10px;
+        }
+      }
+
+      >main {
+        flex: 1 1 auto;
+      }
+
+      >footer {
+        flex: 0 0 auto;
+        text-align: center;
+      }
+    }
+  </style>
+  <script>
+    export default {
+      components: { artCorner, goodWords },
+    }
+  </script>
+</page-zone>
