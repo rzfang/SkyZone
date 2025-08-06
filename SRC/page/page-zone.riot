@@ -60,10 +60,154 @@
 </art-corner>
 
 <good-words>
-  <canvas />
+  <canvas width="640" height="480" onclick={AnimateToggle} />
+  <style>
+    :host {
+      display: inline-block;
+      position: fixed;
+      z-index: -1;
+      left: 0;
+      bottom: 0;
+    }
+  </style>
   <script>
-    export default {
+    /* make a random number in the range.
+      @ minimum number.
+      @ maximum number.
+      @ Decimal. optional, default 0. give -1 to keep original decimal.
+      < random number in the range, or 0 as error. */
+    function RandomRange (Min, Max, Dcm) {
+      if (typeof Min !== 'number' || typeof Max !== 'number') { return 0; }
 
+      if (typeof Dcm !== 'number') { Dcm = 0; }
+
+      if (Min > Max || Max < Min) {
+        let T = Min;
+
+        Min = Max;
+        Max = T;
+      }
+
+      let Dst =  Max - Min, // 'Dst' = Distance.
+          Nbr = Math.random() * Dst + Min;
+
+      if (Dcm === 0) { Nbr = Math.floor(Nbr); }
+      else if (Dcm > 0) {
+        let Pow = Math.pow(10, Dcm);
+
+        Nbr = Math.floor(Nbr * Pow) / Pow;
+      }
+
+      return Nbr;
+    }
+
+    export default {
+      async onMounted (props, state) {
+        if (!this.OnBrowser()) {
+          return;
+        }
+
+        const {
+          Extend,
+          Index = 0,
+          Message = '',
+        } = await fetch('service/words').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
+
+        if (Index < 0) {
+          return console.warn(Message);
+        }
+
+        const { Wds: Str } = Extend;
+
+        let Cvs = this.$('canvas'),
+            Ctx = null,
+            Wds = [];
+
+        Initialize();
+        Animate();
+
+        return 0;
+
+        function Initialize () {
+          Ctx = Cvs.getContext('2d');
+          Ctx.textBaseline = 'middle';
+
+          //==== word info set. ====
+
+          let BsSptA = [40, 25], // 'BsSptA' = Base Seperate Array, [X, Y].
+              StrA = Str.replace(/\n|，|；|。| /g, "\n").split("\n"); // 'StrA' = String Array.
+
+          for (let i = 0; i < StrA.length; i++) {
+            let BsLct = [80, Ctx.canvas.height - (BsSptA[1] * (StrA.length - i + 1))]; // 'BsLct' = Base Location.
+
+            for (let j = 0; j < StrA[i].length; j++) {
+              let Chr = StrA[i].charAt(j);
+
+              let Clr = [RandomRange(64, 128).toString(),
+                       RandomRange(64, 192).toString(),
+                       RandomRange(64, 255).toString(),
+                       RandomRange(0.2, 0.9, 2).toString()];
+
+              let Sz = RandomRange(20, 50);
+
+              let Wd = {'Chr': Chr,
+                        'DftLct': [BsLct[0] + (j * BsSptA[0]) + RandomRange(-5, 5), BsLct[1] + RandomRange(-5, 5)],
+                        'Lct': [RandomRange(0, Ctx.canvas.width, 2), RandomRange(0, Ctx.canvas.height, 2)],
+                        'Drct': [RandomRange(-1, 1, 2), RandomRange(-1, 1, 2)],
+                        'Sz': Sz,
+                        'Clr': 'rgba(' + Clr[0] + ', ' + Clr[1] + ', ' + Clr[2] + ', ' + Clr[3] + ')',
+                        'Fnt': 'italic bold ' + Sz.toString() + 'px sans-serif'};
+
+              Wds.push(Wd);
+            }
+          }
+        }
+
+        function Animate () {
+          Ctx.clearRect(0, 0, Ctx.canvas.width, Ctx.canvas.height);
+
+          AlignedStand();
+          // FreeWalk();
+          // requestAnimationFrame(() => Animate());
+        }
+
+        function AlignedStand () {
+          for (let i = 0; i < Wds.length; i++) {
+            Wds[i].Lct[0] = Wds[i].DftLct[0];
+            Wds[i].Lct[1] = Wds[i].DftLct[1];
+
+            Ctx.font = Wds[i].Fnt;
+            Ctx.fillStyle = Wds[i].Clr;
+            Ctx.shadowOffsetX = 0;
+            Ctx.shadowOffsetY = 0;
+            Ctx.shadowBlur = 0;
+
+            Ctx.fillText(Wds[i].Chr, Wds[i].Lct[0], Wds[i].Lct[1]);
+          }
+        }
+
+        function FreeWalk () {
+          for (let i = 0; i < Wds.length; i++) {
+            Ctx.font = Wds[i].Fnt;
+            Ctx.fillStyle = Wds[i].Clr;
+            Ctx.shadowColor = Wds[i].Clr;
+            Ctx.shadowOffsetX = 3;
+            Ctx.shadowOffsetY = 3;
+            Ctx.shadowBlur = 5;
+
+            Ctx.fillText(Wds[i].Chr, Wds[i].Lct[0], Wds[i].Lct[1]);
+
+            Wds[i].Lct[0] += Wds[i].Drct[0];
+            Wds[i].Lct[1] += Wds[i].Drct[1];
+
+            if (Wds[i].Lct[0] + Wds[i].Sz < 0) { Wds[i].Lct[0] = Ctx.canvas.width; }
+            else if (Wds[i].Lct[0] > Ctx.canvas.width) { Wds[i].Lct[0] = Wds[i].Sz * -1; }
+
+            if (Wds[i].Lct[1] + Wds[i].Sz < 0) { Wds[i].Lct[1] = Ctx.canvas.height; }
+            else if ((Wds[i].Lct[1] - Wds[i].Sz) > Ctx.canvas.height) { Wds[i].Lct[1] = Wds[i].Sz * -1; }
+          }
+        }
+      },
     }
   </script>
 </good-words>
@@ -84,7 +228,7 @@
     <good-words />
   </main>
   <footer id='Tail'>
-    ©2011-2022 RZ Fang
+    ©2011-2025 RZ Fang
   </footer>
   <style>
     :host {
