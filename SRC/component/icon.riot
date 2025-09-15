@@ -1,5 +1,53 @@
 <!-- don't use <icon-*> directly, use <icon> with 'nm' attribute. -->
 
+<icon-close>
+  <svg
+    fill={props.color}
+    height={`${props.size}px`}
+    viewBox="0 -960 960 960"
+    width={`${props.size}px`}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+  </svg>
+</icon-close>
+
+<icon-resize>
+  <svg
+    fill={props.color}
+    height={`${props.size}px`}
+    viewBox="0 -960 960 960"
+    width={`${props.size}px`}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z"/>
+  </svg>
+</icon-resize>
+
+<icon-move>
+  <svg
+    fill={props.color}
+    height={`${props.size}px`}
+    viewBox="0 -960 960 960"
+    width={`${props.size}px`}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M480-80 310-250l57-57 73 73v-206H235l73 72-58 58L80-480l169-169 57 57-72 72h206v-206l-73 73-57-57 170-170 170 170-57 57-73-73v206h205l-73-72 58-58 170 170-170 170-57-57 73-73H520v205l72-73 58 58L480-80Z"/>
+  </svg>
+</icon-move>
+
+<icon-full>
+  <svg
+    fill={props.color}
+    height={`${props.size}px`}
+    viewBox="0 -960 960 960"
+    width={`${props.size}px`}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M120-120v-200h80v120h120v80H120Zm520 0v-80h120v-120h80v200H640ZM120-640v-200h200v80H200v120h-80Zm640 0v-120H640v-80h200v200h-80Z"/>
+  </svg>
+</icon-full>
+
 <icon-tags>
   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width={props.size} height={props.size} viewBox="0 0 40 32">
     <path fill={props.color || '#202020'} d="M38.5 0h-12c-0.825 0-1.977 0.477-2.561 1.061l-14.879 14.879c-0.583 0.583-0.583 1.538 0 2.121l12.879 12.879c0.583 0.583 1.538 0.583 2.121 0l14.879-14.879c0.583-0.583 1.061-1.736 1.061-2.561v-12c0-0.825-0.675-1.5-1.5-1.5zM31 12c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"></path>
@@ -44,7 +92,7 @@
 </icon-mail>
 
 <icon>
-  <i is={state.TgNm} size={props.size || 18} color={props.color}/>
+  <i is={`icon-${props.name || ''}`} size={props.size || 24} color={props.color || '#e4e4e4'} />
   <style>
     i { display: inline-block; }
     svg { vertical-align: middle; }
@@ -52,22 +100,19 @@
   <script>
     export default {
       components: {
-        iconTags,
+        iconClose,
+        iconFull,
+        iconMove,
+        iconResize,
+
         iconCalendar,
         iconFacebook,
-        iconTwitter,
-        iconTumblr,
+        iconMail,
         iconShare,
-        iconMail
+        iconTags,
+        iconTumblr,
+        iconTwitter,
       },
-
-      state: {
-        TgNm: ''
-      },
-
-      onBeforeMount (props, state) {
-        state.TgNm = 'icon-' + props.name;
-      }
     }
   </script>
 </icon>
