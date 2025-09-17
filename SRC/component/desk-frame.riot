@@ -1,0 +1,189 @@
+<desk-frame class={state.classes} style={state.style}>
+  <div>
+    <h2>{props.title}</h2>
+    <div>
+      <icon if={!state.isFull} title='移動' name='move' onclick={toggleMove} size={22} />
+      <icon if={!state.isFull} title='縮放' name='resize' onclick={toggleResize} size={22} />
+      <icon title='最大化' name='full' onclick={toggleFull} size={22} />
+      <icon title='關閉' name='close' onclick={close} size={22} />
+    </div>
+  </div>
+  <div><slot /></div>
+  <style>
+    :host {
+      display: inline-flex;
+      flex-direction: column;
+      position: absolute;
+      box-sizing: border-box;
+      border: 1px solid var(--color-gray-c);
+      border-radius: 5px;
+      background-color: #fffffff0;
+      overflow: hidden;
+
+      &.closed {
+        display: none;
+      }
+
+      &.full {
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      >div:first-child {
+        flex: 0 0 28px;
+        display: flex;
+        border-bottom: 1px solid var(--color-gray-c);
+        padding: 2px 5px;
+        background-image: linear-gradient(to bottom, rgba(200, 240, 255, 1), rgba(240, 248, 255, 0.9));
+
+        >h2 {
+          flex: auto;
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        >div svg {
+          fill: var(--color-gray-8);
+          cursor: pointer;
+
+          &:hover {
+            fill: var(--color-gray-6);
+          }
+        }
+      }
+
+      >div:last-child {
+        flex: auto;
+        padding: 5px;
+        overflow: auto;
+      }
+    }
+  </style>
+  <script>
+    import icon from './icon.riot';
+
+    export default {
+      components: {
+        icon,
+      },
+
+      state: {
+        classes: '',
+        height: 240,
+        isFull: false,
+        isMoving: false,
+        isResizing: false,
+        left: 10,
+        style: '',
+        top: 10,
+        width: 320,
+      },
+
+      onBeforeMount (props, state) {
+        if (typeof props.width === 'number' && props.width > 0) {
+          state.width = props.width;
+        }
+
+        if (typeof props.height === 'number' && props.height > 0) {
+          state.height = props.height;
+        }
+
+        state.style = `left: ${this.state.left}px; top: ${this.state.top}px; width: ${this.state.width}px; height: ${this.state.height}px;`;
+      },
+
+      onBeforeUnmount () {
+        const parentElement = this.$('div').parentElement.parentElement;
+
+        parentElement.removeEventListener('mousemove', this.move);
+        parentElement.removeEventListener('mousemove', this.resize);
+      },
+
+      move (event) {
+        const left = event.clientX - this.state.width + 80;
+        const top = event.clientY - 15;
+
+        this.update({
+          top,
+          left,
+          style: this.state.style
+            .replace(/left: -?\d+px;/, `left: ${left}px;`)
+            .replace(/top: -?\d+px;/, `top: ${top}px;`),
+        });
+      },
+
+      toggleMove (event) {
+        const parentElement = this.$('div').parentElement.parentElement;
+
+        if (!this.state.isMoving) {
+          parentElement.addEventListener('mousemove', this.move);
+        } else {
+          parentElement.removeEventListener('mousemove', this.move);
+        }
+
+        this.update({ isMoving: !this.state.isMoving });
+      },
+
+      resize (event) {
+        const top = event.clientY - 15;
+        let height = this.state.height - (event.clientY - this.state.top);
+        let width = event.clientX - this.state.left + 60;
+
+        if (height < 200) {
+          height = 200;
+        }
+
+        if (width < 200) {
+          width = 200;
+        }
+
+        this.update({
+          style: `left: ${this.state.left}px; top: ${top}px; width: ${width}px; height: ${height}px;`,
+        });
+      },
+
+      toggleResize () {
+        const parentElement = this.$('div').parentElement.parentElement;
+
+        if (!this.state.isResizing) {
+          parentElement.addEventListener('mousemove', this.resize);
+          this.update({ isResizing: !this.state.isResizing });
+
+          return;
+        }
+
+        parentElement.removeEventListener('mousemove', this.resize);
+
+        const [ _, width, height ] = this.state.style.match(/width: (-?\d+)px; height: (-?\d+)px;/);
+
+        this.update({
+          height: parseInt(height, 10),
+          width: parseInt(width, 10),
+          isResizing: !this.state.isResizing,
+        });
+      },
+
+      toggleFull () {
+        const style = !this.state.isFull ?
+          '' :
+          `left: ${this.state.left}px; top: ${this.state.top}px; width: ${this.state.width}px; height: ${this.state.height}px;`;
+
+        const classes = !this.state.isFull ?
+          (this.state.classes + ' full') :
+          this.state.classes.replace('full', '').trim();
+
+        this.update({
+          classes,
+          isFull: !this.state.isFull,
+          style,
+        });
+      },
+
+      close () {
+        this.props.onclose && this.props.onclose();
+        this.update({ classes: 'closed' });
+      },
+    }
+  </script>
+</desk-frame>
