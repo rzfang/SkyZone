@@ -15,9 +15,37 @@
     <div if={state.Idx === 9}><slot name='tab9'/></div>
   </div>
   <style>
-    :host>ul { margin: 0; padding: 0; }
-    :host>ul>li { display: inline-block; margin: 3px; border: 1px solid #d0d0ff; border-radius: 3px 3px 0 0; padding: 3px; color: #c0c0c0; cursor: pointer; }
-    :host>ul>li.Pckd { border-bottom: 1px solid #000000; color: #000000; cursor: default; }
+    :host {
+      >ul {
+        margin: 0;
+        border-bottom: 1px solid var(--color-gray-c);
+        padding: 0;
+
+        >li {
+          display: inline-block;
+          position: relative;
+          z-index: 1;
+          margin: 0 5px 0 0;
+          border-style: solid;
+          border-color: var(--color-gray-c);
+          border-width: 1px 1px 0 1px;
+          border-radius: 3px 3px 0 0;
+          padding: 3px;
+          vertical-align: bottom;
+          color: #c0c0c0;
+          cursor: pointer;
+
+          &.Pckd {
+            border-bottom-color: var(--color-white);
+            border-width: 1px;
+            padding: 2px 3px 4px 3px;
+            bottom: -1px;
+            color: var(--color-gray-4);
+            cursor: default;
+          }
+        }
+      }
+    }
   </style>
   <script>
     export default {
