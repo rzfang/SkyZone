@@ -8,6 +8,9 @@
   --color-gray-e: #e0e0e0;
 
   --color-white: #ffffff;
+
+  --color-link: #005db2;
+  --color-hover: #ffc463;
 }
 
 html {
@@ -46,4 +49,15 @@ button {
     cursor: not-allowed;
     background-image: linear-gradient(0deg, #808080, #f0f0f0);
   }
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-line;
 }

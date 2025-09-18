@@ -63,11 +63,10 @@
   </style>
   <script>
     import icon from './icon.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
-      components: {
-        icon,
-      },
+      components: { icon },
 
       state: {
         classes: '',
@@ -75,13 +74,21 @@
         isFull: false,
         isMoving: false,
         isResizing: false,
-        left: 10,
+        left: 0,
         style: '',
-        top: 10,
+        top: 0,
         width: 320,
       },
 
       onBeforeMount (props, state) {
+        if (typeof props.left === 'number' && props.left > 0) {
+          state.left = props.left;
+        }
+
+        if (typeof props.top === 'number' && props.top > 0) {
+          state.top = props.top;
+        }
+
         if (typeof props.width === 'number' && props.width > 0) {
           state.width = props.width;
         }
@@ -181,8 +188,21 @@
       },
 
       close () {
-        this.props.onclose && this.props.onclose();
         this.update({ classes: 'closed' });
+
+        this.StoreSet('FRAMES', store => {
+          const { frames } = store;
+
+          const index = frames.findIndex(one => one.title === this.props.title);
+
+          if (index < 0) {
+            return store;
+          }
+
+          frames.splice(index, 1);
+
+          return store;
+        });
       },
     }
   </script>

@@ -1,85 +1,3 @@
-<about>
-  <tab-box tabs={[ '網站導覽', '關於空域', '關於我' ]}>
-    <div slot='tab0'>
-      <b>關於</b>
-      一些跟 空域有關的說明會盡量集中在這裡。
-
-      <b>網誌</b>
-      RZ 不定期分享的自言自語、碎碎唸等沒營養垃圾文章。
-
-      <b>留言板</b>
-      開放給客倌隨意留言，沒什麼限制，就是請大家多注意網路禮儀哦。
-
-      <b>內嵌網頁</b>
-      如果覺得 空域一格一格的瀏覽方式深得你心，
-      想用這種方式去瀏覽其它空域以外的網頁，可以用這個方式把別人的網頁拉進來。
-
-      <b>訂閱</b>
-      想要隨時知道 RZ 是不是又在網誌上的發佈了垃圾文章，
-      就用這個 RSS/Atom 訂閱 空域的最新消息吧。
-
-      <b>回入口</b>
-      回到 空域的大門口。RZ 除了網誌以外，還有其它比較主題性的資訊會擺在門口。
-    </div>
-    <div slot='tab1'>
-      空域 是 RZ(小弟本人) 一腳踏進程式與資訊圈以來，不斷學習、探索，
-      終於下定決心所成立的網站。
-
-      開始構思發想階段的時間點已不可考；
-      網站的成立時間則大約是在 2011 年 6 月前後。
-
-      一開始發想很單純，
-      RZ 不太滿意各 Blog 經營業者所提供的維護方式，即模版式的介面配置。
-      可能是因為 RZ 自己喜歡凡是自己動手做，又剛好懂點網頁程式，
-      因此萌生了一個吃力不討好的想法：
-      「既然我可以自己做，幹嘛要屈就於人家 Blog 式的管理方式。」
-      於是…可以算是價值觀扭曲、過度偏執的想法，成就了 空域 的開站。
-
-      RZ 把 空域 當成個人生活的紀錄，基本上就是 Blog，
-      但希望能跳脫制式 Blog 的版面框架；
-      同時 RZ 也把 空域 當作在網頁程式精進的管道，
-      在這裡，客倌無須拘慬，無論您是偶然經過，或是在此流連，
-      若 空域 帶給您一些想法、一些啟發，不妨在 空域 留下您的心得。
-
-      網海茫茫，人與人的際會如此奇妙…
-
-      我的天空，我在其中，在我這裡，自由放空。 RZ 的個人網站。
-
-      20120401 by RZ
-    </div>
-    <div slot='tab2'>
-      小弟本名 方元利，在成長的不同時期有不同的暱稱，基本上都跟名字發音有關，
-      阿利、Lee、小方、RZ (目前較常使用) 等，
-      RZ 不在乎客倌如何稱呼 RZ，名字不重要，重要的是所代表的人。
-
-      有一陣子 RZ 用「天空」作為自己在網路上的代稱，
-      因為喜歡天空的開闊，天空的湛藍。
-      而本站名為 空域 ，也是由此而來。
-
-      RZ 喜歡寫寫東西、畫畫東西，發發夢想，在 空域 裡客倌會發現這些習性，
-      當然 RZ 也還喜歡很多事情，但嘮嘮不休不是 RZ 的習慣，
-      客倌就隨意參觀吧。
-
-      那麼…
-      客倌，您好，
-      我是 RZ ，
-      初次見面的，請多指教；
-      朋友，又見面了，歡迎回來。
-
-      20120401 by RZ
-    </div>
-  </tab-box>
-  <script>
-    import tabBox from '../component/tab-box.riot';
-
-    export default {
-      components: {
-        tabBox,
-      },
-    }
-  </script>
-</about>
-
 <art-corner style='background-image: url({state.ImgUrl});'>
   <div>
     <div>角落藝廊</div>
@@ -294,14 +212,218 @@
   </script>
 </good-words>
 
+<about>
+  <tab-box tabs={[ '網站導覽', '關於空域', '關於我' ]}>
+    <pre slot='tab0'>
+      <b>關於</b>
+      一些跟 空域有關的說明會盡量集中在這裡。
+
+      <b>網誌</b>
+      RZ 不定期分享的自言自語、碎碎唸等沒營養垃圾文章。
+
+      <b>留言板</b>
+      開放給客倌隨意留言，沒什麼限制，就是請大家多注意網路禮儀哦。
+
+      <b>內嵌網頁</b>
+      如果覺得 空域一格一格的瀏覽方式深得你心，
+      想用這種方式去瀏覽其它空域以外的網頁，可以用這個方式把別人的網頁拉進來。
+
+      <b>訂閱</b>
+      想要隨時知道 RZ 是不是又在網誌上的發佈了垃圾文章，
+      就用這個 RSS/Atom 訂閱 空域的最新消息吧。
+
+      <b>回入口</b>
+      回到 空域的大門口。RZ 除了網誌以外，還有其它比較主題性的資訊會擺在門口。
+    </pre>
+    <pre slot='tab1'>
+      空域 是 RZ(小弟本人) 一腳踏進程式與資訊圈以來，不斷學習、探索，
+      終於下定決心所成立的網站。
+
+      開始構思發想階段的時間點已不可考；
+      網站的成立時間則大約是在 2011 年 6 月前後。
+
+      一開始發想很單純，
+      RZ 不太滿意各 Blog 經營業者所提供的維護方式，即模版式的介面配置。
+      可能是因為 RZ 自己喜歡凡是自己動手做，又剛好懂點網頁程式，
+      因此萌生了一個吃力不討好的想法：
+      「既然我可以自己做，幹嘛要屈就於人家 Blog 式的管理方式。」
+      於是…可以算是價值觀扭曲、過度偏執的想法，成就了 空域 的開站。
+
+      RZ 把 空域 當成個人生活的紀錄，基本上就是 Blog，
+      但希望能跳脫制式 Blog 的版面框架；
+      同時 RZ 也把 空域 當作在網頁程式精進的管道，
+      在這裡，客倌無須拘慬，無論您是偶然經過，或是在此流連，
+      若 空域 帶給您一些想法、一些啟發，不妨在 空域 留下您的心得。
+
+      網海茫茫，人與人的際會如此奇妙…
+
+      我的天空，我在其中，在我這裡，自由放空。 RZ 的個人網站。
+
+      20120401 by RZ
+    </pre>
+    <pre slot='tab2'>
+      小弟本名 方元利，在成長的不同時期有不同的暱稱，基本上都跟名字發音有關，
+      阿利、Lee、小方、RZ (目前較常使用) 等，
+      RZ 不在乎客倌如何稱呼 RZ，名字不重要，重要的是所代表的人。
+
+      有一陣子 RZ 用「天空」作為自己在網路上的代稱，
+      因為喜歡天空的開闊，天空的湛藍。
+      而本站名為 空域 ，也是由此而來。
+
+      RZ 喜歡寫寫東西、畫畫東西，發發夢想，在 空域 裡客倌會發現這些習性，
+      當然 RZ 也還喜歡很多事情，但嘮嘮不休不是 RZ 的習慣，
+      客倌就隨意參觀吧。
+
+      那麼…
+      客倌，您好，
+      我是 RZ ，
+      初次見面的，請多指教；
+      朋友，又見面了，歡迎回來。
+
+      20120401 by RZ
+    </pre>
+  </tab-box>
+  <script>
+    import tabBox from '../component/tab-box.riot';
+
+    export default {
+      components: {
+        tabBox,
+      },
+    }
+  </script>
+</about>
+
+<blogs>
+  <ul>
+    <li each={one in state.list}>
+      <h3>
+        <a id={one.ID} href='/blog/{one.ID}' onclick={oepnBlogFrame}>{one.Ttl}</a>
+      </h3>
+      <pre>{one.Smry}</pre>
+      <div>
+        <span each={tag in one.Tg}>{tag.Nm}</span>
+      </div>
+      <div>{one.Dt}</div>
+    </li>
+  </ul>
+  <style>
+    :host {
+      >ul>li {
+        margin: 0 0 15px 0;
+
+        >h3 {
+          margin: 0;
+          font-weight: normal;
+
+          >a {
+            text-decoration: none;
+            color: var(--color-link);
+
+            &:hover {
+              color: var(--color-hover);
+            }
+          }
+        }
+
+        >div:nth-child(3)>span {
+          display: inline-block;
+          margin-right: 10px;
+          color: var(--color-gray-8);
+        }
+
+        >div:last-child {
+          color: var(--color-gray-8);
+        }
+      }
+    }
+  </style>
+  <script>
+    export default {
+      state: {
+        list: [],
+      },
+
+      async onBeforeMount () {
+        const response = await fetch(`/service/blog/list?Lmt=5`);
+
+        const {
+          Extend: list = [],
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ list });
+      },
+
+      oepnBlogFrame (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.StoreSet('FRAMES', store => {
+          const blog = this.state.list.find(one => one.ID === event.currentTarget.id);
+
+          if (!blog) {
+            alert('Oops! Something wrong.');
+
+            return store;
+          }
+
+          const { frames, rootElement } = store;
+
+          const index = frames.findIndex(one => one.title === blog.Ttl);
+
+          if (index < 0) {
+            frames.push({
+              height: 480,
+              id: blog.ID,
+              left: Math.floor((rootElement.offsetWidth - 640) / 2) + (frames.length * 5),
+              slot: 'blog',
+              title: blog.Ttl,
+              top: Math.floor((rootElement.offsetHeight - 480) / 2) + (frames.length * 5),
+              width: 640,
+            });
+          }
+
+          return store;
+        });
+      },
+    };
+  </script>
+</blogs>
+
+<blog>
+  <script>
+    export default {
+      async onBeforeMount () {
+        const response = await fetch(`/service/blog?Id=${this.props.id}`);
+
+        const {
+          Extend: result,
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        console.log('--- 002');
+        console.log(result);
+      },
+    };
+  </script>
+</blog>
+
 <page-zone>
   <header id='Head'>
     <div>
       <button class='Btn0' title='關於' onclick={openAboutFrame}>關於</button>
-      <button class='Btn0' title='網誌' onclick='BlogListFrame("網誌列表");'>網誌</button>
-      <button class='Btn0' title='留言板' onclick='MessageListFrame("留言列表");'>留言板</button>
-      <button class='Btn0' title='內嵌網頁' onclick='CustomFrame("輸入網址");'>內嵌網頁</button>
-      <a href='/feed.xml'><button title='訂閱'>訂閱</button></a>
+      <button class='Btn0' title='網誌' onclick={openBlogsFrame}>網誌</button>
       <a href='/'><button title='回入口'>回入口</button></a>
     </div>
   </header>
@@ -309,18 +431,21 @@
     <art-corner />
     <good-words />
     <desk-frame
-      if={state.isAboutFrameOn}
-      onclose={closeAboutFrame}
-      title="關於"
-      width={640}
-      height={480}
+      each={frame in state.frames}
+      key={frame.title}
+      height={frame.height}
+      left={frame.left}
+      title={frame.title}
+      top={frame.top}
+      width={frame.width}
     >
-      <about />
+      <div is={frame.slot} id={frame.id || frame.title} />
     </desk-frame>
   </main>
   <footer id='Tail'>
     ©2011-2025 RZ Fang
   </footer>
+  <store name='FRAMES' listener={onFramesStoreUpdate} />
   <style>
     :host {
       display: flex;
@@ -350,27 +475,74 @@
   </style>
   <script>
     import deskFrame from '../component/desk-frame.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
-      components: {
-        about,
-        artCorner,
-        deskFrame,
-        goodWords,
-      },
+      components: { about, artCorner, blog, blogs, deskFrame, goodWords, store },
 
       state: {
-        isAboutFrameOn: false,
-        FrmLst: [],
+        frames: [],
+      },
+
+      onMounted () {
+        // To Do: riot-4-fun Store.riot should handle initial value.
+        this.StoreSet('FRAMES', store => ({
+          frames: [],
+          rootElement: this.$('main'),
+        }));
+      },
+
+      onFramesStoreUpdate (store) {
+        this.update({ frames: store.frames });
       },
 
       openAboutFrame () {
-        this.update({ isAboutFrameOn: true })
+        this.StoreSet(
+          'FRAMES',
+          store => {
+            const { frames, rootElement } = store;
+
+            const index = frames.findIndex(one => one.title === '關於');
+
+            if (index < 0) {
+              frames.push({
+                height: 480,
+                left: Math.floor((rootElement.offsetWidth - 640) / 2) + (frames.length * 5),
+                slot: 'about',
+                title: '關於',
+                top: Math.floor((rootElement.offsetHeight - 480) / 2) + (frames.length * 5),
+                width: 640,
+              });
+            }
+
+            return store;
+          }
+        );
       },
 
-      closeAboutFrame () {
-        this.update({ isAboutFrameOn: false })
+      openBlogsFrame () {
+        this.StoreSet(
+          'FRAMES',
+          store => {
+            const { frames, rootElement } = store;
+
+            const index = frames.findIndex(one => one.title === '網誌');
+
+            if (index < 0) {
+              frames.push({
+                height: rootElement.offsetHeight,
+                slot: 'blogs',
+                title: '網誌',
+                left: 0,
+                top: rootElement.offsetTop,
+                width: 320,
+              });
+            }
+
+            return store;
+          }
+        );
       }
-    }
+    };
   </script>
 </page-zone>
