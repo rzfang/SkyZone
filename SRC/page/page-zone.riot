@@ -397,8 +397,49 @@
 </blogs>
 
 <blog>
+  <pre if={state.info.Tp === 'text'}>{state.info.Info}</pre>
+  <div>
+    <icon name='calendar' size={22} />
+    <span>{state.info.Dt}</span>
+    <icon name='tags' size={22} />
+    <ul>
+      <li each={tag in state.info.Tgs} id={tag.ID}>{tag.Nm}</li>
+    </ul>
+  </div>
+  <style>
+    :host {
+      >pre {
+        word-break: break-all;
+      }
+
+      >div:last-child {
+        display: grid;
+        border-top: 1px solid var(--color-gray-c);
+        box-sizing: border-box;
+        padding: 5px;
+        grid-template-columns: auto 1fr;
+        gap: 0 5px;
+        align-items: center;
+        color: var(--color-gray-8);
+        background-color: var(--color-white);
+
+        >ul>li {
+          display: inline-block;
+          margin-right: 5px;
+        }
+      }
+    }
+  </style>
   <script>
+    import icon from '../component/icon.riot';
+
     export default {
+      components: { icon },
+
+      state: {
+        info: {},
+      },
+
       async onBeforeMount () {
         const response = await fetch(`/service/blog?Id=${this.props.id}`);
 
@@ -412,8 +453,9 @@
           return alert(message);
         }
 
-        console.log('--- 002');
-        console.log(result);
+        console.log('--- 002', result.Tp);
+
+        this.update({ info: result });
       },
     };
   </script>
@@ -433,9 +475,9 @@
     <desk-frame
       each={frame in state.frames}
       key={frame.title}
+      frametitle={frame.title}
       height={frame.height}
       left={frame.left}
-      title={frame.title}
       top={frame.top}
       width={frame.width}
     >

@@ -1,11 +1,11 @@
 <desk-frame class={state.classes} onclick={focus} style={state.style}>
   <div>
-    <h2>{props.title}</h2>
+    <h2>{props.frametitle}</h2>
     <div>
-      <icon if={!state.isFull} title='移動' name='move' onclick={toggleMove} size={22} />
-      <icon if={!state.isFull} title='縮放' name='resize' onclick={toggleResize} size={22} />
-      <icon title='最大化' name='full' onclick={toggleFull} size={22} />
-      <icon title='關閉' name='close' onclick={close} size={22} />
+      <icon if={!state.isFull} name='move' onclick={toggleMove} size={22} />
+      <icon if={!state.isFull} name='resize' onclick={toggleResize} size={22} />
+      <icon name='full' onclick={toggleFull} size={22} />
+      <icon name='close' onclick={close} size={22} />
     </div>
   </div>
   <div><slot /></div>
@@ -41,7 +41,8 @@
         >h2 {
           flex: auto;
           margin: 0;
-          font-size: 1rem;
+          font-size: 1.2rem;
+          font-weight: normal;
         }
 
         >div svg {
@@ -113,7 +114,7 @@
           store => {
             const { frames } = store;
 
-            const index = frames.findIndex(one => one.title === this.props.title);
+            const index = frames.findIndex(one => one.title === this.props.frametitle);
 
             if (index > -1) {
               const [ frame ] = frames.splice(index, 1);
@@ -211,7 +212,7 @@
         this.StoreSet('FRAMES', store => {
           const { frames } = store;
 
-          const index = frames.findIndex(one => one.title === this.props.title);
+          const index = frames.findIndex(one => one.title === this.props.frametitle);
 
           if (index < 0) {
             return store;
