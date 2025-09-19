@@ -1,4 +1,4 @@
-<desk-frame class={state.classes} style={state.style}>
+<desk-frame class={state.classes} onclick={focus} style={state.style}>
   <div>
     <h2>{props.title}</h2>
     <div>
@@ -105,6 +105,24 @@
 
         parentElement.removeEventListener('mousemove', this.move);
         parentElement.removeEventListener('mousemove', this.resize);
+      },
+
+      focus () {
+        this.StoreSet(
+          'FRAMES',
+          store => {
+            const { frames } = store;
+
+            const index = frames.findIndex(one => one.title === this.props.title);
+
+            if (index > -1) {
+              const [ frame ] = frames.splice(index, 1);
+
+              frames.push(frame);
+            }
+
+            return store;
+        });
       },
 
       move (event) {

@@ -513,6 +513,10 @@
                 top: Math.floor((rootElement.offsetHeight - 480) / 2) + (frames.length * 5),
                 width: 640,
               });
+            } else {
+              const [ aboutFrame ] = frames.splice(index, 1);
+
+              frames.push(aboutFrame);
             }
 
             return store;
@@ -537,6 +541,10 @@
                 top: rootElement.offsetTop,
                 width: 320,
               });
+            } else {
+              const [ blogsFrame ] = frames.splice(index, 1);
+
+              frames.push(blogsFrame);
             }
 
             return store;
