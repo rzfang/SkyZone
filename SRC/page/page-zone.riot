@@ -317,8 +317,8 @@
       <li if={state.pickedTagId !== ''}><button onclick={cancelFilter}>取消</button></li>
     </ul>
     <div>
-      <button onclick={toggleFilter}><icon name='tags' size={22} /></button>
-      <button onclick={goToTop}><icon name='to-top' size={22} /></button>
+      <button onclick={toggleFilter}><icon name='tags' color='var(--color-gray-8)' size={22} /></button>
+      <button onclick={goToTop}><icon name='to-top' color='var(--color-gray-8)' size={22} /></button>
     </div>
   </div>
   <style>
@@ -374,10 +374,6 @@
 
           >button {
             font-size: 0;
-
-            svg {
-              fill: var(--color-gray-8);
-            }
           }
         }
       }
@@ -537,35 +533,71 @@
 
 <blog>
   <pre if={state.info.Tp === 'text'}>{state.info.Info}</pre>
-  <div>
-    <icon name='calendar' size={22} />
-    <span>{state.info.Dt}</span>
-    <icon name='tags' size={22} />
-    <ul>
-      <li each={tag in state.info.Tgs} id={tag.ID}>{tag.Nm}</li>
-    </ul>
-  </div>
+  <ul class='option-box'>
+    <li>
+      <button><icon name='to-top' color='var(--color-gray-8)' size={22} /></button>
+    </li>
+    <li>
+      <button>
+        <span if={state.info.CmtCnt > 0}>({state.info.CmtCnt})</span>
+        <icon name='chat' color='var(--color-gray-8)' size={22} />
+      </button>
+    </li>
+    <li>
+      <div class='tags'>
+        <span each={tag in state.info.Tgs} id={tag.ID}>{tag.Nm}</span>
+        <icon name='tags' color='var(--color-gray-8)' size={22} />
+      </div>
+      <div>
+        <span>{state.info.Dt}</span>
+        <icon name='calendar' color='var(--color-gray-8)' size={22} />
+      </div>
+    </li>
+  </ul>
   <style>
     :host {
+      height: 100%;
+      overflow: auto;
+
       >pre {
+        margin-bottom: 80px;
         word-break: break-all;
       }
 
-      >div:last-child {
-        display: grid;
-        margin-top: 20px;
-        border-top: 1px solid var(--color-gray-c);
-        box-sizing: border-box;
-        padding: 5px;
-        grid-template-columns: auto 1fr;
-        gap: 0 5px;
-        align-items: center;
+      .option-box {
+        display: inline-flex;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        flex-direction: column;
+        gap: 5px;
+        text-align: right;
         color: var(--color-gray-8);
-        background-color: var(--color-white);
 
-        >ul>li {
-          display: inline-block;
-          margin-right: 5px;
+        >li>button {
+          font-size: 0;
+          color: var(--color-gray-8);
+
+          >span {
+            vertical-align: middle;
+            font-size: initial;
+          }
+        }
+
+        >li:last-child {
+          border: 1px solid var(--color-gray-c);
+          border-radius: 5px;
+          padding: 5px;
+          background-color: #fffffff0;
+
+          icon {
+            margin-left: 5px;
+          }
+
+          >div>span {
+            display: inline-block;
+            margin-left: 5px;
+          }
         }
       }
     }
