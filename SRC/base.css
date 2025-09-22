@@ -21,6 +21,15 @@ body {
   margin: 0;
 }
 
+a {
+  text-decoration: none;
+  color: var(--color-link);
+
+  &:hover {
+    color: var(--color-hover);
+  }
+}
+
 button {
   display: inline-block;
   min-width: 20px;

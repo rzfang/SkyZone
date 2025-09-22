@@ -48,6 +48,18 @@
   </svg>
 </icon-full>
 
+<icon-to-top>
+  <svg
+    fill={props.color}
+    height={`${props.size}px`}
+    viewBox="0 -960 960 960"
+    width={`${props.size}px`}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M160-760v-80h640v80H160Zm280 640v-408L336-424l-56-56 200-200 200 200-56 56-104-104v408h-80Z"/>
+  </svg>
+</icon-to-top>
+
 <icon-tags>
   <svg
     fill={props.color}
@@ -104,7 +116,7 @@
 </icon-mail>
 
 <icon>
-  <i is={`icon-${props.name || ''}`} size={props.size || 24} color={props.color || '#e4e4e4'} />
+  <i is={`icon-${props.name || ''}`} size={props.size || 24} color={props.color || '#c0c0c0'} />
   <style>
     i { display: inline-block; }
     svg { vertical-align: middle; }
@@ -116,6 +128,8 @@
         iconFull,
         iconMove,
         iconResize,
+
+        iconToTop,
 
         iconCalendar,
         iconFacebook,

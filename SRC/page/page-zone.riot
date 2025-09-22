@@ -296,7 +296,7 @@
 
 <blogs>
   <ul>
-    <li each={one in state.list}>
+    <li each={one in state.blogs} key={one.ID}>
       <h3>
         <a id={one.ID} href='/blog/{one.ID}' onclick={oepnBlogFrame}>{one.Ttl}</a>
       </h3>
@@ -307,48 +307,143 @@
       <div>{one.Dt}</div>
     </li>
   </ul>
+  <div if={!state.isNoMore} class='load-more'><button onclick={loadMore}>載入更多</button></div>
+  <div class='option-box'>
+    <ul if={state.isTagPicking}>
+      <li each={one in state.tags} key={one.ID}>
+        <span if={state.pickedTagId === one.ID}>{one.Nm}</span>
+        <a if={state.pickedTagId !== one.ID} id={one.ID} href='/blogs?t={one.ID}' onclick={filter}>{one.Nm}</a>
+      </li>
+      <li if={state.pickedTagId !== ''}><button onclick={cancelFilter}>取消</button></li>
+    </ul>
+    <div>
+      <button onclick={toggleFilter}><icon name='tags' size={22} /></button>
+      <button onclick={goToTop}><icon name='to-top' size={22} /></button>
+    </div>
+  </div>
   <style>
     :host {
-      >ul>li {
-        margin: 0 0 15px 0;
+      height: 100%;
+      overflow: auto;
 
-        >h3 {
-          margin: 0;
-          font-weight: normal;
+      >ul {
+        margin-bottom: 50px;
 
-          >a {
-            text-decoration: none;
-            color: var(--color-link);
+        >li {
+          margin: 0 0 15px 0;
 
-            &:hover {
-              color: var(--color-hover);
-            }
+          >h3 {
+            margin: 0;
+            font-weight: normal;
+          }
+
+          >div:nth-child(3)>span {
+            display: inline-block;
+            margin-right: 10px;
+            color: var(--color-gray-8);
+          }
+
+          >div:last-child {
+            color: var(--color-gray-8);
           }
         }
+      }
 
-        >div:nth-child(3)>span {
-          display: inline-block;
-          margin-right: 10px;
-          color: var(--color-gray-8);
+      >.load-more {
+        text-align: center;
+      }
+
+      >.option-box {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        text-align: right;
+
+        >ul {
+          border: 1px solid var(--color-gray-c);
+          border-radius: 3px;
+          padding: 5px;
+          text-align: center;
+          background-color: #fffffff0;
         }
 
-        >div:last-child {
-          color: var(--color-gray-8);
+        >div {
+          display: inline-flex;
+          flex-direction: column;
+          gap: 5px;
+
+          >button {
+            font-size: 0;
+
+            svg {
+              fill: var(--color-gray-8);
+            }
+          }
         }
       }
     }
   </style>
   <script>
+    import icon from '../component/icon.riot';
+
     export default {
+      components: { icon },
+
       state: {
-        list: [],
+        blogs: [],
+        isNoMore: false,
+        isTagPicking: false,
+        pickedTagId: '',
+        tags: [],
       },
 
       async onBeforeMount () {
-        const response = await fetch(`/service/blog/list?Lmt=5`);
+        const [ blogsResult, tagsResult ] = await Promise.all([
+          fetch(`/service/blog/list?Lmt=5`).then(response => response.json()),
+          fetch(`/service/tag`).then(response => response.json()),
+        ]);
+
+        // === handle blogs. ===
 
         const {
-          Extend: list = [],
+          Extend: blogs = [],
+          Index: blogsError = -1,
+          Message: blogsMessage = '',
+        } = blogsResult;
+
+        if (blogsError !== 0) {
+          return alert(blogsMessage);
+        }
+
+        // === handle tags. ===
+
+        const {
+          Extend: tags = [],
+          Index: tagsError = -1,
+          Message: tagsMessage = '',
+        } = tagsResult;
+
+        if (tagsError !== 0) {
+          alert(tagsMessage);
+        }
+
+        // ===
+
+        this.update({ blogs, tags });
+      },
+
+      async filter (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const id = event.currentTarget.id;
+
+        this.update({ blogs: [], isTagPicking: false, pickedTagId: id });
+
+        const response = await fetch(`/service/blog/list?Lmt=5&TgIDA[]=${id}`);
+
+        const {
+          Extend: blogs = [],
           Index: error = -1,
           Message: message = '',
         } = await response.json();
@@ -357,7 +452,23 @@
           return alert(message);
         }
 
-        this.update({ list });
+        this.update({ blogs, isNoMore: blogs.length < 5 });
+      },
+
+      async cancelFilter () {
+        const response = await fetch(`/service/blog/list?Lmt=5`);
+
+        const {
+          Extend: blogs = [],
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ blogs, isNoMore: blogs.length < 5, isTagPicking: false, pickedTagId: '' });
       },
 
       oepnBlogFrame (event) {
@@ -365,7 +476,7 @@
         event.stopPropagation();
 
         this.StoreSet('FRAMES', store => {
-          const blog = this.state.list.find(one => one.ID === event.currentTarget.id);
+          const blog = this.state.blogs.find(one => one.ID === event.currentTarget.id);
 
           if (!blog) {
             alert('Oops! Something wrong.');
@@ -392,6 +503,34 @@
           return store;
         });
       },
+
+      async loadMore () {
+        const { blogs, pickedTagId } = this.state;
+
+        const offset = blogs.length;
+
+        const response = await fetch(`/service/blog/list?Lmt=5&Ofst=${offset}&TgIDA[]=${pickedTagId}`);
+
+        const {
+          Extend: newBlogs = [],
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ blogs: [ ...blogs, ...newBlogs ], isNoMore: newBlogs.length < 5 });
+      },
+
+      toggleFilter () {
+        this.update({ isTagPicking: !this.state.isTagPicking });
+      },
+
+      goToTop (event) {
+        this.$('.option-box').parentElement.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+      },
     };
   </script>
 </blogs>
@@ -414,6 +553,7 @@
 
       >div:last-child {
         display: grid;
+        margin-top: 20px;
         border-top: 1px solid var(--color-gray-c);
         box-sizing: border-box;
         padding: 5px;
