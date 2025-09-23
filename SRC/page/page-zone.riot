@@ -525,7 +525,7 @@
       },
 
       goToTop (event) {
-        this.$('.option-box').parentElement.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+        this.root.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
       },
     };
   </script>
@@ -533,24 +533,36 @@
 
 <blog>
   <pre if={state.info.Tp === 'text'}>{state.info.Info}</pre>
+  <raw-html if={state.info.Tp !== 'text'} html={state.info.Info} />
+  <ul class='comments'>
+    <li each={(one, index) in state.comments} key={one.ID}>
+      {JSON.stringify(one)}
+      <div>{one.Nm}</div>
+      <div>{one.Dt}</div>
+      <pre>{one.Cmt}</pre>
+      <span>#{index + 1}</span>
+    </li>
+  </ul>
   <ul class='option-box'>
     <li>
-      <button><icon name='to-top' color='var(--color-gray-8)' size={22} /></button>
+      <button><icon name='to-top' color='var(--color-gray-8)' onclick={goToTop} size={22} /></button>
     </li>
     <li>
-      <button>
+      <button onclick={showComments}>
         <span if={state.info.CmtCnt > 0}>({state.info.CmtCnt})</span>
         <icon name='chat' color='var(--color-gray-8)' size={22} />
       </button>
     </li>
     <li>
-      <div class='tags'>
-        <span each={tag in state.info.Tgs} id={tag.ID}>{tag.Nm}</span>
-        <icon name='tags' color='var(--color-gray-8)' size={22} />
-      </div>
       <div>
-        <span>{state.info.Dt}</span>
-        <icon name='calendar' color='var(--color-gray-8)' size={22} />
+        <div class='tags'>
+          <span each={tag in state.info.Tgs} id={tag.ID}>{tag.Nm}</span>
+          <icon name='tags' color='var(--color-gray-8)' size={22} />
+        </div>
+        <div>
+          <span>{state.info.Dt}</span>
+          <icon name='calendar' color='var(--color-gray-8)' size={22} />
+        </div>
       </div>
     </li>
   </ul>
@@ -564,15 +576,31 @@
         word-break: break-all;
       }
 
-      .option-box {
-        display: inline-flex;
+      >raw-html img {
+        border-radius: 5px;
+        width: 100%;
+        max-width: 800px;
+      }
+
+      >.comments {
+        border-top: 1px solid var(--color-gray-c);
+
+        >li {
+          border-bottom: 1px solid var(--color-gray-c);
+        }
+      }
+
+      >.option-box {
+        display: inline-block;
         position: absolute;
         right: 5px;
         bottom: 5px;
-        flex-direction: column;
-        gap: 5px;
         text-align: right;
         color: var(--color-gray-8);
+
+        >* {
+          margin-top: 5px;
+        }
 
         >li>button {
           font-size: 0;
@@ -584,19 +612,20 @@
           }
         }
 
-        >li:last-child {
+        >li:last-child>div {
+          display: inline-block;
           border: 1px solid var(--color-gray-c);
           border-radius: 5px;
           padding: 5px;
           background-color: #fffffff0;
 
-          icon {
-            margin-left: 5px;
+          >div>span {
+            display: none;
+            margin-right: 5px;
           }
 
-          >div>span {
+          &:hover>div>span {
             display: inline-block;
-            margin-left: 5px;
           }
         }
       }
@@ -604,11 +633,13 @@
   </style>
   <script>
     import icon from '../component/icon.riot';
+    import rawHtml from '../component/raw-html.riot';
 
     export default {
-      components: { icon },
+      components: { icon, rawHtml },
 
       state: {
+        comments: [],
         info: {},
       },
 
@@ -625,9 +656,33 @@
           return alert(message);
         }
 
-        console.log('--- 002', result.Tp);
-
         this.update({ info: result });
+      },
+
+      goToTop (event) {
+        this.root.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+      },
+
+      async showComments () {
+        this.root.scrollTo({ behavior: 'smooth', left: 0, top: 99999 });
+
+        if (this.state.comments.length > 0) {
+          return;
+        }
+
+        const response = await fetch(`/service/comment?ID=${this.props.id}`);
+
+        const {
+          Extend: comments,
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ comments });
       },
     };
   </script>

@@ -1,0 +1,14 @@
+<raw-html>
+  <pre />
+  <script>
+    export default {
+      onMounted () {
+        this.$('pre').innerHTML = this.props.html;
+      },
+
+      onUpdated () {
+        this.$('pre').innerHTML = this.props.html;
+      },
+    };
+  </script>
+</raw-html>

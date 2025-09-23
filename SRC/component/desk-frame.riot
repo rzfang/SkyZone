@@ -103,10 +103,8 @@
       },
 
       onBeforeUnmount () {
-        const parentElement = this.$('div').parentElement.parentElement;
-
-        parentElement.removeEventListener('mousemove', this.move);
-        parentElement.removeEventListener('mousemove', this.resize);
+        this.root.parentElement.removeEventListener('mousemove', this.move);
+        this.root.parentElement.removeEventListener('mousemove', this.resize);
       },
 
       focus () {
@@ -141,12 +139,10 @@
       },
 
       toggleMove (event) {
-        const parentElement = this.$('div').parentElement.parentElement;
-
         if (!this.state.isMoving) {
-          parentElement.addEventListener('mousemove', this.move);
+          this.root.parentElement.addEventListener('mousemove', this.move);
         } else {
-          parentElement.removeEventListener('mousemove', this.move);
+          this.root.parentElement.removeEventListener('mousemove', this.move);
         }
 
         this.update({ isMoving: !this.state.isMoving });
@@ -171,16 +167,14 @@
       },
 
       toggleResize () {
-        const parentElement = this.$('div').parentElement.parentElement;
-
         if (!this.state.isResizing) {
-          parentElement.addEventListener('mousemove', this.resize);
+          this.root.parentElement.addEventListener('mousemove', this.resize);
           this.update({ isResizing: !this.state.isResizing });
 
           return;
         }
 
-        parentElement.removeEventListener('mousemove', this.resize);
+        this.root.parentElement.removeEventListener('mousemove', this.resize);
 
         const [ _, width, height ] = this.state.style.match(/width: (-?\d+)px; height: (-?\d+)px;/);
 
