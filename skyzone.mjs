@@ -68,13 +68,13 @@ const RHC = { // Riot HTTP config.
       title: '空域 - 留言',
       body: { type: 'riot', component: './SRC/page/page-messages.riot', initialize: MessagesPage },
     },
-    '/zone': {
+    '/zone0': {
       ...DftPgRt,
       css: [ '/resource/style1.css' ],
       js: [ JQUERY_CDN, 'resource/api1.min.js' ],
       body: { type: 'html', component: path.resolve(__dirname, './SRC/page/zone.html') },
     },
-    '/zone2': {
+    '/zone': {
       ...DftPgRt,
       css: [ '/resource/base.css' ],
       js: [],

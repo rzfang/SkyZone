@@ -532,8 +532,7 @@
 </blogs>
 
 <blog>
-  <pre if={state.info.Tp === 'text'}>{state.info.Info}</pre>
-  <raw-html if={state.info.Tp !== 'text'} html={state.info.Info} />
+  <raw-html html={state.info.Info} />
   <ul class='comments'>
     <li each={(one, index) in state.comments} key={one.ID}>
       {JSON.stringify(one)}
