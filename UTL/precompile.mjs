@@ -1,6 +1,5 @@
 #!/usr/bin/node
 
-import * as sass from 'sass';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,12 +10,6 @@ const RtPth = __dirname + '/../'; // 'RtPth' = Root Path.
 
 const RscPth = RtPth + 'WEB/www/resource/', // 'RscPth' = Resouce Path.
   SrcPth = RtPth + 'SRC/'; // 'SrcPth' = Source Path.
-
-async function SCSS_CSS (FrmPth, ToPth) {
-  const { css } = await sass.compileAsync(FrmPth);
-
-  fs.writeFileSync(ToPth, css);
-}
 
 function JsCompress (FrmPthA, ToPth) {
   let Js = '';
@@ -34,8 +27,6 @@ function JsCompress (FrmPthA, ToPth) {
   fs.writeFileSync(ToPth, Js);
 }
 
-SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
-SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
 JsCompress(
   [
     SrcPth + 'include.js',

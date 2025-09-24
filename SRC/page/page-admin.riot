@@ -97,7 +97,7 @@
       <progress value='0' max='100'></progress><br/>
     </div>
   </div>
-  <style type='scss'>
+  <style>
     :host { text-align: center;
       >div { display: flex;
         >div { display: inline-block;; flex-grow: 1;
@@ -188,7 +188,7 @@
   <div>
     <button each={Pg in state.Pgs} onclick={PageTurn} value={Pg.Pg} disabled={Pg.Pg === props.page}>{Pg.Shw}</button>
   </div>
-  <style type='scss'>
+  <style>
     :host>div { text-align: center;
       >button { min-width: 50px; margin: 0; padding: 0; }
     }
@@ -322,7 +322,6 @@
                 <option value='markdown'>markdown</option>
                 <option value='image'>image</option>
                 <option value='images'>images</option>
-                <option value='html'>html</option>
               </select>
             </dd>
           </dl>
@@ -352,7 +351,7 @@
   <store if={props.published} store='BLOGS' listener={StoreBlogsListen}/>
   <store if={!props.published} store='BLOGS' listener={StoreNonBlogsListen}/>
   <store store='TAGS' listener={StoreTagsListen}/>
-  <style type='scss'>
+  <style>
     :host {
       >ul { margin: 0; padding: 0;
         >li { list-style-type: none; margin: 0; padding: 10px 0; border-bottom: 1px solid #c0c0c0;
@@ -732,7 +731,7 @@
     </li>
   </ul>
   <store store='TAGS' listener={TagsStoreListen}/>
-  <style type='scss'>
+  <style>
     :host>ul { list-style-type: none; padding: 0; line-height: 1.5;
       >li {
         &:hover { background-color: #c0e0ff; }
@@ -878,7 +877,7 @@
     <textarea onchange={TextareaChange}></textarea>
     <pre></pre>
   </div>
-  <style type='scss'>
+  <style>
     :host>div {
       &:nth-of-type(1) { width: 100%;
           >img { border: 1px solid #d0d0ff; border-radius: 5px; width: 64px; height: 64px; object-fit: contain; }
@@ -1028,7 +1027,7 @@
     </li>
   </ul>
   <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
-  <style type='scss'>
+  <style>
     :host>ul>li { display: flex; margin-bottom: 10px;
       >div:first-child { flex: 0 0 80px; }
       >div:nth-child(2) { flex: 0 0 330px; }
@@ -1157,7 +1156,7 @@
   </ul>
   <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
   <store store='GOOD_WORDS' listener={GoodWordsStoreListen}/>
-  <style type='scss'>
+  <style>
     :host>ul { margin: 0; padding: 0;
       >li { display: flex; margin-bottom: 10px;
         &:first-child { border-bottom: solid 1px; color: #c0c0c0; padding-bottom: 10px; }
@@ -1335,7 +1334,7 @@
     <button onclick={Logout}>登出</button>
   </div>
   <store store='DATA_SIZE' listener={DateSizesStoreListen}/>
-  <style type='scss'>
+  <style>
     :host { display: flex;
       >div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px;
         >ul { list-style-type: none; margin: 0; padding: 0;
