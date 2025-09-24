@@ -6,19 +6,6 @@
   </style>
 </text>
 
-<zft>
-  <pre>{props.blog.Info}</pre>
-  <script>
-    export default {
-      onMounted (props, state) {
-        this.OnBrowser(() => {
-          this.$('pre').innerHTML = Z.ZFT(props.blog.Info);
-        });
-      }
-    }
-  </script>
-</zft>
-
 <markdown>
   <pre>{props.blog.Info1}</pre>
   <style type='scss'>
@@ -57,7 +44,7 @@
     import tags from './tags.riot';
 
     export default {
-      components: { icon, shareBox, tags, text, zft, markdown }
+      components: { icon, shareBox, tags, text, markdown }
     }
   </script>
 </blog>

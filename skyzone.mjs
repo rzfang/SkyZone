@@ -61,7 +61,6 @@ const RHC = { // Riot HTTP config.
     '/text': BlgPgRt,
     '/image': BlgPgRt,
     '/images': BlgPgRt,
-    '/zft': BlgPgRt,
     '/blog/:id': BlgPgRt,
     '/messages': {
       ...DftPgRt,

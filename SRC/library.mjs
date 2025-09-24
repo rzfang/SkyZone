@@ -167,7 +167,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 }
 
 export const Blog = {
-  Tp: [ 'text', 'markdown', 'zft' ],
+  Tp: [ 'text', 'markdown' ],
   List: (Rqst, Prm, End) => {
     if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
 
@@ -756,7 +756,6 @@ export const Blog = {
 
         switch (SqlRst.Tp) {
           case 'text':
-          case 'zft' :
             Cch.FileLoad(
               `${BLG_PTH}/${SqlRst.Fl}`,
               (Cd, Str) => {

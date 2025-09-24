@@ -37,12 +37,16 @@ function JsCompress (FrmPthA, ToPth) {
 SCSS_CSS(SrcPth + 'style1.scss', RscPth + 'style1.css');
 SCSS_CSS(SrcPth + 'style2.scss', RscPth + 'style2.css');
 JsCompress(
-  [ SrcPth + 'include.js',
+  [
+    SrcPth + 'include.js',
     SrcPth + 'wording.js',
-    SrcPth + 'RZ-Js-ZFT.js' ],
-  RscPth + 'api1.min.js');
+  ],
+  RscPth + 'api1.min.js'
+);
 JsCompress(
-  [ SrcPth + 'include.js',
+  [
+    SrcPth + 'include.js',
     SrcPth + 'wording.js',
-    SrcPth + 'RZ-Js-ZFT.js' ],
-  RscPth + 'api2.min.js');
+  ],
+  RscPth + 'api2.min.js'
+);
