@@ -6,6 +6,7 @@ import markdownIt from 'markdown-it';
 import path from 'path';
 import tarStream from 'tar-stream';
 import { Cache as Cch, Is, Log, SQLite } from 'rzjs';
+import { customAlphabet } from 'nanoid';
 import { fileURLToPath } from 'url';
 
 import Cnst from './constant.json.mjs';
@@ -23,6 +24,7 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
   DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
   DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
   FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
+const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
 const MI = markdownIt();
 
 let Cnt = 0; // a count for any situation to create an unique thing.
@@ -42,38 +44,16 @@ function PackedEnd (End, ExtrActn) {
 /* create a Uuid format string.
   @ type, the type of UUID, can be 13, 22, 32, 36, default 13.
   < Uuid format string. */
-function MakeId (Tp = 13) {
-  const Hmac = crypto.createHmac('sha256', 'something unique.');
-  const TpMp = [ 13, 22, 32, 36, 64 ]; // type map.
+function MakeId (type = 13) {
+  const typeCases = [ 13, 22, 32, 36, 64 ]; // type map.
 
-  Hmac.update((new Date()).getTime().toString() + (++Cnt).toString());
-
-  let Id = Hmac.digest('hex').toString();
-
-  if (!Is.Number(Tp) || !TpMp.indexOf(Tp) < 0) { Tp = 13; }
-
-  switch (Tp) {
-    case 22:
-      Id = Id.substr(0, 22);
-      break;
-
-    case 32:
-      Id = Id.substr(0, 32);
-      break;
-
-    case 36:
-      Id = Id.substr(0, 8) + '-' + Id.substr(8, 4) + '-' + Id.substr(12, 4) + '-' + Id.substr(16, 4) + '-' +
-           Id.substr(20, 12);
-      break;
-
-    case 13:
-      Id = Id.substr(0, 13);
-      break;
-
-    // default: // 64 don't do anything.
+  if (!Is.Number(type) || !typeCases.indexOf(type) < 0) {
+    type = 13;
   }
 
-  return Id.substr(0, Id.length - Cnt.toString().length) + Cnt.toString(); // use Cnt to make id unique.
+  const nanoid = customAlphabet(ALPHABET, type);
+
+  return nanoid();
 }
 
 function GetIp (Rqst) {
@@ -617,11 +597,12 @@ export const Blog = {
         if (!IsExt) { return PckEnd(-3, Kwd.RM.NoSuchData); }
 
         const SQL = 'INSERT INTO BlogComment (id, name, mail, ip, datetime, comment, blog_id) ' +
-                    'VALUES (?, ?, ?, ?, ?, ?, ?);';
+                    'VALUES (?, ?, ?, ?, ?, ?, ?) ' +
+                    'RETURNING datetime, id;';
 
         return Db.Query(SQL, [ MakeId(13), Nm, Prm.Ml, GetIp(Rqst), GetDatetime(), Cmt, Prm.TgtID ]);
       })
-      .then(() => { PckEnd(0, Kwd.RM.Done); })
+      .then(Rst => { PckEnd(0, Kwd.RM.Done, Rst); })
       .catch(Cd => { PckEnd(-4, Kwd.RM.DbCrash, Cd); });
   },
   CommentDelete: (Rqst, Rspns, Prm, End) => {
