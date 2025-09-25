@@ -535,12 +535,14 @@
   <raw-html html={state.info.Info} />
   <ul class='comments'>
     <li each={(one, index) in state.comments} key={one.ID}>
-      {JSON.stringify(one)}
-      <div>{one.Nm}</div>
-      <div>{one.Dt}</div>
+      <div>
+        <span>#{index + 1}</span>
+        <span>{one.Nm}</span>
+        <span>{one.Dt}</span>
+      </div>
       <pre>{one.Cmt}</pre>
-      <span>#{index + 1}</span>
     </li>
+    <li><comment-form submit={submitComment} /></li>
   </ul>
   <ul class='option-box'>
     <li>
@@ -582,10 +584,28 @@
       }
 
       >.comments {
+        display: flex;
+        margin-top: 20px;
         border-top: 1px solid var(--color-gray-c);
+        padding-top: 20px;
+        gap: 10px;
+        flex-direction: column;
+        align-items: start;
 
         >li {
-          border-bottom: 1px solid var(--color-gray-c);
+          border: 1px solid var(--color-gray-c);
+          border-radius: 5px;
+          padding: 5px;
+
+          >div:first-child>span {
+            display: inline-block;
+            margin-right: 5px;
+
+            &:first-child,
+            &:last-child {
+              color: var(--color-gray-8);
+            }
+          }
         }
       }
 
@@ -631,11 +651,12 @@
     }
   </style>
   <script>
+    import commentForm from '../component/comment-form.riot';
     import icon from '../component/icon.riot';
     import rawHtml from '../component/raw-html.riot';
 
     export default {
-      components: { icon, rawHtml },
+      components: { commentForm, icon, rawHtml },
 
       state: {
         comments: [],
@@ -658,12 +679,53 @@
         this.update({ info: result });
       },
 
+      async submitComment (name, mail, comment) {
+        const response = await fetch(
+          '/service/comment',
+          {
+            body: JSON.stringify({ Cmt: comment, Ml: mail, Nm: name, TgtID: this.props.id }),
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const {
+          Extend: newComments,
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error !== 0) {
+          return alert(message);
+        }
+
+        if (newComments.length < 1) {
+          return alert('Oops, something wrong!');
+        }
+
+        this.$('textarea').value = '';
+
+        this.update({
+          comments: [
+            ...this.state.comments,
+            {
+              ID: newComments[0].id,
+              Nm: name,
+              Dt: newComments[0].datetime,
+              Cmt: comment,
+            }
+          ],
+        });
+      },
+
       goToTop (event) {
         this.root.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
       },
 
       async showComments () {
-        this.root.scrollTo({ behavior: 'smooth', left: 0, top: 99999 });
+        this.root.scrollTo({ behavior: 'smooth', left: 0, top: this.$('raw-html>pre').clientHeight });
 
         if (this.state.comments.length > 0) {
           return;

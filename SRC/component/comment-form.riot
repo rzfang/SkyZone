@@ -2,7 +2,7 @@
   <form>
     <input type='text' maxlength='10' placeholder='匿名' value={state.NmMl[0]} disabled={state.IsSndng}/><br/>
     <input type='email' required='true' placeholder='E-Mail (不會公開)' value={state.NmMl[1]} disabled={state.IsSndng}/><br/>
-    <textarea rows="1" maxlength='255' required='true' disabled={state.IsSndng}></textarea><br/>
+    <textarea rows="2" maxlength='255' required='true' disabled={state.IsSndng}></textarea><br/>
     <div>
       <label>記住我<input type='checkbox' checked={state.NmMl[0]} /></label>
       <div>
@@ -24,6 +24,9 @@
     }
   </style>
   <script>
+    import is from 'rzjs/Is.js';
+    import { CookieParam, CookieSet } from '../helper.mjs';
+
     export default {
       state: {
         IsSndng: false, // is sending message.
@@ -39,21 +42,21 @@
       IsFormGood (Nm, Ml, Msg) {
         let Hnt = ''; // hint.
 
-        if (!Nm || !Z.Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+        if (!Nm || !is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
         else {
           Nm = Nm.trim();
 
           if (Nm === '') { Hnt += '暱稱不可為空白字。\n'; }
         }
 
-        if (!Ml || !Z.Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
+        if (!Ml || !is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
         else {
           Ml = Ml.trim();
 
-          if (!Z.Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
+          if (!is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
         }
 
-        if (!Msg || !Z.Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
+        if (!Msg || !is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
         else {
           Msg = Msg.trim();
 
