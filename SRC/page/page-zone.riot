@@ -1,7 +1,13 @@
 <modules>
   <script>
+    import commentForm from '../component/comment-form.riot';
     import datetime from '../component/datetime.riot';
+    import deskFrame from '../component/desk-frame.riot';
+    import icon from '../component/icon.riot';
     import iconButton from '../component/icon-button.riot';
+    import rawHtml from '../component/raw-html.riot';
+    import store from 'riot-4-fun/SRC/Store.riot';
+    import tabBox from '../component/tab-box.riot';
     import toTopButton from '../component/to-top-button.riot';
   </script>
 </modules>
@@ -292,12 +298,8 @@
     </pre>
   </tab-box>
   <script>
-    import tabBox from '../component/tab-box.riot';
-
     export default {
-      components: {
-        tabBox,
-      },
+      components: { tabBox },
     }
   </script>
 </about>
@@ -312,7 +314,7 @@
       <div>
         <span each={tag in one.Tg}>{tag.Nm}</span>
       </div>
-      <div>{one.Dt}</div>
+      <div><datetime value={one.Dt} /></div>
     </li>
   </ul>
   <div if={!state.isNoMore} class='load-more'><button onclick={loadMore}>載入更多</button></div>
@@ -388,10 +390,8 @@
     }
   </style>
   <script>
-    import icon from '../component/icon.riot';
-
     export default {
-      components: { icon },
+      components: { datetime, icon },
 
       state: {
         blogs: [],
@@ -546,7 +546,7 @@
       <div>
         <span>#{index + 1}</span>
         <span>{one.Nm}</span>
-        <span>{one.Dt}</span>
+        <datetime value={one.Dt} />
       </div>
       <pre>{one.Cmt}</pre>
     </li>
@@ -569,7 +569,7 @@
           <icon name='tags' color='var(--color-gray-8)' size={22} />
         </div>
         <div>
-          <span>{state.info.Dt}</span>
+          <datetime value={state.info.Dt} />
           <icon name='calendar' color='var(--color-gray-8)' size={22} />
         </div>
       </div>
@@ -609,8 +609,7 @@
             display: inline-block;
             margin-right: 5px;
 
-            &:first-child,
-            &:last-child {
+            &:first-child {
               color: var(--color-gray-8);
             }
           }
@@ -646,12 +645,13 @@
           padding: 5px;
           background-color: #fffffff0;
 
-          >div>span {
+          >div>*:first-child {
             display: none;
             margin-right: 5px;
+            vertical-align: middle;
           }
 
-          &:hover>div>span {
+          &:hover>div>*:first-child {
             display: inline-block;
           }
         }
@@ -659,12 +659,8 @@
     }
   </style>
   <script>
-    import commentForm from '../component/comment-form.riot';
-    import icon from '../component/icon.riot';
-    import rawHtml from '../component/raw-html.riot';
-
     export default {
-      components: { commentForm, icon, rawHtml },
+      components: { commentForm, datetime, icon, rawHtml },
 
       state: {
         comments: [],
@@ -912,9 +908,6 @@
     }
   </style>
   <script>
-    import deskFrame from '../component/desk-frame.riot';
-    import store from 'riot-4-fun/SRC/Store.riot';
-
     export default {
       components: { about, artCorner, blog, blogs, deskFrame, goodWords, messages, store },
 
