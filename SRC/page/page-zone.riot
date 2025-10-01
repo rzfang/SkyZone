@@ -1,3 +1,11 @@
+<modules>
+  <script>
+    import datetime from '../component/datetime.riot';
+    import iconButton from '../component/icon-button.riot';
+    import toTopButton from '../component/to-top-button.riot';
+  </script>
+</modules>
+
 <art-corner style='background-image: url({state.ImgUrl});'>
   <div>
     <div>角落藝廊</div>
@@ -330,7 +338,7 @@
         margin-bottom: 50px;
 
         >li {
-          margin: 0 0 15px 0;
+          margin-bottom: 20px;
 
           >h3 {
             margin: 0;
@@ -749,11 +757,111 @@
   </script>
 </blog>
 
+<messages>
+  <ul>
+    <li each={one in state.messages} key={one.ID}>
+      <div>
+        <span>{one.Nm}</span>
+        <datetime value={one.Dt} />
+      </div>
+      <pre>{one.Msg}</pre>
+      <div>
+        <icon-button icon-at='left' icon-name='chat'>{one.ChnCnt > 0 ? `(${one.ChnCnt})` : ''}</icon-button>
+        <datetime if={one.ChnCnt > 0} value={one.Dt} />
+      </div>
+    </li>
+  </ul>
+  <div><button onclick={loadMore}>載入更多</button></div>
+  <div>
+    <to-top-button target={root} />
+  </div>
+  <style>
+    :host {
+      height: 100%;
+      overflow: auto;
+
+      datetime {
+        margin-left: 5px;
+      }
+
+      >ul>li {
+        margin-bottom: 20px;
+
+        >pre {
+          margin: 5px 0;
+          max-height: 100px;
+          white-space: pre;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        >div:last-child {
+          >datetime {
+            vertical-align: middle;
+          }
+        }
+      }
+
+      >div:nth-child(2) {
+        text-align: center;
+      }
+
+      >div:last-child {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+      }
+    }
+  </style>
+  <script>
+    export default {
+      components: { datetime, iconButton, toTopButton },
+
+      state: {
+        messages: [],
+      },
+
+      async onBeforeMount () {
+        const response = await fetch(`/service/message?Lmt=5`);
+
+        const {
+          Extend: messages,
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        this.update({ messages });
+      },
+
+      async loadMore () {
+        const { messages } = this.state;
+
+        const offset = messages.length;
+
+        const response = await fetch(`/service/message?Lmt=5&Ofst=${offset}`);
+
+        const {
+          Extend: newMessages = [],
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ messages: [ ...messages, ...newMessages ], isNoMore: newMessages.length < 5 });
+      },
+    };
+  </script>
+</messages>
+
 <page-zone>
   <header id='Head'>
     <div>
       <button class='Btn0' title='關於' onclick={openAboutFrame}>關於</button>
       <button class='Btn0' title='網誌' onclick={openBlogsFrame}>網誌</button>
+      <button class='Btn0' title='留言板' onclick={openMessagesFrame}>留言板</button>
       <a href='/'><button title='回入口'>回入口</button></a>
     </div>
   </header>
@@ -808,7 +916,7 @@
     import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
-      components: { about, artCorner, blog, blogs, deskFrame, goodWords, store },
+      components: { about, artCorner, blog, blogs, deskFrame, goodWords, messages, store },
 
       state: {
         frames: [],
@@ -865,8 +973,36 @@
             if (index < 0) {
               frames.push({
                 height: rootElement.offsetHeight,
+                left: 0,
                 slot: 'blogs',
                 title: '網誌',
+                top: rootElement.offsetTop,
+                width: 320,
+              });
+            } else {
+              const [ blogsFrame ] = frames.splice(index, 1);
+
+              frames.push(blogsFrame);
+            }
+
+            return store;
+          }
+        );
+      },
+
+      openMessagesFrame () {
+        this.StoreSet(
+          'FRAMES',
+          store => {
+            const { frames, rootElement } = store;
+
+            const index = frames.findIndex(one => one.title === '留言板');
+
+            if (index < 0) {
+              frames.push({
+                height: rootElement.offsetHeight,
+                slot: 'messages',
+                title: '留言板',
                 left: 0,
                 top: rootElement.offsetTop,
                 width: 320,
@@ -880,7 +1016,7 @@
             return store;
           }
         );
-      }
+      },
     };
   </script>
 </page-zone>
