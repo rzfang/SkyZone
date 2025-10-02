@@ -65,7 +65,6 @@
   </style>
   <script>
     import icon from './icon.riot';
-    import store from 'riot-4-fun/SRC/Store.riot';
 
     export default {
       components: { icon },
@@ -122,7 +121,8 @@
             }
 
             return store;
-        });
+          }
+        );
       },
 
       move (event) {
@@ -138,7 +138,7 @@
         });
       },
 
-      toggleMove (event) {
+      toggleMove () {
         if (!this.state.isMoving) {
           this.root.parentElement.addEventListener('mousemove', this.move);
         } else {

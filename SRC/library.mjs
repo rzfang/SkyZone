@@ -27,8 +27,6 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
 const MI = markdownIt();
 
-let Cnt = 0; // a count for any situation to create an unique thing.
-
 /* extend original callback function to be packed.
   @ original callback function.
   @ extra action function.
@@ -139,7 +137,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 
     if (!St.mtime || Hdr.mtime > St.mtime) { return FileWrite(); }
   }
-  catch (Err) {
+  catch (_) {
     return FileWrite();
   }
 

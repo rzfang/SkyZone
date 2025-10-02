@@ -38,7 +38,7 @@
       state: {
         IsFmShwd: false, // is form showed.
         IsSndng: false, // is sending message.
-        NmMl: [ '', '' ]
+        NmMl: [ '', '' ],
       },
 
       onBeforeMount (props, state) {
@@ -49,11 +49,11 @@
         if (Is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
       },
 
-      onMounted (props, state) {
+      onMounted () {
         this.InputFocus();
       },
 
-      onUpdated (props, state) {
+      onUpdated () {
         this.InputFocus();
       },
 
@@ -67,7 +67,7 @@
         this.$(Slctr).focus();
       },
 
-      FormToggle (Evt) {
+      FormToggle () {
         this.update({ IsFmShwd: !this.state.IsFmShwd });
       },
 
@@ -105,14 +105,14 @@
         return true;
       },
 
-      ReplyLeave (Evt) {
+      ReplyLeave () {
         if (this.state.IsSndng) { return alert(Z.Wording.Working); }
 
-        const FmDOMs = this.$$('form input, form textarea'), // form DOMs.
-              Nm = FmDOMs[0].value,
-              Ml = FmDOMs[1].value,
-              Msg = FmDOMs[2].value,
-              IsRmbd = FmDOMs[3].checked; // is remebered.
+        const FmDOMs = this.$$('form input, form textarea'); // form DOMs.
+        const Nm = FmDOMs[0].value;
+        const Ml = FmDOMs[1].value;
+        const Msg = FmDOMs[2].value;
+        const IsRmbd = FmDOMs[3].checked; // is remebered.
 
         if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
 
@@ -153,10 +153,10 @@
 
             return Sto;
           },
-          { MsgId: this.props.messageId, MsgIdx: this.props.messageIndex });
-      }
-
-    }
+          { MsgId: this.props.messageId, MsgIdx: this.props.messageIndex }
+        );
+      },
+    };
   </script>
 </replies>
 
@@ -194,7 +194,7 @@
 
       state: {
         HsAlLdd: false ,// has all loaded.
-        IsFmShwd: false // is form showed.
+        IsFmShwd: false, // is form showed.
       },
 
       MessageLeave (Nm = '', Ml = '', Msg = '') {
@@ -225,11 +225,11 @@
           });
       },
 
-      FormToggle (Evt) {
+      FormToggle () {
         this.update({ IsFmShwd: !this.state.IsFmShwd });
       },
 
-      MessagesLoad (Evt) {
+      MessagesLoad () {
         const { HsAlLdd } = this.state;
 
         if (HsAlLdd) { return; }
@@ -253,11 +253,14 @@
       },
 
       RepliesToggle (Evt) {
-        const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10),
-              Msg = this.props.list[MsgIdx],
-              { ID: MsgId, IsRplsLstd = false } = Msg, // is replies listed.
-              StoReplies = this.StoreGet('REPLIES') || null,
-              Rpls = StoReplies && StoReplies[MsgId] || null;
+        const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10);
+        const StoReplies = this.StoreGet('REPLIES') || null;
+
+        const Msg = this.props.list[MsgIdx];
+
+        const { ID: MsgId, IsRplsLstd = false } = Msg; // is replies listed.
+
+        const Rpls = StoReplies && StoReplies[MsgId] || null;
 
         if (IsRplsLstd) {
           Msg.IsRplsLstd = false;
@@ -305,8 +308,9 @@
 
             return Sto;
           },
-          { MsgId, MsgIdx });
-      }
+          { MsgId, MsgIdx }
+        );
+      },
     }
   </script>
 </messages>

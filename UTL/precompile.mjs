@@ -32,12 +32,12 @@ JsCompress(
     SrcPth + 'include.js',
     SrcPth + 'wording.js',
   ],
-  RscPth + 'api1.min.js'
+  RscPth + 'api1.min.js',
 );
 JsCompress(
   [
     SrcPth + 'include.js',
     SrcPth + 'wording.js',
   ],
-  RscPth + 'api2.min.js'
+  RscPth + 'api2.min.js',
 );

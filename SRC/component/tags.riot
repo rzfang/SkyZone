@@ -5,9 +5,9 @@
     <br/>
   </template>
   <ul if={props.tags.length}>
-    <li each={Tg in props.tags}>
-      <span if={Tg.IsPckd}>{Tg.Nm}</span>
-      <a if={!Tg.IsPckd} href='/blogs?t={Tg.ID}'>{Tg.Nm}</a>
+    <li each={one in props.tags}>
+      <span if={one.IsPckd}>{one.Nm}</span>
+      <a if={!one.IsPckd} href='/blogs?t={one.ID}'>{one.Nm}</a>
     </li>
   </ul>
   <style>
@@ -24,18 +24,18 @@
       components: { icon },
 
       state: {
-        HsPckdId: false
+        HsPckdId: false,
       },
 
       onBeforeMount (props, state) {
-        props.tags.find(Tg => {
-          if (Tg.IsPckd) {
+        props.tags.find(one => {
+          if (one.IsPckd) {
             this.state.HsPckdId = true;
 
             return true;
           }
         });
-      }
-    }
+      },
+    };
   </script>
 </tags>

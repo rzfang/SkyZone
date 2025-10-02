@@ -10,7 +10,7 @@
     "markdown-it": "^12.0.0",
     "nanoid": "^5.1.6",
     "riot": "^9.0.0",
-    "riot-4-fun": "^0.2.10",
+    "riot-4-fun": "^0.2.13",
     "rzjs": "github:rzfang/Js",
     "tar-stream": "^2.2.0"
   },
@@ -26,7 +26,7 @@
     "pre-commit": "^1.2.2"
   },
   "scripts": {
-    "dev": "nodemon --experimental-json-modules -d 3 -e js,mjs,css,html,riot -w SRC/ ./skyzone.mjs",
+    "dev": "nodemon --experimental-json-modules -d 3 -e js,css,html,riot -w SRC/ ./skyzone.mjs",
     "lint": "eslint",
     "start": "node --experimental-json-modules skyzone.mjs",
     "start:pm2": "pm2 start --name skyzone npm -- run start",

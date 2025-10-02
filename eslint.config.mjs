@@ -3,10 +3,12 @@ import globals from 'globals';
 import js from '@eslint/js';
 import json from '@eslint/json';
 import markdown from '@eslint/markdown';
+import r4fConfig from 'riot-4-fun/eslint/config.mjs';
 import stylistic from '@stylistic/eslint-plugin'
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
+  r4fConfig,
   globalIgnores ([ '**/*.riot.*.mjs', 'package-lock.json' ]),
   {
     files: [ '**/*.{js,mjs,cjs}' ],
@@ -31,6 +33,9 @@ export default defineConfig([
     files: [ '**/*.css' ],
     language: 'css/css',
     plugins: { css },
+    // rules: {
+    //   'css/use-baseline': 'off',
+    // },
   },
   {
     extends: [ 'js/recommended' ],
@@ -45,7 +50,7 @@ export default defineConfig([
       '@stylistic/quote-props': [ 'error', 'as-needed' ],
       '@stylistic/quotes': [ 'error', 'single', { avoidEscape: true, allowTemplateLiterals: 'avoidEscape' } ],
       'no-console': [ 'warn' ],
-      'no-unused-vars': [ 'warn' ],
+      'no-unused-vars': [ 'warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' } ],
       'prefer-const': [ 'error' ],
     },
   },

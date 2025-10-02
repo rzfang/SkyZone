@@ -14,26 +14,27 @@
 
       state: {
         HsAlMsgsLdd: false, // has all messages loaded.
-        Msgs: []
+        Msgs: [],
       },
 
-      MessagesStoreListen (Sto, PrmsToTsk) {
+      MessagesStoreListen (Sto) {
         this.update({ Msgs: Sto, HsAlMsgsLdd: Sto.length < 5 });
       },
 
       RepliesStoreListen (Sto, PrmsToTsk) {
         if (!PrmsToTsk) { return; }
 
-        const { MsgId, MsgIdx } = PrmsToTsk,
-              Msg = this.state.Msgs[MsgIdx],
-              Rpls = Sto[MsgId];
+        const { MsgId, MsgIdx } = PrmsToTsk;
+
+        const Msg = this.state.Msgs[MsgIdx];
+        const Rpls = Sto[MsgId];
 
         Msg.ChnCnt = Rpls.length;
         Msg.IsRplsLstd = true;
         Msg.Rpls = Rpls;
 
         this.update({ Msgs: this.state.Msgs });
-      }
+      },
     }
   </script>
 </page-messages>
