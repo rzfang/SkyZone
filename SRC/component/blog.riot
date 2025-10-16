@@ -18,9 +18,9 @@
   </style>
   <script>
     export default {
-      onMounted (props, state) {
+      onMounted (props) {
         this.$('pre').innerHTML = props.blog.Info;
-      }
+      },
     }
   </script>
 </markdown>
@@ -44,7 +44,7 @@
     import tags from './tags.riot';
 
     export default {
-      components: { icon, shareBox, tags, text, markdown }
-    }
+      components: { icon, shareBox, tags, text, markdown },
+    };
   </script>
 </blog>

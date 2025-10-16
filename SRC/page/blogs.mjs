@@ -24,7 +24,7 @@ export const BlogsPage = (Rqst, Optn, Then) => {
           });
         }
 
-        Rqst.R4FMI.StoreSet('TAGS', () => Tgs);
+        Rqst.r4fMixinInstance.StoreSet('TAGS', () => Tgs);
         Resolve(0);
       });
   });
@@ -34,7 +34,7 @@ export const BlogsPage = (Rqst, Optn, Then) => {
       Rqst,
       { Lmt: 5, TgIDA: PckdIds },
       (Idx, Msg, Blgs) => {
-        Rqst.R4FMI.StoreSet('BLOGS', () => Blgs);
+        Rqst.r4fMixinInstance.StoreSet('BLOGS', () => Blgs);
         Resolve(0);
       });
   });

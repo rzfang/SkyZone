@@ -14,7 +14,7 @@ export const MsgsPage = (Rqst, Optn, Then) => {
         return;
       }
 
-      Rqst.R4FMI.StoreSet('MESSAGES', () => MsgLst);
+      Rqst.r4fMixinInstance.StoreSet('MESSAGES', () => MsgLst);
       Then(0);
     });
 };

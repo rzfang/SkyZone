@@ -1,9 +1,10 @@
 <modules>
   <script>
     import store from 'riot-4-fun/SRC/Store.riot';
+    import { Is } from 'rzjs/Is.js';
 
     import tabBox from '../component/tab-box.riot';
-    import { Is } from '../../node_modules/rzjs/Is.js';
+    import { dateToString } from '../helper.mjs';
   </script>
 </modules>
 
@@ -45,8 +46,9 @@
             window.location.reload(true);
 
             return Sto;
-          });
-      }
+          }
+        );
+      },
     };
   </script>
 </login>
@@ -155,9 +157,10 @@
           null,
           {
             File: { Fl: Fl.files[0] },
-            Pgs: (Ldd, Ttl, Evt) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
-          });
-      }
+            Pgs: (Ldd, Ttl) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
+          }
+        );
+      },
     };
   </script>
 </blog-uploader>
@@ -170,23 +173,24 @@
   </style>
   <script>
     export default {
-      Publish (Evt) {
+      Publish () {
         this.ServiceCall(
           { Mthd: 'PATCH', Url: '/service/feed' },
           null,
           'ADMIN',
-          (Sto, Rslt) => {
-            if (Rslt.Index < 0) {
-              alert(Rslt.Message);
+          (store, result) => {
+            if (result.Index < 0) {
+              alert(result.Message);
 
-              return Sto;
+              return store;
             }
 
-            Sto.FdLstDt = Rslt.Extend.replace('T', ' ').replace('Z', '');
+            store.FdLstDt = result.Extend.replace('T', ' ').replace('Z', '');
 
-            return Sto;
-          });
-      }
+            return store;
+          }
+        );
+      },
     };
   </script>
 </feed>
@@ -203,7 +207,7 @@
   <script>
     export default {
       state: {
-        Pgs: []
+        Pgs: [],
       },
 
       onBeforeUpdate (props, state) {
@@ -218,9 +222,9 @@
         if (props.count === 0) { return; }
 
         const LstPg = Math.ceil(props.count / props.limit); // last page.
+        const Pgs = []; // pages.
         const Rng = 3; // range.
 
-        let Pgs = []; // pages.
         let i;
         let j;
 
@@ -917,7 +921,7 @@
         this.OnBrowser(() => {
           this.update({
             Md: window.markdownit(),
-            Cntnr: this.$('div>textarea~pre')
+            Cntnr: this.$('div>textarea~pre'),
           });
         });
       },
@@ -1395,7 +1399,7 @@
 
         const TgtDt = new Date((new Date()).getTime() - (TgtNbr * TgtScd * 1000)); // target date.
 
-        this.update({ TgtDt: DatetimeFormat(TgtDt) });
+        this.update({ TgtDt: dateToString(TgtDt, 'yyyy-mm-dd hh:ii:ss') });
       },
 
       Clean () {

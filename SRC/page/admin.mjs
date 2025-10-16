@@ -45,7 +45,7 @@ const AdminPage = (Rqst, Optn, Then) => {
   FeedLastDateGet((Cd, FdLstDt) => {
     if (Cd < 0) { return Then(-1, ''); }
 
-    Rqst.R4FMI.StoreSet(
+    Rqst.r4fMixinInstance.StoreSet(
       'ADMIN',
       () => { return { FdLstDt, IsLgd: IsLogged(Rqst) }; });
 

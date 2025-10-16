@@ -1,3 +1,9 @@
+<modules>
+  <script>
+    import { cookieParam, cookieSet, dateToString } from '../helper.mjs';
+  </script>
+</modules>
+
 <replies>
   <ul>
     <li each={Rpl in props.replies}>
@@ -42,7 +48,7 @@
       },
 
       onBeforeMount (props, state) {
-        const NmMl = CookieParam('NmMl'); // name & mail.
+        const NmMl = cookieParam('NmMl'); // name & mail.
 
         if (NmMl) { state.NmMl = NmMl.split(';'); }
 
@@ -112,14 +118,13 @@
         const Nm = FmDOMs[0].value;
         const Ml = FmDOMs[1].value;
         const Msg = FmDOMs[2].value;
-        const IsRmbd = FmDOMs[3].checked; // is remebered.
 
         if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
 
         if (this.$('input[type=checkbox]').checked) {
-          CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
+          cookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
         }
-        else { CookieSet('NmMl', '', -1); }
+        else { cookieSet('NmMl', '', -1); }
 
         this.update({ IsSndng: true });
         setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
@@ -147,7 +152,12 @@
               return null;
             }
 
-            Sto[this.props.messageId].push({ Nm, Msg, ID: Rst.Extend, Dt: DatetimeFormat(new Date()) });
+            Sto[this.props.messageId].push({
+              Nm,
+              Msg,
+              ID: Rst.Extend,
+              Dt: dateToString(new Date(), 'yyyy-mm-dd hh:ii:ss'),
+            });
 
             this.$('textarea').value = '';
 
@@ -215,7 +225,7 @@
               return Sto;
             }
 
-            const FmtDt = DatetimeFormat(new Date()); // formatted date time string.
+            const FmtDt = dateToString(new Date(), 'yyyy-mm-dd hh:ii:ss'); // formatted date time string.
 
             setTimeout(this.FormToggle, 2000);
 

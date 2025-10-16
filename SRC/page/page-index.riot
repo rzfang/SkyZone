@@ -134,7 +134,7 @@
         let KyBfr = keyBuffer + Evt.keyCode.toString(16);
         let MpL = 0;
 
-        for (let i in MpA) { MpL = Math.max(MpL, MpA[i].length); }
+        for (const i in MpA) { MpL = Math.max(MpL, MpA[i].length); }
 
         if (KyBfr.length > MpL) { KyBfr = KyBfr.substr(2); }
 

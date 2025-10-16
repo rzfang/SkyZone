@@ -17,16 +17,16 @@
     export default {
       state: {
         Src: '#',
-        Cls: ''
+        Cls: '',
       },
 
-      onMounted (props, state) {
+      onMounted () {
         if (!this.OnBrowser()) { return; }
 
         window.addEventListener('scroll', this.CheckAndLoad);
       },
 
-      CheckAndLoad (Evt) {
+      CheckAndLoad () {
         const {
           innerHeight: H = 0,
           scrollY: Y = 0 } = window;
@@ -37,7 +37,7 @@
             window.removeEventListener('scroll', this.CheckAndLoad);
           });
         }
-      }
+      },
     }
   </script>
 </late-img>
