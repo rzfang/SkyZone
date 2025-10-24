@@ -33,9 +33,9 @@ export default defineConfig([
     files: [ '**/*.css' ],
     language: 'css/css',
     plugins: { css },
-    // rules: {
-    //   'css/use-baseline': 'off',
-    // },
+    rules: {
+      'css/use-baseline': 'off',
+    },
   },
   {
     extends: [ 'js/recommended' ],

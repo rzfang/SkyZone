@@ -1,40 +1,40 @@
-import { Log } from 'rzjs';
+import log from 'rzjs/log.mjs';
 
 import { Blog } from '../library.mjs';
 
-export const BlogPage = (Rqst, Optn, Then) => {
+export const BlogPage = (request, option, next) => {
   const {
       query: { b: QryId = '' },
       params: { id: PrmId = '' },
-    } = Rqst || {},
+    } = request || {},
     Id = QryId || PrmId; // support both /[type]?b=[id] and /blog/[id].
 
   if (!Id) {
-    Log('no blog id.', 'error');
-    Then(-1);
+    log('no blog id.', 'error');
+    next(-1);
 
     return;
   }
 
   Blog.Read(
-    Rqst,
+    request,
     { Id },
     (Idx, Msg, Blg) => {
       if (Idx < 0) {
-        Log(`${Idx} - ${Msg}`, 'error');
+        log(`${Idx} - ${Msg}`, 'error');
 
-        return Then(-1);
+        return next(-1);
       }
 
-      Rqst.r4fMixinInstance.StoreSet('BLOG', () => Blg);
+      request.riotPlugin.StoreSet('BLOG', () => Blg);
 
       if (Blg.Ttl) {
-        Rqst.r4fMixinInstance.StoreSet(
+        request.riotPlugin.StoreSet(
           'PAGE',
           () => { return { title: '空域 - 網誌 - ' + Blg.Ttl }; });
       }
 
-      Then(0);
+      next(0);
     });
 };
 

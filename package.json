@@ -4,12 +4,10 @@
   "description": "Sky Zone",
   "main": "skyzone.mjs",
   "dependencies": {
-    "@riotjs/hydrate": "^9.0.0",
     "cookie": "^1.0.0",
     "get-folder-size": "^3.0.0",
     "markdown-it": "^12.0.0",
     "nanoid": "^5.1.6",
-    "riot": "^9.0.0",
     "riot-4-fun": "^0.2.13",
     "rzjs": "github:rzfang/Js",
     "tar-stream": "^2.2.0"
@@ -22,13 +20,13 @@
     "@stylistic/eslint-plugin": "^5.1.0",
     "eslint": "^9.30.1",
     "globals": "^16.3.0",
-    "nodemon": "^3.0.0",
     "pre-commit": "^1.2.2"
   },
   "scripts": {
-    "dev": "nodemon --experimental-json-modules -d 3 -e js,css,html,riot -w SRC/ ./skyzone.mjs",
+    "build": "r4f build",
+    "dev": "r4f dev",
     "lint": "eslint",
-    "start": "node --experimental-json-modules skyzone.mjs",
+    "start": "r4f start",
     "start:pm2": "pm2 start --name skyzone npm -- run start",
     "test": "test"
   },
@@ -37,8 +35,8 @@
     "url": "git+https://github.com/rzfang/SkyZone.git"
   },
   "keywords": [
-    "web",
-    "tool"
+    "blog",
+    "web"
   ],
   "author": "RZ Fang",
   "license": "ISC",

@@ -1,7 +1,7 @@
 <modules>
   <script>
     import store from 'riot-4-fun/SRC/Store.riot';
-    import { Is } from 'rzjs/Is.js';
+    import is from 'rzjs/is.mjs';
 
     import tabBox from '../component/tab-box.riot';
     import { dateToString } from '../helper.mjs';
@@ -28,7 +28,7 @@
       },
 
       Login (Evt) {
-        if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+        if (!is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
         const Pswd = this.$('input[type=password]').value;
 

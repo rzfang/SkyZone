@@ -24,7 +24,7 @@ const defaultPageRoute = { // default page route. here should handle 404.
   favicon: 'favicon.ico',
   feed: '/feed.xml',
   css: [ '/resource/style2.css' ],
-  js: [ '/wording.js' ],
+  js: [],
   body: {},
 };
 
@@ -32,7 +32,7 @@ const blogPageRoute = { // blog page route.
   ...defaultPageRoute,
   title: '空域 - 網誌',
   body: { component: './SRC/page/page-blog.riot', initialize: BlogPage },
-  js: [ '/markdown-it.min.js', '/wording.js' ],
+  js: [ '/markdown-it.min.js' ],
 };
 
 const config = { // Riot HTTP config.
@@ -42,7 +42,7 @@ const config = { // Riot HTTP config.
     '/admin': {
       ...defaultPageRoute,
       title: '空域 - 管理員',
-      js: [ '/markdown-it.min.js', '/wording.js' ],
+      js: [ '/markdown-it.min.js' ],
       body: { component: './SRC/page/page-admin.riot', initialize: AdminPage }},
 
     '/about': {
@@ -167,11 +167,6 @@ const config = { // Riot HTTP config.
       location: './node_modules/markdown-it/dist',
       nameOnly: true,
     },
-    {
-      path: /Is\.js$/,
-      location: './node_modules/rzjs',
-      nameOnly: true,
-    },
 
     // ===
 
@@ -182,11 +177,6 @@ const config = { // Riot HTTP config.
     },
     {
       path: /base\.css$/,
-      location: './SRC',
-      nameOnly: true,
-    },
-    {
-      path: /wording\.js$/,
       location: './SRC',
       nameOnly: true,
     },

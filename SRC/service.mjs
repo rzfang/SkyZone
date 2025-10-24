@@ -1,4 +1,4 @@
-import { Is } from 'rzjs';
+import is from 'rzjs/is.mjs';
 
 import { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } from './library.mjs';
 
@@ -7,7 +7,7 @@ import { Blog, Tag, Msg, Ssn, Systm, Wds, ArtCnr } from './library.mjs';
   < new callback function. */
 function PackedEnd (End) {
   return function (Cd, Msg, Ext) {
-    const Rst = { Index: Is.Number(Cd) ? Cd : 0, Message: Is.String(Msg) ? Msg : '' };
+    const Rst = { Index: is.Number(Cd) ? Cd : 0, Message: is.String(Msg) ? Msg : '' };
 
     if (Ext !== undefined) { Rst.Extend = Ext; }
 

@@ -1,21 +1,21 @@
-import { Log } from 'rzjs';
+import log from 'rzjs/log.mjs';
 
 import { Msg } from '../library.mjs';
 
-export const MsgsPage = (Rqst, Optn, Then) => {
+export const MsgsPage = (request, option, next) => {
   Msg.List(
-    Rqst,
+    request,
     { Lmt: 5 },
     (Idx, Msg, MsgLst) => {
       if (Idx < 0) {
-        Log(`${Idx} - ${Msg}`, 'error');
-        Then(-1);
+        log(`${Idx} - ${Msg}`, 'error');
+        next(-1);
 
         return;
       }
 
-      Rqst.r4fMixinInstance.StoreSet('MESSAGES', () => MsgLst);
-      Then(0);
+      request.riotPlugin.StoreSet('MESSAGES', () => MsgLst);
+      next(0);
     });
 };
 

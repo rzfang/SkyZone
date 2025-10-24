@@ -1,18 +1,18 @@
-import { Log } from 'rzjs';
+import log from 'rzjs/log.mjs';
 
 import { Blog, Tag } from '../library.mjs';
 
-export const BlogsPage = (Rqst, Optn, Then) => {
-  const { t: TgId } = Rqst.query || {},
+export const BlogsPage = (request, option, next) => {
+  const { t: TgId } = request.query || {},
     PckdIds = [ TgId ]; // picked ids.
 
   const TagList = new Promise((Resolve, Reject) => {
     Tag.List(
-      Rqst,
+      request,
       {},
       (Idx, Msg, Tgs) => {
         if (Idx < 0) {
-          Log(`${Idx} - ${Msg}`, 'error');
+          log(`${Idx} - ${Msg}`, 'error');
           Reject(-1);
 
           return;
@@ -24,22 +24,22 @@ export const BlogsPage = (Rqst, Optn, Then) => {
           });
         }
 
-        Rqst.r4fMixinInstance.StoreSet('TAGS', () => Tgs);
+        request.riotPlugin.StoreSet('TAGS', () => Tgs);
         Resolve(0);
       });
   });
 
   const BlogList = new Promise(Resolve => {
     Blog.List(
-      Rqst,
+      request,
       { Lmt: 5, TgIDA: PckdIds },
       (Idx, Msg, Blgs) => {
-        Rqst.r4fMixinInstance.StoreSet('BLOGS', () => Blgs);
+        request.riotPlugin.StoreSet('BLOGS', () => Blgs);
         Resolve(0);
       });
   });
 
-  Promise.all([ TagList, BlogList ]).then(() => Then(0));
+  Promise.all([ TagList, BlogList ]).then(() => next(0));
 };
 
 export default BlogsPage;

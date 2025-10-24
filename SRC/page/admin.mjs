@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Cache as Cch, Log } from 'rzjs';
+import { cache, log } from 'rzjs';
 import { fileURLToPath } from 'url';
 
 import { Ssn } from '../library.mjs';
@@ -9,18 +9,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const { IsLogged } = Ssn;
 
-function FeedLastDateGet (Then) {
+function FeedLastDateGet (next) {
   const CchKy = 'FdLstDt';
-  const FdLstDt = Cch.Get(CchKy);
+  const FdLstDt = cache.Get(CchKy);
 
-  if (FdLstDt) { return Then(0, FdLstDt); }
+  if (FdLstDt) { return next(0, FdLstDt); }
 
   fs.stat(
     __dirname + '/../../DAT/feed.xml',
     (Err, St) => {
       if (Err) {
-        Log(Err);
-        Then(-1, Err);
+        log(Err);
+        next(-1, Err);
 
         return;
       }
@@ -36,20 +36,20 @@ function FeedLastDateGet (Then) {
 
       Dt = `${Y}-${M}-${D} ${H}:${m}:${S}`;
 
-      Cch.Set(CchKy, Dt, 60 * 60);
-      Then(0, Dt);
+      cache.Set(CchKy, Dt, 60 * 60);
+      next(0, Dt);
     });
 }
 
-const AdminPage = (Rqst, Optn, Then) => {
+const AdminPage = (request, option, next) => {
   FeedLastDateGet((Cd, FdLstDt) => {
-    if (Cd < 0) { return Then(-1, ''); }
+    if (Cd < 0) { return next(-1, ''); }
 
-    Rqst.r4fMixinInstance.StoreSet(
+    request.riotPlugin.StoreSet(
       'ADMIN',
-      () => { return { FdLstDt, IsLgd: IsLogged(Rqst) }; });
+      () => { return { FdLstDt, IsLgd: IsLogged(request) }; });
 
-    Then(0, {});
+    next(0, {});
   })
 };
 
