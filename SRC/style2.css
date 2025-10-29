@@ -1,0 +1,45 @@
+:root {
+  --color-white: #f8f8f8;
+}
+
+body {
+  padding: 0;
+  font-family: monospace;
+  color: var(--color-gray-2);
+  background-color: var(--color-white);
+}
+
+a,
+button,
+input,
+option,
+select {
+  font-size: 1rem;
+}
+
+a {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+a,
+div,
+pre ,
+span,
+td,
+th {
+  border-width: 0;
+  border-style: solid;
+}
+
+h1 {
+  margin: 20px 0;
+  font-size: 2rem;
+  font-weight: inherit;
+}
+
+ol,
+ul {
+  margin: 5px 0px 10px 0px;
+}

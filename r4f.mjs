@@ -13,7 +13,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CCH_PTH = path.resolve(__dirname, Cnst.CCH_PTH),
-  STTC_PTH = path.resolve(__dirname, Cnst.STTC_PTH),
   TMP_PTH = path.resolve(__dirname, Cnst.TMP_PTH);
 
 const defaultPageRoute = { // default page route. here should handle 404.
@@ -23,7 +22,7 @@ const defaultPageRoute = { // default page route. here should handle 404.
   author: 'RZ Fang',
   favicon: 'favicon.ico',
   feed: '/feed.xml',
-  css: [ '/resource/style2.css' ],
+  css: [ '/css/base.css', '/css/style1.css', '/css/style2.css' ],
   js: [],
   body: {},
 };
@@ -66,7 +65,7 @@ const config = { // Riot HTTP config.
     },
     '/zone': {
       ...defaultPageRoute,
-      css: [ '/resource/base.css' ],
+      css: [ '/css/base.css' ],
       body: { component: './SRC/page/page-zone.riot' },
     },
     '/': {
@@ -155,11 +154,6 @@ const config = { // Riot HTTP config.
     },
   },
   route: [
-    { // google search console validate.
-      path: /\/google301903d8518925d5.html$/,
-      location: './WEB/www',
-    },
-
     // === node_modules ===
 
     {
@@ -171,18 +165,14 @@ const config = { // Riot HTTP config.
     // ===
 
     { // SEO files.
-      path: /\/(favicon\.ico|robots\.txt)/,
-      location: './WEB/www',
+      path: /\/(favicon\.ico|robots\.txt)$/,
+      location: './WEB',
       nameOnly: true,
     },
     {
-      path: /base\.css$/,
+      path: /css\/.+\.css$/,
       location: './SRC',
       nameOnly: true,
-    },
-    { // resource: Js, CSS.
-      path: /\.(css|js)$/,
-      location: STTC_PTH,
     },
     {
       path: /^\/feed.xml$/,
@@ -198,7 +188,7 @@ const config = { // Riot HTTP config.
     },
     { // static image resource.
       path: /^\/image\/.+/,
-      location: STTC_PTH,
+      location: './WEB',
     },
   ],
 };
