@@ -1,0 +1,3 @@
+- all file coding style to be camel case.
+- helper.common.mjs & helper.server.mjs & helper.client.mjs
+- riot :scope to be :host.
