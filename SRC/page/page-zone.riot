@@ -1,5 +1,7 @@
 <modules>
   <script>
+    import log from 'rzjs/log.mjs';
+
     import commentForm from '../component/comment-form.riot';
     import datetime from '../component/datetime.riot';
     import deskFrame from '../component/desk-frame.riot';
@@ -62,7 +64,7 @@
         } = await fetch('/service/artcorner').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
 
         if (Index < 0) {
-          return console.warn(Message);
+          return log(Message, 'warn');
         }
 
         const { ImgUrl, Ttl } = Extend;
@@ -100,7 +102,7 @@
         } = await fetch('service/words').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
 
         if (Index < 0) {
-          return console.warn(Message);
+          return log(Message, 'warn');
         }
 
         const Cvs = this.$('canvas');

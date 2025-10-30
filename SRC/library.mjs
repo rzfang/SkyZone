@@ -137,7 +137,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 
     if (!St.mtime || Hdr.mtime > St.mtime) { return FileWrite(); }
   }
-  catch (_) {
+  catch (error) {
     return FileWrite();
   }
 

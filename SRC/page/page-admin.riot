@@ -4,6 +4,7 @@
     import is from 'rzjs/is.mjs';
 
     import tabBox from '../component/tab-box.riot';
+    import wording from '../wording.mjs';
     import { dateToString } from '../helper.mjs';
   </script>
 </modules>
@@ -32,7 +33,7 @@
 
         const Pswd = this.$('input[type=password]').value;
 
-        if (!Pswd) { return alert(Z.Wording.PasswordNeed); }
+        if (!Pswd) { return alert(wording.RM.PasswordNeed); }
 
         this.ServiceCall(
           { Mthd: 'POST', Url: '/service/session/login'},
@@ -41,7 +42,7 @@
           (Sto, Rslt) => {
             const { Index: Idx, Message: Msg } = Rslt || {};
 
-            if (Idx < 0) { return alert(Msg || Z.Wording.LoadDataFail); }
+            if (Idx < 0) { return alert(Msg || wording.RM.LoadDataFail); }
 
             window.location.reload(true);
 
@@ -218,7 +219,7 @@
         this.PageItemsPrepare(props, state);
       },
 
-      PageItemsPrepare (props, state) {
+      PageItemsPrepare (props, _state) {
         if (props.count === 0) { return; }
 
         const LstPg = Math.ceil(props.count / props.limit); // last page.
@@ -393,7 +394,7 @@
         Pg: 1,
       },
 
-      onBeforeMount (_, state) {
+      onBeforeMount (_props, _state) {
         this.StoreListen(
           'BLOG_COMMENTS',
           (Sto, TskPrms) => {
@@ -1470,7 +1471,7 @@
         IsLgd: false,
       },
 
-      onBeforeMount (_, state) {
+      onBeforeMount (_props, _state) {
         const { FdLstDt, IsLgd } = this.StoreGet('ADMIN'); // feed last date, is logged.
 
         this.state.IsLgd = IsLgd;

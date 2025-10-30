@@ -98,7 +98,12 @@
           state.height = props.height;
         }
 
-        state.style = `left: ${this.state.left}px; top: ${this.state.top}px; width: ${this.state.width}px; height: ${this.state.height}px;`;
+        state.style = `
+          left: ${this.state.left}px;
+          top: ${this.state.top}px;
+          width: ${this.state.width}px;
+          height: ${this.state.height}px;
+        `;
       },
 
       onBeforeUnmount () {
@@ -188,7 +193,12 @@
       toggleFull () {
         const style = !this.state.isFull ?
           '' :
-          `left: ${this.state.left}px; top: ${this.state.top}px; width: ${this.state.width}px; height: ${this.state.height}px;`;
+          `
+            left: ${this.state.left}px;
+            top: ${this.state.top}px;
+            width: ${this.state.width}px;
+            height: ${this.state.height}px;
+          `;
 
         const classes = !this.state.isFull ?
           (this.state.classes + ' full') :

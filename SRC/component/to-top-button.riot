@@ -14,6 +14,8 @@
     }
   </style>
   <script>
+    import log from 'rzjs/log.mjs';
+
     import icon from './icon.riot';
 
     export default {
@@ -25,7 +27,7 @@
 
       onBeforeMount (props, state) {
         if (!props.target && !props.targetSelector) {
-          console.error('to-top-button component needs a target element, or a target selector.');
+          log('to-top-button component needs a target element, or a target selector.', 'warn');
 
           return;
         }

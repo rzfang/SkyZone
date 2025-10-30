@@ -37,6 +37,8 @@
     }
   </style>
   <script>
+    import log from 'rzjs/log.mjs';
+
     import { PageTurn, RandomRange } from './../helper.mjs';
 
     /* class Animation.
@@ -47,7 +49,7 @@
       'BgDrwF' = Background Draw Function. optional. */
     function Animation (DO, ItmDrwFA, BgDrwF) {
       if (typeof DO !== 'object' || DO === null || typeof ItmDrwFA !== 'object' || typeof ItmDrwFA.length !== 'number') {
-        console.log('Animation is not going to run.');
+        log('Animation is not going to run.');
 
         return;
       }

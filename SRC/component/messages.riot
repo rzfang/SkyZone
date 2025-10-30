@@ -40,6 +40,8 @@
   <script>
     import is from 'rzjs/is.mjs';
 
+    import wording from '../wording';
+
     export default {
       state: {
         IsFmShwd: false, // is form showed.
@@ -112,7 +114,7 @@
       },
 
       ReplyLeave () {
-        if (this.state.IsSndng) { return alert(Z.Wording.Working); }
+        if (this.state.IsSndng) { return alert(wording.RM.Working); }
 
         const FmDOMs = this.$$('form input, form textarea'); // form DOMs.
         const Nm = FmDOMs[0].value;
@@ -135,7 +137,7 @@
           'REPLIES',
           (Sto, Rst) => {
             if (!Rst) {
-              alert(Z.Wording.LoadDataFail);
+              alert(wording.RM.LoadDataFail);
 
               return null;
             }

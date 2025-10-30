@@ -27,7 +27,7 @@
         HsPckdId: false,
       },
 
-      onBeforeMount (props, state) {
+      onBeforeMount (props, _state) {
         props.tags.find(one => {
           if (one.IsPckd) {
             this.state.HsPckdId = true;

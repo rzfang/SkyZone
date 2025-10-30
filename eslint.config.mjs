@@ -34,6 +34,7 @@ export default defineConfig([
     language: 'css/css',
     plugins: { css },
     rules: {
+      'css/no-invalid-properties': [ 'warn' ],
       'css/use-baseline': 'off',
     },
   },
