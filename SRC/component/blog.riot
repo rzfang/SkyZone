@@ -1,18 +1,29 @@
 <text>
   <pre>{props.blog.Info}</pre>
   <style>
-    :host { display: block; }
-    :host>pre { line-height: 2rem; }
+    :host {
+      display: block;
+
+      >pre {
+        line-height: 2rem;
+      }
+    }
   </style>
 </text>
 
 <markdown>
   <pre>{props.blog.Info1}</pre>
   <style>
-    :host>pre { text-align: center;
-      p { text-align: left; }
+    :host>pre {
+      text-align: center;
+
+      p {
+        text-align: left;
+      }
+
       img {
-        max-width: 640px; width: 100%;
+        max-width: 640px;
+        width: 100%;
       }
     }
   </style>
@@ -34,9 +45,16 @@
   <div is={props.info.Tp} blog={props.info}/>
   <div is='share-box' url={props.info.Url}/>
   <style>
-    :host>h1,
-    :host>h1+div { margin: 0 0 10px 0; }
-    :host>div>icon { margin-right: 10px; }
+    :host {
+      >h1,
+      >h1+div {
+        margin: 0 0 10px 0;
+      }
+
+      >div>icon {
+        margin-right: 10px;
+      }
+    }
   </style>
   <script>
     import icon from './icon.riot';

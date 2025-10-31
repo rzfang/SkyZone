@@ -6,11 +6,16 @@
       to { opacity: 1; }
     }
 
-    :host>img { opacity: 0; }
-    :host>img.show {
-      animation-name: LateImgShow;
-      animation-fill-mode: forwards;
-      animation-duration: 1s;
+    :host {
+      >img {
+        opacity: 0;
+
+        &.show {
+          animation-name: LateImgShow;
+          animation-fill-mode: forwards;
+          animation-duration: 1s;
+        }
+      }
     }
   </style>
   <script>

@@ -20,8 +20,15 @@
     </li>
   </ul>
   <style>
-    :host>ul { list-style-type: none; padding: 0; }
-    :host>ul>li { display: inline-block; margin-right: 10px; }
+    :host>ul {
+      list-style-type: none;
+      padding: 0;
+
+      >li {
+        display: inline-block;
+        margin-right: 10px;
+      }
+    }
   </style>
   <script>
     import icon from './icon.riot';

@@ -11,11 +11,34 @@
     </li>
   </ul>
   <style>
-    :host>icon { margin-right: 10px; }
-    :host>ul { display: inline-block; margin: 0; padding: 0; }
-    :host>ul>li { display: inline-block; }
-    :host>ul>li>a { display: inline-block; margin-right: 5px; }
-    :host>ul>li>span { display: inline-block; margin-right: 5px; padding: 0 3px; border: 1px solid; border-radius: 3px; }
+    :host {
+      >icon {
+        margin-right: 10px;
+      }
+
+      >ul {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+
+        >li {
+          display: inline-block;
+
+          >a {
+            display: inline-block;
+            margin-right: 5px;
+          }
+
+          >span {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 0 3px;
+            border: 1px solid;
+            border-radius: 3px;
+          }
+        }
+      }
+    }
   </style>
   <script>
     import icon from './icon.riot';

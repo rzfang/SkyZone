@@ -25,17 +25,52 @@
     </div>
   </form>
   <style>
-    :host { padding-left: 20px; }
-    :host>ul { padding: 0; list-style: none; }
-    :host>ul>li { margin-bottom: 20px; }
-    :host>ul>li>div { color: #808080; }
-    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
-    :host>form>input,
-    :host>form>textarea { width: 100%; box-sizing: border-box; }
-    :host>form>div { display: flex; }
-    :host>form>div>label { flex-grow: 1; }
-    :host>form>div>label>input { vertical-align: middle; }
-    :host>form>div>div>a { display: inline-block; margin-left: 5px; }
+    :host {
+      padding-left: 20px;
+
+      >ul {
+        padding: 0;
+        list-style: none;
+
+        >li {
+          margin-bottom: 20px;
+
+          >div {
+            color: var(--color-gray-8);
+          }
+
+          >pre {
+            margin: 5px 0;
+            line-height: 1.5;
+          }
+        }
+      }
+
+      >form {
+        >input,
+        >textarea {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        >div {
+          display: flex;
+
+          >label {
+            flex-grow: 1;
+
+            >input {
+              vertical-align: middle;
+            }
+          }
+
+          >div>a {
+            display: inline-block;
+            margin-left: 5px;
+          }
+        }
+      }
+    }
   </style>
   <script>
     import is from 'rzjs/is.mjs';
@@ -192,11 +227,29 @@
     <a href='javascript:void(0);' onclick={MessagesLoad}>載入更多</a>
   </div>
   <style>
-    :host>ul { padding: 0; list-style: none; }
-    :host>ul>li { margin-bottom: 30px; }
-    :host>ul>li>div:first-of-type { color: #808080; }
-    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
-    :host>div { text-align: center; }
+    :host {
+      >ul {
+        padding: 0;
+        list-style: none;
+
+        >li {
+          margin-bottom: 30px;
+
+          >div:first-of-type {
+            color: #808080;
+          }
+
+          >pre {
+            margin: 5px 0;
+            line-height: 1.5;
+          }
+        }
+      }
+
+      >div {
+        text-align: center;
+      }
+    }
   </style>
   <script>
     import commentForm from './comment-form.riot';
