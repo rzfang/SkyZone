@@ -281,11 +281,28 @@
       </div>
     </li>
   </ul>
-  <style scoped>
-    :scope>ul { padding-left: 20px; }
-    :scope>ul>li { display: flex; margin: 5px; border-top: 1px solid #c0c0c0; padding: 5px; }
-    :scope>ul>li>div:first-child { flex: 0 0 200px; }
-    :scope>ul>li>pre { flex: 1 0 0; margin: 0; }
+  <style>
+    :host {
+      >ul {
+        padding-left: 20px;
+
+        >li {
+          display: flex;
+          margin: 5px;
+          border-top: 1px solid #c0c0c0;
+          padding: 5px;
+
+          >div:first-child {
+            flex: 0 0 200px;
+          }
+
+          >pre {
+            flex: 1 0 0;
+            margin: 0;
+          }
+        }
+      }
+    }
   </style>
   <script>
     export default {
