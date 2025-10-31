@@ -1,6 +1,6 @@
 <modules>
   <script>
-    import store from 'riot-4-fun/SRC/Store.riot';
+    import store from 'riot-4-fun/core/store.riot';
     import is from 'rzjs/is.mjs';
 
     import tabBox from '../component/tab-box.riot';
@@ -377,9 +377,9 @@
     </li>
   </ul>
   <list-index if={props.published} count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
-  <store if={props.published} store='BLOGS' listener={StoreBlogsListen}/>
-  <store if={!props.published} store='BLOGS' listener={StoreNonBlogsListen}/>
-  <store store='TAGS' listener={StoreTagsListen}/>
+  <store if={props.published} name='BLOGS' listener={StoreBlogsListen}/>
+  <store if={!props.published} name='BLOGS' listener={StoreNonBlogsListen}/>
+  <store name='TAGS' listener={StoreTagsListen}/>
   <style>
     :host {
       >ul { margin: 0; padding: 0;
@@ -765,7 +765,7 @@
       <button onclick={TagDelete}>刪除</button>
     </li>
   </ul>
-  <store store='TAGS' listener={TagsStoreListen}/>
+  <store name='TAGS' listener={TagsStoreListen}/>
   <style>
     :host>ul { list-style-type: none; padding: 0; line-height: 1.5;
       >li {
@@ -1067,7 +1067,7 @@
       >div:last-child { flex: 1; }
     }
   </style>
-  <store store='MESSAGES' listener={MessagesStoreListen}/>
+  <store name='MESSAGES' listener={MessagesStoreListen}/>
   <script>
     export default {
       components: { store, listIndex },
@@ -1186,7 +1186,7 @@
     </li>
   </ul>
   <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
-  <store store='GOOD_WORDS' listener={GoodWordsStoreListen}/>
+  <store name='GOOD_WORDS' listener={GoodWordsStoreListen}/>
   <style>
     :host>ul { margin: 0; padding: 0;
       >li { display: flex; margin-bottom: 10px;
@@ -1368,7 +1368,7 @@
   <div>
     <button onclick={Logout}>登出</button>
   </div>
-  <store store='DATA_SIZE' listener={DateSizesStoreListen}/>
+  <store name='DATA_SIZE' listener={DateSizesStoreListen}/>
   <style>
     :host { display: flex;
       >div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px;

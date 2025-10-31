@@ -8,7 +8,7 @@
     import icon from '../component/icon.riot';
     import iconButton from '../component/icon-button.riot';
     import rawHtml from '../component/raw-html.riot';
-    import store from 'riot-4-fun/SRC/Store.riot';
+    import store from 'riot-4-fun/core/store.riot';
     import tabBox from '../component/tab-box.riot';
     import toTopButton from '../component/to-top-button.riot';
   </script>
@@ -900,7 +900,7 @@
       },
 
       onMounted () {
-        // To Do: riot-4-fun Store.riot should handle initial value.
+        // To Do: riot-4-fun/core/store.riot should handle initial value.
         this.StoreSet('FRAMES', () => ({
           frames: [],
           rootElement: this.$('main'),
