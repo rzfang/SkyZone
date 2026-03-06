@@ -50,29 +50,31 @@
     export default {
       state: {
         Idx: 0,
-        Tbs: []
+        Tbs: [],
       },
 
       onBeforeMount (props, state) {
         if (props.tabs.length > 10) { alert('tab-box can not handle >10 tabs.'); } // to do.
 
         const Idx = props.index || 0; // index, fallback idx.
-        let Tbs = props.tabs.map(tab => { return { Nm: tab, Pckd: false }; });
+        const Tbs = props.tabs.map(tab => { return { Nm: tab, Pckd: false }; });
 
         Tbs[Idx].Pckd = true;
-        this.state.Idx = Idx;
-        this.state.Tbs = Tbs;
+        state.Idx = Idx;
+        state.Tbs = Tbs;
       },
 
       Switch (Evt) {
-        let { Idx, Tbs } = this.state;
+        const Tbs = this.state.Tbs;
+
+        let Idx = this.state.Idx;
 
         Tbs[Idx].Pckd = false;
         Idx = Array.from(this.$$('ul.TbBx>li')).indexOf(Evt.target);
         Tbs[Idx].Pckd = true;
 
         this.update({ Idx, Tbs });
-      }
-    }
+      },
+    };
   </script>
 </tab-box>

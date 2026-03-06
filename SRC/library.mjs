@@ -5,12 +5,12 @@ import getFolderSize from 'get-folder-size'; // To do - implmenet to retire this
 import markdownIt from 'markdown-it';
 import path from 'path';
 import tarStream from 'tar-stream';
-import { Cache as Cch, Is, Log, SQLite } from 'rzjs';
+import { cache, is, log, sqlite } from 'rzjs';
 import { customAlphabet } from 'nanoid';
 import { fileURLToPath } from 'url';
 
 import Cnst from './constant.json.mjs';
-import Kwd from './keyword.json.mjs';
+import Kwd from './wording.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,8 +26,6 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
   FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
 const MI = markdownIt();
-
-let Cnt = 0; // a count for any situation to create an unique thing.
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -47,7 +45,7 @@ function PackedEnd (End, ExtrActn) {
 function MakeId (type = 13) {
   const typeCases = [ 13, 22, 32, 36, 64 ]; // type map.
 
-  if (!Is.Number(type) || !typeCases.indexOf(type) < 0) {
+  if (!is.Number(type) || !typeCases.indexOf(type) < 0) {
     type = 13;
   }
 
@@ -139,7 +137,7 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 
     if (!St.mtime || Hdr.mtime > St.mtime) { return FileWrite(); }
   }
-  catch (Err) {
+  catch (error) {
     return FileWrite();
   }
 
@@ -149,9 +147,9 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 export const Blog = {
   Tp: [ 'text', 'markdown' ],
   List: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -160,10 +158,10 @@ export const Blog = {
     const TgIds = []; // tag ids.
 
     if (Prm.TgIDA) {
-      if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
+      if (!is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
       for (let i = 0; i < Prm.TgIDA.length; i++) {
-        if (Is.UUID(Prm.TgIDA[i])) { TgIds.push(Prm.TgIDA[i]); }
+        if (is.UUID(Prm.TgIDA[i])) { TgIds.push(Prm.TgIDA[i]); }
       }
     }
 
@@ -181,7 +179,7 @@ export const Blog = {
 
       return Db.Query(SQL, TgIds)
         .then((Rst) => {
-          if (!Rst || !Is.Array(Rst)) { return PckEnd(-1, Kwd.RM.NoSuchData); }
+          if (!Rst || !is.Array(Rst)) { return PckEnd(-1, Kwd.RM.NoSuchData); }
 
           PckEnd(0, Kwd.RM.Done, Rst[0].Cnt);
         })
@@ -219,7 +217,7 @@ export const Blog = {
 
     Db.Query(SQL, QryPrm)
       .then(Rst => {
-        if (!Rst || !Is.Array(Rst)) { return PckEnd(-2, Kwd.RM.NoSuchData); }
+        if (!Rst || !is.Array(Rst)) { return PckEnd(-2, Kwd.RM.NoSuchData); }
 
         const Ids = [];
 
@@ -238,7 +236,7 @@ export const Blog = {
         return Db.Query(SQL, Ids);
       })
       .then((Rst) => {
-        if (!Rst || !Is.Array(Rst)) { return PckEnd(-2, Kwd.RM.NoSuchData); }
+        if (!Rst || !is.Array(Rst)) { return PckEnd(-2, Kwd.RM.NoSuchData); }
 
         for (let i = 0; i < Rst.length; i++) { // append tag info to each blog.
           const Rltn = Rst[i]; // tag, blog relation. Rltn
@@ -257,14 +255,14 @@ export const Blog = {
         PckEnd(0, Kwd.RM.Done, FnlRst);
       })
       .catch(Cd => {
-        Log(Cd);
+        log(Cd);
         PckEnd(Cd, Kwd.RM.DbCrash);
       });
   },
   AdminList: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -299,7 +297,7 @@ export const Blog = {
     Db.Query(SQL, [ Ofst, Lmt ])
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then((DbRst) => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         const Ids = [];
         let i = 0;
@@ -309,9 +307,9 @@ export const Blog = {
 
           // ==== error handle. ====
 
-          if (!Is.Number(One.CmtCnt)) { One.CmtCnt = 0; }
+          if (!is.Number(One.CmtCnt)) { One.CmtCnt = 0; }
 
-          if (!Is.String(One.Smry)) { One.Smry = ''; }
+          if (!is.String(One.Smry)) { One.Smry = ''; }
 
           One.Fl = XmlEscape(One.Fl, true); // once no html special char case, this can be removed.
           One.Tg = [];
@@ -333,7 +331,7 @@ export const Blog = {
         Db.Query(SQL, BlgIds)
           .catch(Cd => { PckEnd(-7, Kwd.RM.DbCrash, Cd); })
           .then((DbRst) => {
-            if (!DbRst || !Is.Array(DbRst) || !DbRst.length) { return PckEnd(2, Kwd.RM.Done, Blgs); }
+            if (!DbRst || !is.Array(DbRst) || !DbRst.length) { return PckEnd(2, Kwd.RM.Done, Blgs); }
 
             for (let i = 0; i < DbRst.length; i++) {
               for (let j = 0; j < Blgs.length; j++) {
@@ -351,7 +349,7 @@ export const Blog = {
   UnpublishedList: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -382,7 +380,7 @@ export const Blog = {
   Update: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -402,7 +400,7 @@ export const Blog = {
       Vls.push(Prm.Tp);
     }
 
-    if (Prm.Dt && Is.TimeStamp(Prm.Dt)) {
+    if (Prm.Dt && is.TimeStamp(Prm.Dt)) {
       Kys.push('datetime = ?');
       Vls.push(Prm.Dt);
     }
@@ -430,7 +428,7 @@ export const Blog = {
       .then(() => {
         if (!Prm.TgIDA) { return Promise.resolve(); }
 
-        if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
+        if (!is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
         Kys = [];
         Vls = [];
@@ -449,7 +447,7 @@ export const Blog = {
       .then(() => Db.Transaction('COMMIT'))
       .then(() => PckEnd(0, Kwd.RM.Done))
       .catch(Err => {
-        Log(Err, 'error');
+        log(Err, 'error');
         PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
@@ -473,16 +471,16 @@ export const Blog = {
   Create: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm || !Prm.Fl || !Is.String(Prm.Fl) || !Prm.Ttl || !Is.String(Prm.Ttl) || !Prm.Dt || !Is.TimeStamp(Prm.Dt) ||
+    if (!Prm || !Prm.Fl || !is.String(Prm.Fl) || !Prm.Ttl || !is.String(Prm.Ttl) || !Prm.Dt || !is.TimeStamp(Prm.Dt) ||
         !Prm.Tp || Blog.Tp.indexOf(Prm.Tp) < 0) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
-    if (!Prm.Pswd || !Is.String(Prm.Pswd)) { Prm.Pswd = ''; }
+    if (!Prm.Pswd || !is.String(Prm.Pswd)) { Prm.Pswd = ''; }
 
-    if (!Prm.Smry || !Is.String(Prm.Smry)) { Prm.Smry = ''; }
+    if (!Prm.Smry || !is.String(Prm.Smry)) { Prm.Smry = ''; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
 
@@ -496,7 +494,7 @@ export const Blog = {
       .then(() => {
         if (!Prm.TgIDA) { return Promise.resolve(); }
 
-        if (!Is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
+        if (!is.Array(Prm.TgIDA)) { Prm.TgIDA = [ Prm.TgIDA ]; }
 
         const Kys = [],
           Vls = [];
@@ -515,18 +513,18 @@ export const Blog = {
       .then(() => Db.Transaction('COMMIT'))
       .then(() => PckEnd(0, Kwd.RM.Done))
       .catch(Err => {
-        Log(Err, 'error');
+        log(Err, 'error');
         PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
   Delete: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm || !Prm.ID || !Is.UUID(Prm.ID)) {
+    if (!Prm || !Prm.ID || !is.UUID(Prm.ID)) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
 
@@ -538,16 +536,16 @@ export const Blog = {
       .then(() => Db.Transaction('COMMIT'))
       .then(() => PckEnd(0, Kwd.RM.Done))
       .catch(Err => {
-        Log(Err, 'error');
+        log(Err, 'error');
         PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
   CommentList: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    if (!Prm.ID || !Is.UUID(Prm.ID)) { return End(-1, Kwd.RM.StrangeValue); }
+    if (!Prm.ID || !is.UUID(Prm.ID)) { return End(-1, Kwd.RM.StrangeValue); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -577,16 +575,16 @@ export const Blog = {
       .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
   },
   CommentLeave: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Nm = Prm.Nm && Is.String(Prm.Nm) && Prm.Nm.trim() || '',
-      Cmt = Prm.Cmt && Is.String(Prm.Cmt) && Prm.Cmt.trim() || '';
+    const Nm = Prm.Nm && is.String(Prm.Nm) && Prm.Nm.trim() || '',
+      Cmt = Prm.Cmt && is.String(Prm.Cmt) && Prm.Cmt.trim() || '';
 
-    if (!Nm || !Prm.Ml || !Is.EMail(Prm.Ml) || !Cmt || !Prm.TgtID || !Is.UUID(Prm.TgtID)) {
+    if (!Nm || !Prm.Ml || !is.EMail(Prm.Ml) || !Cmt || !Prm.TgtID || !is.UUID(Prm.TgtID)) {
       return End(-1, Kwd.RM.StrangeValue);
     }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -608,11 +606,11 @@ export const Blog = {
   CommentDelete: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm || !Prm.ID || !Is.UUID(Prm.ID)) {
+    if (!Prm || !Prm.ID || !is.UUID(Prm.ID)) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
 
@@ -621,14 +619,14 @@ export const Blog = {
     Db.Query('DELETE FROM BlogComment WHERE id = ?;', [ Prm.ID ])
       .then(() => PckEnd(0, Kwd.RM.Done))
       .catch(Err => {
-        Log(Err, 'error');
+        log(Err, 'error');
         PckEnd(-4, Kwd.RM.DbCrash);
       });
   },
   FeedPublish: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -638,7 +636,7 @@ export const Blog = {
 
     Db.Query(SQL, [])
       .then(Rst => {
-        if (!Rst || !Is.Array(Rst)) { return PckEnd(-3, Kwd.RM.NoSuchData); }
+        if (!Rst || !is.Array(Rst)) { return PckEnd(-3, Kwd.RM.NoSuchData); }
 
         let XML = '';
 
@@ -685,11 +683,11 @@ export const Blog = {
       });
   },
   Read: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    if (!Is.String(Prm.Id)) { return End(-1, Kwd.RM.StrangeValue); }
+    if (!is.String(Prm.Id)) { return End(-1, Kwd.RM.StrangeValue); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -719,7 +717,7 @@ export const Blog = {
         return Db.Query(SQL, [ Prm.Id ]);
       })
       .then(Rst => {
-        if (!Rst || !Is.Array(Rst) || !Rst.length) { return Promise.reject({ Cd: -4, Msg: Kwd.RM.NoSuchData }); }
+        if (!Rst || !is.Array(Rst) || !Rst.length) { return Promise.reject({ Cd: -4, Msg: Kwd.RM.NoSuchData }); }
 
         const SQL = 'SELECT Tag.id AS ID, Tag.name AS Nm FROM Tag, TagLink ' +
               'WHERE Tag.id = TagLink.tag_id AND TagLink.link_id = ?;';
@@ -729,7 +727,7 @@ export const Blog = {
         return Db.Query(SQL, [ SqlRst.Id ]);
       })
       .then(Rslt => {
-        if (Rslt || Is.Array(Rslt) || Rslt.length) { SqlRst.Tgs = Rslt; }
+        if (Rslt || is.Array(Rslt) || Rslt.length) { SqlRst.Tgs = Rslt; }
 
         SqlRst.Url = '/blog/' + SqlRst.Id;
 
@@ -737,7 +735,7 @@ export const Blog = {
 
         switch (SqlRst.Tp) {
           case 'text':
-            Cch.FileLoad(
+            cache.FileLoad(
               `${BLG_PTH}/${SqlRst.Fl}`,
               (Cd, Str) => {
                 if (Cd < 0) { return PckEnd(1, Kwd.RM.SystemError); }
@@ -835,9 +833,9 @@ export const Blog = {
 
 export const Tag = {
   List: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -866,9 +864,9 @@ export const Tag = {
       .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
   },
   Add: (Rqst, Rspns, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -876,7 +874,7 @@ export const Tag = {
 
     if (!Ssn.IsLogged(Rqst, Rspns)) { return PckEnd(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm.Nm || !Is.String(Prm.Nm)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
+    if (!Prm.Nm || !is.String(Prm.Nm)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
 
     const Id = MakeId(),
       SQL = 'INSERT INTO Tag (id, name) VALUES (?, ?);';
@@ -890,9 +888,9 @@ export const Tag = {
       .catch(Cd => { PckEnd(Cd * 10 + -4, Kwd.RM.DbCrash); });
   },
   Rename: (Rqst, Rspns, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -900,7 +898,7 @@ export const Tag = {
 
     if (!Ssn.IsLogged(Rqst, Rspns)) { return PckEnd(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm.ID || !Is.String(Prm.ID) || !Prm.Nm || !Is.String(Prm.Nm)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
+    if (!Prm.ID || !is.String(Prm.ID) || !Prm.Nm || !is.String(Prm.Nm)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
 
     const SQL = 'UPDATE Tag SET name = ? WHERE id = ?;';
 
@@ -913,9 +911,9 @@ export const Tag = {
       .catch(Cd => { PckEnd(Cd * 10 + -4, Kwd.RM.DbCrash); });
   },
   Delete: (Rqst, Rspns, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -923,7 +921,7 @@ export const Tag = {
 
     if (!Ssn.IsLogged(Rqst, Rspns)) { return PckEnd(-2, Kwd.RM.NotLogin); }
 
-    if (!Prm.ID || !Is.String(Prm.ID)) { return PckEnd(-3, Kwd.RM.StrangeValue); }
+    if (!Prm.ID || !is.String(Prm.ID)) { return PckEnd(-3, Kwd.RM.StrangeValue); }
 
     Db.Transaction('BEGIN')
       .then(() => { return Db.Query('DELETE FROM TagLink WHERE tag_id = ?;', [ Prm.ID ]); })
@@ -938,9 +936,9 @@ export const Tag = {
 
 export const Msg = { // message.
   List: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -974,15 +972,15 @@ export const Msg = { // message.
       .catch(Cd => { PckEnd(Cd * 10 + -5, Kwd.RM.DbCrash); });
   },
   ChainList: (Rqst, Prm, End) => {
-    if (!Prm || !Is.Object(Prm) || !Is.Function(End)) { return; }
+    if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
 
-    if (!Prm.ID || !Is.UUID(Prm.ID)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
+    if (!Prm.ID || !is.UUID(Prm.ID)) { return PckEnd(-2, Kwd.RM.StrangeValue); }
 
     if (parseInt(Prm.Cnt, 10)) {
       return Db.TableRows('Message', { Fld: 'target', Prms: [ Prm.ID ]})
@@ -1009,12 +1007,12 @@ export const Msg = { // message.
     @ message.
     @ target message id. */
   Leave: (Rqst, Rspns, { Nm, Ml, Msg, Tgt }, End) => {
-    if (!Is.Function(End)) { return; }
+    if (!is.Function(End)) { return; }
 
-    if (!Nm || !Is.String(Nm) || !Ml || !Is.EMail(Ml) || !Msg || !Is.String(Msg))
+    if (!Nm || !is.String(Nm) || !Ml || !is.EMail(Ml) || !Msg || !is.String(Msg))
     { return End(-1, 0, Kwd.RM.StrangeValue); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -1025,7 +1023,7 @@ export const Msg = { // message.
     let SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message) VALUES (?, ?, ?, ?, ?, ?);',
       Prm = [ Id, Nm, Ml, IP, Dt, Msg ];
 
-    if (Tgt && Is.UUID(Tgt)) {
+    if (Tgt && is.UUID(Tgt)) {
       SQL = 'INSERT INTO Message (id, name, mail, ip, datetime, message, target) VALUES (?, ?, ?, ?, ?, ?, ?);';
       Prm = [ Id, Nm, Ml, IP, Dt, Msg, Tgt ];
     }
@@ -1041,7 +1039,7 @@ export const Msg = { // message.
   AdminList: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -1071,7 +1069,7 @@ export const Msg = { // message.
     Db.Query(SQL, [ Ofst, Lmt ])
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then((DbRst) => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
@@ -1081,11 +1079,11 @@ export const Msg = { // message.
 
     const { ID = '' } = Prm;
 
-    if (!ID || !Is.UUID(ID)) {
+    if (!ID || !is.UUID(ID)) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
-    const Db = new SQLite(DB_PTH),
+    const Db = new sqlite(DB_PTH),
       PckEnd = PackedEnd(End, () => { Db.Close(); });
 
     if (!Db.IsReady()) { return End(-3, Kwd.RM.DbCrash); }
@@ -1104,7 +1102,7 @@ export const Msg = { // message.
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
@@ -1117,9 +1115,9 @@ export const Wds = { // good words.
     @ params.
     @ callback function to end process. */
   NowOneGet: (Rqst, Prm, End) => {
-    if (!Is.Function(End)) { return; }
+    if (!is.Function(End)) { return; }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-1, Kwd.RM.DbCrash); }
 
@@ -1144,7 +1142,7 @@ export const Wds = { // good words.
   List: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
@@ -1174,7 +1172,7 @@ export const Wds = { // good words.
     Db.Query(SQL, [ Ofst, Lmt ])
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
@@ -1182,14 +1180,14 @@ export const Wds = { // good words.
   Create: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
       { Wds = '' } = Prm;
 
-    if (!Wds || !Is.String(Wds)) {
+    if (!Wds || !is.String(Wds)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
     }
 
@@ -1208,7 +1206,7 @@ export const Wds = { // good words.
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, Id);
       });
@@ -1216,14 +1214,14 @@ export const Wds = { // good words.
   Update: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
       { ID = '', Wds = '' } = Prm;
 
-    if (!ID || !Is.UUID(ID) || !Wds || !Is.String(Wds)) {
+    if (!ID || !is.UUID(ID) || !Wds || !is.String(Wds)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
     }
 
@@ -1243,7 +1241,7 @@ export const Wds = { // good words.
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
@@ -1251,14 +1249,14 @@ export const Wds = { // good words.
   Delete: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    const Db = new SQLite(DB_PTH);
+    const Db = new sqlite(DB_PTH);
 
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); }),
       { ID = '' } = Prm;
 
-    if (!ID || !Is.UUID(ID)) {
+    if (!ID || !is.UUID(ID)) {
       return PckEnd(-3, Kwd.RM.StrangeValue);
     }
 
@@ -1276,7 +1274,7 @@ export const Wds = { // good words.
       })
       .catch(Cd => { PckEnd(-5, Kwd.RM.DbCrash, Cd); })
       .then(DbRst => {
-        if (!DbRst || !Is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
+        if (!DbRst || !is.Array(DbRst)) { return PckEnd(-6, Kwd.RM.NoSuchData); }
 
         PckEnd(0, Kwd.RM.Done, DbRst);
       });
@@ -1285,7 +1283,7 @@ export const Wds = { // good words.
 
 export const ArtCnr = { // Art Corner.
   RandomOneGet: (Rqst, Prm, End) => {
-    let Info = Cch.Get(NOW_ART_CORNER_KEY);
+    let Info = cache.Get(NOW_ART_CORNER_KEY);
 
     if (Info) { return End(1, Kwd.RM.StepTest, Info); }
 
@@ -1337,7 +1335,7 @@ export const ArtCnr = { // Art Corner.
         Extr.on(
           'finish',
           () => {
-            Cch.Set(NOW_ART_CORNER_KEY, Info);
+            cache.Set(NOW_ART_CORNER_KEY, Info);
             End(1, Kwd.RM.StepTest, Info);
           });
 
@@ -1384,7 +1382,7 @@ export const Systm = {
   },
   // To do.
   // _FolderSizeGet: (Pth, Then) => {
-  //   if (!Pth || !Is.String(Pth)) { return 0; }
+  //   if (!Pth || !is.String(Pth)) { return 0; }
 
   //   fs.stat(
   //     Pth,
@@ -1425,7 +1423,7 @@ export const Systm = {
         const Tsks = Fls.map(Fl => {
           return new Promise(Resolve => {
             getFolderSize(DAT_PTH + '/' + Fl).then(({ size: Sz, errors: Errs }) => {
-              if (Errs) { Log(Errs); }
+              if (Errs) { log(Errs); }
 
               Resolve({ Fl, Sz });
             });
@@ -1450,7 +1448,7 @@ export const Ssn = { // session.
 
     if (!Cks[ADMIN_SESSION_KEY]) { return false; }
 
-    const Ssn = Cch.Get(ADMIN_SESSION_KEY); // session.
+    const Ssn = cache.Get(ADMIN_SESSION_KEY); // session.
 
     if (!Ssn || Ssn !== Cks[ADMIN_SESSION_KEY]) { return false; }
 
@@ -1460,17 +1458,17 @@ export const Ssn = { // session.
 
     if (Rspns && (typeof Rspns.setHeader === 'function')) {
       Rspns.setHeader('Set-Cookie', Ck);
-      Cch.Set(ADMIN_SESSION_KEY, Ssn, ADMIN_SESSION_EXPIRE);
+      cache.Set(ADMIN_SESSION_KEY, Ssn, ADMIN_SESSION_EXPIRE);
     }
 
     return true;
   },
   LogIn (Rqst, Rspns, Prm, End) {
-    if (!Is.Function(End)) { return; }
+    if (!is.Function(End)) { return; }
 
     if (this.IsLogged(Rqst, Rspns)) { return End(1, Kwd.RM.HasLoggedIn); }
 
-    if (!Prm || !Is.Object(Prm) || !Is.String(Prm.Pswd)) { return End(-1, Kwd.RM.PasswordNeed); }
+    if (!Prm || !is.Object(Prm) || !is.String(Prm.Pswd)) { return End(-1, Kwd.RM.PasswordNeed); }
 
     const Dt = new Date(),
       Y = Dt.getFullYear().toString(); // year.
@@ -1492,7 +1490,7 @@ export const Ssn = { // session.
       Ck = cookie.serialize(ADMIN_SESSION_KEY, Ssn, { maxAge: ADMIN_SESSION_EXPIRE, path: '/' }); // cookie.
 
     Rspns.setHeader('Set-Cookie', Ck);
-    Cch.Set(ADMIN_SESSION_KEY, Ssn, ADMIN_SESSION_EXPIRE);
+    cache.Set(ADMIN_SESSION_KEY, Ssn, ADMIN_SESSION_EXPIRE);
 
     End(0, Kwd.RM.Done);
   },
@@ -1500,7 +1498,7 @@ export const Ssn = { // session.
     const Ck = cookie.serialize(ADMIN_SESSION_KEY, '', { maxAge: -1, path: '/' }); // cookie.
 
     Rspns.setHeader('Set-Cookie', Ck);
-    Cch.Set(ADMIN_SESSION_KEY, '', 0); // make the cache expired.
+    cache.Set(ADMIN_SESSION_KEY, '', 0); // make the cache expired.
     End(0, Kwd.RM.Done);
   },
 };

@@ -14,27 +14,41 @@
   <style>
     :host>form {
       >input,
-      >textarea { width: 100%; box-sizing: border-box; }
-      >div { display: flex;
-        >label { flex-grow: 1;
-          >input { vertical-align: middle; }
+      >textarea {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      >div {
+        display: flex;
+
+        >label {
+          flex-grow: 1;
+
+          >input {
+            vertical-align: middle;
+          }
         }
-        >div>a { display: inline-block; margin-left: 5px; }
+
+        >div>a {
+          display: inline-block;
+          margin-left: 5px;
+        }
       }
     }
   </style>
   <script>
-    import is from 'rzjs/Is.js';
-    import { CookieParam, CookieSet } from '../helper.mjs';
+    import is from 'rzjs/is.mjs';
+    import { cookieParam, cookieSet } from '../helper.mjs';
 
     export default {
       state: {
         IsSndng: false, // is sending message.
-        NmMl: [ '', '' ] // [ name, mail ].
+        NmMl: [ '', '' ], // [ name, mail ].
       },
 
       onBeforeMount (props, state) {
-        const NmMl = CookieParam('NmMl'); // name & mail.
+        const NmMl = cookieParam('NmMl'); // name & mail.
 
         if (NmMl) { state.NmMl = NmMl.split(';'); }
       },
@@ -73,24 +87,25 @@
         return true;
       },
 
-      Submit (Evt) {
+      Submit () {
         const [
           { value: Nm },
           { value: Ml },
           { value: Msg },
-          { checked: IsRmbd }] = this.$$('form input, form textarea'); // form DOMs, is remebered.
+          { checked: IsRmbd },
+        ] = this.$$('form input, form textarea'); // form DOMs, is remebered.
 
         if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
 
         // remember or clean name, mail.
-        if (IsRmbd) { CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7); }
-        else { CookieSet('NmMl', '', -1); }
+        if (IsRmbd) { cookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7); }
+        else { cookieSet('NmMl', '', -1); }
 
         this.update({ IsSndng: true });
         setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
 
         this.props.submit && this.props.submit(Nm, Ml, Msg);
-      }
+      },
     }
   </script>
 </comment-form>

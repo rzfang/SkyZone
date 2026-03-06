@@ -1,3 +1,9 @@
+<modules>
+  <script>
+    import { cookieParam, cookieSet, dateToString } from '../helper.mjs';
+  </script>
+</modules>
+
 <replies>
   <ul>
     <li each={Rpl in props.replies}>
@@ -19,41 +25,78 @@
     </div>
   </form>
   <style>
-    :host { padding-left: 20px; }
-    :host>ul { padding: 0; list-style: none; }
-    :host>ul>li { margin-bottom: 20px; }
-    :host>ul>li>div { color: #808080; }
-    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
-    :host>form>input,
-    :host>form>textarea { width: 100%; box-sizing: border-box; }
-    :host>form>div { display: flex; }
-    :host>form>div>label { flex-grow: 1; }
-    :host>form>div>label>input { vertical-align: middle; }
-    :host>form>div>div>a { display: inline-block; margin-left: 5px; }
+    :host {
+      padding-left: 20px;
+
+      >ul {
+        padding: 0;
+        list-style: none;
+
+        >li {
+          margin-bottom: 20px;
+
+          >div {
+            color: var(--color-gray-8);
+          }
+
+          >pre {
+            margin: 5px 0;
+            line-height: 1.5;
+          }
+        }
+      }
+
+      >form {
+        >input,
+        >textarea {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        >div {
+          display: flex;
+
+          >label {
+            flex-grow: 1;
+
+            >input {
+              vertical-align: middle;
+            }
+          }
+
+          >div>a {
+            display: inline-block;
+            margin-left: 5px;
+          }
+        }
+      }
+    }
   </style>
   <script>
-    import { Is } from '../../node_modules/rzjs/Is.js';
+    import is from 'rzjs/is.mjs';
+
+    import wording from '../wording';
 
     export default {
       state: {
         IsFmShwd: false, // is form showed.
         IsSndng: false, // is sending message.
-        NmMl: [ '', '' ]
+        NmMl: [ '', '' ],
       },
 
       onBeforeMount (props, state) {
-        const NmMl = CookieParam('NmMl'); // name & mail.
+        const NmMl = cookieParam('NmMl'); // name & mail.
 
         if (NmMl) { state.NmMl = NmMl.split(';'); }
 
-        if (Is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
+        if (is.Array(props.replies) && !props.replies.length) { state.IsFmShwd = true; }
       },
 
-      onMounted (props, state) {
+      onMounted () {
         this.InputFocus();
       },
 
-      onUpdated (props, state) {
+      onUpdated () {
         this.InputFocus();
       },
 
@@ -67,28 +110,28 @@
         this.$(Slctr).focus();
       },
 
-      FormToggle (Evt) {
+      FormToggle () {
         this.update({ IsFmShwd: !this.state.IsFmShwd });
       },
 
       IsFormGood (Nm, Ml, Msg) {
         let Hnt = ''; // hint.
 
-        if (!Nm || !Is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
+        if (!Nm || !is.String(Nm) || Nm.length === 0) { Hnt += '尚未填寫暱稱。\n'; }
         else {
           Nm = Nm.trim();
 
           if (Nm === '') { Hnt += '暱稱不可為空白字。\n'; }
         }
 
-        if (!Ml || !Is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
+        if (!Ml || !is.String(Ml)) { Hnt += '尚未填寫 E-Mail。\n'; }
         else {
           Ml = Ml.trim();
 
-          if (!Is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
+          if (!is.EMail(Ml)) { Hnt += 'E-Mail 不符合標準格式。\n'; }
         }
 
-        if (!Msg || !Is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
+        if (!Msg || !is.String(Msg)) { Hnt += '尚未填寫任何留言。\n'; }
         else {
           Msg = Msg.trim();
 
@@ -105,21 +148,20 @@
         return true;
       },
 
-      ReplyLeave (Evt) {
-        if (this.state.IsSndng) { return alert(Z.Wording.Working); }
+      ReplyLeave () {
+        if (this.state.IsSndng) { return alert(wording.RM.Working); }
 
-        const FmDOMs = this.$$('form input, form textarea'), // form DOMs.
-              Nm = FmDOMs[0].value,
-              Ml = FmDOMs[1].value,
-              Msg = FmDOMs[2].value,
-              IsRmbd = FmDOMs[3].checked; // is remebered.
+        const FmDOMs = this.$$('form input, form textarea'); // form DOMs.
+        const Nm = FmDOMs[0].value;
+        const Ml = FmDOMs[1].value;
+        const Msg = FmDOMs[2].value;
 
         if (!this.IsFormGood(Nm, Ml, Msg)) { return; }
 
         if (this.$('input[type=checkbox]').checked) {
-          CookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
+          cookieSet('NmMl', Nm + ';' + Ml, 60 * 60 * 24 * 7);
         }
-        else { CookieSet('NmMl', '', -1); }
+        else { cookieSet('NmMl', '', -1); }
 
         this.update({ IsSndng: true });
         setTimeout(() => { this.update({ IsSndng: false }); }, 2000); // limit one reply in 2 seconds.
@@ -130,7 +172,7 @@
           'REPLIES',
           (Sto, Rst) => {
             if (!Rst) {
-              alert(Z.Wording.LoadDataFail);
+              alert(wording.RM.LoadDataFail);
 
               return null;
             }
@@ -147,16 +189,21 @@
               return null;
             }
 
-            Sto[this.props.messageId].push({ Nm, Msg, ID: Rst.Extend, Dt: DatetimeFormat(new Date()) });
+            Sto[this.props.messageId].push({
+              Nm,
+              Msg,
+              ID: Rst.Extend,
+              Dt: dateToString(new Date(), 'yyyy-mm-dd hh:ii:ss'),
+            });
 
             this.$('textarea').value = '';
 
             return Sto;
           },
-          { MsgId: this.props.messageId, MsgIdx: this.props.messageIndex });
-      }
-
-    }
+          { MsgId: this.props.messageId, MsgIdx: this.props.messageIndex }
+        );
+      },
+    };
   </script>
 </replies>
 
@@ -180,11 +227,29 @@
     <a href='javascript:void(0);' onclick={MessagesLoad}>載入更多</a>
   </div>
   <style>
-    :host>ul { padding: 0; list-style: none; }
-    :host>ul>li { margin-bottom: 30px; }
-    :host>ul>li>div:first-of-type { color: #808080; }
-    :host>ul>li>pre { margin: 5px 0; line-height: 1.5; }
-    :host>div { text-align: center; }
+    :host {
+      >ul {
+        padding: 0;
+        list-style: none;
+
+        >li {
+          margin-bottom: 30px;
+
+          >div:first-of-type {
+            color: #808080;
+          }
+
+          >pre {
+            margin: 5px 0;
+            line-height: 1.5;
+          }
+        }
+      }
+
+      >div {
+        text-align: center;
+      }
+    }
   </style>
   <script>
     import commentForm from './comment-form.riot';
@@ -194,7 +259,7 @@
 
       state: {
         HsAlLdd: false ,// has all loaded.
-        IsFmShwd: false // is form showed.
+        IsFmShwd: false, // is form showed.
       },
 
       MessageLeave (Nm = '', Ml = '', Msg = '') {
@@ -215,7 +280,7 @@
               return Sto;
             }
 
-            const FmtDt = DatetimeFormat(new Date()); // formatted date time string.
+            const FmtDt = dateToString(new Date(), 'yyyy-mm-dd hh:ii:ss'); // formatted date time string.
 
             setTimeout(this.FormToggle, 2000);
 
@@ -225,11 +290,11 @@
           });
       },
 
-      FormToggle (Evt) {
+      FormToggle () {
         this.update({ IsFmShwd: !this.state.IsFmShwd });
       },
 
-      MessagesLoad (Evt) {
+      MessagesLoad () {
         const { HsAlLdd } = this.state;
 
         if (HsAlLdd) { return; }
@@ -253,11 +318,14 @@
       },
 
       RepliesToggle (Evt) {
-        const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10),
-              Msg = this.props.list[MsgIdx],
-              { ID: MsgId, IsRplsLstd = false } = Msg, // is replies listed.
-              StoReplies = this.StoreGet('REPLIES') || null,
-              Rpls = StoReplies && StoReplies[MsgId] || null;
+        const MsgIdx = parseInt(Evt.currentTarget.dataset.index, 10);
+        const StoReplies = this.StoreGet('REPLIES') || null;
+
+        const Msg = this.props.list[MsgIdx];
+
+        const { ID: MsgId, IsRplsLstd = false } = Msg; // is replies listed.
+
+        const Rpls = StoReplies && StoReplies[MsgId] || null;
 
         if (IsRplsLstd) {
           Msg.IsRplsLstd = false;
@@ -305,8 +373,9 @@
 
             return Sto;
           },
-          { MsgId, MsgIdx });
-      }
+          { MsgId, MsgIdx }
+        );
+      },
     }
   </script>
 </messages>

@@ -1,3 +1,19 @@
+<modules>
+  <script>
+    import log from 'rzjs/log.mjs';
+
+    import commentForm from '../component/comment-form.riot';
+    import datetime from '../component/datetime.riot';
+    import deskFrame from '../component/desk-frame.riot';
+    import icon from '../component/icon.riot';
+    import iconButton from '../component/icon-button.riot';
+    import rawHtml from '../component/raw-html.riot';
+    import store from 'riot-4-fun/core/store.riot';
+    import tabBox from '../component/tab-box.riot';
+    import toTopButton from '../component/to-top-button.riot';
+  </script>
+</modules>
+
 <art-corner style='background-image: url({state.ImgUrl});'>
   <div>
     <div>角落藝廊</div>
@@ -36,7 +52,7 @@
         Ttl: '',
       },
 
-      async onBeforeMount (props, state) {
+      async onBeforeMount () {
         if (!this.OnBrowser()) {
           return;
         }
@@ -48,7 +64,7 @@
         } = await fetch('/service/artcorner').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
 
         if (Index < 0) {
-          return console.warn(Message);
+          return log(Message, 'warn');
         }
 
         const { ImgUrl, Ttl } = Extend;
@@ -71,38 +87,10 @@
     }
   </style>
   <script>
-    /* make a random number in the range.
-      @ minimum number.
-      @ maximum number.
-      @ Decimal. optional, default 0. give -1 to keep original decimal.
-      < random number in the range, or 0 as error. */
-    function RandomRange (Min, Max, Dcm) {
-      if (typeof Min !== 'number' || typeof Max !== 'number') { return 0; }
-
-      if (typeof Dcm !== 'number') { Dcm = 0; }
-
-      if (Min > Max || Max < Min) {
-        let T = Min;
-
-        Min = Max;
-        Max = T;
-      }
-
-      let Dst =  Max - Min, // 'Dst' = Distance.
-          Nbr = Math.random() * Dst + Min;
-
-      if (Dcm === 0) { Nbr = Math.floor(Nbr); }
-      else if (Dcm > 0) {
-        let Pow = Math.pow(10, Dcm);
-
-        Nbr = Math.floor(Nbr * Pow) / Pow;
-      }
-
-      return Nbr;
-    }
+    import { RandomRange } from '../helper.mjs';
 
     export default {
-      async onMounted (props, state) {
+      async onMounted () {
         if (!this.OnBrowser()) {
           return;
         }
@@ -114,14 +102,14 @@
         } = await fetch('service/words').then(Rspns => (Rspns.ok ? Rspns.json() : {}));
 
         if (Index < 0) {
-          return console.warn(Message);
+          return log(Message, 'warn');
         }
 
+        const Cvs = this.$('canvas');
+        const Wds = [];
         const { Wds: Str } = Extend;
 
-        let Cvs = this.$('canvas'),
-            Ctx = null,
-            Wds = [];
+        let Ctx = null;
 
         Initialize();
         Animate();
@@ -134,31 +122,37 @@
 
           //==== word info set. ====
 
-          let BsSptA = [40, 25], // 'BsSptA' = Base Seperate Array, [X, Y].
-              StrA = Str.replace(/\n|，|；|。| /g, "\n").split("\n"); // 'StrA' = String Array.
+          const baseSeperators = [ 40, 25 ];
+          const strings = Str.replace(/\n|，|；|。| /g, '\n').split('\n');
 
-          for (let i = 0; i < StrA.length; i++) {
-            let BsLct = [80, Ctx.canvas.height - (BsSptA[1] * (StrA.length - i + 1))]; // 'BsLct' = Base Location.
+          for (let i = 0; i < strings.length; i++) {
+            const baseLocation = [ 80, Ctx.canvas.height - (baseSeperators[1] * (strings.length - i + 1)) ];
 
-            for (let j = 0; j < StrA[i].length; j++) {
-              let Chr = StrA[i].charAt(j);
+            for (let j = 0; j < strings[i].length; j++) {
+              const char = strings[i].charAt(j);
+              const size = RandomRange(20, 50);
 
-              let Clr = [RandomRange(64, 128).toString(),
-                       RandomRange(64, 192).toString(),
-                       RandomRange(64, 255).toString(),
-                       RandomRange(0.2, 0.9, 2).toString()];
+              const color = [
+                RandomRange(64, 128).toString(),
+                RandomRange(64, 192).toString(),
+                RandomRange(64, 255).toString(),
+                RandomRange(0.2, 0.9, 2).toString(),
+              ];
 
-              let Sz = RandomRange(20, 50);
+              const word = {
+                Chr: char,
+                DftLct: [
+                  baseLocation[0] + (j * baseSeperators[0]) + RandomRange(-5, 5),
+                  baseLocation[1] + RandomRange(-5, 5),
+                ],
+                Lct: [ RandomRange(0, Ctx.canvas.width, 2), RandomRange(0, Ctx.canvas.height, 2) ],
+                Drct: [ RandomRange(-1, 1, 2), RandomRange(-1, 1, 2) ],
+                Sz: size,
+                Clr: 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')',
+                Fnt: 'italic bold ' + size.toString() + 'px sans-serif',
+              };
 
-              let Wd = {'Chr': Chr,
-                        'DftLct': [BsLct[0] + (j * BsSptA[0]) + RandomRange(-5, 5), BsLct[1] + RandomRange(-5, 5)],
-                        'Lct': [RandomRange(0, Ctx.canvas.width, 2), RandomRange(0, Ctx.canvas.height, 2)],
-                        'Drct': [RandomRange(-1, 1, 2), RandomRange(-1, 1, 2)],
-                        'Sz': Sz,
-                        'Clr': 'rgba(' + Clr[0] + ', ' + Clr[1] + ', ' + Clr[2] + ', ' + Clr[3] + ')',
-                        'Fnt': 'italic bold ' + Sz.toString() + 'px sans-serif'};
-
-              Wds.push(Wd);
+              Wds.push(word);
             }
           }
         }
@@ -186,27 +180,27 @@
           }
         }
 
-        function FreeWalk () {
-          for (let i = 0; i < Wds.length; i++) {
-            Ctx.font = Wds[i].Fnt;
-            Ctx.fillStyle = Wds[i].Clr;
-            Ctx.shadowColor = Wds[i].Clr;
-            Ctx.shadowOffsetX = 3;
-            Ctx.shadowOffsetY = 3;
-            Ctx.shadowBlur = 5;
+        // function FreeWalk () {
+        //   for (let i = 0; i < Wds.length; i++) {
+        //     Ctx.font = Wds[i].Fnt;
+        //     Ctx.fillStyle = Wds[i].Clr;
+        //     Ctx.shadowColor = Wds[i].Clr;
+        //     Ctx.shadowOffsetX = 3;
+        //     Ctx.shadowOffsetY = 3;
+        //     Ctx.shadowBlur = 5;
 
-            Ctx.fillText(Wds[i].Chr, Wds[i].Lct[0], Wds[i].Lct[1]);
+        //     Ctx.fillText(Wds[i].Chr, Wds[i].Lct[0], Wds[i].Lct[1]);
 
-            Wds[i].Lct[0] += Wds[i].Drct[0];
-            Wds[i].Lct[1] += Wds[i].Drct[1];
+        //     Wds[i].Lct[0] += Wds[i].Drct[0];
+        //     Wds[i].Lct[1] += Wds[i].Drct[1];
 
-            if (Wds[i].Lct[0] + Wds[i].Sz < 0) { Wds[i].Lct[0] = Ctx.canvas.width; }
-            else if (Wds[i].Lct[0] > Ctx.canvas.width) { Wds[i].Lct[0] = Wds[i].Sz * -1; }
+        //     if (Wds[i].Lct[0] + Wds[i].Sz < 0) { Wds[i].Lct[0] = Ctx.canvas.width; }
+        //     else if (Wds[i].Lct[0] > Ctx.canvas.width) { Wds[i].Lct[0] = Wds[i].Sz * -1; }
 
-            if (Wds[i].Lct[1] + Wds[i].Sz < 0) { Wds[i].Lct[1] = Ctx.canvas.height; }
-            else if ((Wds[i].Lct[1] - Wds[i].Sz) > Ctx.canvas.height) { Wds[i].Lct[1] = Wds[i].Sz * -1; }
-          }
-        }
+        //     if (Wds[i].Lct[1] + Wds[i].Sz < 0) { Wds[i].Lct[1] = Ctx.canvas.height; }
+        //     else if ((Wds[i].Lct[1] - Wds[i].Sz) > Ctx.canvas.height) { Wds[i].Lct[1] = Wds[i].Sz * -1; }
+        //   }
+        // }
       },
     }
   </script>
@@ -284,12 +278,8 @@
     </pre>
   </tab-box>
   <script>
-    import tabBox from '../component/tab-box.riot';
-
     export default {
-      components: {
-        tabBox,
-      },
+      components: { tabBox },
     }
   </script>
 </about>
@@ -304,7 +294,7 @@
       <div>
         <span each={tag in one.Tg}>{tag.Nm}</span>
       </div>
-      <div>{one.Dt}</div>
+      <div><datetime value={one.Dt} /></div>
     </li>
   </ul>
   <div if={!state.isNoMore} class='load-more'><button onclick={loadMore}>載入更多</button></div>
@@ -330,7 +320,7 @@
         margin-bottom: 50px;
 
         >li {
-          margin: 0 0 15px 0;
+          margin-bottom: 20px;
 
           >h3 {
             margin: 0;
@@ -380,10 +370,8 @@
     }
   </style>
   <script>
-    import icon from '../component/icon.riot';
-
     export default {
-      components: { icon },
+      components: { datetime, icon },
 
       state: {
         blogs: [],
@@ -395,8 +383,8 @@
 
       async onBeforeMount () {
         const [ blogsResult, tagsResult ] = await Promise.all([
-          fetch(`/service/blog/list?Lmt=5`).then(response => response.json()),
-          fetch(`/service/tag`).then(response => response.json()),
+          fetch('/service/blog/list?Lmt=5').then(response => response.json()),
+          fetch('/service/tag').then(response => response.json()),
         ]);
 
         // === handle blogs. ===
@@ -452,7 +440,7 @@
       },
 
       async cancelFilter () {
-        const response = await fetch(`/service/blog/list?Lmt=5`);
+        const response = await fetch('/service/blog/list?Lmt=5');
 
         const {
           Extend: blogs = [],
@@ -524,7 +512,7 @@
         this.update({ isTagPicking: !this.state.isTagPicking });
       },
 
-      goToTop (event) {
+      goToTop () {
         this.root.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
       },
     };
@@ -538,7 +526,7 @@
       <div>
         <span>#{index + 1}</span>
         <span>{one.Nm}</span>
-        <span>{one.Dt}</span>
+        <datetime value={one.Dt} />
       </div>
       <pre>{one.Cmt}</pre>
     </li>
@@ -561,7 +549,7 @@
           <icon name='tags' color='var(--color-gray-8)' size={22} />
         </div>
         <div>
-          <span>{state.info.Dt}</span>
+          <datetime value={state.info.Dt} />
           <icon name='calendar' color='var(--color-gray-8)' size={22} />
         </div>
       </div>
@@ -601,8 +589,7 @@
             display: inline-block;
             margin-right: 5px;
 
-            &:first-child,
-            &:last-child {
+            &:first-child {
               color: var(--color-gray-8);
             }
           }
@@ -638,12 +625,13 @@
           padding: 5px;
           background-color: #fffffff0;
 
-          >div>span {
+          >div>*:first-child {
             display: none;
             margin-right: 5px;
+            vertical-align: middle;
           }
 
-          &:hover>div>span {
+          &:hover>div>*:first-child {
             display: inline-block;
           }
         }
@@ -651,12 +639,8 @@
     }
   </style>
   <script>
-    import commentForm from '../component/comment-form.riot';
-    import icon from '../component/icon.riot';
-    import rawHtml from '../component/raw-html.riot';
-
     export default {
-      components: { commentForm, icon, rawHtml },
+      components: { commentForm, datetime, icon, rawHtml },
 
       state: {
         comments: [],
@@ -715,12 +699,12 @@
               Nm: name,
               Dt: newComments[0].datetime,
               Cmt: comment,
-            }
+            },
           ],
         });
       },
 
-      goToTop (event) {
+      goToTop () {
         this.root.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
       },
 
@@ -749,11 +733,115 @@
   </script>
 </blog>
 
+<messages>
+  <ul>
+    <li each={one in state.messages} key={one.ID}>
+      <div>
+        <span>{one.Nm}</span>
+        <datetime value={one.Dt} />
+      </div>
+      <pre>{one.Msg}</pre>
+      <div>
+        <icon-button icon-at='left' icon-name='chat'>{one.ChnCnt > 0 ? `(${one.ChnCnt})` : ''}</icon-button>
+        <datetime if={one.ChnCnt > 0} value={one.Dt} />
+      </div>
+    </li>
+  </ul>
+  <div><button onclick={loadMore}>載入更多</button></div>
+  <div>
+    <to-top-button target={root} />
+  </div>
+  <style>
+    :host {
+      height: 100%;
+      overflow: auto;
+
+      datetime {
+        margin-left: 5px;
+      }
+
+      >ul>li {
+        margin-bottom: 20px;
+
+        >pre {
+          margin: 5px 0;
+          max-height: 100px;
+          white-space: pre;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        >div:last-child {
+          >datetime {
+            vertical-align: middle;
+          }
+        }
+      }
+
+      >div:nth-child(2) {
+        text-align: center;
+      }
+
+      >div:last-child {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+      }
+    }
+  </style>
+  <script>
+    export default {
+      components: { datetime, iconButton, toTopButton },
+
+      state: {
+        messages: [],
+      },
+
+      async onBeforeMount () {
+        const response = await fetch('/service/message?Lmt=5');
+
+        const {
+          Extend: messages,
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error !== 0) {
+          return alert(message);
+        }
+
+        this.update({ messages });
+      },
+
+      async loadMore () {
+        const { messages } = this.state;
+
+        const offset = messages.length;
+
+        const response = await fetch(`/service/message?Lmt=5&Ofst=${offset}`);
+
+        const {
+          Extend: newMessages = [],
+          Index: error = -1,
+          Message: message = '',
+        } = await response.json();
+
+        if (error != 0) {
+          return alert(message);
+        }
+
+        this.update({ messages: [ ...messages, ...newMessages ], isNoMore: newMessages.length < 5 });
+      },
+    };
+  </script>
+</messages>
+
 <page-zone>
   <header id='Head'>
     <div>
       <button class='Btn0' title='關於' onclick={openAboutFrame}>關於</button>
       <button class='Btn0' title='網誌' onclick={openBlogsFrame}>網誌</button>
+      <button class='Btn0' title='留言板' onclick={openMessagesFrame}>留言板</button>
       <a href='/'><button title='回入口'>回入口</button></a>
     </div>
   </header>
@@ -804,19 +892,16 @@
     }
   </style>
   <script>
-    import deskFrame from '../component/desk-frame.riot';
-    import store from 'riot-4-fun/SRC/Store.riot';
-
     export default {
-      components: { about, artCorner, blog, blogs, deskFrame, goodWords, store },
+      components: { about, artCorner, blog, blogs, deskFrame, goodWords, messages, store },
 
       state: {
         frames: [],
       },
 
       onMounted () {
-        // To Do: riot-4-fun Store.riot should handle initial value.
-        this.StoreSet('FRAMES', store => ({
+        // To Do: riot-4-fun/core/store.riot should handle initial value.
+        this.StoreSet('FRAMES', () => ({
           frames: [],
           rootElement: this.$('main'),
         }));
@@ -865,8 +950,36 @@
             if (index < 0) {
               frames.push({
                 height: rootElement.offsetHeight,
+                left: 0,
                 slot: 'blogs',
                 title: '網誌',
+                top: rootElement.offsetTop,
+                width: 320,
+              });
+            } else {
+              const [ blogsFrame ] = frames.splice(index, 1);
+
+              frames.push(blogsFrame);
+            }
+
+            return store;
+          }
+        );
+      },
+
+      openMessagesFrame () {
+        this.StoreSet(
+          'FRAMES',
+          store => {
+            const { frames, rootElement } = store;
+
+            const index = frames.findIndex(one => one.title === '留言板');
+
+            if (index < 0) {
+              frames.push({
+                height: rootElement.offsetHeight,
+                slot: 'messages',
+                title: '留言板',
                 left: 0,
                 top: rootElement.offsetTop,
                 width: 320,
@@ -880,7 +993,7 @@
             return store;
           }
         );
-      }
+      },
     };
   </script>
 </page-zone>

@@ -3,11 +3,13 @@ import globals from 'globals';
 import js from '@eslint/js';
 import json from '@eslint/json';
 import markdown from '@eslint/markdown';
+import r4fConfig from 'riot-4-fun/eslint/config.mjs';
 import stylistic from '@stylistic/eslint-plugin'
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores ([ '**/*.riot.*.mjs', 'package-lock.json' ]),
+  r4fConfig,
+  globalIgnores ([ '**/*.riot.*.mjs', '.r4f/**', 'package-lock.json' ]),
   {
     files: [ '**/*.{js,mjs,cjs}' ],
     languageOptions: {
@@ -31,6 +33,10 @@ export default defineConfig([
     files: [ '**/*.css' ],
     language: 'css/css',
     plugins: { css },
+    rules: {
+      'css/no-invalid-properties': [ 'warn' ],
+      'css/use-baseline': 'off',
+    },
   },
   {
     extends: [ 'js/recommended' ],
@@ -38,15 +44,25 @@ export default defineConfig([
     plugins: { '@stylistic': stylistic, js },
     rules: {
       '@stylistic/array-bracket-spacing': [ 'error', 'always' ],
-      '@stylistic/comma-dangle': [ 'error', 'always-multiline' ],
       '@stylistic/dot-location': [ 'error', 'property' ],
       '@stylistic/indent': [ 'error', 2 ],
       '@stylistic/max-len': [ 'error', { code: 120, ignoreComments: true } ],
+      '@stylistic/no-multiple-empty-lines': [ 'error', { max: 2, maxEOF: 1 } ],
       '@stylistic/quote-props': [ 'error', 'as-needed' ],
       '@stylistic/quotes': [ 'error', 'single', { avoidEscape: true, allowTemplateLiterals: 'avoidEscape' } ],
       'no-console': [ 'warn' ],
-      'no-unused-vars': [ 'warn' ],
+      'no-unused-vars': [ 'warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' } ],
       'prefer-const': [ 'error' ],
+      '@stylistic/comma-dangle': [
+        'error',
+        {
+          arrays: 'always-multiline',
+          exports: 'always-multiline',
+          functions: 'never',
+          imports: 'always-multiline',
+          objects: 'always-multiline',
+        },
+      ],
     },
   },
 ]);

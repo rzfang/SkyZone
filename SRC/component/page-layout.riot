@@ -3,10 +3,24 @@
     <a each={Tb in state.Tbs} class={Tb.IsCrnt ? 'Crnt' : ''} href={Tb.Lnk}>{Tb.Txt}</a>
   </nav>
   <style>
-    :host { line-height: 2rem; background-color: #f0f0f0; }
-    :host a { margin-right: 10px; }
-    :host a.Crnt { font-size: 1.2rem; color: #202020; };
-    :host a.Crnt:hover { text-decoration: none; cursor: default; }
+    :host {
+      line-height: 2rem;
+      background-color: var(--color-gray-f);
+
+      a {
+        margin-right: 10px;
+
+        &.Crnt {
+          font-size: 1.2rem;
+          color: var(--color-gray-2);
+
+          &:hover {
+            text-decoration: none;
+            cursor: default;
+          }
+        }
+      }
+    }
   </style>
   <script>
     export default {
@@ -17,7 +31,7 @@
           { Lnk: '/messages', Txt: '留言', IsCrnt: false },
           { Lnk: '/feed.xml', Txt: '訂閱', IsCrnt: false },
           { Lnk: '/', Txt: '回入口', IsCrnt: false },
-        ]
+        ],
       },
 
       onBeforeMount (Prps, { Tbs }) {
@@ -33,13 +47,13 @@
 
           return true;
         });
-      }
-    }
+      },
+    };
   </script>
 </page-header>
 
 <page-footer>
-  ©2011-2022 RZ Fang
+  ©2011-2025 RZ Fang
   <a rel='license' href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>
     <img
       alt='創用 CC 授權條款'
@@ -48,8 +62,17 @@
       data-original-src='https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png'/>
   </a>
   <style>
-    :host { text-align: center; background-color: #f0f0f0; }
-    :host img { border-width: 0; width: 88px; height: 31px; vertical-align: middle; }
+    :host {
+      text-align: center;
+      background-color: var(--color-gray-f);
+
+      img {
+        border-width: 0;
+        width: 88px;
+        height: 31px;
+        vertical-align: middle;
+      }
+    }
   </style>
 </page-footer>
 
@@ -58,11 +81,13 @@
   <slot/>
   <page-footer/>
   <style>
-    :host>* { display: block; padding: 10px; }
+    :host>* {
+      display: block; padding: 10px;
+    }
   </style>
   <script>
     export default {
-      components: { pageHeader, pageFooter }
-    }
+      components: { pageHeader, pageFooter },
+    };
   </script>
 </page-layout>

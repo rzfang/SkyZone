@@ -1,4 +1,4 @@
-<!-- don't use <icon-*> directly, use <icon> with 'nm' attribute. -->
+<!-- don't use <icon-*> directly, use <icon> with 'name' attribute. -->
 
 <icon-close>
   <svg
@@ -130,8 +130,14 @@
 <icon>
   <i is={`icon-${props.name || ''}`} size={props.size || 24} color={props.color || '#c0c0c0'} />
   <style>
-    i { display: inline-block; }
-    svg { vertical-align: middle; }
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+
+      svg {
+        vertical-align: middle;
+      }
+    }
   </style>
   <script>
     export default {

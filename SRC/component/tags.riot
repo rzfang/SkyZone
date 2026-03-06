@@ -5,17 +5,40 @@
     <br/>
   </template>
   <ul if={props.tags.length}>
-    <li each={Tg in props.tags}>
-      <span if={Tg.IsPckd}>{Tg.Nm}</span>
-      <a if={!Tg.IsPckd} href='/blogs?t={Tg.ID}'>{Tg.Nm}</a>
+    <li each={one in props.tags}>
+      <span if={one.IsPckd}>{one.Nm}</span>
+      <a if={!one.IsPckd} href='/blogs?t={one.ID}'>{one.Nm}</a>
     </li>
   </ul>
   <style>
-    :host>icon { margin-right: 10px; }
-    :host>ul { display: inline-block; margin: 0; padding: 0; }
-    :host>ul>li { display: inline-block; }
-    :host>ul>li>a { display: inline-block; margin-right: 5px; }
-    :host>ul>li>span { display: inline-block; margin-right: 5px; padding: 0 3px; border: 1px solid; border-radius: 3px; }
+    :host {
+      >icon {
+        margin-right: 10px;
+      }
+
+      >ul {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+
+        >li {
+          display: inline-block;
+
+          >a {
+            display: inline-block;
+            margin-right: 5px;
+          }
+
+          >span {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 0 3px;
+            border: 1px solid;
+            border-radius: 3px;
+          }
+        }
+      }
+    }
   </style>
   <script>
     import icon from './icon.riot';
@@ -24,18 +47,18 @@
       components: { icon },
 
       state: {
-        HsPckdId: false
+        HsPckdId: false,
       },
 
-      onBeforeMount (props, state) {
-        props.tags.find(Tg => {
-          if (Tg.IsPckd) {
+      onBeforeMount (props, _state) {
+        props.tags.find(one => {
+          if (one.IsPckd) {
             this.state.HsPckdId = true;
 
             return true;
           }
         });
-      }
-    }
+      },
+    };
   </script>
 </tags>

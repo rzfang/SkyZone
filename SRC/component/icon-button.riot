@@ -1,0 +1,25 @@
+<icon-button>
+  <button>
+    <icon if={props.iconAt === 'left'} name={props.iconName} color='var(--color-gray-8)' size={22} />
+    <span><slot /></span>
+    <icon if={props.iconAt === 'right'} name={props.iconName} color='var(--color-gray-8)' size={22} />
+  </button>
+  <style>
+    :host>button {
+      font-size: 0;
+      color: var(--color-gray-8);
+
+      >span {
+        vertical-align: middle;
+        font-size: initial;
+      }
+    }
+  </style>
+  <script>
+    import icon from '../component/icon.riot';
+
+    export default {
+      components: { icon },
+    }
+  </script>
+</icon-button>

@@ -1,3 +1,14 @@
+<modules>
+  <script>
+    import store from 'riot-4-fun/core/store.riot';
+    import is from 'rzjs/is.mjs';
+
+    import tabBox from '../component/tab-box.riot';
+    import wording from '../wording.mjs';
+    import { dateToString } from '../helper.mjs';
+  </script>
+</modules>
+
 <login>
   <div>
     管理員工具<br/>
@@ -5,13 +16,13 @@
     <button onclick={Login}>登入</button>
   </div>
   <style>
-    :host>div { text-align: center; }
+    :host>div {
+      text-align: center;
+    }
   </style>
   <script>
-    import { Is } from '../../node_modules/rzjs/Is.js';
-
     export default {
-      onMounted (props, state) {
+      onMounted () {
         this.OnBrowser(() => {
           const This = this;
 
@@ -20,11 +31,11 @@
       },
 
       Login (Evt) {
-        if (!Is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
+        if (!is.Undefined(Evt.keyCode) && Evt.keyCode != 13) { return 0; }
 
         const Pswd = this.$('input[type=password]').value;
 
-        if (!Pswd) { return alert(Z.Wording.PasswordNeed); }
+        if (!Pswd) { return alert(wording.RM.PasswordNeed); }
 
         this.ServiceCall(
           { Mthd: 'POST', Url: '/service/session/login'},
@@ -33,14 +44,15 @@
           (Sto, Rslt) => {
             const { Index: Idx, Message: Msg } = Rslt || {};
 
-            if (Idx < 0) { return alert(Msg || Z.Wording.LoadDataFail); }
+            if (Idx < 0) { return alert(Msg || wording.RM.LoadDataFail); }
 
             window.location.reload(true);
 
             return Sto;
-          });
-      }
-    }
+          }
+        );
+      },
+    };
   </script>
 </login>
 
@@ -110,10 +122,10 @@
   </style>
   <script>
     export default {
-      Upload (Evt) {
-        const Btn = this.$('button]'),
-              Fl = this.$('input[type=file]'),
-              Prgrs = this.$('progress'); // file, progress.
+      Upload () {
+        const Btn = this.$('button');
+        const Fl = this.$('input[type=file]');
+        const Prgrs = this.$('progress'); // file, progress.
 
         if (!Fl.value) {
           alert('尚未選擇網誌檔案。');
@@ -124,7 +136,7 @@
         const FlTp = Fl.files[0].type;
 
         if (FlTp !== 'text/plain' && FlTp !== 'application/x-tar') {
-          alert("檔案格式不符。\n請參考左側檔案格式說明表。");
+          alert('檔案格式不符。\n請參考左側檔案格式說明表。');
 
           return -2;
         }
@@ -148,10 +160,11 @@
           null,
           {
             File: { Fl: Fl.files[0] },
-            Pgs: (Ldd, Ttl, Evt) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
-          });
-      }
-    }
+            Pgs: (Ldd, Ttl) => { Prgrs.value = Ldd / Ttl * 100; }, // loaded, total, event.
+          }
+        );
+      },
+    };
   </script>
 </blog-uploader>
 
@@ -163,24 +176,25 @@
   </style>
   <script>
     export default {
-      Publish (Evt) {
+      Publish () {
         this.ServiceCall(
           { Mthd: 'PATCH', Url: '/service/feed' },
           null,
           'ADMIN',
-          (Sto, Rslt) => {
-            if (Rslt.Index < 0) {
-              alert(Rslt.Message);
+          (store, result) => {
+            if (result.Index < 0) {
+              alert(result.Message);
 
-              return Sto;
+              return store;
             }
 
-            Sto.FdLstDt = Rslt.Extend.replace('T', ' ').replace('Z', '');
+            store.FdLstDt = result.Extend.replace('T', ' ').replace('Z', '');
 
-            return Sto;
-          });
-      }
-    }
+            return store;
+          }
+        );
+      },
+    };
   </script>
 </feed>
 
@@ -196,7 +210,7 @@
   <script>
     export default {
       state: {
-        Pgs: []
+        Pgs: [],
       },
 
       onBeforeUpdate (props, state) {
@@ -207,15 +221,15 @@
         this.PageItemsPrepare(props, state);
       },
 
-      PageItemsPrepare (props, state) {
+      PageItemsPrepare (props, _state) {
         if (props.count === 0) { return; }
 
-        const LstPg = Math.ceil(props.count / props.limit), // last page.
-              Rng = 3; // range.
+        const LstPg = Math.ceil(props.count / props.limit); // last page.
+        const Pgs = []; // pages.
+        const Rng = 3; // range.
 
-        let Pgs = [], // pages.
-            i,
-            j;
+        let i;
+        let j;
 
         if ((Rng * 2) + 1 > LstPg) {
           for (i = 1; i <= LstPg; i++) { Pgs.push({ Pg: i, Shw: i.toString() }); }
@@ -251,8 +265,8 @@
         const TgtPg = parseInt(Evt.target.value, 10); // target page.
 
         this.props.pageTurn(Evt, TgtPg);
-      }
-    }
+      },
+    };
   </script>
 </list-index>
 
@@ -269,18 +283,35 @@
       </div>
     </li>
   </ul>
-  <style scoped>
-    :scope>ul { padding-left: 20px; }
-    :scope>ul>li { display: flex; margin: 5px; border-top: 1px solid #c0c0c0; padding: 5px; }
-    :scope>ul>li>div:first-child { flex: 0 0 200px; }
-    :scope>ul>li>pre { flex: 1 0 0; margin: 0; }
+  <style>
+    :host {
+      >ul {
+        padding-left: 20px;
+
+        >li {
+          display: flex;
+          margin: 5px;
+          border-top: 1px solid #c0c0c0;
+          padding: 5px;
+
+          >div:first-child {
+            flex: 0 0 200px;
+          }
+
+          >pre {
+            flex: 1 0 0;
+            margin: 0;
+          }
+        }
+      }
+    }
   </style>
   <script>
     export default {
       Remove (Evt) {
         Evt.item.ID && this.props.remove && this.props.remove(this.opts.blgId, Evt.item.ID);
-      }
-    }
+      },
+    };
   </script>
 </blog-comments>
 
@@ -348,9 +379,9 @@
     </li>
   </ul>
   <list-index if={props.published} count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
-  <store if={props.published} store='BLOGS' listener={StoreBlogsListen}/>
-  <store if={!props.published} store='BLOGS' listener={StoreNonBlogsListen}/>
-  <store store='TAGS' listener={StoreTagsListen}/>
+  <store if={props.published} name='BLOGS' listener={StoreBlogsListen}/>
+  <store if={!props.published} name='BLOGS' listener={StoreNonBlogsListen}/>
+  <store name='TAGS' listener={StoreTagsListen}/>
   <style>
     :host {
       >ul { margin: 0; padding: 0;
@@ -371,8 +402,6 @@
     }
   </style>
   <script>
-    import store from 'riot-4-fun/SRC/Store.riot';
-
     export default {
       components: { blogComments, listIndex, store },
 
@@ -381,10 +410,10 @@
         Tgs: [],
         Cnt: 0,
         Lmt: 5,
-        Pg: 1
+        Pg: 1,
       },
 
-      onBeforeMount (props, state) {
+      onBeforeMount (_props, _state) {
         this.StoreListen(
           'BLOG_COMMENTS',
           (Sto, TskPrms) => {
@@ -410,10 +439,11 @@
 
             this.update();
           },
-          false);
+          false
+        );
       },
 
-      onMounted (props, state) {
+      onMounted (props) {
         props.published ? this.BlogsLoad() : this.NonBlogsLoad();
 
         this.TagsLoad();
@@ -441,23 +471,23 @@
           { Mthd: 'GET', Url: '/service/blog/list/unpublished' },
           null,
           'BLOGS',
-          (Sto, Rslt) => {
-            if (Rslt.Index < 0) {
-              alert(Rslt.Message);
+          (store, result) => {
+            if (result.Index < 0) {
+              alert(result.Message);
 
-              return Sto;
+              return store;
             }
 
-            const { Extend: Extnd } = Rslt,
-                  Cnt = Extnd.length;
+            const { Extend: Extnd } = result;
 
-            let Blgs = []; // parsed blogs.
+            const Blgs = []; // parsed blogs.
+            const Cnt = Extnd.length;
 
             for (let i = 0; i < Cnt; i++) {
               Blgs.push({
                 Fl: Extnd[i],
                 Dt: '',
-                Tg: []
+                Tg: [],
               });
             }
 
@@ -485,26 +515,26 @@
           });
       },
 
-      StoreBlogsListen (Sto, PrmsToTsk) {
-        const { IsCnt = false, Pg = 1 } = PrmsToTsk || {},
-              { Blgs = [], Cnt = 0 } = Sto || {};
+      StoreBlogsListen (store, PrmsToTsk) {
+        const { IsCnt = false, Pg = 1 } = PrmsToTsk || {};
+        const { Blgs = [], Cnt = 0 } = store || {};
 
         if (!IsCnt) { return this.update({ Blgs, Pg, Cnt }); }
 
-        this.state.Cnt = Sto.Cnt;
+        this.state.Cnt = store.Cnt;
 
         this.PageTurn(null, Pg);
       },
 
-      StoreNonBlogsListen (Sto, PrmsToTsk) {
-        const { IsCnt = false, Pg = 1 } = PrmsToTsk || {},
-              { Blgs = [], Cnt = 0 } = Sto || {};
+      StoreNonBlogsListen (store, PrmsToTsk) {
+        const { Blgs = [], Cnt = 0 } = store || {};
+        const { Pg = 1 } = PrmsToTsk || {};
 
         this.update({ Blgs, Pg, Cnt, Lmt: Cnt });
       },
 
-      StoreTagsListen (Sto, PrmsToTsk) {
-         this.update({ Tgs: Sto });
+      StoreTagsListen (store) {
+        this.update({ Tgs: store });
       },
 
       PageTurn (Evt, Pg) {
@@ -532,7 +562,7 @@
       },
 
       CommentsToggle (Evt) {
-        let Blg = this.state.Blgs[Evt.target.value];
+        const Blg = this.state.Blgs[Evt.target.value];
 
         if (Blg.ShwCmt) {
           Blg.ShwCmt = false;
@@ -565,8 +595,8 @@
         @ type.
         < date object. */
       FieldDateGet (BlgNd, Tp) {
-        const ChkbxNds = BlgNd.querySelectorAll('input[type=checkbox]:checked'),
-              InptNds = BlgNd.querySelectorAll('input:not([type=checkbox]),textarea');
+        const ChkbxNds = BlgNd.querySelectorAll('input[type=checkbox]:checked');
+        const InptNds = BlgNd.querySelectorAll('input:not([type=checkbox]),textarea');
 
         switch (Tp) {
           case 'delete':
@@ -582,7 +612,7 @@
               Pswd: InptNds[3].value, // password.
               Tp: BlgNd.querySelector('select').value, // type.
               Smry: InptNds[4].value, // summary.
-              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value) // tag id array.
+              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
 
           case 'create':
@@ -593,24 +623,26 @@
               Pswd: InptNds[3].value, // password.
               Tp: BlgNd.querySelector('select').value, // type.
               Smry: InptNds[4].value, // summary.
-              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value) // tag id array.
+              TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
         }
       },
 
       Update (Evt) {
-        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
-              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
-              Dt = this.FieldDateGet(BlgNd, 'update'); // data.
+        const Idx = parseInt(Evt.target.value, 10) + 1; // index.
+
+        const BlgNd = this.$(`li:nth-child(${Idx})`); // blog node.
+
+        const Dt = this.FieldDateGet(BlgNd, 'update'); // data.
 
         let ChkStr = '';
 
-        if (Dt.Ttl.length === 0) { ChkStr += "標題不能為空。\n"; }
+        if (Dt.Ttl.length === 0) { ChkStr += '標題不能為空。\n'; }
 
-        if (!Dt.Dt.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)) { ChkStr += "日期時間格式錯誤。\n"; }
+        if (!Dt.Dt.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)) { ChkStr += '日期時間格式錯誤。\n'; }
 
         if (ChkStr.length > 0) {
-          alert("請留意以下說明：\n" + ChkStr);
+          alert('請留意以下說明：\n' + ChkStr);
 
           return -1;
         }
@@ -647,9 +679,11 @@
       },
 
       Delete (Evt) {
-        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
-              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
-              Dt = this.FieldDateGet(BlgNd, 'delete'); // data.
+        const Idx = parseInt(Evt.target.value, 10) + 1; // index.
+
+        const BlgNd = this.$(`li:nth-child(${Idx})`); // blog node.
+
+        const Dt = this.FieldDateGet(BlgNd, 'delete'); // data.
 
         if (!Dt.ID) { return alert('找不到正確的 Blog ID。'); }
 
@@ -680,21 +714,23 @@
           });
       },
 
-      Create (Evt) {
-        const Idx = parseInt(Evt.target.value, 10) + 1, // index.
-              BlgNd = this.$(`li:nth-child(${Idx})`), // blog node.
-              Dt = this.FieldDateGet(BlgNd, 'create'); // data.
+      Create (event) {
+        const Idx = parseInt(event.target.value, 10) + 1; // index.
+
+        const BlgNd = this.$(`li:nth-child(${Idx})`); // blog node.
+
+        const Dt = this.FieldDateGet(BlgNd, 'create'); // data.
 
         let ChkStr = '';
 
-        if (!Dt.Ttl) { ChkStr += "標題不能為空。\n"; }
+        if (!Dt.Ttl) { ChkStr += '標題不能為空。\n'; }
 
-        if (!Dt.Dt) { ChkStr += "日期不能為空。\n"; }
+        if (!Dt.Dt) { ChkStr += '日期不能為空。\n'; }
 
-        if (!Dt.Tp) { ChkStr += "未選擇類型。\n"; }
+        if (!Dt.Tp) { ChkStr += '未選擇類型。\n'; }
 
         if (ChkStr.length > 0) {
-          alert("請留意以下說明：\n" + ChkStr);
+          alert('請留意以下說明：\n' + ChkStr);
 
           return -1;
         }
@@ -703,13 +739,14 @@
           { Mthd: 'POST', Url: '/service/blog' },
           Dt,
           'NON_BLOGS',
-          (Sto, Rslt) => {
-            alert(Rslt.Message);
+          (store, result) => {
+            alert(result.Message);
 
-            return Sto;
-          });
-      }
-    }
+            return store;
+          }
+        );
+      },
+    };
   </script>
 </blogs>
 
@@ -730,7 +767,7 @@
       <button onclick={TagDelete}>刪除</button>
     </li>
   </ul>
-  <store store='TAGS' listener={TagsStoreListen}/>
+  <store name='TAGS' listener={TagsStoreListen}/>
   <style>
     :host>ul { list-style-type: none; padding: 0; line-height: 1.5;
       >li {
@@ -741,16 +778,14 @@
   </style>
   <store-tags/>
   <script>
-    import store from 'riot-4-fun/SRC/Store.riot';
-
     export default {
       components: { store },
 
       state: {
-        Tgs: []
+        Tgs: [],
       },
 
-      onMounted (props, state) {
+      onMounted () {
         this.TagsLoad();
       },
 
@@ -774,12 +809,12 @@
           });
       },
 
-      TagsStoreListen (Sto, PrmsToTsk) {
-        this.update({ Tgs: Sto });
+      TagsStoreListen (store) {
+        this.update({ Tgs: store });
       },
 
-      TagAdd (Evt) {
-        let Nm = this.$('input[type=text]').value.trim();
+      TagAdd () {
+        const Nm = this.$('input[type=text]').value.trim();
 
         if (!Nm) {
           alert('尚未填寫標籤名字。');
@@ -809,10 +844,10 @@
       },
 
       TagRename (Evt) {
-        const NmDom = Evt.target.previousSibling,
-              Nm = NmDom.value,
-              Id = NmDom.previousSibling.innerText;
+        const NmDom = Evt.target.previousSibling;
 
+        const Nm = NmDom.value;
+        const Id = NmDom.previousSibling.innerText;
 
         if (!Nm) {
           alert('名稱不能為空白。');
@@ -862,9 +897,10 @@
             }
 
             return Sto;
-          });
-      }
-    }
+          }
+        );
+      },
+    };
   </script>
 </tags>
 
@@ -898,24 +934,24 @@
       state: {
         Md: null,
         Cntnr: null,
-        ImgFls: []
+        ImgFls: [],
       },
 
-      onMounted (props, state) {
+      onMounted () {
         this.OnBrowser(() => {
           this.update({
             Md: window.markdownit(),
-            Cntnr: this.$('div>textarea~pre')
+            Cntnr: this.$('div>textarea~pre'),
           });
         });
       },
 
       FilePreview (Evt) {
         const FlLnth = Evt.target.files.length;
-        let ImgFls = [], // image fles.
-            BdImgs = []; // bad images.
+        const ImgFls = []; // image fles.
+        const BdImgs = []; // bad images.
 
-        Array.from(Evt.target.files).forEach((Fl, Idx) => {
+        Array.from(Evt.target.files).forEach(Fl => {
           const TpFltrs = [ 'image/png', 'image/jpeg', 'image/gif' ];
           const { name: Nm, type: Tp } = Fl;
 
@@ -945,14 +981,14 @@
       },
 
       TarMarkdownPreview (Txt = '') {
-        const { ImgFls, Md, Cntnr } = this.state,
-              TmdImgs = Txt.match(/tmd\{.+?\}/g); // TMD = tar markdown.
+        const { ImgFls, Md, Cntnr } = this.state;
+        const TmdImgs = Txt.match(/tmd\{.+?\}/g); // TMD = tar markdown.
 
         if (Array.isArray(TmdImgs)) {
           for (let i = 0; i < TmdImgs.length; i++) {
-            const TmdImg = TmdImgs[i],
-                  [ , Nm ] = TmdImg.match(/tmd\{(.+?)\}/),
-                  { DtUri = '' } = ImgFls.find(ImgFl => ImgFl.Nm === Nm) || {};
+            const TmdImg = TmdImgs[i];
+            const [ , Nm ] = TmdImg.match(/tmd\{(.+?)\}/);
+            const { DtUri = '' } = ImgFls.find(ImgFl => ImgFl.Nm === Nm) || {};
 
             if (DtUri) {
               Txt = Txt.replace(TmdImg, DtUri);
@@ -964,13 +1000,13 @@
       },
 
       InsertImageIntoTextarea (Evt) {
-        const Txtara = this.$('textarea'),
-              { value: Vl, selectionStart: SlctnStt, selectionEnd: SlctEnd } = Txtara,
-              { alt: Nm, src: DtUri } = Evt.target,
-              ImgMrkdwnTxt = `![${Nm}](tmd{${Nm}} "${Nm}")`;
-              // ImgMrkdwnTxt = `![${Nm}](${DtUri} "${Nm}")`;
+        const Txtara = this.$('textarea');
+        const { alt: Nm } = Evt.target;
 
-        let NwTxt = Vl.slice(0, SlctnStt) + ImgMrkdwnTxt + Vl.slice(SlctEnd); // new text.
+        const ImgMrkdwnTxt = `![${Nm}](tmd{${Nm}} "${Nm}")`;
+        const { value: Vl, selectionStart: SlctnStt, selectionEnd: SlctEnd } = Txtara;
+
+        const NwTxt = Vl.slice(0, SlctnStt) + ImgMrkdwnTxt + Vl.slice(SlctEnd); // new text.
 
         Txtara.value = NwTxt;
         Txtara.selectionStart = Txtara.selectionEnd = SlctnStt + ImgMrkdwnTxt.length;
@@ -980,8 +1016,8 @@
 
       TextareaChange (Evt) {
         this.TarMarkdownPreview(Evt.target.value);
-      }
-    }
+      },
+    };
   </script>
 </blog-editor>
 
@@ -996,11 +1032,9 @@
     <!-- 相簿型網誌內容編輯器 -->
   </tab-box>
   <script>
-    import tabBox from '../component/tab-box.riot';
-
     export default {
-      components: { tabBox, blogUploader, feed, blogs, tags, blogEditor }
-    }
+      components: { tabBox, blogUploader, feed, blogs, tags, blogEditor },
+    };
   </script>
 </blogs-manager>
 
@@ -1035,10 +1069,8 @@
       >div:last-child { flex: 1; }
     }
   </style>
-  <store store='MESSAGES' listener={MessagesStoreListen}/>
+  <store name='MESSAGES' listener={MessagesStoreListen}/>
   <script>
-    import store from 'riot-4-fun/SRC/Store.riot';
-
     export default {
       components: { store, listIndex },
 
@@ -1046,7 +1078,7 @@
         Cnt: 0,
         Msgs: [],
         Lmt: 10,
-        Pg: 1
+        Pg: 1,
       },
 
       onBeforeMount (props, state) {
@@ -1076,10 +1108,10 @@
           { IsCnt: true });
       },
 
-      MessagesStoreListen (Sto, PrmsToTsk) {
-        const { Lmt, Pg: SttPg } = this.state, // limit, page, state page.
-              { Cnt, Msgs } = Sto,
-              { IsCnt = false, Pg: PrmPg } = PrmsToTsk || {}; // is count, page, param page.
+      MessagesStoreListen (store, PrmsToTsk) {
+        const { Lmt, Pg: SttPg } = this.state; // limit, page, state page.
+        const { Cnt, Msgs } = store;
+        const { IsCnt = false, Pg: PrmPg } = PrmsToTsk || {}; // is count, page, param page.
 
         if (!IsCnt) { return this.update({ Cnt, Msgs, Pg: PrmPg || SttPg }); }
 
@@ -1087,11 +1119,11 @@
           { Mthd: 'GET', Url: '/service/message/admin' },
           { Lmt, Ofst: Lmt * (SttPg - 1) },
           'MESSAGES',
-          (Sto, Rslt) => {
-            if (Rslt.Index < 0) { alert(Rslt.Message); }
-            else { Sto = { ...Sto, Pg: SttPg, Msgs: Rslt.Extend }; }
+          (store, result) => {
+            if (result.Index < 0) { alert(result.Message); }
+            else { store = { ...store, Pg: SttPg, Msgs: result.Extend }; }
 
-            return Sto;
+            return store;
           });
 
         this.update({ Cnt });
@@ -1114,7 +1146,7 @@
       },
 
       Delete (Evt) {
-        let Msg = this.state.Msgs[Evt.target.value];
+        const Msg = this.state.Msgs[Evt.target.value];
 
         this.ServiceCall(
           { Mthd: 'DELETE', Url: '/service/message' },
@@ -1131,9 +1163,10 @@
             Sto.Cnt = Sto.Cnt - 1;
 
             return Sto;
-          });
-      }
-    }
+          }
+        );
+      },
+    };
   </script>
 </messages>
 
@@ -1155,7 +1188,7 @@
     </li>
   </ul>
   <list-index count={state.Cnt} page={state.Pg} limit={state.Lmt} page-turn={PageTurn}/>
-  <store store='GOOD_WORDS' listener={GoodWordsStoreListen}/>
+  <store name='GOOD_WORDS' listener={GoodWordsStoreListen}/>
   <style>
     :host>ul { margin: 0; padding: 0;
       >li { display: flex; margin-bottom: 10px;
@@ -1174,7 +1207,7 @@
         GdWds: [],
         Cnt: 0,
         Lmt: 7,
-        Pg: 1
+        Pg: 1,
       },
 
       onBeforeMount (props, state) {
@@ -1203,8 +1236,8 @@
       },
 
       GoodWordsStoreListen (Sto, PrmsToTsk = {}) {
-        const { Cnt, Pg, GdWds } = Sto,
-              { IsCnt } = PrmsToTsk;
+        const { Cnt, Pg, GdWds } = Sto;
+        const { IsCnt } = PrmsToTsk;
 
         if (!IsCnt) { return this.update({ Cnt, Pg, GdWds }); }
 
@@ -1231,9 +1264,10 @@
           });
       },
 
-      Create (Evt) {
-        const WdsNd = this.$('li:first-child>textarea'),
-              Wds = WdsNd.value.trim();
+      Create () {
+        const WdsNd = this.$('li:first-child>textarea');
+
+        const Wds = WdsNd.value.trim();
 
         if (!Wds) {
           alert('尚未填寫佳言。');
@@ -1258,9 +1292,10 @@
       },
 
       Update (Evt) {
-        const Idx = parseInt(Evt.target.value, 10),
-              Wds = this.$('li:nth-child(' + (Idx + 2) + ')>textarea').value.trim(), // 1 is for creating, start from 2.
-              { ID } = this.state.GdWds[Idx];
+        const Idx = parseInt(Evt.target.value, 10);
+
+        const Wds = this.$('li:nth-child(' + (Idx + 2) + ')>textarea').value.trim(); // 1 is for creating, start from 2.
+        const { ID } = this.state.GdWds[Idx];
 
         if (Wds.length === 0) { return alert('不能為空。'); }
 
@@ -1278,8 +1313,9 @@
       },
 
       Delete (Evt) {
-        const Idx = parseInt(Evt.target.value, 10),
-              { ID } = this.state.GdWds[Idx];
+        const Idx = parseInt(Evt.target.value, 10);
+
+        const { ID } = this.state.GdWds[Idx];
 
         this.ServiceCall(
           { Mthd: 'DELETE', Url: '/service/words'},
@@ -1294,9 +1330,10 @@
             }
 
             return Sto;
-          });
-      }
-    }
+          }
+        );
+      },
+    };
   </script>
 </good-words>
 
@@ -1333,7 +1370,7 @@
   <div>
     <button onclick={Logout}>登出</button>
   </div>
-  <store store='DATA_SIZE' listener={DateSizesStoreListen}/>
+  <store name='DATA_SIZE' listener={DateSizesStoreListen}/>
   <style>
     :host { display: flex;
       >div { flex-grow: 0; flex-basis: 245px; margin-right: 5px; border: 1px solid; border-radius: 3px; padding: 5px;
@@ -1354,79 +1391,83 @@
 
       state: {
         DtSzs: [],
-        TgtDt: ''
+        TgtDt: '',
       },
 
-      onMounted (props, state) {
+      onMounted () {
         this.DatetimeHint();
       },
 
-      DateSizesStoreListen (Sto, PrmsToTsk = {}) {
-        for (let i = 0; i < Sto.length; i++) {
-          const { Sz = 0 } = Sto[i];
+      DateSizesStoreListen (store) {
+        for (let i = 0; i < store.length; i++) {
+          const { Sz = 0 } = store[i];
 
           if (Sz > 1048576) { // 1MB.
-            Sto[i].Sz = parseInt(Sz / 1048576, 10).toString() + 'MB';
+            store[i].Sz = parseInt(Sz / 1048576, 10).toString() + 'MB';
           }
           else if (Sz > 1024) { // 1KB.
-            Sto[i].Sz = parseInt(Sz / 1024, 10).toString() + 'KB';
+            store[i].Sz = parseInt(Sz / 1024, 10).toString() + 'KB';
           }
         }
 
-        this.update({ DtSzs: Sto });
+        this.update({ DtSzs: store });
       },
 
-      DatetimeHint (Evt) {
-        const TgtNbr = parseInt(this.$('input[type=number]').value, 10), // target number.
-              TgtScd = parseInt(this.$('select').value, 10), // target seconds.
-              TgtDt = new Date((new Date()).getTime() - (TgtNbr * TgtScd * 1000)); // target date.
+      DatetimeHint () {
+        const TgtNbr = parseInt(this.$('input[type=number]').value, 10); // target number.
+        const TgtScd = parseInt(this.$('select').value, 10); // target seconds.
 
-        this.update({ TgtDt: DatetimeFormat(TgtDt) });
+        const TgtDt = new Date((new Date()).getTime() - (TgtNbr * TgtScd * 1000)); // target date.
+
+        this.update({ TgtDt: dateToString(TgtDt, 'yyyy-mm-dd hh:ii:ss') });
       },
 
-      Clean (Evt) {
-        const TgtNbr = parseInt(this.$('input[type=number]').value, 10),
-              TgtScd = parseInt(this.$('select').value, 10) // target seconds.
+      Clean () {
+        const TgtNbr = parseInt(this.$('input[type=number]').value, 10);
+        const TgtScd = parseInt(this.$('select').value, 10) // target seconds.
 
         this.ServiceCall(
           { Mthd: 'DELETE', Url: '/service/cache' },
           { Scd: TgtNbr * TgtScd },
           'CACHE',
-          (Sto, Rslt) => {
-            alert(Rslt.Message + "\n共 " + Rslt.Extend + ' 個檔案被刪除。');
+          (store, result) => {
+            alert(result.Message + '\n共 ' + result.Extend + ' 個檔案被刪除。');
 
-            return Sto;
-          });
+            return store;
+          }
+        );
       },
 
-      SizeUsedList (Evt) {
+      SizeUsedList () {
         this.ServiceCall(
           { Mthd: 'GET', Url: '/service/data/size' },
           null,
           'DATA_SIZE',
-          (Sto, Rslt) => {
-            alert(Rslt.Message);
+          (store, result) => {
+            alert(result.Message);
 
-            if (Rslt.Index > -1) { Sto = Rslt.Extend; }
+            if (result.Index > -1) { store = result.Extend; }
 
-            return Sto;
-          });
+            return store;
+          }
+        );
       },
 
-      Logout (Evt) {
+      Logout () {
         this.ServiceCall(
           { Mthd: 'POST', Url: '/service/session/logout' },
           null,
           'ADMIN',
-          (Sto, Rslt) => {
-            alert(Rslt.Message);
+          (store, result) => {
+            alert(result.Message);
 
-            if (Rslt.Index > -1) { window.location.reload(true); }
+            if (result.Index > -1) { window.location.reload(true); }
 
-            return Sto;
-          });
-      }
-    }
+            return store;
+          }
+        );
+      },
+    };
   </script>
 </system>
 
@@ -1441,18 +1482,15 @@
   </tab-box>
   <store name='ADMIN' listener={AdminStoreListen}/>
   <script>
-    import store from 'riot-4-fun/SRC/Store.riot';
-    import tabBox from '../component/tab-box.riot';
-
     export default {
       components: { login, tabBox, blogsManager, messages, goodWords, artCorner, system, store },
 
       state: {
         FdLstDt: '',
-        IsLgd: false
+        IsLgd: false,
       },
 
-      onBeforeMount (props, state) {
+      onBeforeMount (_props, _state) {
         const { FdLstDt, IsLgd } = this.StoreGet('ADMIN'); // feed last date, is logged.
 
         this.state.IsLgd = IsLgd;
@@ -1472,13 +1510,13 @@
       //     false);
       // },
 
-      AdminStoreListen (Sto, PrmsToTsk) {
-        const { FdLstDt } = Sto;
+      AdminStoreListen (store) {
+        const { FdLstDt } = store;
 
         if (!FdLstDt) { return; }
 
         this.update({ FdLstDt });
-      }
-    }
+      },
+    };
   </script>
 </page-admin>

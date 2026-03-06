@@ -1,0 +1,43 @@
+<to-top-button>
+  <button onclick={goToTop}>
+    <icon name='to-top' color='var(--color-gray-8)' size={22} />
+  </button>
+  <style>
+    :host>button {
+      font-size: 0;
+      color: var(--color-gray-8);
+
+      >span {
+        vertical-align: middle;
+        font-size: initial;
+      }
+    }
+  </style>
+  <script>
+    import log from 'rzjs/log.mjs';
+
+    import icon from './icon.riot';
+
+    export default {
+      components: { icon },
+
+      state: {
+        target: null,
+      },
+
+      onBeforeMount (props, state) {
+        if (!props.target && !props.targetSelector) {
+          log('to-top-button component needs a target element, or a target selector.', 'warn');
+
+          return;
+        }
+
+        state.target = document.querySelector(props.targetSelector) || props.target || null;
+      },
+
+      goToTop () {
+        this.state.target.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+      },
+    };
+  </script>
+</to-top-button>

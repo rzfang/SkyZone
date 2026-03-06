@@ -7,33 +7,34 @@
   <script>
     import messages from '../component/messages.riot';
     import pageLayout from '../component/page-layout.riot';
-    import store from 'riot-4-fun/SRC/Store.riot';
+    import store from 'riot-4-fun/core/store.riot';
 
     export default {
       components: { pageLayout, messages, store },
 
       state: {
         HsAlMsgsLdd: false, // has all messages loaded.
-        Msgs: []
+        Msgs: [],
       },
 
-      MessagesStoreListen (Sto, PrmsToTsk) {
+      MessagesStoreListen (Sto) {
         this.update({ Msgs: Sto, HsAlMsgsLdd: Sto.length < 5 });
       },
 
       RepliesStoreListen (Sto, PrmsToTsk) {
         if (!PrmsToTsk) { return; }
 
-        const { MsgId, MsgIdx } = PrmsToTsk,
-              Msg = this.state.Msgs[MsgIdx],
-              Rpls = Sto[MsgId];
+        const { MsgId, MsgIdx } = PrmsToTsk;
+
+        const Msg = this.state.Msgs[MsgIdx];
+        const Rpls = Sto[MsgId];
 
         Msg.ChnCnt = Rpls.length;
         Msg.IsRplsLstd = true;
         Msg.Rpls = Rpls;
 
         this.update({ Msgs: this.state.Msgs });
-      }
+      },
     }
   </script>
 </page-messages>
