@@ -9,7 +9,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   r4fConfig,
-  globalIgnores ([ '**/*.riot.*.mjs', 'package-lock.json' ]),
+  globalIgnores ([ '**/*.riot.*.mjs', '.r4f/**', 'package-lock.json' ]),
   {
     files: [ '**/*.{js,mjs,cjs}' ],
     languageOptions: {
