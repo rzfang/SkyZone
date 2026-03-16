@@ -23,7 +23,13 @@ const defaultPageRoute = { // default page route. here should handle 404.
   favicon: 'favicon.ico',
   feed: '/feed.xml',
   css: [ '/css/base.css', '/css/style1.css', '/css/style2.css' ],
-  js: [],
+  js: [
+    {
+      async: '',
+      crossorigin: 'anonymous',
+      src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5447666979551687',
+    },
+  ],
   body: {},
 };
 
@@ -31,7 +37,7 @@ const blogPageRoute = { // blog page route.
   ...defaultPageRoute,
   title: '空域 - 網誌',
   body: { component: './SRC/page/page-blog.riot', initialize: BlogPage },
-  js: [ '/markdown-it.min.js' ],
+  js: [ ...defaultPageRoute.js, '/markdown-it.min.js' ],
 };
 
 const config = { // Riot HTTP config.
@@ -41,7 +47,7 @@ const config = { // Riot HTTP config.
     '/admin': {
       ...defaultPageRoute,
       title: '空域 - 管理員',
-      js: [ '/markdown-it.min.js' ],
+      js: [ ...defaultPageRoute.js, '/markdown-it.min.js' ],
       body: { component: './SRC/page/page-admin.riot', initialize: AdminPage }},
 
     '/about': {
