@@ -6,7 +6,7 @@
   "dependencies": {
     "cookie": "^1.0.0",
     "get-folder-size": "^3.0.0",
-    "markdown-it": "^12.0.0",
+    "markdown-it": "^14.0.0",
     "nanoid": "^5.1.6",
     "riot-4-fun": "^0.3.4",
     "rzjs": "github:rzfang/Js",

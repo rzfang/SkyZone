@@ -1,13 +1,20 @@
 <raw-html>
   <pre />
+  <style>
+    :host>pre { white-space: collapse; }
+  </style>
   <script>
     export default {
       onMounted () {
-        this.$('pre').innerHTML = this.props.html;
+        this.OnBrowser(() => {
+          this.$('pre').innerHTML = this.props.html;
+        });
       },
 
       onUpdated () {
-        this.$('pre').innerHTML = this.props.html;
+        this.OnBrowser(() => {
+          this.$('pre').innerHTML = this.props.html;
+        });
       },
     };
   </script>

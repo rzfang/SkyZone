@@ -1,0 +1,98 @@
+<markdown-panel>
+  <raw-html html={parseSource()} />
+  <style>
+    :host {
+      --color-bg: rgb(from var(--color-gray-8) r g b / 0.1);
+
+
+      pre {
+        blockquote {
+          margin: 10px 0;
+          border-left: 3px solid var(--color-gray-8);
+          padding: 5px 10px;
+          background-color: var(--color-bg);
+
+          >p {
+            margin: 0;
+          }
+        }
+
+        code {
+          padding: 2px 7px;
+        }
+
+        img {
+          max-width: 100%;
+        }
+
+        p {
+          margin-top: 0;
+        }
+
+        pre:has(>code) {
+          background-color: var(--color-bg);
+
+          >code {
+            background-color: initial;
+          }
+        }
+
+        table {
+          border-spacing: 0;
+
+          tr:last-child {
+            >td {
+              border-bottom-width: 1px;
+            }
+          }
+
+          td, th {
+            border-left-width: 1px;
+            border-top-width: 1px;
+            padding: 0 5px;
+
+            &:last-child {
+              border-right-width: 1px;
+            }
+          }
+        }
+
+        ul {
+          list-style-type: initial;
+          padding-left: 20px;
+        }
+      }
+    }
+  </style>
+  <script>
+    import markdownit from 'markdown-it';
+
+    import rawHtml from './raw-html.riot';
+
+    export default {
+      components: { rawHtml },
+
+      state: {
+        mdii: null, // markdown-it instance.
+      },
+
+      onBeforeMount (props, state) {
+        this.OnBrowser(() => { state.mdii = markdownit(); });
+      },
+
+      parseSource () {
+        const { images = [], mode } = this.props;
+
+        let source = this.props.source;
+
+        if (mode === 'edit') {
+          images.forEach(({ name, url }) => {
+            source = source.replace(new RegExp(name, 'g'), url);
+          });
+        }
+
+        return this.state.mdii?.render(source);
+      },
+    };
+  </script>
+</markdown-panel>
