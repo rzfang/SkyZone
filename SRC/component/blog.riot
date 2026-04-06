@@ -1,48 +1,10 @@
-<text>
-  <pre>{props.blog.Info}</pre>
-  <style>
-    :host {
-      display: block;
-
-      >pre {
-        line-height: 2rem;
-      }
-    }
-  </style>
-</text>
-
-<markdown>
-  <pre>{props.blog.Info1}</pre>
-  <style>
-    :host>pre {
-      text-align: center;
-
-      p {
-        text-align: left;
-      }
-
-      img {
-        max-width: 640px;
-        width: 100%;
-      }
-    }
-  </style>
-  <script>
-    export default {
-      onMounted (props) {
-        this.$('pre').innerHTML = props.blog.Info;
-      },
-    }
-  </script>
-</markdown>
-
 <blog>
   <h1>{props.info.Ttl}</h1>
   <div>
     <div if={props.info.Tgs.length} is='tags' tags={props.info.Tgs}/>
     <icon title='發佈時間' name='calendar'/> {props.info.Dt}
   </div>
-  <div is={props.info.Tp} blog={props.info}/>
+  <markdown-panel source={props.info.Info} />
   <div is='share-box' url={props.info.Url}/>
   <style>
     :host {
@@ -58,11 +20,12 @@
   </style>
   <script>
     import icon from './icon.riot';
+    import markdownPanel from './markdown-panel.riot';
     import shareBox from './share-box.riot';
     import tags from './tags.riot';
 
     export default {
-      components: { icon, shareBox, tags, text, markdown },
+      components: { icon, shareBox, tags, markdownPanel },
     };
   </script>
 </blog>

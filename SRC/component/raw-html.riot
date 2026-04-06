@@ -5,7 +5,11 @@
   </style>
   <script>
     export default {
-      onMounted () {
+      onBeforeMount (props) {
+        this.root.innerHTML = `<pre>${props.html}</pre>`;
+      },
+
+      onMounted (props) {
         this.OnBrowser(() => {
           this.$('pre').innerHTML = this.props.html;
         });

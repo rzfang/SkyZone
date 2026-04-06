@@ -4,8 +4,9 @@
     :host {
       --color-bg: rgb(from var(--color-gray-8) r g b / 0.1);
 
+      >raw-html>pre {
+        line-height: 2rem;
 
-      pre {
         blockquote {
           margin: 10px 0;
           border-left: 3px solid var(--color-gray-8);
@@ -22,6 +23,7 @@
         }
 
         img {
+          max-width: 640px;
           max-width: 100%;
         }
 
@@ -77,13 +79,13 @@
       },
 
       onBeforeMount (props, state) {
-        this.OnBrowser(() => { state.mdii = markdownit(); });
+        state.mdii = markdownit();
       },
 
       parseSource () {
         const { images = [], mode } = this.props;
 
-        let source = this.props.source;
+        let source = this.props.source.replace(/\n/g, '  \n');
 
         if (mode === 'edit') {
           images.forEach(({ name, url }) => {
