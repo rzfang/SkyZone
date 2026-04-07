@@ -2,9 +2,9 @@ import cookie from 'cookie';
 import crypto from 'crypto';
 import fs from 'fs';
 import getFolderSize from 'get-folder-size'; // To do - implmenet to retire this.
-import markdownIt from 'markdown-it';
 import path from 'path';
 import tarStream from 'tar-stream';
+import yauzl from 'yauzl';
 import { cache, is, log, sqlite } from 'rzjs';
 import { customAlphabet } from 'nanoid';
 import { fileURLToPath } from 'url';
@@ -25,7 +25,6 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
   DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
   FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
-const MI = markdownIt();
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -748,7 +747,7 @@ export const Blog = {
             return;
 
           case 'markdown':
-            Blog.TarMarkdownRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
+            Blog.MarkdownRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
 
             return;
 
@@ -760,74 +759,45 @@ export const Blog = {
         PckEnd(Cd, Msg || Kwd.RM.DbCrash);
       });
   },
-  TarMarkdownRead: (SqlRst, Then) => {
+  MarkdownRead: (SqlRst, Then) => {
     if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
-    const TarNm = SqlRst.Fl.replace('.tar', ''),
-      FlStrm = fs.createReadStream(`${BLG_PTH}/${SqlRst.Fl}`);
+    yauzl.open(`${BLG_PTH}/${SqlRst.Fl}`, { lazyEntries: true }, (error, zipFile) => {
+      if (error) {
+        return Then(-2);
+      }
 
-    const Extr = tarStream.extract();
+      zipFile.on('entry', entry => {
+        if (!entry.fileName.endsWith('.md')) {
+          zipFile.readEntry();
 
-    SqlRst.Info = { Lst: [], Imgs: {}, Str: '' };
-
-    Extr.on(
-      'entry',
-      (Hdr, Strm, Next) => { // file header in the tar; stream object; callback function.
-        if (Hdr.name.indexOf('.md') > -1) { // markdown.
-          const Chks = []; // chunks.
-
-          Strm.on('data', Chk=> { Chks.push(Chk); });
-
-          Strm.on(
-            'end',
-            () => {
-              SqlRst.Info.IsMrkdwn = true;
-              SqlRst.Info.Str = Chks.join('').toString('utf8');
-
-              Next();
-            });
-        }
-        else {
-          const Pth = `${CCH_PTH}/${TarNm}-${Hdr.name}`; // image file path.
-
-          SqlRst.Info.Imgs[Hdr.name] = `/resource/image/${TarNm}-${Hdr.name}`; // image file url.
-
-          TarStreamFileWrite(Hdr, Strm, Pth, Next);
+          return;
         }
 
-        Strm.resume();
-      });
+        zipFile.openReadStream(entry, (error, stream) => {
+          if (error) {
+            zipFile.close();
 
-    Extr.on(
-      'finish',
-      () => {
-        if (SqlRst.Info.IsMrkdwn) {
-          const Kys = Object.keys(SqlRst.Info.Imgs),
-            KysLngth = Kys.length;
-
-          for (let i = 0; i < KysLngth; i++) {
-            const Ky = Kys[i];
-
-            SqlRst.Info.Str = SqlRst.Info.Str.replace(`tmd{${Ky}}`, SqlRst.Info.Imgs[Ky]);
+            return Then(-3);
           }
 
-          SqlRst.Info = MI.render(SqlRst.Info.Str).replace(/<img /g, '<img loading="lazy" ');
-        }
-        else {
-          for (let i = 0; i < SqlRst.Info.Lst.length; i++) {
-            const Itm = SqlRst.Info.Lst[i],
-              FlbckFl = Itm.Fl.replace(/\.jpg$/, '.png'); // fallback PNG file name.
+          let data = '';
 
-            Itm.ImgUrl = SqlRst.Info.Imgs[Itm.Fl] || SqlRst.Info.Imgs[FlbckFl] || '';
-          }
+          stream.on('data', chunk => {
+            data += chunk.toString();
+          });
 
-          SqlRst.Info = SqlRst.Info.Lst;
-        }
+          stream.on('end', () => {
+            SqlRst.Info = data.replace(/\((.+?)\)/g, `(/blog/${SqlRst.Id}/$1)`);
 
-        Then(0);
+            zipFile.close();
+            Then(0);
+          });
+        });
       });
 
-    FlStrm.pipe(Extr);
+      zipFile.readEntry();
+    });
   },
 };
 

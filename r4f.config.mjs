@@ -37,7 +37,6 @@ const blogPageRoute = { // blog page route.
   ...defaultPageRoute,
   title: '空域 - 網誌',
   body: { component: './SRC/page/page-blog.riot', initialize: BlogPage },
-  js: [ ...defaultPageRoute.js, '/markdown-it.min.js' ],
 };
 
 const config = { // Riot HTTP config.
@@ -47,7 +46,6 @@ const config = { // Riot HTTP config.
     '/admin': {
       ...defaultPageRoute,
       title: '空域 - 管理員',
-      js: [ ...defaultPageRoute.js, '/markdown-it.min.js' ],
       body: { component: './SRC/page/page-admin.riot', initialize: AdminPage }},
 
     '/about': {
@@ -160,14 +158,6 @@ const config = { // Riot HTTP config.
     },
   },
   route: [
-    // === node_modules ===
-
-    {
-      path: /markdown-it\.min\.js$/,
-      location: './node_modules/markdown-it/dist',
-      nameOnly: true,
-    },
-
     // ===
 
     { // SEO files.

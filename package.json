@@ -10,7 +10,7 @@
     "nanoid": "^5.1.6",
     "riot-4-fun": "^0.3.4",
     "rzjs": "github:rzfang/Js",
-    "tar-stream": "^2.2.0"
+    "yauzl": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/css": "^0.10.0",
@@ -21,6 +21,7 @@
     "@stylistic/eslint-plugin": "^5.1.0",
     "eslint": "^9.30.1",
     "globals": "^16.3.0",
+    "tar-stream": "^2.2.0",
     "yazl": "^3.3.1"
   },
   "scripts": {
