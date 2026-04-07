@@ -7,7 +7,7 @@
     import deskFrame from '../component/desk-frame.riot';
     import icon from '../component/icon.riot';
     import iconButton from '../component/icon-button.riot';
-    import rawHtml from '../component/raw-html.riot';
+    import markdownPanel from '../component/markdown-panel.riot';
     import store from 'riot-4-fun/core/store.riot';
     import tabBox from '../component/tab-box.riot';
     import toTopButton from '../component/to-top-button.riot';
@@ -520,7 +520,7 @@
 </blogs>
 
 <blog>
-  <raw-html html={state.info.Info} />
+  <markdown-panel source={state.info.Info} />
   <ul class='comments'>
     <li each={(one, index) in state.comments} key={one.ID}>
       <div>
@@ -563,12 +563,6 @@
       >pre {
         margin-bottom: 80px;
         word-break: break-all;
-      }
-
-      >raw-html img {
-        border-radius: 5px;
-        width: 100%;
-        max-width: 800px;
       }
 
       >.comments {
@@ -640,7 +634,7 @@
   </style>
   <script>
     export default {
-      components: { commentForm, datetime, icon, rawHtml },
+      components: { commentForm, datetime, icon, markdownPanel },
 
       state: {
         comments: [],

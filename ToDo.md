@@ -1,6 +1,9 @@
 - all file coding style to be camel case.
 - helper.common.mjs & helper.server.mjs & helper.client.mjs
 - tar_be_markdown.sh & txt_to_md.mjs works.
+- all articles to be markdown only.
+- markdown panel is not necessary to rerender on browser side.
+- Blog.FileRespond code refactor.
 
 ==== To Do List ========================================================================================================
 
