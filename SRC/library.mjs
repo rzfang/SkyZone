@@ -681,6 +681,122 @@ export const Blog = {
           });
       });
   },
+  FileRespond: (Rqst, Rspns, Then) => {
+    const { id, file } = Rqst.params;
+
+    if (!id || !file) { return Then(); }
+
+    const Db = new sqlite(DB_PTH);
+
+    if (!Db.IsReady()) { return Then(); }
+
+    Db.Query('SELECT file FROM Blog WHERE id = ?;', [ id ])
+      .then(Rst => {
+        if (!Rst || !is.Array(Rst) || !Rst.length) {
+          Db.Close();
+
+          return Then();
+        }
+
+        const Fl = Rst[0].file;
+        const Pth = path.join(BLG_PTH, Fl);
+
+        yauzl.open(Pth, { lazyEntries: true }, (error, zip) => {
+          if (error) {
+            Db.Close();
+
+            return Then();
+          }
+
+          let Fnd = false; // found flag.
+
+          zip.on('entry', entry => {
+            if (entry.fileName === file) {
+              Fnd = true;
+
+              const mimeTypes = {
+                '.bmp':  'image/x-windows-bmp',
+                '.gif':  'image/gif',
+                '.ico':  'image/x-icon',
+                '.jpg':  'image/jpeg',
+                '.png':  'image/png',
+                '.svg':  'image/svg+xml',
+                '.webp': 'image/webp',
+              };
+
+              const mimeType = mimeTypes[path.extname(file)] || 'text/plain';
+              const lastMod = entry.getLastModDate ? entry.getLastModDate() : null;
+              const ifModifiedSince = Rqst.headers['if-modified-since'];
+              const cacheSeconds = 3600;
+
+              if (lastMod && ifModifiedSince && ifModifiedSince !== 'Invalid Date') {
+                const checkedMs = (new Date(ifModifiedSince)).getTime();
+
+                if (lastMod.getTime() <= checkedMs) {
+                  Rspns.writeHead(304, {
+                    'Cache-Control': `public, max-age=${cacheSeconds}`,
+                    'Content-Type': mimeType,
+                    'Last-Modified': ifModifiedSince,
+                  });
+                  Rspns.end();
+                  zip.close();
+                  Db.Close();
+
+                  return;
+                }
+              }
+
+              zip.openReadStream(entry, (error, stream) => {
+                if (error) {
+                  zip.close();
+                  Db.Close();
+
+                  return Then();
+                }
+
+                const headers = {
+                  'Cache-Control': `public, max-age=${cacheSeconds}`,
+                  'Content-Type': mimeType,
+                };
+
+                if (lastMod) {
+                  headers['Last-Modified'] = lastMod.toUTCString();
+                }
+
+                Rspns.writeHead(200, headers);
+
+                stream.on('end', () => {
+                  zip.close();
+                  Db.Close();
+                });
+
+                stream.pipe(Rspns);
+              });
+
+              return;
+            }
+
+            zip.readEntry();
+          });
+
+          zip.on('end', () => {
+            if (!Fnd) {
+              zip.close();
+              Db.Close();
+
+              Then();
+            }
+          });
+
+          zip.readEntry();
+        });
+      })
+      .catch(() => {
+        Db.Close();
+
+        Then();
+      });
+  },
   Read: (Rqst, Prm, End) => {
     if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 

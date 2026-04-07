@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 
 import Cnst from './SRC/constant.json.mjs';
 import Svc from './SRC/service.mjs';
+import { Blog } from './SRC/library.mjs';
 
 import AdminPage from './SRC/page/admin.mjs';
 import BlogPage from './SRC/page/blog.mjs';
@@ -157,7 +158,10 @@ const config = { // Riot HTTP config.
       get: Svc.SystemDataSize,
     },
   },
-  route: [
+  raw: {
+    '/blog/:id/:file': Blog.FileRespond,
+  },
+  file: [
     // ===
 
     { // SEO files.
