@@ -332,17 +332,6 @@
             <dd>{Blg.Fl}</dd>
           </dl>
           <dl>
-            <dt>類型</dt>
-            <dd>
-              <select value={Blg.Tp}>
-                <option value='text'>text</option>
-                <option value='markdown'>markdown</option>
-                <option value='image'>image</option>
-                <option value='images'>images</option>
-              </select>
-            </dd>
-          </dl>
-          <dl>
             <dt>簡述</dt>
             <dd><textarea rows='3' placeholder='未輸入副標文字。'>{Blg.Smry}</textarea></dd>
           </dl>
@@ -595,7 +584,6 @@
               ID: BlgNd.querySelector('dd').innerHTML,
               Ttl: InptNds[0].value, // title.
               Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
-              Tp: BlgNd.querySelector('select').value, // type.
               Smry: InptNds[3].value, // summary.
               TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
@@ -605,7 +593,6 @@
               Fl: BlgNd.querySelector('div>div:nth-child(2) dd').innerHTML, // file.
               Ttl: InptNds[0].value, // title.
               Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
-              Tp: BlgNd.querySelector('select').value, // type.
               Smry: InptNds[3].value, // summary.
               TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
@@ -641,7 +628,6 @@
             if (Rslt.Index > -1) {
               for (let i = 0; i < Sto.length; i++) {
                 if (Sto[i].ID === Dt.ID) {
-                  Sto[i].Tp = Dt.Tp;
                   Sto[i].Ttl = Dt.Ttl;
                   Sto[i].Dt = Dt.Dt;
                   Sto[i].Smry = Dt.Smry;
@@ -682,7 +668,6 @@
                 if (Sto[i].ID === Dt.ID) {
                   Sto[i].ID = '';
                   Sto[i].Ttl = '';
-                  Sto[i].Tp = '';
                   Sto[i].Dt = '';
                   Sto[i].Smry = '';
                   Sto[i].Tg = [];
@@ -708,8 +693,6 @@
         if (!Dt.Ttl) { ChkStr += '標題不能為空。\n'; }
 
         if (!Dt.Dt) { ChkStr += '日期不能為空。\n'; }
-
-        if (!Dt.Tp) { ChkStr += '未選擇類型。\n'; }
 
         if (ChkStr.length > 0) {
           alert('請留意以下說明：\n' + ChkStr);

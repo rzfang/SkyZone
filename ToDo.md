@@ -1,26 +1,19 @@
 - all file coding style to be camel case.
 - helper.common.mjs & helper.server.mjs & helper.client.mjs
-- tar_be_markdown.sh & txt_to_md.mjs works.
-- all articles to be markdown only.
 - markdown panel is not necessary to rerender on browser side.
 - Blog.FileRespond code refactor.
+- blog published control.
 
 ==== To Do List ========================================================================================================
 
 * 20200528
   list kind store can save "page", "total" info to reduce service call.
 
-* 20200521
-  unite all blog types as one markdown tgz format.
-
 * 20200519
   a solution of service call for both server and browser side.
 
 * 20200425
   messages toggle implementation is bad, it changes props.
-
-* 20200422
-  try catch causes hard debug.
 
 * 20200328
   for mobile, function menu becomes bottom of page.
@@ -33,9 +26,6 @@
   SEO.
     sitemap.xml - https://www.awoo.com.tw/blog/2018/01/sitemap-xml/
   File Upload.
-
-* 20190414
-  池塘與夏天 this comment.txt in tar file is not expected.
 
 * 20190106
   cookie solution on node.js and browser.
@@ -52,9 +42,6 @@
 
 * 20121224 & 25
   管理頁，留言板串列比照網誌的留言呈現方式。
-
-* 20121023 & 24
-  實作空域專用的 Blog 撰寫工具。
 
 * 20120707
   管理頁，留言板可以顯示整個留言串，方便維護時的觀察。

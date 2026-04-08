@@ -148,7 +148,6 @@ function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
 }
 
 export const Blog = {
-  Tp: [ 'text', 'markdown' ],
   List: (Rqst, Prm, End) => {
     if (!Prm || !is.Object(Prm) || !is.Function(End)) { return; }
 
@@ -199,7 +198,6 @@ export const Blog = {
           Blog.id AS ID,
           Blog.title AS Ttl,
           Blog.summary as Smry,
-          Blog.type AS Tp,
           Blog.datetime AS Dt
         FROM Blog, TagLink
         WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (${Prt})
@@ -208,7 +206,7 @@ export const Blog = {
     }
     else {
       SQL = `
-        SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt
+        SELECT id AS ID, title AS Ttl, summary as Smry, datetime AS Dt
         FROM Blog
         ORDER BY datetime DESC
         LIMIT ? OFFSET ?;
@@ -290,7 +288,7 @@ export const Blog = {
     let SQL =
       'SELECT BlogComment.blog_id, COUNT(BlogComment.id) AS CmtCnt FROM BlogComment GROUP BY BlogComment.blog_id';
 
-    SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.type AS Tp, Blog.datetime AS Dt, ' +
+    SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.datetime AS Dt, ' +
           'Blog.summary AS Smry, BlogCmt.CmtCnt ' +
           'FROM Blog LEFT JOIN (' + SQL + ') AS BlogCmt ON Blog.id = BlogCmt.blog_id ORDER BY Dt DESC LIMIT ?, ?;';
 
@@ -395,11 +393,6 @@ export const Blog = {
       Vls.push(Prm.Ttl);
     }
 
-    if (Prm.Tp && Blog.Tp.indexOf(Prm.Tp) > -1) {
-      Kys.push('type = ?');
-      Vls.push(Prm.Tp);
-    }
-
     if (Prm.Dt && is.TimeStamp(Prm.Dt)) {
       Kys.push('datetime = ?');
       Vls.push(Prm.Dt);
@@ -466,8 +459,7 @@ export const Blog = {
   Create: (Rqst, Rspns, Prm, End) => {
     if (!Ssn.IsLogged(Rqst, Rspns)) { return End(-1, Kwd.RM.NotLogin); }
 
-    if (!Prm || !Prm.Fl || !is.String(Prm.Fl) || !Prm.Ttl || !is.String(Prm.Ttl) || !Prm.Dt || !is.TimeStamp(Prm.Dt) ||
-        !Prm.Tp || Blog.Tp.indexOf(Prm.Tp) < 0) {
+    if (!Prm || !Prm.Fl || !is.String(Prm.Fl) || !Prm.Ttl || !is.String(Prm.Ttl) || !Prm.Dt || !is.TimeStamp(Prm.Dt)) {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
@@ -480,10 +472,10 @@ export const Blog = {
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
     const BlgId = MakeId();
 
-    let SQL = 'INSERT INTO Blog (id, title, file, type, datetime, summary) VALUES (?, ?, ?, ?, ?, ?);';
+    let SQL = 'INSERT INTO Blog (id, title, file, datetime, summary) VALUES (?, ?, ?, ?, ?);';
 
     Db.Transaction('BEGIN')
-      .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Tp, Prm.Dt, Prm.Smry ]))
+      .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Dt, Prm.Smry ]))
       .then(() => {
         if (!Prm.TgIDA) { return Promise.resolve(); }
 
@@ -817,10 +809,10 @@ export const Blog = {
     }))
       .then(() => {
         const SQL =
-          'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
+          'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, ' +
           'Blog.datetime AS Dt, COUNT(BlogComment.id) AS CmtCnt ' +
           'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
-          'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt;';
+          'WHERE Blog.id = ? GROUP BY Ttl, Fl, Dt;';
 
         return Db.Query(SQL, [ Prm.Id ]);
       })
@@ -839,10 +831,9 @@ export const Blog = {
 
         SqlRst.Url = '/blog/' + SqlRst.Id;
 
-        if (SqlRst.Tp === 'image' || SqlRst.Tp === 'images') { SqlRst.Tp = 'markdown'; }
-
-        switch (SqlRst.Tp) {
-          case 'text':
+        switch (path.extname(SqlRst.Fl)) {
+          case '.txt':
+          case '.md':
             cache.FileLoad(
               `${BLG_PTH}/${SqlRst.Fl}`,
               (Cd, Str) => {
@@ -855,8 +846,8 @@ export const Blog = {
 
             return;
 
-          case 'markdown':
-            Blog.MarkdownRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
+          case '.zip':
+            Blog.ZipRead(SqlRst, Cd => { PckEnd(Cd, (Cd < 0) ? Kwd.RM.SystemError : Kwd.RM.Done, SqlRst); });
 
             return;
 
@@ -868,7 +859,7 @@ export const Blog = {
         PckEnd(Cd, Msg || Kwd.RM.DbCrash);
       });
   },
-  MarkdownRead: (SqlRst, Then) => {
+  ZipRead: (SqlRst, Then) => {
     if (!SqlRst || !SqlRst.Fl) { return Then(-1); }
 
     yauzl.open(`${BLG_PTH}/${SqlRst.Fl}`, { lazyEntries: true }, (error, zipFile) => {
