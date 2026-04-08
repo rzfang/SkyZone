@@ -64,34 +64,24 @@
         <tbody>
           <tr><th>類型</th><th>檔案格式</th><th>說明</th></tr>
           <tr>
-            <td>Text</td>
+            <td>Text, Markdown</td>
             <td>文字檔</td>
-            <td>任意檔名的純文字檔, *.txt</td>
+            <td>任意檔名的純文字檔, *.txt, *.md</td>
           </tr>
           <tr>
-            <td>Markdown</td>
+            <td>Zip</td>
             <td>
-              Tar 打包檔<br/>
-              ├ 001.*<br/>
+              Zip 打包檔<br/>
+              ├ *.jpg<br/>
+              ├ *.png<br/>
+              ├ *.webp<br/>
               ...<br/>
-              ├ 999.*<br/>
-              └ comment.txt<br/>
-              ---- or ----<br/>
-              Tar 打包檔<br/>
-              ├ [圖檔名].*<br/>
-              ...<br/>
-              ├ [圖檔名].*<br/>
-              └ [任意檔名].md<br/>
+              └ *.md<br/>
             </td>
             <td>
               打包檔名稱不限。<br/>
               透過「網誌撰寫」產生 Markdown 文本，<br/>儲存為 .md 檔案。<br/>然後將圖檔與 .md 檔一同打包。
             </td>
-          </tr>
-          <tr>
-            <td>HTML</td>
-            <td>(還在規畫)</td>
-            <td></td>
           </tr>
         </tbody>
       </table>
@@ -334,10 +324,6 @@
               <input placeholder='請輸入日期。' type='date' value={Blg.Dt.substr(0, 10)}/>
               <input placeholder='請輸入時間。' type='text' pattern='\d\{2}:\d\{2}:\d\{2}' value={Blg.Dt.substr(11)}/>
             </dd>
-          </dl>
-          <dl>
-            <dt>密碼</dt>
-            <dd><input placeholder='未設定瀏覽密碼。' type='text' value={Blg.Pswd}></dd>
           </dl>
         </div>
         <div>
@@ -609,9 +595,8 @@
               ID: BlgNd.querySelector('dd').innerHTML,
               Ttl: InptNds[0].value, // title.
               Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
-              Pswd: InptNds[3].value, // password.
               Tp: BlgNd.querySelector('select').value, // type.
-              Smry: InptNds[4].value, // summary.
+              Smry: InptNds[3].value, // summary.
               TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
 
@@ -620,9 +605,8 @@
               Fl: BlgNd.querySelector('div>div:nth-child(2) dd').innerHTML, // file.
               Ttl: InptNds[0].value, // title.
               Dt: InptNds[1].value + ' ' + InptNds[2].value, // date.
-              Pswd: InptNds[3].value, // password.
               Tp: BlgNd.querySelector('select').value, // type.
-              Smry: InptNds[4].value, // summary.
+              Smry: InptNds[3].value, // summary.
               TgIDA: [ ...ChkbxNds ].map(Nd => Nd.value), // tag id array.
             };
         }
@@ -660,7 +644,6 @@
                   Sto[i].Tp = Dt.Tp;
                   Sto[i].Ttl = Dt.Ttl;
                   Sto[i].Dt = Dt.Dt;
-                  Sto[i].Pswd = Dt.Pswd;
                   Sto[i].Smry = Dt.Smry;
 
                   Sto[i].Tg = this.state.Tgs.filter(Tg => {
@@ -701,7 +684,6 @@
                   Sto[i].Ttl = '';
                   Sto[i].Tp = '';
                   Sto[i].Dt = '';
-                  Sto[i].Pswd = '';
                   Sto[i].Smry = '';
                   Sto[i].Tg = [];
 
@@ -1044,7 +1026,7 @@
 </blog-editor>
 
 <blogs-manager>
-  <tab-box tabs={[ '網誌上傳', '訂閱消息', '網誌列表', '未建立網誌', '標籤管理', '網誌撰寫' ]} index={5}>
+  <tab-box tabs={[ '網誌上傳', '訂閱消息', '網誌列表', '未建立網誌', '標籤管理', '網誌撰寫' ]}>
     <blog-uploader slot='tab0'/>
     <feed slot='tab1' feed-last-date={props.feedLastDate}/>
     <blogs slot='tab2' published={true}/>

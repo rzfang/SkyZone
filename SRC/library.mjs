@@ -13,18 +13,22 @@ import Cnst from './constant.json.mjs';
 import Kwd from './wording.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
+
 const __dirname = path.dirname(__filename);
 
-const ADMIN_SESSION_EXPIRE = 60 * 60 * 12, // admin session expire, 1 hour.
-  ADMIN_SESSION_KEY = 'SSN', // admin session key.
-  NOW_ART_CORNER_KEY = 'NAC', // now art corner key.
-  ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH), // blog files path.
-  BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH), // blog files path.
-  CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH), // cache files path.
-  DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH), // data folder path.
-  DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH), // Sqlite database path.
-  FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
+const ADMIN_SESSION_EXPIRE = 60 * 60 * 12; // admin session expire, 1 hour.
+const ADMIN_SESSION_KEY = 'SSN'; // admin session key.
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
+
+const ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH); // blog files path.
+const BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH); // blog files path.
+const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH); // cache files path.
+const DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH); // data folder path.
+const DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH); // Sqlite database path.
+const FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
+const NOW_ART_CORNER_KEY = 'NAC'; // now art corner key.
+
+cache.RecycleRoll(10);
 
 /* extend original callback function to be packed.
   @ original callback function.
@@ -196,8 +200,7 @@ export const Blog = {
           Blog.title AS Ttl,
           Blog.summary as Smry,
           Blog.type AS Tp,
-          Blog.datetime AS Dt,
-          Blog.password AS Pswd
+          Blog.datetime AS Dt
         FROM Blog, TagLink
         WHERE Blog.id = TagLink.link_id AND TagLink.tag_id IN (${Prt})
         ORDER BY Blog.datetime DESC LIMIT ? OFFSET ?;
@@ -205,7 +208,7 @@ export const Blog = {
     }
     else {
       SQL = `
-        SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt, password AS Pswd
+        SELECT id AS ID, title AS Ttl, summary as Smry, type AS Tp, datetime AS Dt
         FROM Blog
         ORDER BY datetime DESC
         LIMIT ? OFFSET ?;
@@ -221,8 +224,6 @@ export const Blog = {
         const Ids = [];
 
         for(let i = 0; i < Rst.length; i++) {
-          if (Rst[i].Pswd) { Rst[i].Pswd = '???'; } // hide passowrd.
-
           Ids.push(Rst[i].ID); // collect ids for tag appending.
         }
 
@@ -290,7 +291,7 @@ export const Blog = {
       'SELECT BlogComment.blog_id, COUNT(BlogComment.id) AS CmtCnt FROM BlogComment GROUP BY BlogComment.blog_id';
 
     SQL = 'SELECT Blog.id AS ID, Blog.title AS Ttl, Blog.file AS Fl, Blog.type AS Tp, Blog.datetime AS Dt, ' +
-          'Blog.password AS Pswd, Blog.summary AS Smry, BlogCmt.CmtCnt ' +
+          'Blog.summary AS Smry, BlogCmt.CmtCnt ' +
           'FROM Blog LEFT JOIN (' + SQL + ') AS BlogCmt ON Blog.id = BlogCmt.blog_id ORDER BY Dt DESC LIMIT ?, ?;';
 
     Db.Query(SQL, [ Ofst, Lmt ])
@@ -404,11 +405,6 @@ export const Blog = {
       Vls.push(Prm.Dt);
     }
 
-    if (Prm.Pswd) {
-      Kys.push('password = ?');
-      Vls.push(Prm.Pswd);
-    }
-
     if (Prm.Smry) {
       Kys.push('summary = ?');
       Vls.push(Prm.Smry);
@@ -475,8 +471,6 @@ export const Blog = {
       return End(-2, Kwd.RM.StrangeValue);
     }
 
-    if (!Prm.Pswd || !is.String(Prm.Pswd)) { Prm.Pswd = ''; }
-
     if (!Prm.Smry || !is.String(Prm.Smry)) { Prm.Smry = ''; }
 
     const Db = new sqlite(DB_PTH);
@@ -486,10 +480,10 @@ export const Blog = {
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
     const BlgId = MakeId();
 
-    let SQL = 'INSERT INTO Blog (id, title, file, type, datetime, password, summary) VALUES (?, ?, ?, ?, ?, ?, ?);';
+    let SQL = 'INSERT INTO Blog (id, title, file, type, datetime, summary) VALUES (?, ?, ?, ?, ?, ?);';
 
     Db.Transaction('BEGIN')
-      .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Tp, Prm.Dt, Prm.Pswd, Prm.Smry ]))
+      .then(() => Db.Query(SQL, [ BlgId, Prm.Ttl, Prm.Fl, Prm.Tp, Prm.Dt, Prm.Smry ]))
       .then(() => {
         if (!Prm.TgIDA) { return Promise.resolve(); }
 
@@ -630,8 +624,7 @@ export const Blog = {
     if (!Db.IsReady()) { return End(-2, Kwd.RM.DbCrash); }
 
     const PckEnd = PackedEnd(End, () => { Db.Close(); });
-    const SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, datetime AS Dt FROM Blog WHERE password = \'\' ' +
-                'ORDER BY Dt DESC LIMIT 10;';
+    const SQL = 'SELECT id AS ID, title AS Ttl, summary as Smry, datetime AS Dt FROM Blog ORDER BY Dt DESC LIMIT 10;';
 
     Db.Query(SQL, [])
       .then(Rst => {
@@ -825,9 +818,9 @@ export const Blog = {
       .then(() => {
         const SQL =
           'SELECT Blog.id AS Id, Blog.title AS Ttl, Blog.file AS Fl, Blog.summary AS Smry, Blog.type AS Tp, ' +
-          'Blog.datetime AS Dt, Blog.password AS Pswd, COUNT(BlogComment.id) AS CmtCnt ' +
+          'Blog.datetime AS Dt, COUNT(BlogComment.id) AS CmtCnt ' +
           'FROM Blog LEFT JOIN BlogComment ON Blog.id = BlogComment.blog_id ' +
-          'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt, Pswd;';
+          'WHERE Blog.id = ? GROUP BY Ttl, Fl, Tp, Dt;';
 
         return Db.Query(SQL, [ Prm.Id ]);
       })
