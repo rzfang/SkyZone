@@ -94,7 +94,10 @@
         <li>上傳過程，請不要進行其它操作或是離開本頁。</li>
       </ul>
       <span class='TextTitle'>檔案</span>
-      <input type='file'/><br/>
+      <input
+        type='file'
+        accept='application/x-zip-compressed, application/zip, text/markdown, text/md, text/plain, text/x-markdown'
+      /><br/>
       <button onclick={Upload}>上傳</button>
       <progress value='0' max='100'></progress><br/>
     </div>
@@ -124,12 +127,6 @@
         }
 
         const FlTp = Fl.files[0].type;
-
-        if (FlTp !== 'text/plain' && FlTp !== 'application/x-tar') {
-          alert('檔案格式不符。\n請參考左側檔案格式說明表。');
-
-          return -2;
-        }
 
         Btn.disabled = true;
         Fl.disabled = true;
@@ -870,7 +867,7 @@
 </tags>
 
 <blog-editor>
-  <input type='file' multiple='multiple' onchange={FilePreview}/>
+  <input type='file' multiple='multiple' accept='image/gif, image/jpeg, image/png, image/webp' onchange={FilePreview}/>
   <div>
     <img
       each={one in state.imageFiles}
@@ -934,22 +931,18 @@
       },
 
       FilePreview (Evt) {
-        const badImages = [];
         const fileLength = Evt.target.files.length;
         const imageFiles = [];
 
         Array.from(Evt.target.files).forEach(file => {
-          const typeFilters = [ 'image/png', 'image/jpeg', 'image/gif' ];
           const { name, type } = file;
-
-          if (typeFilters.indexOf(type) < 0) { return badImages.push(name); }
 
           const fileReader = new FileReader();
 
           fileReader.onload = Evt => {
             imageFiles.push({ name, type, url: Evt.target.result });
 
-            if ((imageFiles.length + badImages.length) === fileLength) {
+            if (imageFiles.length === fileLength) {
               imageFiles.sort((A, B) => {
                 if (A.name > B.name) { return 1; }
                 else if (A.name < B.name) { return -1; }
@@ -963,26 +956,9 @@
 
           fileReader.readAsDataURL(file);
         });
-
-        if (badImages.length > 0) { alert('Files are not images:\n' + badImages.join('\n')); }
       },
 
-      TarMarkdownPreview (Txt = '') {
-        const { imageFiles } = this.state;
-        const TmdImgs = Txt.match(/tmd\{.+?\}/g); // TMD = tar markdown.
-
-        if (Array.isArray(TmdImgs)) {
-          for (let i = 0; i < TmdImgs.length; i++) {
-            const TmdImg = TmdImgs[i];
-            const [ , Nm ] = TmdImg.match(/tmd\{(.+?)\}/);
-            const { url = '' } = imageFiles.find(ImgFl => ImgFl.Nm === Nm) || {};
-
-            if (url) {
-              Txt = Txt.replace(TmdImg, url);
-            }
-          }
-        }
-
+      MarkdownPreview (Txt = '') {
         setTimeout(() => { this.update({ sourceText: Txt }); }, 100);
       },
 
@@ -990,7 +966,7 @@
         const Txtara = this.$('textarea');
         const { alt: Nm } = Evt.target;
 
-        const ImgMrkdwnTxt = `![${Nm}](tmd{${Nm}} "${Nm}")`;
+        const ImgMrkdwnTxt = `![${Nm}](${Nm} "${Nm}")\n`;
         const { value: Vl, selectionStart: SlctnStt, selectionEnd: SlctEnd } = Txtara;
 
         const NwTxt = Vl.slice(0, SlctnStt) + ImgMrkdwnTxt + Vl.slice(SlctEnd); // new text.
@@ -998,11 +974,11 @@
         Txtara.value = NwTxt;
         Txtara.selectionStart = Txtara.selectionEnd = SlctnStt + ImgMrkdwnTxt.length;
 
-        this.TarMarkdownPreview(NwTxt);
+        this.MarkdownPreview(NwTxt);
       },
 
       TextareaChange (Evt) {
-        this.TarMarkdownPreview(Evt.target.value);
+        this.MarkdownPreview(Evt.target.value);
       },
     };
   </script>

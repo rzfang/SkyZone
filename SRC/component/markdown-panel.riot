@@ -100,7 +100,9 @@
 
         if (mode === 'edit') {
           images.forEach(({ name, url }) => {
-            source = source.replace(new RegExp(name, 'g'), url);
+            const re = new RegExp('(!\\[\\S+?\\])\\(' + name + '(.*?)\\)', 'g');
+
+            source = source.replace(re, '$1(' + url + '$2)');
           });
         }
 
