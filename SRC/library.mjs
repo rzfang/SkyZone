@@ -444,9 +444,10 @@ export const Blog = {
 
     if (!Fls || Fls.length === 0) { return End(-2, Kwd.RM.StrangeValue); }
 
+    const allowedExt = [ '.md', '.txt', '.zip' ];
     const PthInfo = path.parse(Fls[0]);
 
-    if (!PthInfo || (PthInfo.ext !== '.tar' && PthInfo.ext !== '.txt')) {
+    if (!PthInfo || !allowedExt.includes(PthInfo.ext)) {
       return End(-3, Kwd.RM.StrangeValue);
     }
 
