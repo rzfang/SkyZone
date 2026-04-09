@@ -28,8 +28,6 @@ const DB_PTH = path.resolve(__dirname, '..', Cnst.DB_PTH); // Sqlite database pa
 const FD_PTH = path.resolve(__dirname, '..', Cnst.FD_PTH); // feed.xml path.
 const NOW_ART_CORNER_KEY = 'NAC'; // now art corner key.
 
-cache.RecycleRoll(10);
-
 /* extend original callback function to be packed.
   @ original callback function.
   @ extra action function.
@@ -1407,6 +1405,8 @@ export const ArtCnr = { // Art Corner.
           'finish',
           () => {
             cache.Set(NOW_ART_CORNER_KEY, Info);
+            cache.RecycleRoll(10); // passively start the cache recyle.
+
             End(1, Kwd.RM.StepTest, Info);
           });
 
