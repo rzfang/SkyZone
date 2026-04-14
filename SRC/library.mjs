@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import fs from 'fs';
 import getFolderSize from 'get-folder-size'; // To do - implmenet to retire this.
 import path from 'path';
-import tarStream from 'tar-stream';
 import yauzl from 'yauzl';
 import { cache, is, log, sqlite } from 'rzjs';
 import { customAlphabet } from 'nanoid';
@@ -20,7 +19,6 @@ const ADMIN_SESSION_EXPIRE = 60 * 60 * 12; // admin session expire, 1 hour.
 const ADMIN_SESSION_KEY = 'SSN'; // admin session key.
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // for nanoid.
 
-const ARTCNR_PTH = path.resolve(__dirname, '..', Cnst.ARTCNR_PTH); // blog files path.
 const BLG_PTH = path.resolve(__dirname, '..', Cnst.BLG_PTH); // blog files path.
 const CCH_PTH = path.resolve(__dirname, '..', Cnst.CCH_PTH); // cache files path.
 const DAT_PTH = path.resolve(__dirname, '..', Cnst.DAT_PTH); // data folder path.
@@ -117,32 +115,6 @@ function XmlEscape (Str, Flg = false) {
   @ separated string. */
 function MakeCircularString (Arr, FlStr = '?', SpStr = ', ') {
   return (new Array(Arr.length)).fill(FlStr).join(SpStr)
-}
-
-/* extract a file from tar file to system.
-  @ header object from tar-stream library.
-  @ stream object from tar-stream library.
-  @ file path to write to.
-  @ callback function. */
-function TarStreamFileWrite (Hdr, Strm, Pth, Then) {
-  function FileWrite () {
-    const ImgFlStrm = fs.createWriteStream(Pth, { encoding: 'binary', flags: 'w' });
-
-    Strm.on('end', Then);
-    Strm.pipe(ImgFlStrm);
-  }
-
-  // somehow, fs.stat's error result will breaks tar-stream. here use sync way to try catch the error.
-  try {
-    const St = fs.statSync(Pth); // stat.
-
-    if (!St.mtime || Hdr.mtime > St.mtime) { return FileWrite(); }
-  }
-  catch (error) {
-    return FileWrite();
-  }
-
-  Then();
 }
 
 export const Blog = {
@@ -1352,65 +1324,70 @@ export const Wds = { // good words.
 
 export const ArtCnr = { // Art Corner.
   RandomOneGet: (Rqst, Prm, End) => {
-    let Info = cache.Get(NOW_ART_CORNER_KEY);
+    const imageUrl = cache.Get(NOW_ART_CORNER_KEY);
 
-    if (Info) { return End(1, Kwd.RM.StepTest, Info); }
+    if (imageUrl) {
+      return End(1, Kwd.RM.Done, imageUrl);
+    }
 
-    fs.readdir(
-      ARTCNR_PTH,
-      (Err, Fls) => {
-        if (Err) { return End(-1, Kwd.RM.LoadDataFail, 0); }
+    const Db = new sqlite(DB_PTH);
 
-        // const Idx = parseInt(Math.random() * Fls.length, 10),
-        const Idx = 1,
-          TarFl = Fls[Idx],
-          FlStrm = fs.createReadStream(`${ARTCNR_PTH}/${TarFl}`),
-          Extr = tarStream.extract();
+    if (!Db.IsReady()) {
+      return End(-1, Kwd.RM.DbCrash);
+    }
 
-        Info = {};
+    const PckEnd = PackedEnd(End, () => { Db.Close(); });
 
-        Extr.on(
-          'entry',
-          (Hdr, Strm, Next) => {
-            if (Hdr.name === 'info.xml') {
-              const Chks = []; // chunks.
+    Db
+      .Query(`
+        SELECT Blog.id, Blog.file, Blog.published
+        FROM
+          Blog RIGHT JOIN (
+            SELECT link_id
+            FROM TagLink
+            WHERE tag_id = 'f45ed33ada78873f268ace3fdca9c975'
+          ) AS Wanted
+          ON Blog.id = Wanted.link_id
+        ORDER BY datetime DESC;
+      `)
+      .then(result => {
+        if (!is.Array(result)) {
+          return PckEnd(-2, Kwd.RM.NoSuchData);
+        }
 
-              Strm.on('data', Chk => { Chks.push(Chk); });
+        const index = Math.floor(Math.random() * result.length);
 
-              Strm.on(
-                'end',
-                () => {
-                  const Src = Chks.join('').toString('utf8');
+        const { id, file } = result[index];
 
-                  Info.Ttl = Src.match(/<Title>(.+)<\/Title>/)[1];
-                  Info.Atr = Src.match(/<Author>(.+)<\/Author>/)[1];
-                  Info.Dt = Src.match(/<Datetime>(.+)<\/Datetime>/)[1];
+        yauzl.open(`${BLG_PTH}/${file}`, { lazyEntries: true }, (error, zipFile) => {
+          if (error) {
+            return PckEnd(-3, Kwd.RM.LoadDataFail);
+          }
 
-                  Next();
-                });
+          zipFile.on('entry', entry => {
+            const allowedExtensions = [ '.png', '.jpg', '.webp' ];
+            const extension = path.extname(entry.fileName);
+
+            if (!allowedExtensions.includes(extension)) {
+              zipFile.readEntry();
+
+              return;
             }
-            else {
-              const FlNm = TarFl.replace('.tar', '') + '-' + Hdr.name;
-              const Pth = `${CCH_PTH}/${FlNm}`; // image file path.
 
-              Info.ImgUrl = '/resource/image/' + FlNm;
+            const imageUrl = `/blog/${id}/${entry.fileName}`;
 
-              TarStreamFileWrite(Hdr, Strm, Pth, Next);
-            }
-
-            Strm.resume(); // this is important.
-          });
-
-        Extr.on(
-          'finish',
-          () => {
-            cache.Set(NOW_ART_CORNER_KEY, Info);
             cache.RecycleRoll(10); // passively start the cache recyle.
+            cache.Set(NOW_ART_CORNER_KEY, imageUrl, 1800);
+            zipFile.close();
 
-            End(1, Kwd.RM.StepTest, Info);
+            PckEnd(0, Kwd.RM.Done, imageUrl);
           });
 
-        FlStrm.pipe(Extr);
+          zipFile.readEntry();
+        })
+      })
+      .catch(_ => {
+        PckEnd(-4, Kwd.RM.SystemError);
       });
   },
 };

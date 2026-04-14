@@ -1308,10 +1308,6 @@
   </script>
 </good-words>
 
-<art-corner>
-  To Do...
-</art-corner>
-
 <system>
   <div>
     清理圖片 cache 舊資料
@@ -1444,17 +1440,16 @@
 
 <page-admin>
   <login if={!state.IsLgd}/>
-  <tab-box if={state.IsLgd} tabs={[ '網誌管理', '留言管理', '佳言錄', '角落藝廊管理', '系統管理' ]}>
+  <tab-box if={state.IsLgd} tabs={[ '網誌管理', '留言管理', '佳言錄', '系統管理' ]}>
     <blogs-manager slot='tab0' feed-last-date={state.FdLstDt}/>
     <messages slot='tab1'/>
     <good-words slot='tab2'/>
-    <art-corner slot='tab3'/>
-    <system slot='tab4'/>
+    <system slot='tab3'/>
   </tab-box>
   <store name='ADMIN' listener={AdminStoreListen}/>
   <script>
     export default {
-      components: { login, tabBox, blogsManager, messages, goodWords, artCorner, system, store },
+      components: { login, tabBox, blogsManager, messages, goodWords, system, store },
 
       state: {
         FdLstDt: '',

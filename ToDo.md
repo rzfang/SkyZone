@@ -3,6 +3,9 @@
 - markdown panel is not necessary to rerender on browser side.
 - Blog.FileRespond code refactor.
 - blog published control.
+- blog file read optimize.
+- blog search.
+- retire getFolderSize.
 
 ==== To Do List ========================================================================================================
 

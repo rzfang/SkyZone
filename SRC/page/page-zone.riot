@@ -15,13 +15,9 @@
 </modules>
 
 <art-corner style='background-image: url({state.ImgUrl});'>
-  <div>
-    <div>角落藝廊</div>
-    <div>{state.Ttl}</div>
-  </div>
   <style>
     :host {
-      display: inline-flex;
+      display: inline-block;
       position: fixed;
       z-index: -1;
       padding: 10px;
@@ -31,17 +27,20 @@
       max-height: 75vh;
       width: 800px;
       height: 600px;
-      align-items: end;
-      justify-content: end;
-      text-align: right;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: right bottom;
 
-      >div {
-        border-radius: 5px;
-        padding: 5px 0 0 5px;
-        background-color: #ffffff80;
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 0) 60%
+        );
+        pointer-events: none;
       }
     }
   </style>
@@ -49,7 +48,6 @@
     export default {
       state: {
         ImgUrl: '',
-        Ttl: '',
       },
 
       async onBeforeMount () {
@@ -67,9 +65,7 @@
           return log(Message, 'warn');
         }
 
-        const { ImgUrl, Ttl } = Extend;
-
-        this.update({ ImgUrl, Ttl });
+        this.update({ ImgUrl: Extend });
       },
     }
   </script>
